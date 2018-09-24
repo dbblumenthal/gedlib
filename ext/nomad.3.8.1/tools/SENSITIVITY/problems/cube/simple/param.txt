@@ -1,0 +1,11 @@
+DIMENSION       3
+BB_EXE          bb.exe
+BB_OUTPUT_TYPE  PB OBJ
+x0              x0.txt
+LOWER_BOUND     [0 0 0]
+UPPER_BOUND     [2.1 2 2]
+tmp_dir         /tmp
+max_bb_eval     500
+ADD_SEED_TO_FILE_NAMES no
+CACHE_FILE cache.bin
+display_stats bbe ( sol ) obj

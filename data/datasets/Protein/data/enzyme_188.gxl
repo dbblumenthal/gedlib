@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="pdb1lbm" label="5" edgeids="true" edgemode="undirected">
+<node id="1"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>11</int></attr><attr name="sequence"><int>NLEDALFSVES</int></attr></node>
+<node id="2"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>12</int></attr><attr name="sequence"><int>SPEDARRISVEL</int></attr></node>
+<node id="3"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>12</int></attr><attr name="sequence"><int>EPEKILDVASYV</int></attr></node>
+<node id="4"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>12</int></attr><attr name="sequence"><int>PIELCRKIAERI</int></attr></node>
+<node id="5"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>9</int></attr><attr name="sequence"><int>NERDMERAL</int></attr></node>
+<node id="6"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>3</int></attr><attr name="sequence"><int>NYR</int></attr></node>
+<node id="7"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>12</int></attr><attr name="sequence"><int>DWSLILPYRDRF</int></attr></node>
+<node id="8"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>10</int></attr><attr name="sequence"><int>NVRSAIDVVR</int></attr></node>
+<node id="9"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>14</int></attr><attr name="sequence"><int>DHDSIKMFIKNAKG</int></attr></node>
+<node id="10"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>RVKI</int></attr></node>
+<node id="11"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>5</int></attr><attr name="sequence"><int>AVGFV</int></attr></node>
+<node id="12"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>6</int></attr><attr name="sequence"><int>FRVGVF</int></attr></node>
+<node id="13"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>AVQL</int></attr></node>
+<node id="14"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>7</int></attr><attr name="sequence"><int>LVIKAVG</int></attr></node>
+<node id="15"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>ILLD</int></attr></node>
+<node id="16"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>LVLS</int></attr></node>
+<node id="17"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>AVDV</int></attr></node>
+<node id="18"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>RVKI</int></attr></node>
+<node id="19"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>3</int></attr><attr name="sequence"><int>EAF</int></attr></node>
+<node id="20"><attr name="type"><int>1</int></attr><attr name="aaLength"><int>2</int></attr><attr name="sequence"><int>KK</int></attr></node>
+<edge from="1" to="2"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>31.35138</double></attr></edge>
+<edge from="2" to="3"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>27.58123</double></attr></edge>
+<edge from="3" to="4"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>25.24992</double></attr></edge>
+<edge from="8" to="16"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>19.31902</double></attr></edge>
+<edge from="9" to="20"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>18.77606</double></attr></edge>
+<edge from="11" to="10"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>22.0</double></attr></edge>
+<edge from="12" to="13"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>24.0</double></attr></edge>
+<edge from="13" to="14"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>20.0</double></attr></edge>
+<edge from="15" to="14"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>24.0</double></attr></edge>
+<edge from="1" to="10"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>31.36175</double></attr></edge>
+<edge from="4" to="5"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>26.43356</double></attr></edge>
+<edge from="6" to="7"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>28.58464</double></attr></edge>
+<edge from="7" to="8"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>25.84359</double></attr></edge>
+<edge from="9" to="19"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>19.93842</double></attr></edge>
+<edge from="11" to="18"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>22.0</double></attr></edge>
+<edge from="12" to="11"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>30.0</double></attr></edge>
+<edge from="16" to="17"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>22.0</double></attr></edge>
+<edge from="17" to="20"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>13.0</double></attr></edge>
+<edge from="1" to="18"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>31.36175</double></attr></edge>
+<edge from="2" to="11"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>45.47501</double></attr></edge>
+<edge from="3" to="5"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>48.43094</double></attr></edge>
+<edge from="4" to="6"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>31.11619</double></attr></edge>
+<edge from="5" to="14"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>31.06311</double></attr></edge>
+<edge from="12" to="14"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>44.0</double></attr></edge>
+<edge from="13" to="5"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>41.53212</double></attr></edge>
+<edge from="15" to="16"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>31.0</double></attr></edge>
+<edge from="10" to="18"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>0.0</double></attr><attr name="type1"><double>5</double></attr><attr name="distance1"><double>0.0</double></attr></edge>
+<edge from="2" to="12"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>4</double></attr><attr name="distance0"><double>4.0</double></attr></edge>
+<edge from="12" to="3"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>4</double></attr><attr name="distance0"><double>3.0</double></attr></edge>
+<edge from="3" to="13"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>4</double></attr><attr name="distance0"><double>3.0</double></attr></edge>
+<edge from="13" to="4"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>4</double></attr><attr name="distance0"><double>4.0</double></attr></edge>
+<edge from="4" to="14"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>5</double></attr><attr name="distance0"><double>0.0</double></attr></edge>
+<edge from="5" to="6"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>12.10818</double></attr><attr name="type1"><double>5</double></attr><attr name="distance1"><double>0.0</double></attr></edge>
+<edge from="6" to="15"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>4</double></attr><attr name="distance0"><double>3.0</double></attr></edge>
+<edge from="15" to="7"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>27.27488</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>13.0</double></attr></edge>
+<edge from="7" to="16"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>25.51312</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>2.0</double></attr></edge>
+<edge from="8" to="17"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>20.42607</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>2.0</double></attr></edge>
+<edge from="17" to="19"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>8.0</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>4.0</double></attr></edge>
+<edge from="19" to="20"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>5.0</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>2.0</double></attr></edge>
+</graph>
+</gxl>

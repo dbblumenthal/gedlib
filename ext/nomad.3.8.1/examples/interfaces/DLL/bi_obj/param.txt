@@ -1,0 +1,28 @@
+#seed              100
+
+initial_mesh_size r0.1
+
+direction_type    ortho 2n
+
+
+multi_overall_bb_eval 1000
+
+lower_bound * -10.0
+
+upper_bound *  10.0
+
+
+x0 ( 2 3 4 5 6 )
+
+display_degree    3
+
+
+add_seed_to_file_names no
+
+#stats_file toto.txt bbe obj
+#solution_file     "sol.txt"
+
+#LH_SEARCH 100 0
+
+#OPPORTUNISTIC_LH no
+

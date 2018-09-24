@@ -1,0 +1,13 @@
+
+MAX_CACHE_MEMORY 750
+
+initial_mesh_size r0.1
+
+opportunistic_eval no
+
+DIRECTION_TYPE           ortho 2n
+DIRECTION_TYPE           Lt
+DIRECTION_TYPE           Gps
+DIRECTION_TYPE           Gps n+1 rand
+
+MAX_BB_EVAL 1000

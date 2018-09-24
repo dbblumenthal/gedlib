@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="sampletest150-mod3_image20.bmp" edgemode="undirected">
+<node id="0">
+<attr name="x"><Integer>139</Integer></attr>
+<attr name="y"><Integer>322</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="1">
+<attr name="x"><Integer>442</Integer></attr>
+<attr name="y"><Integer>362</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="2">
+<attr name="x"><Integer>360</Integer></attr>
+<attr name="y"><Integer>340</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="3">
+<attr name="x"><Integer>469</Integer></attr>
+<attr name="y"><Integer>468</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="4">
+<attr name="x"><Integer>52</Integer></attr>
+<attr name="y"><Integer>434</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="5">
+<attr name="x"><Integer>252</Integer></attr>
+<attr name="y"><Integer>197</Integer></attr>
+<attr name="type"><String>circle</String></attr>
+</node>
+<node id="6">
+<attr name="x"><Integer>370</Integer></attr>
+<attr name="y"><Integer>288</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="7">
+<attr name="x"><Integer>155</Integer></attr>
+<attr name="y"><Integer>355</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="8">
+<attr name="x"><Integer>147</Integer></attr>
+<attr name="y"><Integer>286</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="9">
+<attr name="x"><Integer>63</Integer></attr>
+<attr name="y"><Integer>355</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="10">
+<attr name="x"><Integer>161</Integer></attr>
+<attr name="y"><Integer>355</Integer></attr>
+<attr name="type"><String>endpoint</String></attr>
+</node>
+<edge from="0" to="8">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.35</String></attr>
+</edge>
+<edge from="0" to="7">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.12</String></attr>
+</edge>
+<edge from="1" to="2">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.26</String></attr>
+</edge>
+<edge from="1" to="3">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.32</String></attr>
+</edge>
+<edge from="2" to="6">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.38</String></attr>
+</edge>
+<edge from="2" to="7">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.07</String></attr>
+</edge>
+<edge from="3" to="4">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.08</String></attr>
+</edge>
+<edge from="4" to="9">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.43</String></attr>
+</edge>
+<edge from="7" to="9">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.00</String></attr>
+</edge>
+<edge from="7" to="10">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.00</String></attr>
+</edge>
+<edge from="6" to="8">
+<attr name="frequency"><Integer>2</Integer></attr>
+<attr name="type0"><String>arc</String></attr>
+<attr name="angle0"><String>375.98</String></attr>
+<attr name="type1"><String>arc</String></attr>
+<attr name="angle1"><String>297.06</String></attr>
+</edge>
+</graph>
+</gxl>

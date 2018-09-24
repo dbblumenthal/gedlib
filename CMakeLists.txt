@@ -1,0 +1,55 @@
+cmake_minimum_required(VERSION 2.6)
+
+project(GEDLIB)
+set(VERSION 1.0)
+
+# Determine build type.
+
+if(NOT CMAKE_BUILD_TYPE)
+  message(STATUS "Building GEDLIB with build type 'Release', as none was specified.")
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Release or Debug build type")
+else()
+  message(STATUS "Building GEDLIB with build type '${CMAKE_BUILD_TYPE}'.")
+endif()
+
+# Find Boost and Doxygen.
+
+find_package(Boost REQUIRED)
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/doxyfile @ONLY)
+  add_custom_target(doc
+  ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxyfile
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMENT "Generating API documentation with Doxygen" VERBATIM
+  )
+endif()
+
+# Set up the compiler.
+
+if(APPLE)
+  set (CMAKE_CXX_COMPILER clang-omp++ CACHE STRING "C++ compiler" FORCE)
+endif()
+set(CMAKE_CXX_FLAGS "-std=c++11 -fopenmp -Wall -Wextra -pedantic -Wredundant-decls -Wdisabled-optimization -Wctor-dtor-privacy -Wnon-virtual-dtor -Werror=old-style-cast -Wsign-promo -Werror=return-type -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
+set(CMAKE_MACOSX_RPATH ON)
+
+# Define variables.
+
+set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
+set(LSAPE_HOME ${CMAKE_SOURCE_DIR}/ext/lsape.5)
+set(NOMAD_HOME ${CMAKE_SOURCE_DIR}/ext/nomad.3.8.1)
+set(LIBSVM_HOME ${CMAKE_SOURCE_DIR}/ext/libsvm.3.22)
+set(EIGEN_HOME ${CMAKE_SOURCE_DIR}/ext/eigen.3.3.4)
+set(FANN_HOME ${CMAKE_SOURCE_DIR}/ext/fann.2.2.0)
+
+# Add include and link directories.
+
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${NOMAD_HOME}/ext/sgtelib/src ${NOMAD_HOME}/src ${LSAPE_HOME}/include ${EIGEN_HOME}/Eigen ${LIBSVM_HOME} ${FANN_HOME}/include)
+link_directories(${NOMAD_HOME}/lib ${FANN_HOME}/lib ${LIBSVM_HOME})
+
+# Add subdirectories.
+
+add_subdirectory(src)
+add_subdirectory(tests)

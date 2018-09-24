@@ -1,0 +1,17 @@
+Creating the Python Interface to Nomad (PyNomad) is based on Cython 0.24 (or above) and Python 2.7
+A simple way to have Cython and Python is to install the Anaconda package.
+
+Please note that not all functionalities of Nomad are available in PyNomad (beta version).
+
+To build the PyNomad interface library:
+   - Make sure to have the NOMAD_HOME environment variables set correctly
+   - run the following in a command line: python setup_PyNomad.py build_ext --inplace
+
+To install the PyNomad interface library for the current user
+   - run the following in a command line: python setup_PyNomad.py install --user
+
+Several tests are proposed in the directory to check that everything is up and running:
+   - python runTestInfoHelp.py
+   - python runTest.py
+   - python runTest_2.py
+   - python runTest_BlockEval.py

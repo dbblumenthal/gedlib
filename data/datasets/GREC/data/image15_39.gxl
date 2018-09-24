@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="sampletest150-mod4_image15.bmp" edgemode="undirected">
+<node id="0">
+<attr name="x"><Integer>414</Integer></attr>
+<attr name="y"><Integer>256</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="1">
+<attr name="x"><Integer>46</Integer></attr>
+<attr name="y"><Integer>73</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="2">
+<attr name="x"><Integer>434</Integer></attr>
+<attr name="y"><Integer>236</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="3">
+<attr name="x"><Integer>228</Integer></attr>
+<attr name="y"><Integer>372</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="4">
+<attr name="x"><Integer>298</Integer></attr>
+<attr name="y"><Integer>302</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="5">
+<attr name="x"><Integer>169</Integer></attr>
+<attr name="y"><Integer>249</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="6">
+<attr name="x"><Integer>319</Integer></attr>
+<attr name="y"><Integer>308</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="7">
+<attr name="x"><Integer>356</Integer></attr>
+<attr name="y"><Integer>268</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="8">
+<attr name="x"><Integer>167</Integer></attr>
+<attr name="y"><Integer>202</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="9">
+<attr name="x"><Integer>415</Integer></attr>
+<attr name="y"><Integer>82</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="10">
+<attr name="x"><Integer>218</Integer></attr>
+<attr name="y"><Integer>130</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="11">
+<attr name="x"><Integer>54</Integer></attr>
+<attr name="y"><Integer>447</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="12">
+<attr name="x"><Integer>160</Integer></attr>
+<attr name="y"><Integer>334</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="13">
+<attr name="x"><Integer>112</Integer></attr>
+<attr name="y"><Integer>257</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="14">
+<attr name="x"><Integer>297</Integer></attr>
+<attr name="y"><Integer>209</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="15">
+<attr name="x"><Integer>289</Integer></attr>
+<attr name="y"><Integer>235</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="16">
+<attr name="x"><Integer>310</Integer></attr>
+<attr name="y"><Integer>208</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="17">
+<attr name="x"><Integer>408</Integer></attr>
+<attr name="y"><Integer>176</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="18">
+<attr name="x"><Integer>420</Integer></attr>
+<attr name="y"><Integer>228</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="19">
+<attr name="x"><Integer>185</Integer></attr>
+<attr name="y"><Integer>181</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="20">
+<attr name="x"><Integer>459</Integer></attr>
+<attr name="y"><Integer>256</Integer></attr>
+<attr name="type"><String>endpoint</String></attr>
+</node>
+<node id="21">
+<attr name="x"><Integer>161</Integer></attr>
+<attr name="y"><Integer>202</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="22">
+<attr name="x"><Integer>418</Integer></attr>
+<attr name="y"><Integer>437</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="23">
+<attr name="x"><Integer>291</Integer></attr>
+<attr name="y"><Integer>324</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<edge from="0" to="2">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.79</String></attr>
+</edge>
+<edge from="0" to="22">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.55</String></attr>
+</edge>
+<edge from="1" to="9">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.02</String></attr>
+</edge>
+<edge from="1" to="11">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.55</String></attr>
+</edge>
+<edge from="2" to="18">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.52</String></attr>
+</edge>
+<edge from="2" to="20">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.67</String></attr>
+</edge>
+<edge from="3" to="12">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.51</String></attr>
+</edge>
+<edge from="3" to="23">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.65</String></attr>
+</edge>
+<edge from="4" to="15">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.44</String></attr>
+</edge>
+<edge from="4" to="23">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.26</String></attr>
+</edge>
+<edge from="5" to="8">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.53</String></attr>
+</edge>
+<edge from="5" to="12">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.47</String></attr>
+</edge>
+<edge from="6" to="23">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.52</String></attr>
+</edge>
+<edge from="6" to="7">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.82</String></attr>
+</edge>
+<edge from="7" to="16">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.92</String></attr>
+</edge>
+<edge from="8" to="21">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.00</String></attr>
+</edge>
+<edge from="8" to="19">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.86</String></attr>
+</edge>
+<edge from="9" to="17">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.50</String></attr>
+</edge>
+<edge from="10" to="19">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.00</String></attr>
+</edge>
+<edge from="10" to="16">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.70</String></attr>
+</edge>
+<edge from="11" to="22">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.03</String></attr>
+</edge>
+<edge from="12" to="13">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.01</String></attr>
+</edge>
+<edge from="13" to="21">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.84</String></attr>
+</edge>
+<edge from="14" to="16">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.08</String></attr>
+</edge>
+<edge from="14" to="15">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.27</String></attr>
+</edge>
+<edge from="17" to="18">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>1.34</String></attr>
+</edge>
+</graph>
+</gxl>

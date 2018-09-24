@@ -1,0 +1,51 @@
+%SinkhornKnopp algorithm with regularization (balancing)
+%
+%  [ c,r ] = SinkhornKnopp( G, lambda, tol )
+%
+%  G must be non-negative and square
+%  
+%  lambda (optional) is the regularization parameter in [0,1], 0 corresponding to no
+%  regularization (basic Sinkhorn) by default
+%
+%  tol (optional) is the error parameter to control the convergence
+%  set to 0.1/n by default
+%
+%  X = diag(c)*G*diag(r) is the reconstruction
+%
+% -----------------------------------------------------------
+% authors: Sebastien Bougleux
+% institution: Normandie Univ, CNRS - UNICAEN - ENSICAEN, GREYC, Caen, France 
+% ----------------------------------------------------------- 
+% This file is part of LSAPE.
+% LSAPE is free software: you can redistribute it and/or modify
+% it under the terms of the CeCILL-C License. See README file 
+% for more details.
+% ----------------------------------------------------------- 
+function [ c,r ] = SinkhornKnopp( G, lambda, tol )
+
+    [n, m] = size(G);
+    
+    if n~=m
+        error('n must b equal to m');
+    end
+    
+    if nargin < 3
+        lambda = 0;
+    end
+    
+    if nargin < 2
+        tol = 0.1/n;
+    end
+    
+    r = ones(n,1); 
+    c = r;
+    Gp = G';
+    d = Gp*r + lambda*sum(r);
+    
+    while norm(c.*d - 1,1) > tol
+        c = 1./d;
+        r = 1./(G*c+ lambda*sum(c));
+        d = Gp*r + lambda*sum(r);
+    end
+    
+end

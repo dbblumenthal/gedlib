@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="sampletest150-mod2_image22.bmp" edgemode="undirected">
+<node id="0">
+<attr name="x"><Integer>243</Integer></attr>
+<attr name="y"><Integer>551</Integer></attr>
+<attr name="type"><String>endpoint</String></attr>
+</node>
+<node id="1">
+<attr name="x"><Integer>432</Integer></attr>
+<attr name="y"><Integer>-12</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="2">
+<attr name="x"><Integer>268</Integer></attr>
+<attr name="y"><Integer>161</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="3">
+<attr name="x"><Integer>82</Integer></attr>
+<attr name="y"><Integer>-18</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="4">
+<attr name="x"><Integer>251</Integer></attr>
+<attr name="y"><Integer>175</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<node id="5">
+<attr name="x"><Integer>272</Integer></attr>
+<attr name="y"><Integer>-22</Integer></attr>
+<attr name="type"><String>intersection</String></attr>
+</node>
+<edge from="0" to="2">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.51</String></attr>
+</edge>
+<edge from="1" to="5">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.06</String></attr>
+</edge>
+<edge from="1" to="2">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.81</String></attr>
+</edge>
+<edge from="2" to="4">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.69</String></attr>
+</edge>
+<edge from="3" to="4">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>.85</String></attr>
+</edge>
+<edge from="3" to="5">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.02</String></attr>
+</edge>
+<edge from="4" to="5">
+<attr name="frequency"><Integer>1</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-1.46</String></attr>
+</edge>
+</graph>
+</gxl>

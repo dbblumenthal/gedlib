@@ -1,0 +1,5 @@
+gfortran ELFUN.f -c ;
+gfortran GROUP.f -c ;
+gfortran RANGE.f -c ;
+gcc bb.c -c -I$CUTER/common/include
+gfortran -O -fno-second-underscore -o bb.exe ELFUN.o GROUP.o RANGE.o bb.o $MYCUTER/double/bin/genc.o -L$MYCUTER/double/lib -lcuter $MYCUTER/double/bin/linpac.o

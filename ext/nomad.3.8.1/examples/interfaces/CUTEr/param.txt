@@ -1,0 +1,17 @@
+DIMENSION 6
+DISPLAY_DEGREE 1
+DISPLAY_STATS BBE OBJ
+#TMP_DIR /tmp
+x0 x0.txt
+
+initial_mesh_size 1.0
+
+BB_EXE     bb.exe
+BB_OUTPUT_TYPE  OBJ
+MAX_BB_EVAL  100
+
+DIRECTION_TYPE  ortho 2n
+
+#stats_file    ortho.stats TIME BBE OBJ
+#solution_file ortho.sol
+#history_file  ortho.history

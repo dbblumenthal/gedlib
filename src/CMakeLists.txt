@@ -1,0 +1,8 @@
+add_library(gxlgedlib SHARED env/ged_env.gxl.cpp)
+set_target_properties(gxlgedlib PROPERTIES SUFFIX ".so")
+target_link_libraries(gxlgedlib nomad doublefann svm)
+if(APPLE)
+  add_custom_command(TARGET gxlgedlib POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${LIBRARY_OUTPUT_PATH}/libgxlgedlib.so)
+  add_custom_command(TARGET gxlgedlib POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${LIBRARY_OUTPUT_PATH}/libgxlgedlib.so)
+  add_custom_command(TARGET gxlgedlib POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${LIBRARY_OUTPUT_PATH}/libgxlgedlib.so)
+endif()

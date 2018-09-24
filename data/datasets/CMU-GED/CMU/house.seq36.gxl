@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="37" edgemode="undirected">
+<node id="1">
+<attr name="x"><Double>175.564516</Double></attr><attr name="y"><Double>349.854839</Double></attr></node>
+<node id="2">
+<attr name="x"><Double>136.661290</Double></attr><attr name="y"><Double>256.951613</Double></attr></node>
+<node id="3">
+<attr name="x"><Double>165.693548</Double></attr><attr name="y"><Double>133.854839</Double></attr></node>
+<node id="4">
+<attr name="x"><Double>267.306452</Double></attr><attr name="y"><Double>104.822581</Double></attr></node>
+<node id="5">
+<attr name="x"><Double>330.596774</Double></attr><attr name="y"><Double>126.306452</Double></attr></node>
+<node id="6">
+<attr name="x"><Double>348.016129</Double></attr><attr name="y"><Double>153.596774</Double></attr></node>
+<node id="7">
+<attr name="x"><Double>369.500000</Double></attr><attr name="y"><Double>141.983871</Double></attr></node>
+<node id="8">
+<attr name="x"><Double>318.403226</Double></attr><attr name="y"><Double>93.209677</Double></attr></node>
+<node id="9">
+<attr name="x"><Double>359.629032</Double></attr><attr name="y"><Double>22.951613</Double></attr></node>
+<node id="10">
+<attr name="x"><Double>372.403226</Double></attr><attr name="y"><Double>23.532258</Double></attr></node>
+<node id="11">
+<attr name="x"><Double>436.854839</Double></attr><attr name="y"><Double>71.145161</Double></attr></node>
+<node id="12">
+<attr name="x"><Double>408.403226</Double></attr><attr name="y"><Double>99.596774</Double></attr></node>
+<node id="13">
+<attr name="x"><Double>417.112903</Double></attr><attr name="y"><Double>94.951613</Double></attr></node>
+<node id="14">
+<attr name="x"><Double>408.983871</Double></attr><attr name="y"><Double>121.080645</Double></attr></node>
+<node id="15">
+<attr name="x"><Double>417.693548</Double></attr><attr name="y"><Double>114.693548</Double></attr></node>
+<node id="16">
+<attr name="x"><Double>341.048387</Double></attr><attr name="y"><Double>205.274194</Double></attr></node>
+<node id="17">
+<attr name="x"><Double>374.725806</Double></attr><attr name="y"><Double>186.693548</Double></attr></node>
+<node id="18">
+<attr name="x"><Double>343.951613</Double></attr><attr name="y"><Double>224.435484</Double></attr></node>
+<node id="19">
+<attr name="x"><Double>377.629032</Double></attr><attr name="y"><Double>207.016129</Double></attr></node>
+<node id="20">
+<attr name="x"><Double>325.370968</Double></attr><attr name="y"><Double>267.983871</Double></attr></node>
+<node id="21">
+<attr name="x"><Double>375.306452</Double></attr><attr name="y"><Double>240.112903</Double></attr></node>
+<node id="22">
+<attr name="x"><Double>330.596774</Double></attr><attr name="y"><Double>288.306452</Double></attr></node>
+<node id="23">
+<attr name="x"><Double>379.951613</Double></attr><attr name="y"><Double>259.274194</Double></attr></node>
+<node id="24">
+<attr name="x"><Double>204.016129</Double></attr><attr name="y"><Double>225.596774</Double></attr></node>
+<node id="25">
+<attr name="x"><Double>267.306452</Double></attr><attr name="y"><Double>232.564516</Double></attr></node>
+<node id="26">
+<attr name="x"><Double>184.274194</Double></attr><attr name="y"><Double>309.209677</Double></attr></node>
+<node id="27">
+<attr name="x"><Double>208.080645</Double></attr><attr name="y"><Double>312.112903</Double></attr></node>
+<node id="28">
+<attr name="x"><Double>320.145161</Double></attr><attr name="y"><Double>317.919355</Double></attr></node>
+<node id="29">
+<attr name="x"><Double>332.919355</Double></attr><attr name="y"><Double>330.112903</Double></attr></node>
+<node id="30">
+<attr name="x"><Double>439.177419</Double></attr><attr name="y"><Double>284.822581</Double></attr></node>
+<edge from="26" to="1">
+<attr name="dist"><Float>41.567868</Float></attr></edge>
+<edge from="1" to="2">
+<attr name="dist"><Float>100.719761</Float></attr></edge>
+<edge from="2" to="26">
+<attr name="dist"><Float>70.695784</Float></attr></edge>
+<edge from="4" to="5">
+<attr name="dist"><Float>66.837277</Float></attr></edge>
+<edge from="5" to="25">
+<attr name="dist"><Float>123.678782</Float></attr></edge>
+<edge from="25" to="4">
+<attr name="dist"><Float>127.741935</Float></attr></edge>
+<edge from="18" to="25">
+<attr name="dist"><Float>77.075041</Float></attr></edge>
+<edge from="25" to="16">
+<attr name="dist"><Float>78.629732</Float></attr></edge>
+<edge from="16" to="18">
+<attr name="dist"><Float>19.379984</Float></attr></edge>
+<edge from="2" to="3">
+<attr name="dist"><Float>126.474060</Float></attr></edge>
+<edge from="3" to="24">
+<attr name="dist"><Float>99.424358</Float></attr></edge>
+<edge from="24" to="2">
+<attr name="dist"><Float>74.295358</Float></attr></edge>
+<edge from="9" to="4">
+<attr name="dist"><Float>123.394952</Float></attr></edge>
+<edge from="3" to="9">
+<attr name="dist"><Float>223.406574</Float></attr></edge>
+<edge from="17" to="16">
+<attr name="dist"><Float>38.463086</Float></attr></edge>
+<edge from="16" to="6">
+<attr name="dist"><Float>52.145039</Float></attr></edge>
+<edge from="17" to="19">
+<attr name="dist"><Float>20.528907</Float></attr></edge>
+<edge from="19" to="16">
+<attr name="dist"><Float>36.622096</Float></attr></edge>
+<edge from="25" to="24">
+<attr name="dist"><Float>63.672713</Float></attr></edge>
+<edge from="24" to="4">
+<attr name="dist"><Float>136.352744</Float></attr></edge>
+<edge from="14" to="19">
+<attr name="dist"><Float>91.476955</Float></attr></edge>
+<edge from="17" to="14">
+<attr name="dist"><Float>74.018025</Float></attr></edge>
+<edge from="4" to="8">
+<attr name="dist"><Float>52.399808</Float></attr></edge>
+<edge from="8" to="5">
+<attr name="dist"><Float>35.271505</Float></attr></edge>
+<edge from="9" to="8">
+<attr name="dist"><Float>81.460191</Float></attr></edge>
+<edge from="9" to="10">
+<attr name="dist"><Float>12.787383</Float></attr></edge>
+<edge from="10" to="8">
+<attr name="dist"><Float>88.152951</Float></attr></edge>
+<edge from="12" to="7">
+<attr name="dist"><Float>57.533703</Float></attr></edge>
+<edge from="7" to="5">
+<attr name="dist"><Float>41.943324</Float></attr></edge>
+<edge from="5" to="12">
+<attr name="dist"><Float>82.263302</Float></attr></edge>
+<edge from="16" to="5">
+<attr name="dist"><Float>79.656390</Float></attr></edge>
+<edge from="5" to="6">
+<attr name="dist"><Float>32.375849</Float></attr></edge>
+<edge from="20" to="25">
+<attr name="dist"><Float>68.014842</Float></attr></edge>
+<edge from="18" to="20">
+<attr name="dist"><Float>47.346620</Float></attr></edge>
+<edge from="27" to="24">
+<attr name="dist"><Float>86.611552</Float></attr></edge>
+<edge from="25" to="27">
+<attr name="dist"><Float>99.174805</Float></attr></edge>
+<edge from="24" to="26">
+<attr name="dist"><Float>85.911941</Float></attr></edge>
+<edge from="3" to="4">
+<attr name="dist"><Float>105.679015</Float></attr></edge>
+<edge from="28" to="27">
+<attr name="dist"><Float>112.214842</Float></attr></edge>
+<edge from="25" to="28">
+<attr name="dist"><Float>100.386143</Float></attr></edge>
+<edge from="27" to="26">
+<attr name="dist"><Float>23.982824</Float></attr></edge>
+<edge from="27" to="1">
+<attr name="dist"><Float>49.817189</Float></attr></edge>
+<edge from="1" to="28">
+<attr name="dist"><Float>148.065655</Float></attr></edge>
+<edge from="28" to="29">
+<attr name="dist"><Float>17.659633</Float></attr></edge>
+<edge from="29" to="1">
+<attr name="dist"><Float>158.588427</Float></attr></edge>
+<edge from="28" to="20">
+<attr name="dist"><Float>50.208183</Float></attr></edge>
+<edge from="20" to="22">
+<attr name="dist"><Float>20.983716</Float></attr></edge>
+<edge from="22" to="28">
+<attr name="dist"><Float>31.403189</Float></attr></edge>
+<edge from="21" to="20">
+<attr name="dist"><Float>57.186916</Float></attr></edge>
+<edge from="18" to="21">
+<attr name="dist"><Float>35.055775</Float></attr></edge>
+<edge from="19" to="18">
+<attr name="dist"><Float>37.915729</Float></attr></edge>
+<edge from="22" to="29">
+<attr name="dist"><Float>41.870918</Float></attr></edge>
+<edge from="12" to="15">
+<attr name="dist"><Float>17.726327</Float></attr></edge>
+<edge from="15" to="14">
+<attr name="dist"><Float>10.800624</Float></attr></edge>
+<edge from="14" to="12">
+<attr name="dist"><Float>21.491716</Float></attr></edge>
+<edge from="8" to="12">
+<attr name="dist"><Float>90.226354</Float></attr></edge>
+<edge from="11" to="30">
+<attr name="dist"><Float>213.690042</Float></attr></edge>
+<edge from="30" to="15">
+<attr name="dist"><Float>171.480157</Float></attr></edge>
+<edge from="15" to="11">
+<attr name="dist"><Float>47.577485</Float></attr></edge>
+<edge from="21" to="23">
+<attr name="dist"><Float>19.716302</Float></attr></edge>
+<edge from="23" to="20">
+<attr name="dist"><Float>55.271198</Float></attr></edge>
+<edge from="22" to="23">
+<attr name="dist"><Float>57.260563</Float></attr></edge>
+<edge from="23" to="29">
+<attr name="dist"><Float>85.030325</Float></attr></edge>
+<edge from="7" to="17">
+<attr name="dist"><Float>45.014046</Float></attr></edge>
+<edge from="17" to="6">
+<attr name="dist"><Float>42.530029</Float></attr></edge>
+<edge from="6" to="7">
+<attr name="dist"><Float>24.421635</Float></attr></edge>
+<edge from="21" to="19">
+<attr name="dist"><Float>33.178168</Float></attr></edge>
+<edge from="19" to="30">
+<attr name="dist"><Float>99.207096</Float></attr></edge>
+<edge from="30" to="21">
+<attr name="dist"><Float>77.964452</Float></attr></edge>
+<edge from="30" to="23">
+<attr name="dist"><Float>64.501289</Float></attr></edge>
+<edge from="30" to="29">
+<attr name="dist"><Float>115.507530</Float></attr></edge>
+<edge from="15" to="13">
+<attr name="dist"><Float>19.750473</Float></attr></edge>
+<edge from="13" to="11">
+<attr name="dist"><Float>30.927191</Float></attr></edge>
+<edge from="19" to="15">
+<attr name="dist"><Float>100.641067</Float></attr></edge>
+<edge from="14" to="7">
+<attr name="dist"><Float>44.675731</Float></attr></edge>
+<edge from="10" to="13">
+<attr name="dist"><Float>84.259596</Float></attr></edge>
+<edge from="13" to="12">
+<attr name="dist"><Float>9.870968</Float></attr></edge>
+<edge from="12" to="10">
+<attr name="dist"><Float>84.153494</Float></attr></edge>
+<edge from="10" to="11">
+<attr name="dist"><Float>80.131136</Float></attr></edge>
+</graph></gxl>

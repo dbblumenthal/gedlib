@@ -1,0 +1,34 @@
+######################################
+#  Deb, Discontinuous, alpha=2, q=4  #
+######################################
+
+DIMENSION 2
+
+display_degree 4
+
+TMP_DIR /tmp
+BB_EXE         bb.exe
+BB_OUTPUT_TYPE OBJ OBJ
+
+x0 ( 0.51 0.51 )
+
+#vns_search yes
+
+#initial_mesh_size r0.01
+
+lower_bound * 0.0
+upper_bound * 1.0
+
+DIRECTION_TYPE ORTHO
+
+#MAX_BB_EVAL           5
+MULTI_OVERALL_BB_EVAL 500
+#MULTI_NB_MADS_RUNS   0
+#MULTI_USE_DELTA_CRIT  yes
+
+#              f1_min f1_max f2_min f2_max
+MULTI_F_BOUNDS 0.0    2.0    -1.0   10.0
+
+ADD_SEED_TO_FILE_NAMES no
+STATS_FILE    front.txt OBJ,
+#HISTORY_FILE history.txt

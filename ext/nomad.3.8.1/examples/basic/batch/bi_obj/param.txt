@@ -1,0 +1,29 @@
+######################################
+#  Deb, Discontinuous, alpha=2, q=4  #
+######################################
+
+DIMENSION 2
+
+DISPLAY_DEGREE 2
+
+BB_EXE         bb.exe
+BB_OUTPUT_TYPE OBJ OBJ
+
+x0 ( 0.51 0.51 )
+
+lower_bound * 0.0
+upper_bound * 1.0
+
+MULTI_OVERALL_BB_EVAL 500
+
+# ADD_SEED_TO_FILE_NAMES no
+STATS_FILE front.txt OBJ
+# HISTORY_FILE history.txt
+DISPLAY_STATS BBE ( SOL ) OBJ
+
+# TMP_DIR        /tmp          # indicates a repertory where
+                              # temporary files are put
+                              # (increases performance by ~100%
+                              # if you're working on a network
+                              # account and if TMP_DIR is on a
+                              # local disk)

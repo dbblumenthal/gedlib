@@ -1,0 +1,10 @@
+DIMENSION      50
+BB_OUTPUT_TYPE PB PB OBJ
+x0             x0.txt
+LOWER_BOUND    * 0
+UPPER_BOUND    * 10
+max_bb_eval    5000
+DIRECTION_TYPE ORTHO 2N
+display_stats  time bbe obj
+initial_mesh_size r0.2
+snap_to_bounds    no

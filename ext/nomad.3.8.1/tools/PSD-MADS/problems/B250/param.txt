@@ -1,0 +1,10 @@
+DIMENSION      60
+BB_EXE         bb.exe
+BB_OUTPUT_TYPE OBJ PB
+x0             x0.txt
+LOWER_BOUND    lb.txt
+UPPER_BOUND    ub.txt
+tmp_dir        /tmp
+max_bb_eval    3000
+display_stats  time bbe obj
+snap_to_bounds yes

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="pdb1e2a" label="2" edgeids="true" edgemode="undirected">
+<node id="1"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>31</int></attr><attr name="sequence"><int>REEMTLLGFEIVAYAGDARSKLLEALKAAEN</int></attr></node>
+<node id="2"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>30</int></attr><attr name="sequence"><int>FAKADSLVVEAGSCIAEAHSSQTGMLAREA</int></attr></node>
+<node id="3"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>27</int></attr><attr name="sequence"><int>VTMMHGQDHLMTTILLKDVIHHLIELY</int></attr></node>
+<node id="4"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>30</int></attr><attr name="sequence"><int>REEMTLLGFEIVAYAGDARSKLLEALKAAE</int></attr></node>
+<node id="5"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>30</int></attr><attr name="sequence"><int>FAKADSLVVEAGSCIAEAHSSQTGMLAREA</int></attr></node>
+<node id="6"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>27</int></attr><attr name="sequence"><int>VTMMHGQDHLMTTILLKDVIHHLIELY</int></attr></node>
+<node id="7"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>30</int></attr><attr name="sequence"><int>REEMTLLGFEIVAYAGDARSKLLEALKAAE</int></attr></node>
+<node id="8"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>30</int></attr><attr name="sequence"><int>FAKADSLVVEAGSCIAEAHSSQTGMLAREA</int></attr></node>
+<node id="9"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>27</int></attr><attr name="sequence"><int>VTMMHGQDHLMTTILLKDVIHHLIELY</int></attr></node>
+<edge from="3" to="9"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>9.675932</double></attr></edge>
+<edge from="6" to="9"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>11.03436</double></attr></edge>
+<edge from="1" to="2"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>33.67647</double></attr></edge>
+<edge from="3" to="2"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>38.61831</double></attr></edge>
+<edge from="6" to="5"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>38.29011</double></attr></edge>
+<edge from="9" to="8"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>38.49918</double></attr></edge>
+<edge from="4" to="5"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>33.4429</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>3.0</double></attr></edge>
+<edge from="7" to="8"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>33.34999</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>3.0</double></attr></edge>
+</graph>
+</gxl>

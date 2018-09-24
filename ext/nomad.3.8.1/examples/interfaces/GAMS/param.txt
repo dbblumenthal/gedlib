@@ -1,0 +1,32 @@
+#####
+#  NOMAD PARAMETERS  #
+####
+
+
+
+SEED NONE
+
+DIMENSION 19
+DISPLAY_DEGREE 1
+DISPLAY_STATS BBE OBJ
+
+BB_EXE bb.exe
+
+BB_OUTPUT_TYPE OBJ
+
+BB_INPUT_INCLUDE_SEED yes
+
+BB_INPUT_INCLUDE_TAG  yes
+
+
+
+
+x0          x0.txt
+lower_bound lb.txt
+
+upper_bound ub.txt
+
+
+
+
+MAX_BB_EVAL 10

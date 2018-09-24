@@ -1,0 +1,12 @@
+DIMENSION      5
+
+BB_EXE         bb.exe
+BB_OUTPUT_TYPE OBJ obj cstr
+
+X0             ( 0 0 0 0 0 )
+
+LOWER_BOUND    * -6
+UPPER_BOUND    ( 5 6 7 - - )
+
+#MAX_BB_EVAL    200
+multi_overall_bb_eval 500

@@ -5,7 +5,7 @@
 # @details 
 # Usage: 
 # ```sh
-# $ python install.py [--help] [-h] [--doc] [--tests all|pr2018|sspr2018|unit_tests] [--boost \<BOOST_ROOT\>] [--debug] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
+# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|unit_tests] [--boost \<BOOST_ROOT\>] [--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
 # ```
 #
 # For more information, execute `$ python install.py --help`.

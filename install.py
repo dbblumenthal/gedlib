@@ -120,14 +120,19 @@ def build_gedlib(args):
 		create_template_instantiation(identifier, node_id_type, node_label_type, edge_label_type)
 		append_ged_env_hpp(identifier, node_id_type, node_label_type, edge_label_type)
 		append_cmake_lists(identifier)
-
-	print("\n***** Run CMake. *****")
-	commands = "mkdir -p build; cd build; rm -rf *; cmake -DBOOST_ROOT=" + args.boost + " -DCMAKE_BUILD_TYPE="
-	if args.debug:
-		commands = commands + "Debug .."
-	else:
-		commands = commands + "Release .."
+	
+	print("\n***** Goto build directory. *****")
+	commands = "mkdir -p build"
 	call(commands, shell=True)
+	
+	if (not os.path.isfile("build/Makefile")) or args.update_makefile:
+		print("\n***** Run CMake. *****")
+		commands = "cd build; rm -rf *; cmake -DBOOST_ROOT=" + args.boost + " -DCMAKE_BUILD_TYPE="
+		if args.debug:
+			commands = commands + "Debug .."
+		else:
+			commands = commands + "Release .."
+		call(commands, shell=True)
 
 	if args.doc:
 		print("\n***** Generate documentation. *****")
@@ -148,9 +153,10 @@ def build_gedlib(args):
 			commands = "cd build; make " + args.tests
 			call(commands, shell=True)
 			
-	print("\n***** Delete build directory. *****")
-	commands = "rm -rf build"
-	call(commands, shell=True)
+	if args.clean:
+		print("\n***** Delete build directory. *****")
+		commands = "rm -rf build"
+		call(commands, shell=True)
 
 print("**************************************************")
 print("                    GEDLIB 1.0                    ")
@@ -160,9 +166,11 @@ print("**************************************************")
 parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependencies unless they have already been installed.", epilog="If called without arguments, only the dependencies are installed.")
 parser.add_argument("--doc", help="build documentation; requires --boost <BOOST_ROOT>", action="store_true")
 parser.add_argument("--lib", help="build shared library; requires --boost <BOOST_ROOT>", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
-parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|pr2018|sspr2018", choices=["all", "unit_tests", "pr2018", "sspr2018"])
+parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018"])
 parser.add_argument("--boost", metavar="<BOOST_ROOT>", help="specify path to directory containing Boost sources")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
+parser.add_argument("--clean", help="delete build directory", action="store_true")
+parser.add_argument("--update_makefile", help="updates the makefile", action="store_true")
 args = parser.parse_args()
 if not args.boost and (args.lib or args.tests or args.doc):
 	raise Exception("The argument --boost BOOST is required if the script is called with one of the options --lib, --tests or --doc.")

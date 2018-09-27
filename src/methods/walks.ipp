@@ -90,7 +90,6 @@ void
 Walks<UserNodeLabel, UserEdgeLabel>::
 lsape_init_graph_(const GEDGraph & graph) {
 	adj_graphs_[graph.id()] = AdjGraph_(graph);
-	this->ids_to_nodes_[graph.id()] = adj_graphs_.at(graph.id()).ids_to_nodes();
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -127,7 +126,6 @@ lsape_init_() {
 	lsape_solver.set_model(this->lsape_model_);
 	for (depth_ = min_depth_; depth_ <= max_depth_; depth_++) {
 		double avg_ub{0.0};
-		NodeMap node_map;
 		for (auto g = this->ged_data_.begin(); g != this->ged_data_.end(); g++) {
 			if (this->ged_data_.is_shuffled_graph_copy(g->id())) {
 				continue;
@@ -136,20 +134,21 @@ lsape_init_() {
 				if (this->ged_data_.is_shuffled_graph_copy(h->id())) {
 					continue;
 				}
-				DMatrix lsape_instance(static_cast<std::size_t>(g->num_nodes()) + 1, static_cast<std::size_t>(h->num_nodes()) + 1, 0.0);
+				NodeMap node_map(g->num_nodes(), h->num_nodes());
+				DMatrix lsape_instance(g->num_nodes() + 1, h->num_nodes() + 1, 0.0);
 				if (this->ged_data_.shuffled_graph_copies_available() and (g->id() == h->id())) {
 					GEDGraph::GraphID id_shuffled_graph_copy{this->ged_data_.id_shuffled_graph_copy(h->id())};
 					lsape_populate_instance_(*g, this->ged_data_.graph(id_shuffled_graph_copy), lsape_instance);
 					lsape_solver.set_problem(lsape_instance);
 					lsape_solver.solve();
-					util::construct_node_map_from_solver(lsape_solver, this->ids_to_nodes_.at(g->id()), this->ids_to_nodes_.at(id_shuffled_graph_copy), node_map);
+					util::construct_node_map_from_solver(lsape_solver, node_map);
 					this->ged_data_.compute_induced_cost(*g, this->ged_data_.graph(id_shuffled_graph_copy), node_map);
 				}
 				else {
 					lsape_populate_instance_(*g, *h, lsape_instance);
 					lsape_solver.set_problem(lsape_instance);
 					lsape_solver.solve();
-					util::construct_node_map_from_solver(lsape_solver, this->ids_to_nodes_.at(g->id()), this->ids_to_nodes_.at(h->id()), node_map);
+					util::construct_node_map_from_solver(lsape_solver, node_map);
 					this->ged_data_.compute_induced_cost(*g, *h, node_map);
 				}
 				avg_ub += node_map.induced_cost();
@@ -347,14 +346,6 @@ Walks<UserNodeLabel, UserEdgeLabel>::
 AdjGraph_ ::
 operator() (std::size_t row, std::size_t col) const {
 	return static_cast<double>(adj_matrix_(row, col));
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-const GEDGraph::SizeTNodeMap &
-Walks<UserNodeLabel, UserEdgeLabel>::
-AdjGraph_ ::
-ids_to_nodes() const {
-	return nodes_;
 }
 
 // === Definition of private class ProductGraph_. ===

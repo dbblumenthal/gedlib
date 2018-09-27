@@ -128,15 +128,9 @@ private:
 
 	double time_limit_in_sec_;
 
-	std::map<GEDGraph::GraphID, GEDGraph::NodeSizeTMap> nodes_to_ids_;
-
-	std::map<GEDGraph::GraphID, GEDGraph::SizeTNodeMap> ids_to_nodes_;
-
 	// Member functions inherited from GEDMethod.
 
 	virtual void ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) final;
-
-	virtual void ged_init_() final;
 
 	virtual void ged_set_default_options_() final;
 
@@ -146,23 +140,17 @@ private:
 
 	// Private helper functions.
 
-	void init_graph_(const GEDGraph & graph);
-
 	bool termination_criterion_met_(const std::size_t & current_itr, const double & last_improvement, Result & result);
 
-	void init_subproblems_(const GEDGraph & g, const GEDGraph & h, const GEDGraph::SizeTNodeMap & g_ids_to_nodes, const GEDGraph::SizeTNodeMap & h_ids_to_nodes,
-			const GEDGraph::NodeSizeTMap g_nodes_to_ids, const GEDGraph::NodeSizeTMap h_nodes_to_ids, SubproblemSolvers_ & subproblem_solver) const;
+	void init_subproblems_(const GEDGraph & g, const GEDGraph & h, SubproblemSolvers_ & subproblem_solver) const;
 
-	void init_node_costs_(const GEDGraph & g, const GEDGraph & h, const GEDGraph::SizeTNodeMap & g_ids_to_nodes, const GEDGraph::SizeTNodeMap & h_ids_to_nodes, DMatrix & node_costs) const;
+	void init_node_costs_(const GEDGraph & g, const GEDGraph & h, DMatrix & node_costs) const;
 
 	void update_master_problem_costs_(const SubproblemSolvers_ & subproblems_solver, const DMatrix & node_costs, LSAPSolver & master_problem_solver) const;
 
 	void update_subproblem_costs_(const Weights_ & weights, std::size_t degree, SubproblemSolvers_ & subproblems_solver) const;
 
 	void update_weights_(const LSAPSolver & master_problem_solver, std::size_t degree, const SubproblemSolvers_ & subproblems_solver, Weights_ & weights) const;
-
-	double compute_upper_bound_from_current_costs_(const DMatrix & node_costs, const SubproblemSolvers_ & subproblem_solvers, const LSAPSolver & master_problem_solver,
-			const GEDGraph::SizeTNodeMap & g_ids_to_nodes, const GEDGraph & g, const GEDGraph::SizeTNodeMap & h_ids_to_nodes, const GEDGraph & h);
 
 	std::size_t regularize_(GEDGraph & g, GEDGraph & h) const;
 

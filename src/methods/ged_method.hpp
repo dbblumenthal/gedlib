@@ -88,7 +88,7 @@ public:
 	 * @brief Returns a graph matching.
 	 * @return Constant reference to graph matching provided by last call to run() or to an empty matching if the method does not yield a matching.
 	 */
-	const NodeMap & get_matching() const;
+	const NodeMap & get_node_map() const;
 
 protected:
 
@@ -110,7 +110,7 @@ private:
 
 	double upper_bound_;
 
-	NodeMap matching_;
+	NodeMap node_map_;
 
 	Seconds runtime_;
 

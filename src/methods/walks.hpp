@@ -63,8 +63,6 @@ private:
 
 		double operator() (std::size_t row, std::size_t col) const;
 
-		const GEDGraph::SizeTNodeMap & ids_to_nodes() const;
-
 		void compute_num_walks_(const std::set<LabelID> & node_labels, std::size_t depth);
 
 	private:

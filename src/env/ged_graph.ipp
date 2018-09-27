@@ -30,7 +30,13 @@ id_{ged_graph.id_} {}
 GEDGraph :: NodeID
 GEDGraph ::
 dummy_node() {
-	return boost::graph_traits<detail::GedGraphAL>::null_vertex();
+	return std::numeric_limits<NodeID>::max() - 1;
+}
+
+GEDGraph :: NodeID
+GEDGraph ::
+undefined_node() {
+	return std::numeric_limits<NodeID>::max();
 }
 
 GEDGraph :: EdgeID
@@ -42,7 +48,11 @@ dummy_edge() {
 GEDGraph :: NodeID
 GEDGraph ::
 add_node() {
-	return boost::add_vertex(alist_);
+	NodeID new_node{boost::add_vertex(alist_)};
+	if (new_node >= dummy_node()) {
+		throw Error("Cannot add node. Maximal number of nodes reached.");
+	}
+	return new_node;
 }
 
 GEDGraph :: EdgeID

@@ -72,14 +72,6 @@ private:
 
 		std::size_t num_nodes_h() const;
 
-		const GEDGraph::SizeTNodeMap & g_ids_to_nodes() const;
-
-		const GEDGraph::SizeTNodeMap & h_ids_to_nodes() const;
-
-		const GEDGraph::NodeSizeTMap & g_nodes_to_ids() const;
-
-		const GEDGraph::NodeSizeTMap & h_nodes_to_ids() const;
-
 	private:
 
 		double quadratic_cost_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const;
@@ -95,14 +87,6 @@ private:
 		const GEDGraph * g_;
 
 		const GEDGraph * h_;
-
-		const GEDGraph::SizeTNodeMap * g_ids_to_nodes_;
-
-		const GEDGraph::SizeTNodeMap * h_ids_to_nodes_;
-
-		const GEDGraph::NodeSizeTMap * g_nodes_to_ids_;
-
-		const GEDGraph::NodeSizeTMap * h_nodes_to_ids_;
 
 		double translation_factor_;
 	};
@@ -121,10 +105,6 @@ private:
 
 	QAPInstance_ qap_instance_;
 
-	std::map<GEDGraph::GraphID, GEDGraph::SizeTNodeMap> ids_to_nodes_;
-
-	std::map<GEDGraph::GraphID, GEDGraph::NodeSizeTMap> nodes_to_ids_;
-
 	// Member functions inherited from LSBasedMethod.
 
 	void ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double lower_bound, const NodeMap & initial_node_map, NodeMap & output_node_map) final;
@@ -137,11 +117,7 @@ private:
 
 	virtual std::string ls_valid_options_string_() const final;
 
-	virtual void ls_init_() final;
-
 	// Private helper member functions.
-
-	void init_graph_(const GEDGraph & graph);
 
 	void node_map_to_matrix_(const NodeMap & node_map, DMatrix & matrix) const;
 

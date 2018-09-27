@@ -55,7 +55,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	std::vector<NodeMap> initial_node_maps;
 	generate_initial_node_maps(g, h, initial_node_maps, result);
 	for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
-		result.add_node_map();
+		result.add_node_map(g.num_nodes(), h.num_nodes());
 	}
 
 	// Initialize lower bound.
@@ -323,7 +323,7 @@ generate_random_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::v
 		std::random_device rng_h;
 		std::mt19937 urng_h(rng_h());
 		std::shuffle(permutation_h.begin(), permutation_h.end(), urng_h);
-		initial_node_maps.emplace_back();
+		initial_node_maps.emplace_back(g.num_nodes(), h.num_nodes());
 		for (auto node = g.nodes().first; node != g.nodes().second; node++) {
 			initial_node_maps.back().add_assignment(*node, GEDGraph::dummy_node());
 		}

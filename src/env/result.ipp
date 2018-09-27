@@ -36,8 +36,8 @@ upper_bound() const {
 
 std::size_t
 Result ::
-add_node_map() {
-	node_maps_.emplace_back();
+add_node_map(std::size_t num_nodes_g, std::size_t num_nodes_h) {
+	node_maps_.emplace_back(num_nodes_g, num_nodes_h);
 	return (node_maps_.size() - 1);
 }
 
@@ -92,7 +92,7 @@ sort_node_maps_and_set_upper_bound(std::size_t num_node_maps) {
 	}
 	std::sort(node_maps_.begin(), node_maps_.end());
 	if (node_maps_.size() > num_node_maps) {
-		node_maps_.resize(num_node_maps);
+		node_maps_.erase(node_maps_.begin() + num_node_maps + 1, node_maps_.end());
 	}
 }
 

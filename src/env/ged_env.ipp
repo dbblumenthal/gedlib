@@ -22,7 +22,7 @@ ged_data_(),
 lower_bounds_(),
 upper_bounds_(),
 runtimes_(),
-matchings_(),
+node_maps_(),
 original_to_internal_node_ids_(),
 internal_to_original_node_ids_(),
 ged_method_{nullptr} {}
@@ -409,7 +409,13 @@ run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) {
 	lower_bounds_[key] = ged_method_->get_lower_bound();
 	upper_bounds_[key] = ged_method_->get_upper_bound();
 	runtimes_[key] = ged_method_->get_runtime();
-	matchings_[key] = ged_method_->get_matching();
+	auto it = node_maps_.find(key);
+	if (it == node_maps_.end()) {
+		node_maps_.emplace(key, ged_method_->get_node_map());
+	}
+	else {
+		it->second = ged_method_->get_node_map();
+	}
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -452,10 +458,10 @@ const NodeMap &
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_node_map(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) const {
 	std::pair<GEDGraph::GraphID, GEDGraph::GraphID> key(g_id, h_id);
-	if (matchings_.find(key) == matchings_.end()) {
+	if (node_maps_.find(key) == node_maps_.end()) {
 		throw Error("Call run(" + std::to_string(g_id) + "," + std::to_string(h_id) + ") before calling get_node_map(" + std::to_string(g_id) + "," + std::to_string(h_id) + ").");
 	}
-	return matchings_.at(key);
+	return node_maps_.at(key);
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

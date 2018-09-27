@@ -95,8 +95,6 @@ private:
 
 	std::string lsape_method_options_;
 
-	std::map<GEDGraph::GraphID, GEDGraph::NodeSizeTMap> nodes_to_ids_;
-
 	Eigen::ArrayXXd lsape_instance_;
 
 	std::vector<double> global_features_;
@@ -108,8 +106,6 @@ private:
 	// Member functions inherited from MLBasedMethod.
 
 	virtual void ml_init_() final;
-
-	virtual void ml_init_graph_(const GEDGraph & graph) final;
 
 	virtual void ml_set_default_options_() final;
 

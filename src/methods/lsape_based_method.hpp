@@ -92,11 +92,6 @@ protected:
 	bool solve_optimally_;
 
 	/*!
-	 * @brief Stores indices that map rows and columns to node IDs.
-	 */
-	std::map<GEDGraph::GraphID, GEDGraph::SizeTNodeMap> ids_to_nodes_;
-
-	/*!
 	 * @brief The number of threads to be used.
 	 */
 	std::size_t num_threads_;

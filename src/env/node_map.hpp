@@ -27,8 +27,10 @@ public:
 
 	/*!
 	 * @brief Default constructor.
+	 * @param[in] num_nodes_g Number of nodes in first input graph.
+	 * @param[in] num_nodes_h Number of nodes in second input graph.
 	 */
-	NodeMap();
+	NodeMap(std::size_t num_nodes_g, std::size_t num_nodes_h);
 
 	/*!
 	 * @brief Copy constructor.
@@ -52,6 +54,18 @@ public:
 	 * @return Boolean @p true if the map is empty and @p false otherwise.
 	 */
 	bool empty() const;
+
+	/*!
+	 * @brief Returns number of source nodes contained in the node map.
+	 * @return Number of source nodes.
+	 */
+	std::size_t num_source_nodes() const;
+
+	/*!
+	 * @brief Returns number of target nodes contained in the node map.
+	 * @return Number of target nodes.
+	 */
+	std::size_t num_target_nodes() const;
 
 	/*!
 	 * @brief Checks if the node map is complete.
@@ -131,9 +145,9 @@ public:
 
 private:
 
-	GEDGraph::NodeNodeMap forward_map_;
+	std::vector<GEDGraph::NodeID> forward_map_;
 
-	GEDGraph::NodeNodeMap backward_map_;
+	std::vector<GEDGraph::NodeID> backward_map_;
 
 	double induced_cost_;
 };

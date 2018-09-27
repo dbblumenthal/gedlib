@@ -23,9 +23,7 @@ epsilon_{0.000001},
 max_itrs_{100},
 time_limit_in_sec_{0.0},
 omega_{0.0},
-qap_instance_(),
-ids_to_nodes_(),
-nodes_to_ids_() {}
+qap_instance_() {}
 
 // === Definitions of member functions inherited from LSBasedMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -64,14 +62,14 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			solve_linear_problem_(linear_problem, qap_instance_, lsape_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
-				util::construct_node_map_from_solver(lsape_solver, qap_instance_.g_ids_to_nodes(), qap_instance_.h_ids_to_nodes(), output_node_map);
+				util::construct_node_map_from_solver(lsape_solver, output_node_map);
 			}
 		}
 		else {
 			solve_linear_problem_(linear_problem, qap_instance_, lsap_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
-				util::construct_node_map_from_solver(lsap_solver, qap_instance_.g_ids_to_nodes(), qap_instance_.h_ids_to_nodes(), output_node_map);
+				util::construct_node_map_from_solver(lsap_solver, output_node_map);
 			}
 		}
 		alpha = min_linear_problem - 2 * overall_cost_x + linear_cost_x;
@@ -112,14 +110,14 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			solve_linear_problem_(projection_problem, qap_instance_, lsape_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
-				util::construct_node_map_from_solver(lsape_solver, qap_instance_.g_ids_to_nodes(), qap_instance_.h_ids_to_nodes(), output_node_map);
+				util::construct_node_map_from_solver(lsape_solver, output_node_map);
 			}
 		}
 		else {
 			solve_linear_problem_(projection_problem, qap_instance_, lsap_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
-				util::construct_node_map_from_solver(lsap_solver, qap_instance_.g_ids_to_nodes(), qap_instance_.h_ids_to_nodes(), output_node_map);
+				util::construct_node_map_from_solver(lsap_solver, output_node_map);
 			}
 		}
 	}
@@ -132,21 +130,8 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 IPFP<UserNodeLabel, UserEdgeLabel>::
 ls_runtime_init_(const GEDGraph & g, const GEDGraph & h) {
-	if (not this->initialized_) {
-		init_graph_(g);
-		init_graph_(h);
-	}
 	omega_ = this->ged_data_.max_edit_cost(g, h) + 10.0;
 	qap_instance_.init(this, g, h);
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-void
-IPFP<UserNodeLabel, UserEdgeLabel>::
-ls_init_() {
-	for (auto graph = this->ged_data_.begin(); graph != this->ged_data_.end(); graph++) {
-		init_graph_(*graph);
-	}
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -155,7 +140,7 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 ls_set_default_options_() {
 	quadratic_model_ = QAPE;
 	lsape_model_ = LSAPESolver::ECBP;
-	epsilon_ = 0.000001;
+	epsilon_ = 0.001;
 	max_itrs_ = 100;
 	time_limit_in_sec_ = 0.0;
 }
@@ -247,13 +232,6 @@ ls_parse_option_(const std::string & option, const std::string & arg) {
 }
 
 // == Definitions of private helper member functions. ===
-template<class UserNodeLabel, class UserEdgeLabel>
-void
-IPFP<UserNodeLabel, UserEdgeLabel>::
-init_graph_(const GEDGraph & graph) {
-	util::init_id_to_node_indices(graph, ids_to_nodes_);
-	util::init_node_to_id_indices(graph, nodes_to_ids_);
-}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
@@ -267,10 +245,10 @@ node_map_to_matrix_(const NodeMap & node_map, DMatrix & matrix) const {
 		std::size_t row{undefined()};
 		std::size_t col{undefined()};
 		if (assignment.first != GEDGraph::dummy_node()) {
-			row = qap_instance_.g_nodes_to_ids().at(assignment.first);
+			row = assignment.first;
 		}
 		if (assignment.second != GEDGraph::dummy_node()) {
-			col = qap_instance_.h_nodes_to_ids().at(assignment.second);
+			col = assignment.second;
 		}
 		if ((row != undefined()) and (col != undefined())) {
 			matrix(row, col) = 1.0;
@@ -512,10 +490,6 @@ QAPInstance_() :
 ipfp_{nullptr},
 g_{nullptr},
 h_{nullptr},
-g_ids_to_nodes_{nullptr},
-h_ids_to_nodes_{nullptr},
-g_nodes_to_ids_{nullptr},
-h_nodes_to_ids_{nullptr},
 translation_factor_{0.0} {}
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -526,10 +500,6 @@ init(const IPFP<UserNodeLabel, UserEdgeLabel> * ipfp, const GEDGraph & g, const 
 	ipfp_ = ipfp;
 	g_ = &g;
 	h_ = &h;
-	g_ids_to_nodes_ = &(ipfp_->ids_to_nodes_.at(g.id()));
-	h_ids_to_nodes_ = &(ipfp_->ids_to_nodes_.at(h.id()));
-	g_nodes_to_ids_ = &(ipfp_->nodes_to_ids_.at(g.id()));
-	h_nodes_to_ids_ = &(ipfp_->nodes_to_ids_.at(h.id()));
 	if (ipfp_->quadratic_model_ == C_QAP) {
 		if (g_->num_nodes() > h_->num_nodes()) {
 			translation_factor_ = 3 * std::max(ipfp_->ged_data_.max_node_del_cost(*g_), ipfp_->ged_data_.max_edge_del_cost(*g_));
@@ -587,38 +557,6 @@ num_nodes_h() const {
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
-const GEDGraph::SizeTNodeMap &
-IPFP<UserNodeLabel, UserEdgeLabel>::
-QAPInstance_ ::
-g_ids_to_nodes() const {
-	return *g_ids_to_nodes_;
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-const GEDGraph::SizeTNodeMap &
-IPFP<UserNodeLabel, UserEdgeLabel>::
-QAPInstance_ ::
-h_ids_to_nodes() const {
-	return *h_ids_to_nodes_;
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-const GEDGraph::NodeSizeTMap &
-IPFP<UserNodeLabel, UserEdgeLabel>::
-QAPInstance_ ::
-g_nodes_to_ids() const {
-	return *g_nodes_to_ids_;
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-const GEDGraph::NodeSizeTMap &
-IPFP<UserNodeLabel, UserEdgeLabel>::
-QAPInstance_ ::
-h_nodes_to_ids() const {
-	return *h_nodes_to_ids_;
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
 double
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
@@ -629,15 +567,15 @@ operator() (std::size_t row, std::size_t col) const {
 	double return_val{0.0};
 	switch(ipfp_->quadratic_model_) {
 	case QAP:
-		return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(g_ids_to_nodes_->at(row)), h_->get_node_label(h_ids_to_nodes_->at(col)));
+		return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), h_->get_node_label(col));
 		break;
 	case C_QAP:
-		return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(g_ids_to_nodes_->at(row)), h_->get_node_label(h_ids_to_nodes_->at(col)));
+		return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), h_->get_node_label(col));
 		if (g_->num_nodes() > h_->num_nodes()) {
-			return_val -= ipfp_->ged_data_.node_cost(g_->get_node_label(g_ids_to_nodes_->at(row)), dummy_label());
+			return_val -= ipfp_->ged_data_.node_cost(g_->get_node_label(row), dummy_label());
 		}
 		else if (g_->num_nodes() < h_->num_nodes()) {
-			return_val -= ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(h_ids_to_nodes_->at(col)));
+			return_val -= ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(col));
 		}
 		if (g_->num_nodes() != h_->num_nodes()) {
 			return_val += translation_factor_;
@@ -645,13 +583,13 @@ operator() (std::size_t row, std::size_t col) const {
 		break;
 	case QAPE:
 		if (row < g_->num_nodes() and col < h_->num_nodes()) {
-			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(g_ids_to_nodes_->at(row)), h_->get_node_label(h_ids_to_nodes_->at(col)));
+			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), h_->get_node_label(col));
 		}
 		else if (row < g_->num_nodes()) {
-			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(g_ids_to_nodes_->at(row)), dummy_label());
+			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), dummy_label());
 		}
 		else if (col < h_->num_nodes()) {
-			return_val += ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(h_ids_to_nodes_->at(col)));
+			return_val += ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(col));
 		}
 		break;
 	case B_QAP:
@@ -662,13 +600,13 @@ operator() (std::size_t row, std::size_t col) const {
 			return_val += ipfp_->omega_;
 		}
 		else if (row < g_->num_nodes() and col < h_->num_nodes()) {
-			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(g_ids_to_nodes_->at(row)), h_->get_node_label(h_ids_to_nodes_->at(col)));
+			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), h_->get_node_label(col));
 		}
 		else if (row < g_->num_nodes()) {
-			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(g_ids_to_nodes_->at(row)), dummy_label());
+			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), dummy_label());
 		}
 		else if (col < h_->num_nodes()) {
-			return_val += ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(h_ids_to_nodes_->at(col)));
+			return_val += ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(col));
 		}
 		break;
 	}
@@ -694,32 +632,24 @@ quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 		return_val += ipfp_->omega_;
 	}
 	else if (row_1 < g_->num_nodes() and col_1 < h_->num_nodes() and row_2 < g_->num_nodes() and col_2 < h_->num_nodes()) {
-		GEDGraph::NodeID i{g_ids_to_nodes_->at(row_1)};
-		GEDGraph::NodeID j{g_ids_to_nodes_->at(row_2)};
-		GEDGraph::NodeID k{h_ids_to_nodes_->at(col_1)};
-		GEDGraph::NodeID l{h_ids_to_nodes_->at(col_2)};
-		if (g_->is_edge(i, j) and h_->is_edge(k, l)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), h_->get_edge_label(h_->get_edge(k, l)));
+		if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
-		else if (g_->is_edge(i, j)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), dummy_label());
+		else if (g_->is_edge(row_1, row_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 		}
-		else if (h_->is_edge(k, l)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(k, l)));
+		else if (h_->is_edge(col_1, col_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
 	}
 	else if (row_1 < g_->num_nodes() and row_2 < g_->num_nodes()) {
-		GEDGraph::NodeID i{g_ids_to_nodes_->at(row_1)};
-		GEDGraph::NodeID j{g_ids_to_nodes_->at(row_2)};
-		if (g_->is_edge(i, j)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), dummy_label());
+		if (g_->is_edge(row_1, row_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 		}
 	}
 	else if (col_1 < h_->num_nodes() and col_2 < h_->num_nodes()) {
-		GEDGraph::NodeID k{h_ids_to_nodes_->at(col_1)};
-		GEDGraph::NodeID l{h_ids_to_nodes_->at(col_2)};
-		if (h_->is_edge(k, l)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(k, l)));
+		if (h_->is_edge(col_1, col_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
 	}
 	return return_val;
@@ -731,24 +661,20 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_c_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
-	GEDGraph::NodeID i{g_ids_to_nodes_->at(row_1)};
-	GEDGraph::NodeID j{g_ids_to_nodes_->at(row_2)};
-	GEDGraph::NodeID k{h_ids_to_nodes_->at(col_1)};
-	GEDGraph::NodeID l{h_ids_to_nodes_->at(col_2)};
-	if (g_->is_edge(i, j) and h_->is_edge(k, l)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), h_->get_edge_label(h_->get_edge(k, l)));
+	if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 	}
-	else if (g_->is_edge(i, j)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), dummy_label());
+	else if (g_->is_edge(row_1, row_2)) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 	}
-	else if (h_->is_edge(k, l)) {
-		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(k, l)));
+	else if (h_->is_edge(col_1, col_2)) {
+		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 	}
-	if (g_->is_edge(i, j) and g_->num_nodes() > h_->num_nodes()) {
-		return_val -= 3 * ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), dummy_label());
+	if (g_->is_edge(row_1, row_2) and g_->num_nodes() > h_->num_nodes()) {
+		return_val -= 3 * ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 	}
-	else if (h_->is_edge(k, l) and g_->num_nodes() < h_->num_nodes()) {
-		return_val -= 3 * ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(k, l)));
+	else if (h_->is_edge(col_1, col_2) and g_->num_nodes() < h_->num_nodes()) {
+		return_val -= 3 * ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 	}
 	if (g_->num_nodes() != h_->num_nodes()) {
 		return_val += translation_factor_;
@@ -762,18 +688,14 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
-	GEDGraph::NodeID i{g_ids_to_nodes_->at(row_1)};
-	GEDGraph::NodeID j{g_ids_to_nodes_->at(row_2)};
-	GEDGraph::NodeID k{h_ids_to_nodes_->at(col_1)};
-	GEDGraph::NodeID l{h_ids_to_nodes_->at(col_2)};
-	if (g_->is_edge(i, j) and h_->is_edge(k, l)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), h_->get_edge_label(h_->get_edge(k, l)));
+	if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 	}
-	else if (g_->is_edge(i, j)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), dummy_label());
+	else if (g_->is_edge(row_1, row_2)) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 	}
-	else if (h_->is_edge(k, l)) {
-		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(k, l)));
+	else if (h_->is_edge(col_1, col_2)) {
+		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 	}
 	return return_val;
 }
@@ -785,32 +707,24 @@ QAPInstance_ ::
 quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
 	if (row_1 < g_->num_nodes() and col_1 < h_->num_nodes() and row_2 < g_->num_nodes() and col_2 < h_->num_nodes()) {
-		GEDGraph::NodeID i{g_ids_to_nodes_->at(row_1)};
-		GEDGraph::NodeID j{g_ids_to_nodes_->at(row_2)};
-		GEDGraph::NodeID k{h_ids_to_nodes_->at(col_1)};
-		GEDGraph::NodeID l{h_ids_to_nodes_->at(col_2)};
-		if (g_->is_edge(i, j) and h_->is_edge(k, l)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), h_->get_edge_label(h_->get_edge(k, l)));
+		if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
-		else if (g_->is_edge(i, j)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), dummy_label());
+		else if (g_->is_edge(row_1, row_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 		}
-		else if (h_->is_edge(k, l)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(k, l)));
+		else if (h_->is_edge(col_1, col_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
 	}
 	else if (row_1 < g_->num_nodes() and row_2 < g_->num_nodes()) {
-		GEDGraph::NodeID i{g_ids_to_nodes_->at(row_1)};
-		GEDGraph::NodeID j{g_ids_to_nodes_->at(row_2)};
-		if (g_->is_edge(i, j)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(i, j)), dummy_label());
+		if (g_->is_edge(row_1, row_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 		}
 	}
 	else if (col_1 < h_->num_nodes() and col_2 < h_->num_nodes()) {
-		GEDGraph::NodeID k{h_ids_to_nodes_->at(col_1)};
-		GEDGraph::NodeID l{h_ids_to_nodes_->at(col_2)};
-		if (h_->is_edge(k, l)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(k, l)));
+		if (h_->is_edge(col_1, col_2)) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
 	}
 	return return_val;

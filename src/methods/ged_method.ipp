@@ -21,7 +21,7 @@ ged_data_(ged_data),
 options_(),
 lower_bound_(0.0),
 upper_bound_(std::numeric_limits<double>::infinity()),
-matching_(),
+node_map_(0, 0),
 runtime_(),
 init_time_(){}
 
@@ -43,8 +43,8 @@ get_init_time() const {
 template<class UserNodeLabel, class UserEdgeLabel>
 const NodeMap &
 GEDMethod<UserNodeLabel, UserEdgeLabel>::
-get_matching() const {
-	return matching_;
+get_node_map() const {
+	return node_map_;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -97,7 +97,7 @@ run(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) {
 	lower_bound_ = result.lower_bound();
 	upper_bound_ = result.upper_bound();
 	if (result.num_node_maps() > 0) {
-		matching_ = result.node_map(0);
+		node_map_ = result.node_map(0);
 	}
 	runtime_ = end - start;
 }
@@ -109,7 +109,7 @@ run_as_util(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 	// Compute optimal solution and return if at least one of the two graphs is empty.
 	if ((g.num_nodes() == 0) or (h.num_nodes() == 0)) {
-		std::size_t index_node_map{result.add_node_map()};
+		std::size_t index_node_map{result.add_node_map(g.num_nodes(), h.num_nodes())};
 		for (auto node = g.nodes().first; node != g.nodes().second; node++) {
 			result.node_map(index_node_map).add_assignment(*node, GEDGraph::dummy_node());
 		}

@@ -101,9 +101,6 @@ void
 Subgraph<UserNodeLabel, UserEdgeLabel>::
 lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem) {
 
-	const GEDGraph::SizeTNodeMap & g_ids_to_nodes = this->ids_to_nodes_.at(g.id());
-	const GEDGraph::SizeTNodeMap & h_ids_to_nodes = this->ids_to_nodes_.at(h.id());
-
 #ifdef _OPENMP
 	omp_set_num_threads(this->num_threads_ - 1);
 #pragma omp parallel for if(this->num_threads_ > 1)
@@ -113,13 +110,13 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 		exact.set_options(exact_options_);
 		for (std::size_t col_in_master = 0; col_in_master < master_problem.num_cols(); col_in_master++) {
 			if ((row_in_master < g.num_nodes()) and (col_in_master < h.num_nodes())) {
-				master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, g_ids_to_nodes.at(row_in_master), h_ids_to_nodes.at(col_in_master), exact);
+				master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, row_in_master, col_in_master, exact);
 			}
 			else if (row_in_master < g.num_nodes()) {
-				master_problem(row_in_master, h.num_nodes()) = compute_deletion_cost_(g, g_ids_to_nodes.at(row_in_master));
+				master_problem(row_in_master, h.num_nodes()) = compute_deletion_cost_(g, row_in_master);
 			}
 			else if (col_in_master < h.num_nodes()) {
-				master_problem(g.num_nodes(), col_in_master) = compute_insertion_cost_(h, h_ids_to_nodes.at(col_in_master));
+				master_problem(g.num_nodes(), col_in_master) = compute_insertion_cost_(h, col_in_master);
 			}
 		}
 	}
@@ -170,7 +167,6 @@ lsape_init_() {
 			build_subgraphs_(*graph);
 		}
 		double avg_ub{0.0};
-		NodeMap node_map;
 		for (auto g = this->ged_data_.begin(); g != this->ged_data_.end(); g++) {
 			if (this->ged_data_.is_shuffled_graph_copy(g->id())) {
 				continue;
@@ -179,20 +175,21 @@ lsape_init_() {
 				if (this->ged_data_.is_shuffled_graph_copy(h->id())) {
 					continue;
 				}
-				DMatrix lsape_instance(static_cast<std::size_t>(g->num_nodes()) + 1, static_cast<std::size_t>(h->num_nodes()) + 1, 0.0);
+				NodeMap node_map(g->num_nodes(), h->num_nodes());
+				DMatrix lsape_instance(g->num_nodes() + 1, h->num_nodes() + 1, 0.0);
 				if (this->ged_data_.shuffled_graph_copies_available() and (g->id() == h->id())) {
 					GEDGraph::GraphID id_shuffled_graph_copy{this->ged_data_.id_shuffled_graph_copy(h->id())};
 					lsape_populate_instance_(*g, this->ged_data_.graph(id_shuffled_graph_copy), lsape_instance);
 					lsape_solver.set_problem(lsape_instance);
 					lsape_solver.solve();
-					util::construct_node_map_from_solver(lsape_solver, this->ids_to_nodes_.at(g->id()), this->ids_to_nodes_.at(id_shuffled_graph_copy), node_map);
+					util::construct_node_map_from_solver(lsape_solver, node_map);
 					this->ged_data_.compute_induced_cost(*g, this->ged_data_.graph(id_shuffled_graph_copy), node_map);
 				}
 				else {
 					lsape_populate_instance_(*g, *h, lsape_instance);
 					lsape_solver.set_problem(lsape_instance);
 					lsape_solver.solve();
-					util::construct_node_map_from_solver(lsape_solver, this->ids_to_nodes_.at(g->id()), this->ids_to_nodes_.at(h->id()), node_map);
+					util::construct_node_map_from_solver(lsape_solver, node_map);
 					this->ged_data_.compute_induced_cost(*g, *h, node_map);
 				}
 				avg_ub += node_map.induced_cost();
@@ -244,7 +241,7 @@ Subgraph<UserNodeLabel, UserEdgeLabel>::
 compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const {
 	const GEDGraph & subgraph_i{subgraphs_.at(subgraph_id_(g, i))};
 	GEDGraph dummy_graph;
-	NodeMap matching;
+	NodeMap matching(subgraph_i.num_nodes(), 0);
 	for (auto node = subgraph_i.nodes().first; node != subgraph_i.nodes().second; node++) {
 		matching.add_assignment(*node, GEDGraph::dummy_node());
 	}
@@ -258,7 +255,7 @@ Subgraph<UserNodeLabel, UserEdgeLabel>::
 compute_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k) const {
 	const GEDGraph & subgraph_k{subgraphs_.at(subgraph_id_(h, k))};
 	GEDGraph dummy_graph;
-	NodeMap matching;
+	NodeMap matching(0, subgraph_k.num_nodes());
 	for (auto node = subgraph_k.nodes().first; node != subgraph_k.nodes().second; node++) {
 		matching.add_assignment(GEDGraph::dummy_node(), *node);
 	}

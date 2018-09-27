@@ -133,8 +133,7 @@ private:
 
 	bool load_config_file_() const;
 
-	double compute_ring_distance_(const GEDGraph & g, const GEDGraph & h, const GEDGraph::SizeTNodeMap & g_ids_to_nodes,
-				const GEDGraph::SizeTNodeMap & h_ids_to_nodes, const NodeRingMap_ & rings_g, const NodeRingMap_ & rings_h,
+	double compute_ring_distance_(const GEDGraph & g, const GEDGraph & h, const NodeRingMap_ & rings_g, const NodeRingMap_ & rings_h,
 				const std::vector<double> & alpha, const std::vector<double> & lambda, std::size_t row_in_master, std::size_t col_in_master) const;
 
 	double compute_substitution_cost_(const Ring_ & ring_i, const Ring_ & ring_k, const std::vector<double> & alpha, std::size_t level) const;

@@ -20,7 +20,6 @@ BipartiteML(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 MLBasedMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
 lsape_method_{new Bipartite<UserNodeLabel, UserEdgeLabel>(this->ged_data_)},
 lsape_method_options_(""),
-nodes_to_ids_(),
 lsape_instance_(),
 global_features_(),
 row_features_(),
@@ -32,13 +31,6 @@ void
 BipartiteML<UserNodeLabel, UserEdgeLabel>::
 ml_init_() {
 	lsape_method_->init();
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-void
-BipartiteML<UserNodeLabel, UserEdgeLabel>::
-ml_init_graph_(const GEDGraph & graph) {
-	util::init_node_to_id_indices(graph, nodes_to_ids_);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -128,8 +120,8 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 BipartiteML<UserNodeLabel, UserEdgeLabel>::
 ml_populate_substitution_feature_vector_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k, std::vector<double> & feature_vector) {
-	std::size_t row{nodes_to_ids_.at(g.id()).at(i)};
-	std::size_t col{nodes_to_ids_.at(h.id()).at(k)};
+	std::size_t row{i};
+	std::size_t col{k};
 	feature_vector.clear();
 	add_global_features_(feature_vector);
 	add_cell_features_(row, col, this->ged_data_.node_cost(g.get_node_label(i), h.get_node_label(k)), feature_vector);
@@ -141,7 +133,7 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 BipartiteML<UserNodeLabel, UserEdgeLabel>::
 ml_populate_deletion_feature_vector_(const GEDGraph & g, GEDGraph::NodeID i, std::vector<double> & feature_vector) {
-	std::size_t row{nodes_to_ids_.at(g.id()).at(i)};
+	std::size_t row{i};
 	std::size_t col{static_cast<std::size_t>(lsape_instance_.cols() - 1)};
 	feature_vector.clear();
 	add_global_features_(feature_vector);
@@ -155,7 +147,7 @@ void
 BipartiteML<UserNodeLabel, UserEdgeLabel>::
 ml_populate_insertion_feature_vector_(const GEDGraph & h, GEDGraph::NodeID k, std::vector<double> & feature_vector) {
 	std::size_t row{static_cast<std::size_t>(lsape_instance_.rows() - 1)};
-	std::size_t col{nodes_to_ids_.at(h.id()).at(k)};
+	std::size_t col{k};
 	feature_vector.clear();
 	add_global_features_(feature_vector);
 	add_cell_features_(row, col, this->ged_data_.node_cost(dummy_label(), h.get_node_label(k)), feature_vector);

@@ -84,7 +84,7 @@ class GEDGraph {
 
 public:
 
-	typedef detail::GedGraphAL::vertex_descriptor NodeID; //!< Internally used vertex ID type.
+	typedef std::size_t NodeID; //!< Internally used vertex ID type.
 
 	typedef detail::GedGraphAL::edge_descriptor EdgeID; //!< Internally used edge ID type.
 
@@ -130,6 +130,12 @@ public:
 	 * @return ID of dummy node.
 	 */
 	static NodeID dummy_node();
+
+	/*!
+	 * @brief Returns an undefined node.
+	 * @return ID of undefined node.
+	 */
+	static NodeID undefined_node();
 
 	/*!
 	 * @brief Returns a dummy edge.

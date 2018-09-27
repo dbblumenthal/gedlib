@@ -21,7 +21,6 @@ lsape_model_{LSAPESolver::ECBP},
 greedy_method_{LSAPESolver::BASIC},
 compute_lower_bound_{true},
 solve_optimally_{true},
-ids_to_nodes_(),
 num_threads_{1},
 centrality_method_{NONE},
 centrality_weight_{0.7},
@@ -70,8 +69,8 @@ populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result
 	}
 
 	for (std::size_t solution_id{0}; solution_id < lsape_solver.num_solutions(); solution_id++) {
-		std::size_t index_node_map{result.add_node_map()};
-		util::construct_node_map_from_solver(lsape_solver, ids_to_nodes_.at(g.id()), ids_to_nodes_.at(h.id()), result.node_map(index_node_map), solution_id);
+		std::size_t index_node_map{result.add_node_map(g.num_nodes(), h.num_nodes())};
+		util::construct_node_map_from_solver(lsape_solver, result.node_map(index_node_map), solution_id);
 		this->ged_data_.compute_induced_cost(g, h, result.node_map(index_node_map));
 	}
 
@@ -81,8 +80,8 @@ populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result
 		lsape_solver.set_problem(lsape_instance);
 		lsape_solver.solve(max_num_solutions_);
 		for (std::size_t solution_id{0}; solution_id < lsape_solver.num_solutions(); solution_id++) {
-			std::size_t index_node_map{result.add_node_map()};
-			util::construct_node_map_from_solver(lsape_solver, ids_to_nodes_.at(g.id()), ids_to_nodes_.at(h.id()), result.node_map(index_node_map), solution_id);
+			std::size_t index_node_map{result.add_node_map(g.num_nodes(), h.num_nodes())};
+			util::construct_node_map_from_solver(lsape_solver, result.node_map(index_node_map), solution_id);
 			this->ged_data_.compute_induced_cost(g, h, result.node_map(index_node_map));
 		}
 	}
@@ -268,7 +267,6 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel>::
 init_graph_(const GEDGraph & graph) {
-	util::init_id_to_node_indices(graph, ids_to_nodes_);
 	if (centrality_method_ != NONE) {
 		init_centralities_(graph);
 	}
@@ -280,15 +278,14 @@ void
 LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel>::
 init_centralities_(const GEDGraph & graph) {
 	centralities_[graph.id()] = std::vector<double>(graph.num_nodes(), 0.0);
-	const GEDGraph::SizeTNodeMap & ids_to_nodes(ids_to_nodes_.at(graph.id()));
 	if (centrality_method_ == DEGREE) {
 		for (std::size_t row{0}; row < graph.num_nodes(); row++) {
-			centralities_.at(graph.id())[row] = static_cast<double>(graph.degree(ids_to_nodes.at(row)));
+			centralities_.at(graph.id())[row] = static_cast<double>(graph.degree(row));
 		}
 		return;
 	}
 	DMatrix adj_matrix(graph.num_nodes(), graph.num_nodes());
-	util::init_adj_matrix(graph, ids_to_nodes, adj_matrix);
+	util::init_adj_matrix(graph, adj_matrix);
 	double eigenvalue;
 	std::vector<double> eigenvector;
 	compute_eigenvector_with_largest_eigenvalue_(adj_matrix, eigenvector, eigenvalue);
@@ -296,7 +293,7 @@ init_centralities_(const GEDGraph & graph) {
 		for (std::size_t col{0}; col < adj_matrix.num_cols(); col++) {
 			double summand{adj_matrix(row, col) * eigenvector.at(col)};
 			if (centrality_method_ == PAGERANK) {
-				summand /= std::max(1.0, static_cast<double>(graph.degree(ids_to_nodes.at(col))));
+				summand /= std::max(1.0, static_cast<double>(graph.degree(col)));
 				summand += 1.0;
 			}
 			centralities_.at(graph.id())[row] += summand;

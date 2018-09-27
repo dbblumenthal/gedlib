@@ -44,9 +44,11 @@ public:
 
 	/*!
 	 * @brief Adds an empty node map to the result.
+	 * @param[in] num_nodes_g Number of nodes in first input graph.
+	 * @param[in] num_nodes_h Number of nodes in second input graph.
 	 * @return The index of the newly added node map.
 	 */
-	std::size_t add_node_map();
+	std::size_t add_node_map(std::size_t num_nodes_g, std::size_t num_nodes_h);
 
 	/*!
 	 * @brief Adds a node map to the result.

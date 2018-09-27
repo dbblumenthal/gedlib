@@ -260,8 +260,6 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 Ring<UserNodeLabel, UserEdgeLabel>::
 lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem) {
-	const GEDGraph::SizeTNodeMap & g_ids_to_nodes = this->ids_to_nodes_.at(g.id());
-	const GEDGraph::SizeTNodeMap & h_ids_to_nodes = this->ids_to_nodes_.at(h.id());
 	const NodeRingMap_ & rings_g = rings_.at(g.id());
 	const NodeRingMap_ & rings_h = rings_.at(h.id());
 #ifdef _OPENMP
@@ -270,7 +268,7 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 #endif
 	for (std::size_t row_in_master = 0; row_in_master < master_problem.num_rows(); row_in_master++) {
 		for (std::size_t col_in_master = 0; col_in_master < master_problem.num_cols(); col_in_master++) {
-			master_problem(row_in_master, col_in_master) = compute_ring_distance_(g, h, g_ids_to_nodes, h_ids_to_nodes, rings_g, rings_h, alpha_, lambda_, row_in_master, col_in_master);
+			master_problem(row_in_master, col_in_master) = compute_ring_distance_(g, h, rings_g, rings_h, alpha_, lambda_, row_in_master, col_in_master);
 		}
 	}
 }
@@ -364,7 +362,6 @@ eval_x_(NOMAD::Eval_Point & x) const {
 	std::vector<double> lambda;
 	nomad_point_to_params_(x, alpha, lambda);
 	double val {0.0};
-	NodeMap matching;
 	LSAPESolver lsape_solver;
 	lsape_solver.set_model(this->lsape_model_);
 	for (auto g = this->ged_data_.begin(); g != this->ged_data_.end(); g++) {
@@ -375,20 +372,21 @@ eval_x_(NOMAD::Eval_Point & x) const {
 			if (this->ged_data_.is_shuffled_graph_copy(h->id())) {
 				continue;
 			}
-			DMatrix lsape_instance(static_cast<std::size_t>(g->num_nodes()) + 1, static_cast<std::size_t>(h->num_nodes()) + 1, 0.0);
+			NodeMap matching(g->num_nodes(), h->num_nodes());
+			DMatrix lsape_instance(g->num_nodes() + 1, h->num_nodes() + 1, 0.0);
 			if (this->ged_data_.shuffled_graph_copies_available() and (g->id() == h->id())) {
 				GEDGraph::GraphID id_shuffled_graph_copy{this->ged_data_.id_shuffled_graph_copy(h->id())};
 				populate_instance_with_params_(*g, this->ged_data_.graph(id_shuffled_graph_copy), alpha, lambda, lsape_instance);
 				lsape_solver.set_problem(lsape_instance);
 				lsape_solver.solve();
-				util::construct_node_map_from_solver(lsape_solver, this->ids_to_nodes_.at(g->id()), this->ids_to_nodes_.at(id_shuffled_graph_copy), matching);
+				util::construct_node_map_from_solver(lsape_solver, matching);
 				this->ged_data_.compute_induced_cost(*g, this->ged_data_.graph(id_shuffled_graph_copy), matching);
 			}
 			else {
 				populate_instance_with_params_(*g, *h, alpha, lambda, lsape_instance);
 				lsape_solver.set_problem(lsape_instance);
 				lsape_solver.solve();
-				util::construct_node_map_from_solver(lsape_solver, this->ids_to_nodes_.at(g->id()), this->ids_to_nodes_.at(h->id()), matching);
+				util::construct_node_map_from_solver(lsape_solver, matching);
 				this->ged_data_.compute_induced_cost(*g, *h, matching);
 			}
 			val += matching.induced_cost();
@@ -571,25 +569,24 @@ init_x0s_(std::vector<NOMAD::Point> & x0s) const {
 template<class UserNodeLabel, class UserEdgeLabel>
 double
 Ring<UserNodeLabel, UserEdgeLabel>::
-compute_ring_distance_(const GEDGraph & g, const GEDGraph & h, const GEDGraph::SizeTNodeMap & g_ids_to_nodes,
-		const GEDGraph::SizeTNodeMap & h_ids_to_nodes, const NodeRingMap_ & rings_g, const NodeRingMap_ & rings_h,
+compute_ring_distance_(const GEDGraph & g, const GEDGraph & h, const NodeRingMap_ & rings_g, const NodeRingMap_ & rings_h,
 		const std::vector<double> & alpha, const std::vector<double> & lambda, std::size_t row_in_master, std::size_t col_in_master) const {
 	double red{0.0};
 	if ((row_in_master < g.num_nodes()) and (col_in_master < h.num_nodes())) { // compute substitution cost
-		const Ring_ & ring_i = rings_g.at(g_ids_to_nodes.at(row_in_master));
-		const Ring_ & ring_k = rings_h.at(h_ids_to_nodes.at(col_in_master));
+		const Ring_ & ring_i = rings_g.at(row_in_master);
+		const Ring_ & ring_k = rings_h.at(col_in_master);
 		for (std::size_t level{0}; level < lambda.size(); level++) {
 			red += lambda.at(level) * compute_substitution_cost_(ring_i, ring_k, alpha, level);
 		}
 	}
 	else if (row_in_master < g.num_nodes()) { // compute deletion cost
-		const Ring_ & ring_i = rings_g.at(g_ids_to_nodes.at(row_in_master));
+		const Ring_ & ring_i = rings_g.at(row_in_master);
 		for (std::size_t level{0}; level < lambda.size(); level++) {
 			red += lambda.at(level) * compute_deletion_cost_(ring_i, alpha, level);
 		}
 	}
 	else if (col_in_master < h.num_nodes()) { // compute insertion cost
-		const Ring_ & ring_k = rings_h.at(h_ids_to_nodes.at(col_in_master));
+		const Ring_ & ring_k = rings_h.at(col_in_master);
 		for (std::size_t level{0}; level < lambda.size(); level++) {
 			red += lambda.at(level) * compute_insertion_cost_(ring_k, alpha, level);
 		}
@@ -835,14 +832,12 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 Ring<UserNodeLabel, UserEdgeLabel>::
 populate_instance_with_params_(const GEDGraph & g, const GEDGraph & h, const vector<double> & alpha, const vector<double> & lambda, DMatrix & lsape_instance) const {
-	const GEDGraph::SizeTNodeMap & g_ids_to_nodes = this->ids_to_nodes_.at(g.id());
-	const GEDGraph::SizeTNodeMap & h_ids_to_nodes = this->ids_to_nodes_.at(h.id());
 	const NodeRingMap_ & rings_g = rings_.at(g.id());
 	const NodeRingMap_ & rings_h = rings_.at(h.id());
 
 	for (std::size_t row_in_master = 0; row_in_master < lsape_instance.num_rows(); row_in_master++) {
 		for (std::size_t col_in_master = 0; col_in_master < lsape_instance.num_cols(); col_in_master++) {
-			lsape_instance(row_in_master, col_in_master) = compute_ring_distance_(g, h, g_ids_to_nodes, h_ids_to_nodes, rings_g, rings_h, alpha, lambda, row_in_master, col_in_master);
+			lsape_instance(row_in_master, col_in_master) = compute_ring_distance_(g, h, rings_g, rings_h, alpha, lambda, row_in_master, col_in_master);
 		}
 	}
 }

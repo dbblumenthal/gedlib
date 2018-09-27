@@ -23,9 +23,7 @@ epsilon_{0.01},
 upper_bound_option_{BEST},
 naive_regularization_{true},
 num_threads_{1},
-time_limit_in_sec_{0.0},
-nodes_to_ids_(),
-ids_to_nodes_() {}
+time_limit_in_sec_{0.0} {}
 
 // === Definitions of member functions inherited from GEDMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -145,15 +143,6 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 BranchTight<UserNodeLabel, UserEdgeLabel>::
-ged_init_() {
-	for (auto graph = this->ged_data_.begin(); graph != this->ged_data_.end(); graph++) {
-		init_graph_(*graph);
-	}
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-void
-BranchTight<UserNodeLabel, UserEdgeLabel>::
 ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 
 	Timer timer(time_limit_in_sec_);
@@ -169,20 +158,12 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 		degree = regularize_(g, h);
 	}
 
-	// Initialize the inidices.
-	GEDGraph::NodeSizeTMap g_nodes_to_ids, h_nodes_to_ids;
-	util::init_node_to_id_indices(g, g_nodes_to_ids);
-	util::init_node_to_id_indices(h, h_nodes_to_ids);
-
-	GEDGraph::SizeTNodeMap g_ids_to_nodes, h_ids_to_nodes;
-	util::init_id_to_node_indices(g, g_ids_to_nodes);
-	util::init_id_to_node_indices(h, h_ids_to_nodes);
 
 	// Initialize the subproblems, the node costs, and the weights for updating the subproblems.
 	SubproblemSolvers_ subproblem_solvers(static_cast<std::size_t>(g.num_nodes()), degree);
-	init_subproblems_(g, h, g_ids_to_nodes, h_ids_to_nodes, g_nodes_to_ids, h_nodes_to_ids, subproblem_solvers);
+	init_subproblems_(g, h, subproblem_solvers);
 	DMatrix node_costs(static_cast<std::size_t>(g.num_nodes()), static_cast<std::size_t>(g.num_nodes()));
-	init_node_costs_(g, h, g_ids_to_nodes, h_ids_to_nodes, node_costs);
+	init_node_costs_(g, h, node_costs);
 	Weights_ weights(static_cast<std::size_t>(g.num_nodes()));
 
 	// The main loop.
@@ -214,8 +195,8 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 		}
 		result.set_lower_bound(master_problem_solver.minimal_cost());
 		if (upper_bound_option_ == BEST or (upper_bound_option_ == FIRST and current_itr == 1)) {
-			std::size_t index_node_map{result.add_node_map()};
-			util::construct_node_map_from_solver(master_problem_solver, g_ids_to_nodes, h_ids_to_nodes, result.node_map(index_node_map));
+			std::size_t index_node_map{result.add_node_map(g.num_nodes(), h.num_nodes())};
+			util::construct_node_map_from_solver(master_problem_solver, result.node_map(index_node_map));
 			if (result.is_non_redundant_node_map(index_node_map)) {
 				this->ged_data_.compute_induced_cost(g, h, result.node_map(index_node_map));
 				result.sort_node_maps_and_set_upper_bound();
@@ -225,21 +206,14 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 
 	// Store the last upper bound if the option upper-bound is set to LAST.
 	if (upper_bound_option_ == LAST) {
-		std::size_t index_node_map{result.add_node_map()};
-		util::construct_node_map_from_solver(master_problem_solver, g_ids_to_nodes, h_ids_to_nodes, result.node_map(index_node_map));
+		std::size_t index_node_map{result.add_node_map(g.num_nodes(), h.num_nodes())};
+		util::construct_node_map_from_solver(master_problem_solver, result.node_map(index_node_map));
 		this->ged_data_.compute_induced_cost(g, h, result.node_map(index_node_map));
 		result.sort_node_maps_and_set_upper_bound();
 	}
 }
 
 // === Definitions of private helper functions. ===
-template<class UserNodeLabel, class UserEdgeLabel>
-void
-BranchTight<UserNodeLabel, UserEdgeLabel>::
-init_graph_(const GEDGraph & graph) {
-	util::init_id_to_node_indices(graph, ids_to_nodes_);
-	util::init_node_to_id_indices(graph, nodes_to_ids_);
-}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 bool
@@ -263,26 +237,25 @@ termination_criterion_met_(const std::size_t & current_itr, const double & last_
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 BranchTight<UserNodeLabel, UserEdgeLabel>::
-init_subproblems_(const GEDGraph & g, const GEDGraph & h, const GEDGraph::SizeTNodeMap & g_ids_to_nodes, const GEDGraph::SizeTNodeMap & h_ids_to_nodes,
-		const GEDGraph::NodeSizeTMap g_nodes_to_ids, const GEDGraph::NodeSizeTMap h_nodes_to_ids, SubproblemSolvers_ & subproblems_solver) const {
+init_subproblems_(const GEDGraph & g, const GEDGraph & h, SubproblemSolvers_ & subproblems_solver) const {
 	for (std::size_t row_master{0}; row_master < subproblems_solver.get_size(); row_master++) {
 
 		// Collect the edges that are incident to the node that corresponds to row row_master in the master problem.
-		auto incident_edges_i = g.incident_edges(g_ids_to_nodes.at(row_master));
+		auto incident_edges_i = g.incident_edges(row_master);
 
 		for (std::size_t col_master{0}; col_master < subproblems_solver.get_size(); col_master++) {
 
-			// Collect the edges that are incident to the node that corresponds to collumn col_master in the master problem.
-			auto incident_edges_k = h.incident_edges(h_ids_to_nodes.at(col_master));
+			// Collect the edges that are incident to the node that corresponds to column col_master in the master problem.
+			auto incident_edges_k = h.incident_edges(col_master);
 
 			// Initialize row and collumn indices.
 			std::size_t row_sub{0};
 			for (auto ij = incident_edges_i.first; ij != incident_edges_i.second; ij++) {
-				subproblems_solver.rows_subproblem_to_master(row_master, col_master)[row_sub++] = g_nodes_to_ids.at(g.head(*ij));
+				subproblems_solver.rows_subproblem_to_master(row_master, col_master)[row_sub++] = g.head(*ij);
 			}
 			std::size_t col_sub{0};
 			for (auto kl = incident_edges_k.first; kl != incident_edges_k.second; kl++) {
-				subproblems_solver.cols_subproblem_to_master(row_master, col_master)[col_sub++] = h_nodes_to_ids.at(h.head(*kl));
+				subproblems_solver.cols_subproblem_to_master(row_master, col_master)[col_sub++] = h.head(*kl);
 			}
 
 			// Collect edge relabelling costs.
@@ -312,10 +285,10 @@ update_master_problem_costs_(const SubproblemSolvers_ & subproblems_solver, cons
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 BranchTight<UserNodeLabel, UserEdgeLabel>::
-init_node_costs_(const GEDGraph & g, const GEDGraph & h, const GEDGraph::SizeTNodeMap & g_ids_to_nodes, const GEDGraph::SizeTNodeMap & h_ids_to_nodes, DMatrix & node_costs) const {
+init_node_costs_(const GEDGraph & g, const GEDGraph & h, DMatrix & node_costs) const {
 	for (std::size_t row_master{0}; row_master < node_costs.num_rows(); row_master++) {
 		for (std::size_t col_master{0}; col_master < node_costs.num_cols(); col_master++) {
-			node_costs(row_master, col_master) = this->ged_data_.node_cost(g.get_node_label(g_ids_to_nodes.at(row_master)), h.get_node_label(h_ids_to_nodes.at(col_master)));
+			node_costs(row_master, col_master) = this->ged_data_.node_cost(g.get_node_label(row_master), h.get_node_label(col_master));
 		}
 	}
 }
@@ -338,32 +311,6 @@ update_weights_(const LSAPSolver & master_problem_solver, std::size_t degree, co
 			}
 		}
 	}
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-double
-BranchTight<UserNodeLabel, UserEdgeLabel>::
-compute_upper_bound_from_current_costs_(const DMatrix & node_costs, const SubproblemSolvers_ & subproblem_solvers, const LSAPSolver & master_problem_solver,
-		const GEDGraph::SizeTNodeMap & g_ids_to_nodes, const GEDGraph & g, const GEDGraph::SizeTNodeMap & h_ids_to_nodes, const GEDGraph & h) {
-	std::vector<std::vector<double>> sub_cost(subproblem_solvers.get_size(), std::vector<double>(subproblem_solvers.get_size(), 0.0));
-	double upper_bound{0.0};
-	for (std::size_t row_master{0}; row_master < node_costs.num_rows(); row_master++) {
-		std::size_t assigned_col_master{master_problem_solver.get_assigned_col(row_master)};
-		upper_bound += node_costs(row_master, assigned_col_master);
-		LSAPSolver subproblem_solver{subproblem_solvers.solver(row_master, assigned_col_master)};
-		for (std::size_t row_sub{0}; row_sub < subproblem_solvers.get_degree(); row_sub++) {
-			std::size_t row_sub_in_master{subproblem_solvers.row_in_master(row_master, assigned_col_master, row_sub)};
-			std::size_t assigned_col_sub_in_master{master_problem_solver.get_assigned_col(row_sub_in_master)};
-			LabelID edge_label_g{dummy_label()};
-			LabelID edge_label_h{dummy_label()};
-			edge_label_g = g.get_edge_label(g.get_edge(g_ids_to_nodes.at(row_master), g_ids_to_nodes.at(row_sub_in_master)));
-			if (h.is_edge(h_ids_to_nodes.at(assigned_col_master), h_ids_to_nodes.at(assigned_col_sub_in_master))) {
-				edge_label_h = h.get_edge_label(h.get_edge(h_ids_to_nodes.at(assigned_col_master), h_ids_to_nodes.at(assigned_col_sub_in_master)));
-			}
-			upper_bound += this->ged_data_.edge_cost(edge_label_g, edge_label_h) / 2.0;
-		}
-	}
-	return upper_bound;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>

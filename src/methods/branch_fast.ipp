@@ -66,8 +66,6 @@ void
 BranchFast<UserNodeLabel, UserEdgeLabel>::
 lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem) {
 
-	const GEDGraph::SizeTNodeMap & g_ids_to_nodes = this->ids_to_nodes_.at(g.id());
-	const GEDGraph::SizeTNodeMap & h_ids_to_nodes = this->ids_to_nodes_.at(h.id());
 	const SortedUserEdgeLabels_ & sorted_edge_labels_g = sorted_edge_labels_.at(g.id());
 	const SortedUserEdgeLabels_ & sorted_edge_labels_h = sorted_edge_labels_.at(h.id());
 
@@ -78,13 +76,13 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 	for (std::size_t row_in_master = 0; row_in_master < master_problem.num_rows(); row_in_master++) {
 		for (std::size_t col_in_master = 0; col_in_master < master_problem.num_cols(); col_in_master++) {
 			if ((row_in_master < g.num_nodes()) and (col_in_master < h.num_nodes())) {
-				master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, g_ids_to_nodes.at(row_in_master), h_ids_to_nodes.at(col_in_master), sorted_edge_labels_g, sorted_edge_labels_h);
+				master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, row_in_master, col_in_master, sorted_edge_labels_g, sorted_edge_labels_h);
 			}
 			else if (row_in_master < g.num_nodes()) {
-				master_problem(row_in_master, h.num_nodes()) = compute_deletion_cost_(g, g_ids_to_nodes.at(row_in_master));
+				master_problem(row_in_master, h.num_nodes()) = compute_deletion_cost_(g, row_in_master);
 			}
 			else if (col_in_master < h.num_nodes()) {
-				master_problem(g.num_nodes(), col_in_master) = compute_insertion_cost_(h, h_ids_to_nodes.at(col_in_master));
+				master_problem(g.num_nodes(), col_in_master) = compute_insertion_cost_(h, col_in_master);
 			}
 		}
 	}

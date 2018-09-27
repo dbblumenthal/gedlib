@@ -190,7 +190,7 @@ private:
 
 	std::map<std::pair<GEDGraph::GraphID, GEDGraph::GraphID>, Seconds> runtimes_;
 
-	std::map<std::pair<GEDGraph::GraphID, GEDGraph::GraphID>, NodeMap> matchings_;
+	std::map<std::pair<GEDGraph::GraphID, GEDGraph::GraphID>, NodeMap> node_maps_;
 
 	std::vector<std::map<UserNodeID, GEDGraph::NodeID>> original_to_internal_node_ids_;
 

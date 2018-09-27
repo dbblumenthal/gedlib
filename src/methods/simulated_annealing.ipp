@@ -27,19 +27,13 @@ lower_bound_method_options_(""),
 num_threads_{1},
 num_iterations_{1000},
 start_probability_{0.8},
-end_probability_{0.01},
-ids_to_nodes_() {}
+end_probability_{0.01} {}
 
 // === Definitions of member functions inherited from GEDMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 SimulatedAnnealing<UserNodeLabel, UserEdgeLabel>::
 ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
-
-	if (not this->initialized_) {
-		util::init_id_to_node_indices(g, ids_to_nodes_);
-		util::init_id_to_node_indices(h, ids_to_nodes_);
-	}
 
 	DMatrix lsape_instance;
 	lsape_method_->populate_instance_and_run_as_util(g, h, result, lsape_instance);
@@ -76,7 +70,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 	// Main loop.
 	while ((best_node_map.induced_cost() > result.lower_bound()) and (num_iterations++ < num_iterations_)) {
-		NodeMap candidate_node_map;
+		NodeMap candidate_node_map(g.num_nodes(), h.num_nodes());
 		std::vector<std::size_t> candidate_order;
 		generate_candidate_(g, h, lsape_instance, current_order, candidate_order, candidate_node_map);
 		double delta{std::fabs(candidate_node_map.induced_cost() - current_node_map.induced_cost())};
@@ -113,9 +107,6 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 SimulatedAnnealing<UserNodeLabel, UserEdgeLabel>::
 ged_init_() {
-	for (auto graph = this->ged_data_.begin(); graph != this->ged_data_.end(); graph++) {
-		util::init_id_to_node_indices(*graph, ids_to_nodes_);
-	}
 	lsape_method_->init();
 	if (lower_bound_method_) {
 		lower_bound_method_->init();
@@ -290,8 +281,6 @@ void
 SimulatedAnnealing<UserNodeLabel, UserEdgeLabel>::
 generate_candidate_(const GEDGraph & g, const GEDGraph & h, const DMatrix & lsape_instance, const std::vector<std::size_t> & current_order,
 		std::vector<std::size_t> & candidate_order, NodeMap & candidate_node_map) const {
-	const GEDGraph::SizeTNodeMap & g_ids_to_nodes = ids_to_nodes_.at(g.id());
-	const GEDGraph::SizeTNodeMap & h_ids_to_nodes = ids_to_nodes_.at(h.id());
 
 	// Slightly change the order.
 	candidate_order = current_order;
@@ -316,15 +305,15 @@ generate_candidate_(const GEDGraph & g, const GEDGraph & h, const DMatrix & lsap
 				}
 			}
 			if (best_col < h.num_nodes()) {
-				candidate_node_map.add_assignment(g_ids_to_nodes.at(row), h_ids_to_nodes.at(best_col));
+				candidate_node_map.add_assignment(row, best_col);
 				is_unassigned_col[best_col] = false;
 			}
 			else {
-				candidate_node_map.add_assignment(g_ids_to_nodes.at(row), GEDGraph::dummy_node());
+				candidate_node_map.add_assignment(row, GEDGraph::dummy_node());
 			}
 			for (std::size_t col{0}; col < h.num_nodes(); col++) {
 				if (is_unassigned_col.at(col)) {
-					candidate_node_map.add_assignment(GEDGraph::dummy_node(), h_ids_to_nodes.at(col));
+					candidate_node_map.add_assignment(GEDGraph::dummy_node(), col);
 				}
 			}
 		}
@@ -339,15 +328,15 @@ generate_candidate_(const GEDGraph & g, const GEDGraph & h, const DMatrix & lsap
 				}
 			}
 			if (best_row < g.num_nodes()) {
-				candidate_node_map.add_assignment(g_ids_to_nodes.at(best_row),  h_ids_to_nodes.at(col));
+				candidate_node_map.add_assignment(best_row, col);
 				is_unassigned_row[best_row] = false;
 			}
 			else {
-				candidate_node_map.add_assignment(GEDGraph::dummy_node(), h_ids_to_nodes.at(col));
+				candidate_node_map.add_assignment(GEDGraph::dummy_node(), col);
 			}
 			for (std::size_t row{0}; row < g.num_nodes(); row++) {
 				if (is_unassigned_row.at(row)) {
-					candidate_node_map.add_assignment(g_ids_to_nodes.at(row), GEDGraph::dummy_node());
+					candidate_node_map.add_assignment(row, GEDGraph::dummy_node());
 				}
 			}
 		}

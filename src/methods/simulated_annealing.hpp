@@ -58,8 +58,6 @@ private:
 
 	double end_probability_;
 
-	std::map<GEDGraph::GraphID, GEDGraph::SizeTNodeMap> ids_to_nodes_;
-
 	// Member functions inherited from GEDMethod.
 
 	virtual void ged_init_() final;

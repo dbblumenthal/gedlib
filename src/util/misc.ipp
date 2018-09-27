@@ -11,10 +11,10 @@ namespace ged {
 namespace util {
 
 void
-init_adj_matrix(const GEDGraph & graph, const GEDGraph::SizeTNodeMap & ids_to_nodes, DMatrix & adj_matrix) {
+init_adj_matrix(const GEDGraph & graph, DMatrix & adj_matrix) {
 	for (std::size_t row{0}; row < adj_matrix.num_rows(); row++) {
 		for (std::size_t col{0}; col < adj_matrix.num_cols(); col++) {
-			if (graph.is_edge(ids_to_nodes.at(row), ids_to_nodes.at(col))) {
+			if (graph.is_edge(row, col)) {
 				adj_matrix(row, col) = 1.0;
 			}
 			else {
@@ -62,55 +62,27 @@ save_as_config_file(const std::string & filename, const std::map<std::string, st
 
 template<class Solver>
 void
-construct_node_map_from_solver(const Solver & solver, const GEDGraph::SizeTNodeMap & g_ids_to_nodes,
-		const GEDGraph::SizeTNodeMap & h_ids_to_nodes, NodeMap & matching, std::size_t solution_id) {
-	matching.clear();
-	std::size_t num_nodes_g{g_ids_to_nodes.size()};
-	std::size_t num_nodes_h{h_ids_to_nodes.size()};
+construct_node_map_from_solver(const Solver & solver, NodeMap & node_map, std::size_t solution_id) {
+	node_map.clear();
+	std::size_t num_nodes_g{node_map.num_source_nodes()};
+	std::size_t num_nodes_h{node_map.num_target_nodes()};
 
 	// add deletions and substitutions
 	for (std::size_t row{0}; row < num_nodes_g; row++) {
-		if (solver.get_assigned_col(row, solution_id) >= num_nodes_h) {
-			matching.add_assignment(g_ids_to_nodes.at(row), GEDGraph::dummy_node());
+		std::size_t col{solver.get_assigned_col(row, solution_id)};
+		if (col >= num_nodes_h) {
+			node_map.add_assignment(row, GEDGraph::dummy_node());
 		}
 		else {
-			matching.add_assignment(g_ids_to_nodes.at(row), h_ids_to_nodes.at(solver.get_assigned_col(row, solution_id)));
+			node_map.add_assignment(row, col);
 		}
 	}
 
 	// insertions
 	for (std::size_t col{0}; col < num_nodes_h; col++) {
 		if (solver.get_assigned_row(col, solution_id) >= num_nodes_g) {
-			matching.add_assignment(GEDGraph::dummy_node(), h_ids_to_nodes.at(col));
+			node_map.add_assignment(GEDGraph::dummy_node(), col);
 		}
-	}
-}
-
-void
-init_node_to_id_indices(const GEDGraph & graph, std::map<GEDGraph::GraphID, GEDGraph::NodeSizeTMap> & nodes_to_ids) {
-	nodes_to_ids[graph.id()] = GEDGraph::NodeSizeTMap();
-	init_node_to_id_indices(graph, nodes_to_ids[graph.id()]);
-}
-
-void
-init_node_to_id_indices(const GEDGraph & graph, GEDGraph::NodeSizeTMap & nodes_to_ids) {
-	std::size_t id{0};
-	for (auto node = graph.nodes().first; node != graph.nodes().second; node++) {
-		nodes_to_ids[*node] = id++;
-	}
-}
-
-void
-init_id_to_node_indices(const GEDGraph & graph, std::map<GEDGraph::GraphID, GEDGraph::SizeTNodeMap> & ids_to_nodes) {
-	ids_to_nodes[graph.id()] = GEDGraph::SizeTNodeMap();
-	init_id_to_node_indices(graph, ids_to_nodes[graph.id()]);
-}
-
-void
-init_id_to_node_indices(const GEDGraph & graph, GEDGraph::SizeTNodeMap & ids_to_nodes) {
-	std::size_t id{0};
-	for (auto node = graph.nodes().first; node != graph.nodes().second; node++) {
-		ids_to_nodes[id++] = *node;
 	}
 }
 

@@ -63,46 +63,85 @@ private:
 		std::map<GEDGraph::NodeID, std::vector<typename Exact<UserNodeLabel, UserEdgeLabel>::Edge_>> sorted_edges_;
 	};
 
-	struct NodeMap_ {
-		NodeMap_(const GEDGraph & g, const GEDGraph & h, const Exact * exact);
+	class TreeNode_ {
 
-		NodeMap_(const Exact * exact);
+	public:
 
-		NodeMap_(const NodeMap_ & node_map);
+		TreeNode_(const GEDGraph & g, const GEDGraph & h, const Exact * exact);
 
-		const Exact * exact;
-
-		NodeMap matching;
-
-		std::map<GEDGraph::NodeID, bool> is_matched_node_in_g;
-
-		std::map<GEDGraph::NodeID, bool> is_matched_node_in_h;
-
-		std::map<GEDGraph::NodeID, bool> is_candidate_in_h;
-
-		double induced_cost;
-
-		double lower_bound_to_leaf;
-
-		std::size_t num_matched_nodes_in_g;
-
-		std::size_t num_matched_nodes_in_h;
+		TreeNode_(const TreeNode_ & tree_node);
 
 		double lower_bound() const;
 
-		void operator=(const NodeMap_ & rhs);
+		void operator=(const TreeNode_ & rhs);
 
-		bool operator<(const NodeMap_ & rhs) const;
+		bool operator<(const TreeNode_ & rhs) const;
 
-		GEDGraph::NodeID next_unmatched_node_in_g(const GEDGraph & g) const;
+		void prepare_for_sibling_generation();
 
-		GEDGraph::NodeID last_matched_node_in_g(const GEDGraph & g) const;
+		void prepare_for_child_generation();
 
-		void reset_is_candidate_in_h();
+		void append_extension(const GEDGraph & g, const GEDGraph & h, const NodeMap & extension);
 
-		bool candidates_left();
+		void append_next_assignment(const NodeMap & extension);
 
-		void print();
+		void populate_lsape_instance(const GEDGraph & g, const GEDGraph & h, DMatrix & lsape_instance);
+
+		void set_lower_bound_to_leaf(double lower_bound_to_leaf);
+
+		void update_induced_cost(const GEDGraph & g, const GEDGraph & h);
+
+		double induced_cost() const;
+
+		const NodeMap & node_map() const;
+
+		bool is_leaf_node() const;
+
+		void extend_leaf_node(const GEDGraph & g, const GEDGraph & h);
+
+		GEDGraph::NodeID next_unmatched_node_in_g() const;
+
+		GEDGraph::NodeID last_matched_node_in_g() const;
+
+		bool has_unexplored_sibling();
+
+		std::size_t num_unmatched_nodes_in_g() const;
+
+		std::size_t num_unmatched_nodes_in_h() const;
+
+		void update_original_id_of_unmatched_nodes_in_h();
+
+	private:
+
+		const Exact * exact_;
+
+		NodeMap node_map_;
+
+		std::vector<bool> is_matched_node_in_g_;
+
+		std::vector<bool> is_matched_node_in_h_;
+
+		std::vector<bool> is_candidate_in_h_;
+
+		bool dummy_node_is_candidate_in_h_;
+
+		std::vector<std::size_t> original_id_of_unmatched_nodes_in_h_;
+
+		double induced_cost_;
+
+		double lower_bound_to_leaf_;
+
+		std::size_t num_matched_nodes_in_g_;
+
+		std::size_t num_matched_nodes_in_h_;
+
+		double compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const;
+
+		double compute_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k) const;
+
+		double compute_branch_fast_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k) const;
+
+		double compute_branch_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k) const;
 	};
 
 	LSAPESolver::Model lsape_model_;
@@ -119,9 +158,9 @@ private:
 
 	std::map<GEDGraph::GraphID, SortedEdges_> sorted_edges_;
 
-	NodeMap_ best_feasible_;
+	NodeMap best_feasible_;
 
-	std::priority_queue<NodeMap_> open_;
+	std::priority_queue<TreeNode_> open_;
 
 	double omega_;
 
@@ -141,29 +180,11 @@ private:
 
 	void init_graph_(const GEDGraph & graph);
 
-	void extend_half_complete_node_map_(const GEDGraph & g, const GEDGraph & h, NodeMap_ & node_map) const;
+	void generate_best_child_(const GEDGraph & g, const GEDGraph & h, const TreeNode_ & tree_node);
 
-	void generate_best_child_(const GEDGraph & g, const GEDGraph & h, const NodeMap_ & node_map);
+	void generate_best_sibling_(const GEDGraph & g, const GEDGraph & h, const TreeNode_ & tree_node);
 
-	void generate_best_sibling_(const GEDGraph & g, const GEDGraph & h, const NodeMap_ & node_map);
-
-	void generate_next_map_(const GEDGraph & g, const GEDGraph & h, NodeMap_ & next_map, bool update_induced_cost, bool update_upper_bound);
-
-	void init_indices_(const NodeMap_ & node_map, GEDGraph::SizeTNodeMap & g_ids_to_nodes, GEDGraph::SizeTNodeMap & h_ids_to_nodes) const;
-
-	void init_master_problem_(const GEDGraph & g, const GEDGraph & h, const NodeMap_ & node_map, const GEDGraph::SizeTNodeMap & g_ids_to_nodes, const GEDGraph::SizeTNodeMap &  h_ids_to_nodes, DMatrix & master_problem) const;
-
-	double compute_insertion_cost_(const GEDGraph & h, const NodeMap_ & node_map, GEDGraph::NodeID k) const;
-
-	double compute_deletion_cost_(const GEDGraph & g, const NodeMap_ & node_map, GEDGraph::NodeID i) const;
-
-	double compute_branch_substitution_cost_(const GEDGraph & g, const GEDGraph & h, const NodeMap_ & node_map, GEDGraph::NodeID i, GEDGraph::NodeID k) const;
-
-	double compute_branch_fast_substitution_cost_(const GEDGraph & g, const GEDGraph & h, const NodeMap_ & node_map, GEDGraph::NodeID i, GEDGraph::NodeID k) const;
-
-	void append_extension_(const GEDGraph & g, const GEDGraph & h, const NodeMap & extension, NodeMap_ & node_map);
-
-	void update_induced_cost_(const GEDGraph & g, const GEDGraph & h, NodeMap_ & child_map) const;
+	void generate_next_tree_node_(const GEDGraph & g, const GEDGraph & h, TreeNode_ & next_map, bool update_induced_cost, bool update_upper_bound);
 };
 
 }

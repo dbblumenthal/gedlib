@@ -9,16 +9,16 @@
 namespace ged {
 
 NodeMap::
-NodeMap() :
-forward_map_(),
-backward_map_(),
+NodeMap(std::size_t num_nodes_g, std::size_t num_nodes_h) :
+forward_map_(num_nodes_g, GEDGraph::undefined_node()),
+backward_map_(num_nodes_h, GEDGraph::undefined_node()),
 induced_cost_{std::numeric_limits<double>::infinity()} {}
 
 NodeMap::
-NodeMap(const NodeMap & matching) :
-forward_map_(matching.forward_map_),
-backward_map_(matching.backward_map_),
-induced_cost_(matching.induced_cost_) {}
+NodeMap(const NodeMap & node_map) :
+forward_map_(node_map.forward_map_),
+backward_map_(node_map.backward_map_),
+induced_cost_(node_map.induced_cost_) {}
 
 void
 NodeMap::
@@ -31,26 +31,52 @@ operator=(const NodeMap & node_map) {
 void
 NodeMap::
 clear() {
-	forward_map_.clear();
-	backward_map_.clear();
+	for (auto & node_id : forward_map_) {
+		node_id = GEDGraph::undefined_node();
+	}
+	for (auto & node_id : backward_map_) {
+		node_id = GEDGraph::undefined_node();
+	}
 }
 
 bool
 NodeMap::
 empty() const {
-	return forward_map_.empty() and backward_map_.empty();
+	for (const auto & node_id : forward_map_) {
+		if (node_id != GEDGraph::undefined_node()) {
+			return false;
+		}
+	}
+	for (const auto & node_id : backward_map_) {
+		if (node_id != GEDGraph::undefined_node()) {
+			return false;
+		}
+	}
+	return true;
+}
+
+std::size_t
+NodeMap::
+num_source_nodes() const {
+	return forward_map_.size();
+}
+
+std::size_t
+NodeMap::
+num_target_nodes() const {
+	return backward_map_.size();
 }
 
 bool
 NodeMap::
 complete(const GEDGraph & g, const GEDGraph & h) const {
-	for (auto node = g.nodes().first; node != g.nodes().second; node++) {
-		if (forward_map_.find(*node) == forward_map_.end()) {
+	for (const auto & node_id : forward_map_) {
+		if (node_id == GEDGraph::undefined_node()) {
 			return false;
 		}
 	}
-	for (auto node = h.nodes().first; node != h.nodes().second; node++) {
-		if (backward_map_.find(*node) == backward_map_.end()) {
+	for (const auto & node_id : backward_map_) {
+		if (node_id == GEDGraph::undefined_node()) {
 			return false;
 		}
 	}
@@ -60,49 +86,72 @@ complete(const GEDGraph & g, const GEDGraph & h) const {
 GEDGraph::NodeID
 NodeMap::
 image(GEDGraph::NodeID node) const {
-	try {
+	if (node < forward_map_.size()) {
 		return forward_map_.at(node);
 	}
-	catch (const std::out_of_range& oor) {
-		throw Error("The node map does not contain a substitution or a deletion for node " + std::to_string(node) + ".");
+	else {
+		throw Error("The node with ID " + std::to_string(node) + " is not contained in the source nodes of the node map.");
 	}
-	return GEDGraph::dummy_node();
+	return GEDGraph::undefined_node();
 }
 
 void
 NodeMap::
 erase_image(GEDGraph::NodeID node) {
-	forward_map_.erase(node);
+	if (node < forward_map_.size()) {
+		GEDGraph::NodeID image{forward_map_.at(node)};
+		forward_map_[node] = GEDGraph::undefined_node();
+		if (image < backward_map_.size()) {
+			backward_map_[image] = GEDGraph::undefined_node();
+		}
+	}
+	else {
+		throw Error("The node with ID " + std::to_string(node) + " is not contained in the source nodes of the node map.");
+	}
 }
 
 GEDGraph::NodeID
 NodeMap::
 pre_image(GEDGraph::NodeID node) const {
-	try {
+	if (node < backward_map_.size()) {
 		return backward_map_.at(node);
 	}
-	catch (const std::out_of_range& oor) {
-		throw Error("The node map does not contain a substitution or an insertion for node " + std::to_string(node) + ".");
+	else {
+		throw Error("The node with ID " + std::to_string(node) + " is not contained in the target nodes of the node map.");
 	}
-	return GEDGraph::dummy_node();
+	return GEDGraph::undefined_node();
 }
 
 void
 NodeMap::
 erase_pre_image(GEDGraph::NodeID node) {
-	backward_map_.erase(node);
+	if (node < backward_map_.size()) {
+		GEDGraph::NodeID pre_image{backward_map_.at(node)};
+		backward_map_[node] = GEDGraph::undefined_node();
+		if (pre_image < forward_map_.size()) {
+			forward_map_[pre_image] = GEDGraph::undefined_node();
+		}
+	}
+	else {
+		throw Error("The node with ID " + std::to_string(node) + " is not contained in the target nodes of the node map.");
+	}
 }
 
 void
 NodeMap::
 as_relation(std::vector<Assignment> & relation) const {
 	relation.clear();
-	for (auto assignment = forward_map_.begin(); assignment != forward_map_.end(); assignment++) {
-		relation.emplace_back(assignment->first, assignment->second);
+	GEDGraph::NodeID i, k;
+	for (i = 0; i < forward_map_.size(); i++) {
+		k = forward_map_.at(i);
+		if (k != GEDGraph::undefined_node()) {
+			relation.emplace_back(i, k);
+		}
 	}
-	for (auto assignment = backward_map_.begin(); assignment != backward_map_.end(); assignment++) {
-		if (assignment->second == GEDGraph::dummy_node()) {
-			relation.emplace_back(assignment->second, assignment->first);
+	for (k = 0; k < backward_map_.size(); k++) {
+		i = backward_map_.at(k);
+		if (i == GEDGraph::dummy_node()) {
+			relation.emplace_back(i, k);
 		}
 	}
 }
@@ -111,10 +160,20 @@ void
 NodeMap::
 add_assignment(GEDGraph::NodeID i, GEDGraph::NodeID k) {
 	if (i != GEDGraph::dummy_node()) {
-		forward_map_[i] = k;
+		if (i < forward_map_.size()) {
+			forward_map_[i] = k;
+		}
+		else {
+			throw Error("The node with ID " + std::to_string(i) + " is not contained in the source nodes of the node map.");
+		}
 	}
 	if (k != GEDGraph::dummy_node()) {
-		backward_map_[k] = i;
+		if (k < backward_map_.size()) {
+			backward_map_[k] = i;
+		}
+		else {
+			throw Error("The node with ID " + std::to_string(k) + " is not contained in the target nodes of the node map.");
+		}
 	}
 }
 

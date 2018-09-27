@@ -54,8 +54,6 @@ predict(const GEDGraph & g, const GEDGraph & h, const NodeMap::Assignment & assi
 
 	if ((not this->initialized_) and (not initialized_for_prediction_(g, h))) {
 		lsape_pre_graph_init_(true);
-		util::init_id_to_node_indices(g, this->ids_to_nodes_);
-		util::init_id_to_node_indices(h, this->ids_to_nodes_);
 		ml_init_graph_(g);
 		ml_init_graph_(h);
 	}
@@ -515,11 +513,9 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 MLBasedMethod<UserNodeLabel, UserEdgeLabel>::
 generate_assignments_(const GEDGraph & g, const GEDGraph & h) {
-	const GEDGraph::SizeTNodeMap & g_ids_to_nodes = this->ids_to_nodes_.at(g.id());
-	const GEDGraph::SizeTNodeMap & h_ids_to_nodes = this->ids_to_nodes_.at(h.id());
 
 	// Compute ground truth.
-	NodeMap ground_truth;
+	NodeMap ground_truth(g.num_nodes(), h.num_nodes());
 	if (compute_or_load_ground_truth_()) {
 		if (ground_truth_infile_ != "") {
 			this->ged_data_.load_node_map(ground_truth_infile_, g.id(), h.id(), ground_truth);
@@ -553,7 +549,7 @@ generate_assignments_(const GEDGraph & g, const GEDGraph & h) {
 			bool good_assignment{false};
 			if ((row_in_master < g.num_nodes()) and (col_in_master < h.num_nodes())) {
 				if (compute_or_load_ground_truth_()) {
-					good_assignment = (ground_truth.image(g_ids_to_nodes.at(row_in_master)) == h_ids_to_nodes.at(col_in_master));
+					good_assignment = (ground_truth.image(row_in_master) == col_in_master);
 				}
 				if ((not this->initialized_) and (not good_assignment)) {
 #ifdef _OPENMP
@@ -564,11 +560,11 @@ generate_assignments_(const GEDGraph & g, const GEDGraph & h) {
 					}
 					continue;
 				}
-				ml_populate_substitution_feature_vector_(g, h, g_ids_to_nodes.at(row_in_master), h_ids_to_nodes.at(col_in_master), feature_vector);
+				ml_populate_substitution_feature_vector_(g, h, row_in_master, col_in_master, feature_vector);
 			}
 			else if (row_in_master < g.num_nodes()) {
 				if (compute_or_load_ground_truth_()) {
-					good_assignment = (ground_truth.image(g_ids_to_nodes.at(row_in_master)) == GEDGraph::dummy_node());
+					good_assignment = (ground_truth.image(row_in_master) == GEDGraph::dummy_node());
 				}
 				if ((not this->initialized_) and (not good_assignment)) {
 #ifdef _OPENMP
@@ -579,11 +575,11 @@ generate_assignments_(const GEDGraph & g, const GEDGraph & h) {
 					}
 					continue;
 				}
-				ml_populate_deletion_feature_vector_(g, g_ids_to_nodes.at(row_in_master), feature_vector);
+				ml_populate_deletion_feature_vector_(g, row_in_master, feature_vector);
 			}
 			else {
 				if (compute_or_load_ground_truth_()) {
-					good_assignment = (ground_truth.pre_image(h_ids_to_nodes.at(col_in_master)) == GEDGraph::dummy_node());
+					good_assignment = (ground_truth.pre_image(col_in_master) == GEDGraph::dummy_node());
 				}
 				if ((not this->initialized_) and (not good_assignment)) {
 #ifdef _OPENMP
@@ -594,7 +590,7 @@ generate_assignments_(const GEDGraph & g, const GEDGraph & h) {
 					}
 					continue;
 				}
-				ml_populate_insertion_feature_vector_(h, h_ids_to_nodes.at(col_in_master), feature_vector);
+				ml_populate_insertion_feature_vector_(h, col_in_master, feature_vector);
 			}
 #ifdef _OPENMP
 #pragma omp critical
@@ -623,13 +619,13 @@ generate_assignments_(const GEDGraph & g, const GEDGraph & h) {
 			std::size_t col_in_master{bad_assignments.at(i).second};
 			std::vector<double> feature_vector;
 			if ((row_in_master < g.num_nodes()) and (col_in_master < h.num_nodes())) {
-				ml_populate_substitution_feature_vector_(g, h, g_ids_to_nodes.at(row_in_master), h_ids_to_nodes.at(col_in_master), feature_vector);
+				ml_populate_substitution_feature_vector_(g, h, row_in_master, col_in_master, feature_vector);
 			}
 			else if (row_in_master < g.num_nodes()) {
-				ml_populate_deletion_feature_vector_(g, g_ids_to_nodes.at(row_in_master), feature_vector);
+				ml_populate_deletion_feature_vector_(g, row_in_master, feature_vector);
 			}
 			else {
-				ml_populate_insertion_feature_vector_(h, h_ids_to_nodes.at(col_in_master), feature_vector);
+				ml_populate_insertion_feature_vector_(h, col_in_master, feature_vector);
 			}
 #ifdef _OPENMP
 #pragma omp critical

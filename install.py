@@ -170,7 +170,7 @@ parser.add_argument("--tests", help="build test executables; requires --boost <B
 parser.add_argument("--boost", metavar="<BOOST_ROOT>", help="specify path to directory containing Boost sources")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
 parser.add_argument("--clean", help="delete build directory", action="store_true")
-parser.add_argument("--update_makefile", help="updates the makefile", action="store_true")
+parser.add_argument("--update_makefile", help="update the makefile", action="store_true")
 args = parser.parse_args()
 if not args.boost and (args.lib or args.tests or args.doc):
 	raise Exception("The argument --boost BOOST is required if the script is called with one of the options --lib, --tests or --doc.")

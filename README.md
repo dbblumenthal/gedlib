@@ -1,3 +1,24 @@
+<!--------------------------------------------------------------------------
+-                                                                          -
+-   Copyright (C) 2018 by David B. Blumenthal                              -
+-                                                                          -
+-   This file is part of GEDLIB.                                           -
+-                                                                          -
+-   GEDLIB is free software: you can redistribute it and/or modify it      -
+-   under the terms of the GNU Lesser General Public License as published  -
+-   by the Free Software Foundation, either version 3 of the License, or   -
+-   (at your option) any later version.                                    -
+-                                                                          -
+-   GEDLIB is distributed in the hope that it will be useful,              -
+-   but WITHOUT ANY WARRANTY; without even the implied warranty of         -
+-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           -
+-   GNU Lesser General Public License for more details.                    -
+-                                                                          -
+-   You should have received a copy of the GNU Lesser General Public       -
+-   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. -
+-                                                                          -
+--------------------------------------------------------------------------->
+
 # GEDLIB (1.0)
 
 ## 1. About GEDLIB
@@ -29,10 +50,10 @@ GEDLIB uses the following external libraries:
 After having installed CMake, Doxygen, and OpenMP and having downloaded Boost, execute the script `<GEDLIB_ROOT>/install.py` for installing GEDLIB and the external libraries distributed with GEDLIB:
 
 ```sh
-python install.py [--help] [-h] [--doc] [--tests all|pr2018|sspr2018|unit_tests] [--boost <BOOST_ROOT>] [--debug] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
+python install.py [--help] [-h] [--doc] [--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests] [--boost <BOOST_ROOT>] [--debug] [--clean] [--update_makefile] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
 ```
 
-Use the option `--doc` to build the documentation, the option `--lib gxl` to build the shared library `<GEDLIB_ROOT>/lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests` to build test executables. The three options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode.
+Use the option `--doc` to build the documentation, the option `--clean` to delete the build directoy, the option `--update_makefile` to re-run CMake for updating the makefile, the option `--lib gxl` to build the shared library `<GEDLIB_ROOT>/lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode.
 
 Use the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>` to build GEDLIB as a shared for graphs with custom node ID, node label, and edge label types:
 

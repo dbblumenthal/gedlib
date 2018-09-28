@@ -52,9 +52,9 @@ public:
 
 	/*!
 	 * @brief Constructs solver for LSAPE problem instance.
-	 * @param[in] cost_matrix The LSAPE problem instance that should be solved.
+	 * @param[in] cost_matrix Pointer to the LSAPE problem instance that should be solved.
 	 */
-	LSAPESolver(const DMatrix & cost_matrix);
+	LSAPESolver(const DMatrix * cost_matrix);
 
 	/*!
 	 * @brief Constructs empty solver.
@@ -63,9 +63,9 @@ public:
 
 	/*!
 	 * @brief Sets the LSAPE problem instance.
-	 * @param[in] cost_matrix The LSAPE problem instance that should be solved.
+	 * @param[in] cost_matrix Pointer to the LSAPE problem instance that should be solved.
 	 */
-	void set_problem(const DMatrix & cost_matrix);
+	void set_problem(const DMatrix * cost_matrix);
 
 	/*!
 	 * @brief Clears a previously computed solution.
@@ -136,15 +136,9 @@ public:
 
 	/*!
 	 * @brief Returns the LSAPE problem instance.
-	 * @returns Reference to the LSAPE problem instance.
+	 * @returns Constant pointer to the LSAPE problem instance.
 	 */
-	DMatrix & cost_matrix();
-
-	/*!
-	 * @brief Returns the LSAPE problem instance.
-	 * @returns Constant reference to the LSAPE problem instance.
-	 */
-	const DMatrix & cost_matrix() const;
+	const DMatrix * cost_matrix() const;
 
 	/*!
 	 * @brief Returns the assignment from rows to columns.
@@ -193,7 +187,7 @@ public:
 
 private:
 
-	DMatrix cost_matrix_;
+	const DMatrix * cost_matrix_;
 
 	Model model_;
 

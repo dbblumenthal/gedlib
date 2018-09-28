@@ -133,10 +133,10 @@ private:
 
 	double compute_induced_quadratic_cost_(const QAPInstance_ & qap_instance, const LSAPESolver & solver) const;
 
-	void solve_linear_problem_(const DMatrix & linear_problem, const QAPInstance_ & qap_instance, LSAPSolver & solver,
+	void solve_linear_problem_(const QAPInstance_ & qap_instance, LSAPSolver & solver,
 			double & min_linear_problem, double & linear_cost_b, double & overall_cost_b) const;
 
-	void solve_linear_problem_(const DMatrix & linear_problem, const QAPInstance_ & qap_instance, LSAPESolver & solver,
+	void solve_linear_problem_(const QAPInstance_ & qap_instance, LSAPESolver & solver,
 			double & min_linear_problem, double & linear_cost_b, double & overall_cost_b) const;
 
 	void solver_to_matrix_(const LSAPSolver & solver, DMatrix & b_k_plus_1) const;

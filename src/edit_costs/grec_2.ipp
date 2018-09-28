@@ -80,7 +80,7 @@ edge_rel_cost_fun(const GXLLabel & edge_label_1, const GXLLabel & edge_label_2) 
 			}
 		}
 	}
-	LSAPESolver lsape_solver(edge_rel_cost_matrix);
+	LSAPESolver lsape_solver(&edge_rel_cost_matrix);
 	lsape_solver.solve();
 	return (1 - alpha_) * lsape_solver.minimal_cost();
 }

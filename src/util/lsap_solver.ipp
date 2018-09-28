@@ -9,8 +9,8 @@
 namespace ged {
 
 LSAPSolver ::
-LSAPSolver(const DMatrix& cost_matrix) :
-cost_matrix_(cost_matrix),
+LSAPSolver(const DMatrix * cost_matrix) :
+cost_matrix_{cost_matrix},
 greedy_method_{BASIC},
 solve_optimally_{true},
 minimal_cost_{0.0},
@@ -21,7 +21,7 @@ dual_var_cols_(num_cols()) {}
 
 LSAPSolver ::
 LSAPSolver() :
-cost_matrix_(),
+cost_matrix_{nullptr},
 greedy_method_{BASIC},
 solve_optimally_{true},
 minimal_cost_{0.0},
@@ -32,7 +32,7 @@ dual_var_cols_() {}
 
 void
 LSAPSolver::
-set_problem(const DMatrix & cost_matrix) {
+set_problem(const DMatrix * cost_matrix) {
 	cost_matrix_ = cost_matrix;
 	clear_solution();
 }
@@ -67,11 +67,11 @@ LSAPSolver ::
 solve(int num_solutions) {
 	clear_solution();
 	if (solve_optimally_) {
-		lsape::hungarianLSAP(cost_matrix_.data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), dual_var_rows_.data(), dual_var_cols_.data(), col_to_row_assignments_.at(0).data());
+		lsape::hungarianLSAP(cost_matrix_->data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), dual_var_rows_.data(), dual_var_cols_.data(), col_to_row_assignments_.at(0).data());
 		compute_cost_from_dual_vars_();
 		if (num_solutions > 1) {
 			std::list<std::size_t *> further_row_to_col_assignments;
-			lsape::lsapSolutions(cost_matrix_.data(), num_rows(), num_cols(), num_solutions, row_to_col_assignments_.at(0).data(), dual_var_rows_.data(), dual_var_cols_.data(),
+			lsape::lsapSolutions(cost_matrix_->data(), num_rows(), num_cols(), num_solutions, row_to_col_assignments_.at(0).data(), dual_var_rows_.data(), dual_var_cols_.data(),
 					further_row_to_col_assignments);
 			row_to_col_assignments_.clear();
 			col_to_row_assignments_.clear();
@@ -83,7 +83,7 @@ solve(int num_solutions) {
 		}
 	}
 	else {
-		minimal_cost_ = lsape::greedyLSAP(cost_matrix_.data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(), greedy_method_);
+		minimal_cost_ = lsape::greedyLSAP(cost_matrix_->data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(), greedy_method_);
 	}
 }
 
@@ -108,7 +108,7 @@ get_assigned_row(std::size_t col, std::size_t solution_id) const {
 double
 LSAPSolver ::
 get_slack(std::size_t row, std::size_t col) const {
-	return cost_matrix_(row, col) - (dual_var_rows_.at(row) + dual_var_cols_.at(col));
+	return cost_matrix_->operator()(row, col) - (dual_var_rows_.at(row) + dual_var_cols_.at(col));
 }
 
 double
@@ -135,13 +135,7 @@ col_to_row_assignment(std::size_t solution_id) const {
 	return col_to_row_assignments_.at(solution_id);
 }
 
-DMatrix &
-LSAPSolver ::
-cost_matrix() {
-	return cost_matrix_;
-}
-
-const DMatrix &
+const DMatrix *
 LSAPSolver ::
 cost_matrix() const {
 	return cost_matrix_;
@@ -150,13 +144,13 @@ cost_matrix() const {
 std::size_t
 LSAPSolver ::
 num_rows() const {
-	return cost_matrix_.num_rows();
+	return cost_matrix_->num_rows();
 }
 
 std::size_t
 LSAPSolver ::
 num_cols() const {
-	return cost_matrix_.num_cols();
+	return cost_matrix_->num_cols();
 }
 
 std::size_t
@@ -182,11 +176,11 @@ LSAPSolver ::
 compute_cost_from_assignments_() {
 	minimal_cost_ = 0.0;
 	for (std::size_t row{}; row < num_rows(); row++) {
-		minimal_cost_ += cost_matrix_(row, row_to_col_assignments_.at(0).at(row));
+		minimal_cost_ += cost_matrix_->operator()(row, row_to_col_assignments_.at(0).at(row));
 	}
 	for (std::size_t col{}; col < num_cols(); col++) {
 		if (col_to_row_assignments_.at(0).at(col) == num_rows()) {
-			minimal_cost_ += cost_matrix_(num_rows(), col);
+			minimal_cost_ += cost_matrix_->operator()(num_rows(), col);
 		}
 	}
 }

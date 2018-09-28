@@ -72,6 +72,13 @@ public:
 	ScalarT * data();
 
 	/*!
+	 * @brief Provides constant access to internal data.
+	 * @return Constant pointer to the data array.
+	 */
+	const ScalarT * data() const;
+
+
+	/*!
 	 * @brief Returns the number of rows.
 	 * @return The number of rows.
 	 */

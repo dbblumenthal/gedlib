@@ -54,19 +54,25 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 	LSAPESolver lsape_solver;
 	lsape_solver.set_model(lsape_model_);
 	LSAPSolver lsap_solver;
+	if (quadratic_model_ == QAPE) {
+		lsape_solver.set_problem(&linear_problem);
+	}
+	else {
+		lsap_solver.set_problem(&linear_problem);
+	}
 
 	// Main loop.
 	for (std::size_t current_itr{1}; not termination_criterion_met_(timer, alpha, min_linear_problem, current_itr, lower_bound, upper_bound); current_itr++) {
 		init_next_linear_problem_(qap_instance_, x, linear_problem);
 		if (quadratic_model_ == QAPE) {
-			solve_linear_problem_(linear_problem, qap_instance_, lsape_solver, min_linear_problem, linear_cost_b, overall_cost_b);
+			solve_linear_problem_(qap_instance_, lsape_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
 				util::construct_node_map_from_solver(lsape_solver, output_node_map);
 			}
 		}
 		else {
-			solve_linear_problem_(linear_problem, qap_instance_, lsap_solver, min_linear_problem, linear_cost_b, overall_cost_b);
+			solve_linear_problem_(qap_instance_, lsap_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
 				util::construct_node_map_from_solver(lsap_solver, output_node_map);
@@ -107,14 +113,20 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 		DMatrix projection_problem(qap_instance_.num_rows(), qap_instance_.num_cols(), 1.0);
 		projection_problem -= x;
 		if (quadratic_model_ == QAPE) {
-			solve_linear_problem_(projection_problem, qap_instance_, lsape_solver, min_linear_problem, linear_cost_b, overall_cost_b);
+			lsape_solver.set_problem(&projection_problem);
+		}
+		else {
+			lsap_solver.set_problem(&projection_problem);
+		}
+		if (quadratic_model_ == QAPE) {
+			solve_linear_problem_(qap_instance_, lsape_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
 				util::construct_node_map_from_solver(lsape_solver, output_node_map);
 			}
 		}
 		else {
-			solve_linear_problem_(projection_problem, qap_instance_, lsap_solver, min_linear_problem, linear_cost_b, overall_cost_b);
+			solve_linear_problem_(qap_instance_, lsap_solver, min_linear_problem, linear_cost_b, overall_cost_b);
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
 				util::construct_node_map_from_solver(lsap_solver, output_node_map);
@@ -321,9 +333,8 @@ termination_criterion_met_(const Timer & timer, const double & alpha, const doub
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 IPFP<UserNodeLabel, UserEdgeLabel>::
-solve_linear_problem_(const DMatrix & linear_problem, const QAPInstance_ & qap_instance, LSAPSolver & solver,
+solve_linear_problem_(const QAPInstance_ & qap_instance, LSAPSolver & solver,
 		double & min_linear_problem, double & linear_cost_b, double & overall_cost_b) const {
-	solver.set_problem(linear_problem);
 	solver.solve();
 	min_linear_problem = solver.minimal_cost();
 	linear_cost_b = compute_induced_linear_cost_(qap_instance, solver);
@@ -333,9 +344,8 @@ solve_linear_problem_(const DMatrix & linear_problem, const QAPInstance_ & qap_i
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 IPFP<UserNodeLabel, UserEdgeLabel>::
-solve_linear_problem_(const DMatrix & linear_problem, const QAPInstance_ & qap_instance, LSAPESolver & solver,
+solve_linear_problem_(const QAPInstance_ & qap_instance, LSAPESolver & solver,
 		double & min_linear_problem, double & linear_cost_b, double & overall_cost_b) const {
-	solver.set_problem(linear_problem);
 	solver.solve();
 	min_linear_problem = solver.minimal_cost();
 	linear_cost_b = compute_induced_linear_cost_(qap_instance, solver);
@@ -359,11 +369,7 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 IPFP<UserNodeLabel, UserEdgeLabel>::
 solver_to_matrix_(const LSAPSolver & solver, DMatrix & b_k_plus_1) const {
-	for (std::size_t row{0}; row < b_k_plus_1.num_rows(); row++) {
-		for (std::size_t col{0}; col < b_k_plus_1.num_cols(); col++) {
-			b_k_plus_1(row, col) = 0.0;
-		}
-	}
+	b_k_plus_1.matrix().setZero();
 	for (std::size_t row{0}; row < solver.num_rows(); row++) {
 		if (solver.get_assigned_col(row) < solver.num_cols()) {
 			b_k_plus_1(row, solver.get_assigned_col(row)) = 1.0;
@@ -375,11 +381,7 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 IPFP<UserNodeLabel, UserEdgeLabel>::
 solver_to_matrix_(const LSAPESolver & solver, DMatrix & b_k_plus_1) const {
-	for (std::size_t row{0}; row < b_k_plus_1.num_rows(); row++) {
-		for (std::size_t col{0}; col < b_k_plus_1.num_cols(); col++) {
-			b_k_plus_1(row, col) = 0.0;
-		}
-	}
+	b_k_plus_1.matrix().setZero();
 	for (std::size_t row{0}; row < solver.num_rows(); row++) {
 		b_k_plus_1(row, solver.get_assigned_col(row)) = 1.0;
 	}
@@ -424,13 +426,13 @@ double
 IPFP<UserNodeLabel, UserEdgeLabel>::
 compute_induced_quadratic_cost_(const QAPInstance_ & qap_instance, const DMatrix & x_k) const {
 	double quadratic_cost{0.0};
-	for (std::size_t row_1{0}; row_1 < qap_instance.num_rows(); row_1++) {
-		for (std::size_t col_1{0}; col_1 < qap_instance.num_cols(); col_1++) {
+	for (std::size_t col_1{0}; col_1 < qap_instance.num_cols(); col_1++) {
+		for (std::size_t row_1{0}; row_1 < qap_instance.num_rows(); row_1++) {
 			if (x_k(row_1, col_1) == 0.0) {
 				continue;
 			}
-			for (std::size_t row_2{0}; row_2 < qap_instance.num_rows(); row_2++) {
-				for (std::size_t col_2{0}; col_2 < qap_instance.num_cols(); col_2++) {
+			for (std::size_t col_2{0}; col_2 < qap_instance.num_cols(); col_2++) {
+				for (std::size_t row_2{0}; row_2 < qap_instance.num_rows(); row_2++) {
 					quadratic_cost += qap_instance(row_1, col_1, row_2, col_2) * x_k(row_2, col_2);
 				}
 			}

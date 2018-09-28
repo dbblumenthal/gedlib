@@ -51,7 +51,7 @@ populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result
 
 	// Populate the LSAPE instance and set up the solver.
 	populate_instance(g, h, lsape_instance);
-	LSAPESolver lsape_solver(lsape_instance);
+	LSAPESolver lsape_solver(&lsape_instance);
 
 	// Solve the LSAPE instance.
 	if (solve_optimally_) {
@@ -77,7 +77,6 @@ populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result
 	// Add centralities and reoptimize
 	if (centrality_weight_ > 0.0 and centrality_method_ != NONE) {
 		add_centralities_(g, h, lsape_instance);
-		lsape_solver.set_problem(lsape_instance);
 		lsape_solver.solve(max_num_solutions_);
 		for (std::size_t solution_id{0}; solution_id < lsape_solver.num_solutions(); solution_id++) {
 			std::size_t index_node_map{result.add_node_map(g.num_nodes(), h.num_nodes())};

@@ -654,7 +654,7 @@ compute_branch_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGra
 	}
 
 	// Solve subproblem.
-	LSAPESolver subproblem_solver(subproblem);
+	LSAPESolver subproblem_solver(&subproblem);
 	subproblem_solver.set_model(exact_->lsape_model_);
 	subproblem_solver.solve();
 
@@ -831,7 +831,7 @@ generate_next_tree_node_(const GEDGraph & g, const GEDGraph & h, TreeNode_ & nex
 	next_tree_node.populate_lsape_instance(g, h, lsape_instance);
 
 	// solve LSAPE instance and update lower bound to leaf
-	LSAPESolver lsape_solver(lsape_instance);
+	LSAPESolver lsape_solver(&lsape_instance);
 	lsape_solver.set_model(lsape_model_);
 	lsape_solver.solve();
 	next_tree_node.set_lower_bound_to_leaf(lsape_solver.minimal_cost());

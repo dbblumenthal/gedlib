@@ -177,17 +177,16 @@ lsape_init_() {
 				}
 				NodeMap node_map(g->num_nodes(), h->num_nodes());
 				DMatrix lsape_instance(g->num_nodes() + 1, h->num_nodes() + 1, 0.0);
+				lsape_solver.set_problem(&lsape_instance);
 				if (this->ged_data_.shuffled_graph_copies_available() and (g->id() == h->id())) {
 					GEDGraph::GraphID id_shuffled_graph_copy{this->ged_data_.id_shuffled_graph_copy(h->id())};
 					lsape_populate_instance_(*g, this->ged_data_.graph(id_shuffled_graph_copy), lsape_instance);
-					lsape_solver.set_problem(lsape_instance);
 					lsape_solver.solve();
 					util::construct_node_map_from_solver(lsape_solver, node_map);
 					this->ged_data_.compute_induced_cost(*g, this->ged_data_.graph(id_shuffled_graph_copy), node_map);
 				}
 				else {
 					lsape_populate_instance_(*g, *h, lsape_instance);
-					lsape_solver.set_problem(lsape_instance);
 					lsape_solver.solve();
 					util::construct_node_map_from_solver(lsape_solver, node_map);
 					this->ged_data_.compute_induced_cost(*g, *h, node_map);

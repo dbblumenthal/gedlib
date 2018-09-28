@@ -67,6 +67,10 @@ private:
 
 		const LSAPSolver & solver(std::size_t row_in_master, std::size_t col_in_master) const;
 
+		DMatrix & subproblem(std::size_t row_in_master, std::size_t col_in_master);
+
+		const DMatrix & subproblem(std::size_t row_in_master, std::size_t col_in_master) const;
+
 		SizeTSizeTMap_ & rows_subproblem_to_master(std::size_t row_in_master, std::size_t col_in_master);
 
 		std::size_t row_in_master(std::size_t row_in_master, std::size_t col_in_master, std::size_t row_in_subproblem) const;
@@ -87,6 +91,8 @@ private:
 		std::size_t size_master_;
 
 		std::size_t degree_;
+
+		std::vector<DMatrix> subproblems_;
 
 		std::vector<LSAPSolver> subproblem_solvers_;
 
@@ -146,7 +152,7 @@ private:
 
 	void init_node_costs_(const GEDGraph & g, const GEDGraph & h, DMatrix & node_costs) const;
 
-	void update_master_problem_costs_(const SubproblemSolvers_ & subproblems_solver, const DMatrix & node_costs, LSAPSolver & master_problem_solver) const;
+	void update_master_problem_costs_(const SubproblemSolvers_ & subproblems_solver, const DMatrix & node_costs, DMatrix & master_problem) const;
 
 	void update_subproblem_costs_(const Weights_ & weights, std::size_t degree, SubproblemSolvers_ & subproblems_solver) const;
 

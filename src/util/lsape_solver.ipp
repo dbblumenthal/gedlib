@@ -9,8 +9,8 @@
 namespace ged {
 
 LSAPESolver ::
-LSAPESolver(const DMatrix& cost_matrix) :
-cost_matrix_(cost_matrix),
+LSAPESolver(const DMatrix * cost_matrix) :
+cost_matrix_{cost_matrix},
 model_{ECBP},
 greedy_method_{BASIC},
 solve_optimally_{true},
@@ -22,7 +22,7 @@ dual_var_cols_(total_num_cols()) {}
 
 LSAPESolver ::
 LSAPESolver() :
-cost_matrix_(),
+cost_matrix_{nullptr},
 model_{ECBP},
 greedy_method_{BASIC},
 solve_optimally_{true},
@@ -32,9 +32,8 @@ col_to_row_assignments_() {}
 
 void
 LSAPESolver::
-set_problem(const DMatrix & cost_matrix) {
+set_problem(const DMatrix * cost_matrix) {
 	cost_matrix_ = cost_matrix;
-	clear_solution();
 }
 
 void
@@ -68,12 +67,12 @@ LSAPESolver ::
 solve(int num_solutions) {
 	clear_solution();
 	if (solve_optimally_) {
-		lsape::lsapeSolver(cost_matrix_.data(), total_num_rows(), total_num_cols(), row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(),
+		lsape::lsapeSolver(cost_matrix_->data(), total_num_rows(), total_num_cols(), row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(),
 				dual_var_rows_.data(), dual_var_cols_.data(), static_cast<lsape::LSAPE_MODEL>(model_));
 		compute_cost_from_assignments_();
 		if (num_solutions > 1) {
 			std::list<std::size_t *> further_row_to_col_assignments;
-			lsape::lsapeSolutionsFromOne(cost_matrix_.data(), total_num_rows(),total_num_cols(), num_solutions, row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(),
+			lsape::lsapeSolutionsFromOne(cost_matrix_->data(), total_num_rows(),total_num_cols(), num_solutions, row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(),
 					dual_var_rows_.data(), dual_var_cols_.data(), further_row_to_col_assignments);
 			row_to_col_assignments_.clear();
 			col_to_row_assignments_.clear();
@@ -85,7 +84,7 @@ solve(int num_solutions) {
 		}
 	}
 	else {
-		minimal_cost_ = lsape::lsapeGreedy(cost_matrix_.data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(),
+		minimal_cost_ = lsape::lsapeGreedy(cost_matrix_->data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(),
 				static_cast<lsape::GREEDY_METHOD>(greedy_method_));
 	}
 }
@@ -123,7 +122,7 @@ col_to_row_assignment(std::size_t solution_id) const {
 double
 LSAPESolver ::
 get_slack(std::size_t row, std::size_t col) const {
-	return cost_matrix_(row, col) - (dual_var_rows_.at(row) + dual_var_cols_.at(col));
+	return cost_matrix_->operator()(row, col) - (dual_var_rows_.at(row) + dual_var_cols_.at(col));
 }
 
 double
@@ -138,13 +137,7 @@ get_dual_var_col(std::size_t col) const {
 	return dual_var_cols_.at(col);
 }
 
-DMatrix &
-LSAPESolver ::
-cost_matrix() {
-	return cost_matrix_;
-}
-
-const DMatrix &
+const DMatrix *
 LSAPESolver ::
 cost_matrix() const {
 	return cost_matrix_;
@@ -153,25 +146,25 @@ cost_matrix() const {
 std::size_t
 LSAPESolver ::
 num_rows() const {
-	return cost_matrix_.num_rows() - 1;
+	return cost_matrix_->num_rows() - 1;
 }
 
 std::size_t
 LSAPESolver ::
 num_cols() const {
-	return cost_matrix_.num_cols() - 1;
+	return cost_matrix_->num_cols() - 1;
 }
 
 std::size_t
 LSAPESolver ::
 total_num_rows() const {
-	return cost_matrix_.num_rows();
+	return cost_matrix_->num_rows();
 }
 
 std::size_t
 LSAPESolver ::
 total_num_cols() const {
-	return cost_matrix_.num_cols();
+	return cost_matrix_->num_cols();
 }
 
 std::size_t
@@ -197,11 +190,11 @@ LSAPESolver ::
 compute_cost_from_assignments_() {
 	minimal_cost_ = 0.0;
 	for (std::size_t row{}; row < num_rows(); row++) {
-		minimal_cost_ += cost_matrix_(row, row_to_col_assignments_.at(0).at(row));
+		minimal_cost_ += cost_matrix_->operator()(row, row_to_col_assignments_.at(0).at(row));
 	}
 	for (std::size_t col{}; col < num_cols(); col++) {
 		if (col_to_row_assignments_.at(0).at(col) == num_rows()) {
-			minimal_cost_ += cost_matrix_(num_rows(), col);
+			minimal_cost_ += cost_matrix_->operator()(num_rows(), col);
 		}
 	}
 }

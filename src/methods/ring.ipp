@@ -374,17 +374,16 @@ eval_x_(NOMAD::Eval_Point & x) const {
 			}
 			NodeMap matching(g->num_nodes(), h->num_nodes());
 			DMatrix lsape_instance(g->num_nodes() + 1, h->num_nodes() + 1, 0.0);
+			lsape_solver.set_problem(&lsape_instance);
 			if (this->ged_data_.shuffled_graph_copies_available() and (g->id() == h->id())) {
 				GEDGraph::GraphID id_shuffled_graph_copy{this->ged_data_.id_shuffled_graph_copy(h->id())};
 				populate_instance_with_params_(*g, this->ged_data_.graph(id_shuffled_graph_copy), alpha, lambda, lsape_instance);
-				lsape_solver.set_problem(lsape_instance);
 				lsape_solver.solve();
 				util::construct_node_map_from_solver(lsape_solver, matching);
 				this->ged_data_.compute_induced_cost(*g, this->ged_data_.graph(id_shuffled_graph_copy), matching);
 			}
 			else {
 				populate_instance_with_params_(*g, *h, alpha, lambda, lsape_instance);
-				lsape_solver.set_problem(lsape_instance);
 				lsape_solver.solve();
 				util::construct_node_map_from_solver(lsape_solver, matching);
 				this->ged_data_.compute_induced_cost(*g, *h, matching);
@@ -736,7 +735,7 @@ lsape_multiset_cost_(const std::vector<LabelID> & lhs, const std::vector<LabelID
 		}
 	}
 
-	LSAPESolver problem_solver(problem);
+	LSAPESolver problem_solver(&problem);
 	if (led_method_ == LSAPE_OPTIMAL) {
 		problem_solver.set_model(this->lsape_model_);
 	}

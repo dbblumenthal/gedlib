@@ -35,9 +35,9 @@ public:
 
 	/*!
 	 * @brief Constructs solver for LSAP problem instance.
-	 * @param[in] cost_matrix The LSAP problem instance that should be solved.
+	 * @param[in] cost_matrix Pointer to the LSAP problem instance that should be solved.
 	 */
-	LSAPSolver(const DMatrix & cost_matrix);
+	LSAPSolver(const DMatrix * cost_matrix);
 
 	/*!
 	 * @brief Constructs empty solver.
@@ -52,9 +52,9 @@ public:
 
 	/*!
 	 * @brief Sets the LSAP problem instance.
-	 * @param[in] cost_matrix The LSAP problem instance that should be solved.
+	 * @param[in] cost_matrix Pointer to the LSAP problem instance that should be solved.
 	 */
-	void set_problem(const DMatrix & cost_matrix);
+	void set_problem(const DMatrix * cost_matrix);
 
 	/*!
 	 * @brief Makes the solver use a greedy method.
@@ -118,15 +118,9 @@ public:
 
 	/*!
 	 * @brief Returns the LSAP problem instance.
-	 * @returns Reference to the LSAP problem instance.
+	 * @returns Constant pointer to the LSAP problem instance.
 	 */
-	DMatrix & cost_matrix();
-
-	/*!
-	 * @brief Returns the LSAP problem instance.
-	 * @returns Constant reference to the LSAP problem instance.
-	 */
-	const DMatrix & cost_matrix() const;
+	const DMatrix * cost_matrix() const;
 
 	/*!
 	 * @brief Returns the number of rows of the LSAP problem instance.
@@ -162,7 +156,7 @@ public:
 
 private:
 
-	DMatrix cost_matrix_;
+	const DMatrix * cost_matrix_;
 
 	GreedyMethod greedy_method_;
 

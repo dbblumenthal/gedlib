@@ -234,7 +234,7 @@ compute_wildcard_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDG
 	}
 
 	// Solve subproblem.
-	LSAPESolver subproblem_solver(subproblem);
+	LSAPESolver subproblem_solver(&subproblem);
 	subproblem_solver.set_model(this->lsape_model_);
 	subproblem_solver.solve();
 

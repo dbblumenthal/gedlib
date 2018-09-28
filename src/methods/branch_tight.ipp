@@ -167,7 +167,8 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 	Weights_ weights(static_cast<std::size_t>(g.num_nodes()));
 
 	// The main loop.
-	LSAPSolver master_problem_solver(DMatrix(static_cast<std::size_t>(g.num_nodes()), static_cast<std::size_t>(g.num_nodes())));
+	DMatrix master_problem(g.num_nodes(), g.num_nodes());
+	LSAPSolver master_problem_solver(&master_problem);
 	double last_improvement{std::numeric_limits<double>::max()};
 	for (std::size_t current_itr{1}; not termination_criterion_met_(current_itr, last_improvement, result); current_itr++) {
 
@@ -183,7 +184,7 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 		subproblem_solvers.solve(num_threads_);
 
 		// Update and solve the master problem.
-		update_master_problem_costs_(subproblem_solvers, node_costs, master_problem_solver);
+		update_master_problem_costs_(subproblem_solvers, node_costs, master_problem);
 		master_problem_solver.solve();
 
 		// Update the lower bound bound, the improvement ratio, and the upper bound, if necessary.
@@ -263,7 +264,7 @@ init_subproblems_(const GEDGraph & g, const GEDGraph & h, SubproblemSolvers_ & s
 			for (auto ij = incident_edges_i.first; ij != incident_edges_i.second; ij++) {
 				col_sub = 0;
 				for (auto kl = incident_edges_k.first; kl != incident_edges_k.second; kl++) {
-					subproblems_solver.solver(row_master, col_master).cost_matrix()(row_sub, col_sub++) = this->ged_data_.edge_cost(g.get_edge_label(*ij), h.get_edge_label(*kl)) * 0.5;
+					subproblems_solver.subproblem(row_master, col_master)(row_sub, col_sub++) = this->ged_data_.edge_cost(g.get_edge_label(*ij), h.get_edge_label(*kl)) * 0.5;
 				}
 				row_sub++;
 			}
@@ -274,10 +275,10 @@ init_subproblems_(const GEDGraph & g, const GEDGraph & h, SubproblemSolvers_ & s
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 BranchTight<UserNodeLabel, UserEdgeLabel>::
-update_master_problem_costs_(const SubproblemSolvers_ & subproblems_solver, const DMatrix & node_costs, LSAPSolver & master_problem_solver) const {
+update_master_problem_costs_(const SubproblemSolvers_ & subproblems_solver, const DMatrix & node_costs, DMatrix & master_problem) const {
 	for (std::size_t row_master{0}; row_master < subproblems_solver.get_size(); row_master++) {
 		for (std::size_t col_master{0}; col_master < subproblems_solver.get_size(); col_master++) {
-			master_problem_solver.cost_matrix()(row_master, col_master) = node_costs(row_master, col_master) + subproblems_solver.solver(row_master, col_master).minimal_cost();
+			master_problem(row_master, col_master) = node_costs(row_master, col_master) + subproblems_solver.solver(row_master, col_master).minimal_cost();
 		}
 	}
 }
@@ -326,7 +327,7 @@ update_subproblem_costs_(const Weights_ & weights, std::size_t degree, Subproble
 					std::size_t col_sub_in_master{subproblems_solver.col_in_master(row_master, col_master, col_sub)};
 					added_weight = weights.get_weight(row_sub_in_master, col_sub_in_master, row_master, col_master);
 					added_weight -= weights.get_weight(row_master, col_master, row_sub_in_master, col_sub_in_master);
-					subproblems_solver.solver(row_master, col_master).cost_matrix()(row_sub, col_sub) += added_weight;
+					subproblems_solver.subproblem(row_master, col_master)(row_sub, col_sub) += added_weight;
 				}
 			}
 		}
@@ -709,9 +710,14 @@ SubproblemSolvers_ ::
 SubproblemSolvers_(std::size_t size_master, std::size_t degree) :
 size_master_{size_master},
 degree_{degree},
-subproblem_solvers_(size_master_ * size_master_, LSAPSolver(DMatrix(degree_, degree_))),
+subproblems_(size_master_ * size_master_, DMatrix(degree_, degree_)),
+subproblem_solvers_(),
 rows_sub_to_master_(size_master_ * size_master_),
-cols_sub_to_master_(size_master_ * size_master_){}
+cols_sub_to_master_(size_master_ * size_master_) {
+	for (const auto & subproblem : subproblems_) {
+		subproblem_solvers_.emplace_back(&subproblem);
+	}
+}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 LSAPSolver &
@@ -727,6 +733,22 @@ BranchTight<UserNodeLabel, UserEdgeLabel>::
 SubproblemSolvers_ ::
 solver(std::size_t row_in_master, std::size_t col_in_master) const {
 	return subproblem_solvers_.at(row_in_master + size_master_ * col_in_master);
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+DMatrix &
+BranchTight<UserNodeLabel, UserEdgeLabel>::
+SubproblemSolvers_ ::
+subproblem(std::size_t row_in_master, std::size_t col_in_master) {
+	return subproblems_.at(row_in_master + size_master_ * col_in_master);
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+const DMatrix &
+BranchTight<UserNodeLabel, UserEdgeLabel>::
+SubproblemSolvers_ ::
+subproblem(std::size_t row_in_master, std::size_t col_in_master) const {
+	return subproblems_.at(row_in_master + size_master_ * col_in_master);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>

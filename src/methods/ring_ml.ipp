@@ -474,7 +474,7 @@ lsape_multiset_cost_(const std::vector<LabelID> & lhs, const std::vector<LabelID
 		}
 	}
 
-	LSAPESolver problem_solver(problem);
+	LSAPESolver problem_solver(&problem);
 	if (led_method_ == LSAPE_OPTIMAL) {
 		problem_solver.set_model(this->lsape_model_);
 	}

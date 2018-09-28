@@ -323,7 +323,7 @@ TEST_CASE("LSAPSolver works") {
 				2, 2;
 		std::cout << std::endl << "===multiple solutions LSAP===" << std::endl;
 		std::cout << "LSAP instance" << std::endl << ecm.matrix() << std::endl;
-		ged::LSAPSolver solver_mult_sol(ecm);
+		ged::LSAPSolver solver_mult_sol(&ecm);
 		solver_mult_sol.solve(10);
 		print_solution(solver_mult_sol, "===multiple solutions===");
 		CHECK(solver_mult_sol.minimal_cost() == Approx(3.0));
@@ -335,7 +335,7 @@ TEST_CASE("LSAPSolver works") {
 			matrix_squared(row, row) = 1.0;
 		}
 
-		ged::LSAPSolver solver_squared(matrix_squared);
+		ged::LSAPSolver solver_squared(&matrix_squared);
 		solver_squared.solve();
 		CHECK(solver_squared.minimal_cost() == Approx(3.0));
 	}
@@ -348,7 +348,7 @@ TEST_CASE("LSAPSolver works") {
 		}
 
 
-		ged::LSAPSolver solver_more_rows(matrix_more_rows);
+		ged::LSAPSolver solver_more_rows(&matrix_more_rows);
 		solver_more_rows.solve();
 		CHECK(solver_more_rows.minimal_cost() == Approx(0.0));
 	}
@@ -359,7 +359,7 @@ TEST_CASE("LSAPSolver works") {
 		for (std::size_t row = 0; row < 2; ++row) {
 			matrix_more_cols_1(row, row) =-1.0;
 		}
-		ged::LSAPSolver solver_more_cols(matrix_more_cols_1);
+		ged::LSAPSolver solver_more_cols(&matrix_more_cols_1);
 		solver_more_cols.solve();
 		CHECK(solver_more_cols.minimal_cost() == Approx(-2.0));
 
@@ -367,7 +367,7 @@ TEST_CASE("LSAPSolver works") {
 		for (std::size_t row = 0; row < 2; ++row) {
 			matrix_more_cols_2(row, row) = -1.0;
 		}
-		solver_more_cols.set_problem(matrix_more_cols_2);
+		solver_more_cols.set_problem(&matrix_more_cols_2);
 		solver_more_cols.solve();
 		CHECK(solver_more_cols.minimal_cost() == Approx(-2.0));
 	}

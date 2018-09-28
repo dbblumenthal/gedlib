@@ -52,6 +52,13 @@ data() {
 }
 
 template<class ScalarT>
+const ScalarT *
+Matrix<ScalarT>::
+data() const {
+	return matrix_.data();
+}
+
+template<class ScalarT>
 std::size_t
 Matrix<ScalarT>::
 num_rows() const {

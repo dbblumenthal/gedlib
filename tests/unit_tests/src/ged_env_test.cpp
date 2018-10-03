@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 #include "catch.hpp"
 
@@ -29,7 +29,7 @@ TEST_CASE("testing on MAO graphs") {
 	env.set_edit_costs(ged::Options::EditCosts::CHEM_1);
 	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/mao/", "../collections/mao_5.xml"));
 	ged::GEDGraph::GraphID g {graph_ids[0]};
-	ged::GEDGraph::GraphID h {graph_ids[0]};
+	ged::GEDGraph::GraphID h {graph_ids[1]};
 	//env.init();
 	env.init(ged::Options::InitType::EAGER_WITH_SHUFFLED_COPIES);
 	double lower_bound{0.0};
@@ -154,6 +154,21 @@ TEST_CASE("testing on MAO graphs") {
 		std::cout << "\noptions = \"\"\n";
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 	}
+
+#ifdef GUROBI
+	SECTION("F2") {
+		std::cout << "\n===running F2 ===\n";
+		env.set_method(ged::Options::GEDMethod::F2, "--threads 4 --tune TRUE --relax TRUE");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+
+		env.set_method(ged::Options::GEDMethod::F2, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1\"\n";
+		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+	}
+#endif
 
 	SECTION("Refine") {
 		std::cout << "\n===running Refine ===\n";

@@ -148,11 +148,13 @@ def build_gedlib(args):
 	
 	if (not os.path.isfile("build/Makefile")) or args.update_makefile:
 		print("\n***** Run CMake. *****")
-		commands = "cd build; rm -rf *; cmake -DBOOST_ROOT=" + args.boost + " -DCMAKE_BUILD_TYPE="
+		commands = "cd build; rm -rf *; cmake .. -DBOOST_ROOT=" + args.boost + " -DCMAKE_BUILD_TYPE="
 		if args.debug:
-			commands = commands + "Debug .."
+			commands = commands + "Debug"
 		else:
-			commands = commands + "Release .."
+			commands = commands + "Release"
+		if args.gurobi:
+			commands = commands + " -DGUROBI_ROOT=" + args.gurobi
 		call(commands, shell=True)
 
 	if args.doc:
@@ -189,6 +191,7 @@ parser.add_argument("--doc", help="build documentation; requires --boost <BOOST_
 parser.add_argument("--lib", help="build shared library; requires --boost <BOOST_ROOT>", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
 parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018"])
 parser.add_argument("--boost", metavar="<BOOST_ROOT>", help="specify path to directory containing Boost sources")
+parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
 parser.add_argument("--clean", help="delete build directory", action="store_true")
 parser.add_argument("--update_makefile", help="update the makefile", action="store_true")

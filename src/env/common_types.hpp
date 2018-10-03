@@ -61,6 +61,11 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+// Include Gurobi.
+#ifdef GUROBI
+#include <gurobi_c++.h>
+#endif
+
 // Include external non-standard libraries.
 #ifndef LSAPE_IndexType
 #define LSAPE_IndexType std::size_t
@@ -143,25 +148,28 @@ struct Options {
 	 * @brief Selects the method.
 	 */
 	enum class GEDMethod {
-		BRANCH,             //!< Selects ged::Branch.
-		BRANCH_FAST,        //!< Selects ged::BranchFast.
-		BRANCH_TIGHT,       //!< Selects ged::BranchTight.
-		BRANCH_UNIFORM,     //!< Selects ged::BranchUniform.
-		BRANCH_COMPACT,     //!< Selects ged::BranchCompact.
-		PARTITION,          //!< Selects ged::Partition.
-		HYBRID,             //!< Selects ged::Hybrid.
-		RING,               //!< Selects ged::Ring.
-		EXACT,              //!< Selects ged::Exact.
-		WALKS,              //!< Selects ged::Walks.
-		IPFP,               //!< Selects ged::IPFP
-		BIPARTITE,          //!< Selects ged::Bipartite.
-		SUBGRAPH,           //!< Selects ged::Subgraph.
-		NODE,               //!< Selects ged::Node.
-		RING_ML,            //!< Selects ged::RingML.
-		BIPARTITE_ML,       //!< Selects ged::BipartiteML.
-		REFINE,             //!< Selects ged::Refine.
-		BP_BEAM,            //!< Selects ged::BPBeam.
-		SIMULATED_ANNEALING //!< Selects ged::SimulatedAnnealing.
+#ifdef GUROBI
+		F2,                  //!< Selects ged::F2.
+#endif
+		BRANCH,              //!< Selects ged::Branch.
+		BRANCH_FAST,         //!< Selects ged::BranchFast.
+		BRANCH_TIGHT,        //!< Selects ged::BranchTight.
+		BRANCH_UNIFORM,      //!< Selects ged::BranchUniform.
+		BRANCH_COMPACT,      //!< Selects ged::BranchCompact.
+		PARTITION,           //!< Selects ged::Partition.
+		HYBRID,              //!< Selects ged::Hybrid.
+		RING,                //!< Selects ged::Ring.
+		EXACT,               //!< Selects ged::Exact.
+		WALKS,               //!< Selects ged::Walks.
+		IPFP,                //!< Selects ged::IPFP
+		BIPARTITE,           //!< Selects ged::Bipartite.
+		SUBGRAPH,            //!< Selects ged::Subgraph.
+		NODE,                //!< Selects ged::Node.
+		RING_ML,             //!< Selects ged::RingML.
+		BIPARTITE_ML,        //!< Selects ged::BipartiteML.
+		REFINE,              //!< Selects ged::Refine.
+		BP_BEAM,             //!< Selects ged::BPBeam.
+		SIMULATED_ANNEALING  //!< Selects ged::SimulatedAnnealing.
 	};
 
 	/*!

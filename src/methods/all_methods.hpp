@@ -34,6 +34,9 @@
 #include "lsape_based_method.hpp"  // Declares LSAPEBasedMethod. Dependencies: "ged_method.hpp".
 #include "ls_based_method.hpp"     // Declares LSBasedMethod. Dependencies: "lsape_based_method.hpp".
 #include "ml_based_method.hpp"     // Declares MLBasedMethod. Dependencies: "lsape_based_method.hpp".
+#ifdef GUROBI
+#include "mip_based_method.hpp"    // Declares MIPBasedMethod. Dependencies: "ged_method.hpp".
+#endif
 
 // Declarations of concrete derived classes of GEDMethod.
 
@@ -66,12 +69,21 @@
 #include "bipartite_ml.hpp"        // Declares BipartiteML. Dependencies: "ml_based_method.hpp".
 #include "ring_ml.hpp"             // Declares RingML. Dependencies: "ml_based_method.hpp".
 
+// Declarations of concrete derived classes of MIPBasedMethod.
+
+#ifdef GUROBI
+#include "f2.hpp"				   // Declares F2. Dependencies: "mip_based_method.hpp".
+#endif
+
 // Definitions of abstract classes.
 
 #include "ged_method.ipp"          // Defines GEDMethod. Dependencies: "ged_method.hpp".
 #include "lsape_based_method.ipp"  // Defines LSAPEBasedMethod. Dependencies: "lsape_based_method.hpp", "ged_method.hpp", "branch_tight.hpp".
 #include "ls_based_method.ipp"     // Defines LSBasedMethod. Dependencies: "ls_based_method.hpp", "lsape_based_method.hpp", "bipartite.hpp", "branch_hpp", "branch_fast.hpp", "node.hpp", "ring.hpp", "subgraph.hpp", "walks.hpp", "bipartite_ml.hpp", "ring_ml.hpp".
 #include "ml_based_method.ipp"     // Defines MLBasedMethod. Dependencies: "ml_based_method.hpp", "lsape_based_method.hpp", "exact.hpp", "ipfp.hpp".
+#ifdef GUROBI
+#include "mip_based_method.ipp"    // Defines MIPBasedMethod. Dependencies: "mip_based_method.hpp", "ged_method.hpp".
+#endif
 
 // Definitions of concrete derived classes of GEDMethod.
 
@@ -103,6 +115,12 @@
 
 #include "bipartite_ml.ipp"        // Defines BipartiteML. Dependencies: "bipartite_ml.ipp", "ml_based_method.hpp".
 #include "ring_ml.ipp"             // Defines RingML. Dependencies: "ring_ml.ipp", "ml_based_method.hpp".
+
+// Definitions of concrete derived classes of MIPBasedMethod.
+
+#ifdef GUROBI
+#include "f2.ipp"				   // Defines F2. Dependencies: "f2.hpp", "mip_based_method.hpp".
+#endif
 
 
 #endif /* SRC_METHODS_ALL_METHODS_HPP_ */

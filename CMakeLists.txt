@@ -67,8 +67,19 @@ set(FANN_HOME ${CMAKE_SOURCE_DIR}/ext/fann.2.2.0)
 
 # Add include and link directories.
 
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${NOMAD_HOME}/ext/sgtelib/src ${NOMAD_HOME}/src ${LSAPE_HOME}/include ${EIGEN_HOME}/Eigen ${LIBSVM_HOME} ${FANN_HOME}/include)
-link_directories(${NOMAD_HOME}/lib ${FANN_HOME}/lib ${LIBSVM_HOME})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${NOMAD_HOME}/ext/sgtelib/src ${NOMAD_HOME}/src ${LSAPE_HOME}/include ${EIGEN_HOME}/Eigen ${LIBSVM_HOME} ${FANN_HOME}/include ${GUROBI_HOME}/include)
+link_directories(${NOMAD_HOME}/lib ${FANN_HOME}/lib ${LIBSVM_HOME} ${GUROBI_HOME}/lib)
+
+if(GUROBI_ROOT)
+  add_definitions(-DGUROBI)
+  if(APPLE)
+    set(GUROBI_HOME ${GUROBI_ROOT}/mac64)
+  else()
+    set(GUROBI_HOME ${GUROBI_ROOT}/linux64)
+  endif()
+  include_directories(SYSTEM ${GUROBI_HOME}/include)
+  link_directories(${GUROBI_HOME}/lib)
+ endif()
 
 # Add subdirectories.
 

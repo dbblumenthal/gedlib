@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ml_based_method.ipp
@@ -249,6 +249,7 @@ lsape_set_default_options_() {
 	delete ground_truth_method_;
 	ground_truth_options_ = "";
 	ground_truth_method_ = new IPFP<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+	ground_truth_method_->set_options(std::string("--initial-solutions 80 --runs-from-initial-solutions 40 --lower-bound-method BRANCH_TIGHT --threads ") + std::to_string(this->num_threads_));
 	dnn_params_.activation_candidates = {FANN::activation_function_enum::RELU, FANN::activation_function_enum::SIGMOID};
 	dnn_params_.min_num_hidden_layers = 1;
 	dnn_params_.max_num_hidden_layers = 10;
@@ -288,13 +289,31 @@ lsape_parse_option_(const std::string & option, const std::string & arg) {
 		is_valid_option = true;
 	}
 	else if (option == "ground-truth-method") {
-		if (arg == "EXACT") {
+		if (arg == "ANCHOR_AWARE_GED") {
 			delete ground_truth_method_;
-			ground_truth_method_ = new Exact<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+			ground_truth_method_ = new AnchorAwareGED<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+		}
+#ifdef GUROBI
+		else if (arg == "F2") {
+			delete ground_truth_method_;
+			ground_truth_method_ = new F2<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+		}
+		else if (arg == "F3") {
+			delete ground_truth_method_;
+			ground_truth_method_ = new F3<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+		}
+		else if (arg == "COMPACT_MIP") {
+			delete ground_truth_method_;
+			ground_truth_method_ = new CompactMIP<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 		}
 		else if (arg != "IPFP") {
-			throw ged::Error(std::string("Invalid argument ") + arg  + " for option ground-truth-method. Usage: options = \"[--ground-truth-method EXACT|IPFP] [...]\"");
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option ground-truth-method. Usage: options = \"[--ground-truth-method ANCHOR_AWARE|F2|F3|COMPACT_MIP|IPFP] [...]\"");
 		}
+#else
+		else if (arg != "IPFP") {
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option ground-truth-method. Usage: options = \"[--ground-truth-method ANCHOR_AWARE|IPFP] [...]\"");
+		}
+#endif
 		is_valid_option = true;
 	}
 	else if (option == "ground-truth-options") {

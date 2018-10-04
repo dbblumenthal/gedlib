@@ -41,7 +41,8 @@ namespace ged {
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--load @<filename@></tt> | path to existing configuration file | not specified | n.a. |
  * | <tt>\--save @<filename@></tt> | path where to save configuration file | not specified | n.a. |
- * | <tt>\--time-limit-subproblem @<convertible to double@></tt> | time limit in seconds for solving the subproblems | @p 0.001 | if less or equal @p 0, no time limit is enforced |
+ * | <tt>\--subproblem-solver ANCHOR_AWARE_GED\|%F2\|%F3\|COMPACT_MIP</tt> | method for exactly solving the subproblems | @p ANCHOR_AWARE_GED | the methods %F2, %F3, and COMPACT_MIP are available only if GEDLIB is installed with Gurobi |
+ * | <tt>\--subproblem-solver-options '[--@<option@> @<arg@>] [...]'</tt> | options string passed to the ground truth method | @p '' | ged::AnchorAwareGED, ged::F2, ged::F3, ged::CompactMIP |
  * | <tt>\--depth-range @<smaller convertible to int greater 0@>,@<larger convertible to int greater 0@></tt> | range that specifies possible depths of the subgraphs | <tt>1,5</tt> | if the range is larger than one, the best choice is determined via cross-validation during initialization and the mean is used if the method is run without prior initialization |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -69,6 +70,8 @@ private:
 
 	std::map<GEDGraph::GraphID, GEDGraph> subgraphs_;
 
+	Options::GEDMethod exact_method_;
+
 	// Inherited member functions from LSAPEBasedMethod.
 
 	virtual void lsape_set_default_options_() final;
@@ -87,7 +90,7 @@ private:
 
 	// Helper member functions.
 
-	double compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k, Exact<UserNodeLabel, UserEdgeLabel> & exact) const;
+	double compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k, GEDMethod<UserNodeLabel, UserEdgeLabel> * exact_method) const;
 
 	double compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const;
 
@@ -102,6 +105,9 @@ private:
 	void build_subgraph_dfs_(const GEDGraph & graph, GEDGraph::NodeID current_node, std::size_t depth_current_node, GEDGraph::NodeNodeMap & ids_in_subgraph, GEDGraph & subgraph);
 
 	bool load_config_file_() const;
+
+	GEDMethod<UserNodeLabel, UserEdgeLabel> * exact_method_factory_() const;
+
 };
 
 }

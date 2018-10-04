@@ -72,12 +72,17 @@ mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) {
 		key_x.first = *i;
 		for (auto k = h.nodes().first; k != h.nodes().second; k++) {
 			key_x.second = *k;
-			sub_cost = this->ged_data_.node_cost(g.get_node_label(*i), h.get_node_label(*k));
-			x_[key_x] = model.addVar(0, 1, sub_cost - del_cost.at(*i) - ins_cost.at(*k), variable_type_());
+			sub_cost = this->ged_data_.node_cost(g.get_node_label(*i), h.get_node_label(*k)) - del_cost.at(*i) - ins_cost.at(*k);
+			if ((*i == 0) and (*k == 0) and this->map_root_to_root_) {
+				x_[key_x] = model.addVar(1, 1, sub_cost, variable_type_());
+			}
+			else {
+				x_[key_x] = model.addVar(0, 1, sub_cost, variable_type_());
+			}
 		}
 	}
 
-	// Collect node deletion costs.
+	// Collect edge deletion costs.
 	del_cost.clear();
 	for (auto e = g.edges().first; e != g.edges().second; e++) {
 		del_cost.push_back(this->ged_data_.edge_cost(g.get_edge_label(*e), dummy_label()));
@@ -85,7 +90,7 @@ mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) {
 	}
 
 
-	// Collect node insertion costs.
+	// Collect edge insertion costs.
 	ins_cost.clear();
 	for (auto f = h.edges().first; f != h.edges().second; f++) {
 		ins_cost.push_back(this->ged_data_.edge_cost(dummy_label(), h.get_edge_label(*f)));
@@ -101,8 +106,8 @@ mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) {
 		counter_f = 0;
 		for (auto f = h.edges().first; f != h.edges().second; f++, counter_f++) {
 			key_y.second = *f;
-			sub_cost = this->ged_data_.edge_cost(g.get_edge_label(*e), h.get_edge_label(*f));
-			y_[key_y] = model.addVar(0, 1, sub_cost - del_cost.at(counter_e) - ins_cost.at(counter_f), variable_type_());
+			sub_cost = this->ged_data_.edge_cost(g.get_edge_label(*e), h.get_edge_label(*f)) - del_cost.at(counter_e) - ins_cost.at(counter_f);
+			y_[key_y] = model.addVar(0, 1, sub_cost, variable_type_());
 		}
 	}
 

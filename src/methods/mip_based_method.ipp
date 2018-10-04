@@ -39,6 +39,7 @@ MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 MIPBasedMethod(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 GEDMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
 relax_{false},
+map_root_to_root_{false},
 num_threads_{1},
 time_limit_in_sec_{0},
 tune_{false},
@@ -101,6 +102,9 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 				std::size_t node_map_id{result.add_node_map(g.num_nodes(), h.num_nodes())};
 				result.node_map(node_map_id).set_induced_cost(obj_val);
 				mip_model_to_node_map_(g, h, model, result.node_map(node_map_id));
+				if (map_root_to_root_ and (result.node_map(node_map_id).image(0) != 0)) {
+					throw Error("Root constrained model does not map root to root.");
+				}
 			}
 		}
 		else {
@@ -123,6 +127,15 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		else if (arg != "FALSE") {
 			throw Error(std::string("Invalid argument \"") + arg  + "\" for option relax. Usage: options = \"[--relax TRUE|FALSE] [...]\"");
+		}
+		is_valid_option = true;
+	}
+	else if (option == "map-root-to-root") {
+		if (arg == "TRUE") {
+			map_root_to_root_ = true;
+		}
+		else if (arg != "FALSE") {
+			throw Error(std::string("Invalid argument \"") + arg  + "\" for option map-root-to-root. Usage: options = \"[--map-root-to-root TRUE|FALSE] [...]\"");
 		}
 		is_valid_option = true;
 	}
@@ -174,9 +187,9 @@ std::string
 MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (mip_valid_options_string_() == "") {
-		return "[--relax <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>]";
+		return "[--relax <arg>] [--map-root-to-root <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>]";
 	}
-	return mip_valid_options_string_() + " [--relax <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>]";
+	return mip_valid_options_string_() + " [--relax <arg>] [--map-root-to-root <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -184,6 +197,7 @@ void
 MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_set_default_options_() {
 	relax_ = false;
+	map_root_to_root_ = false;
 	tune_ = false;
 	num_threads_ = 1;
 	time_limit_in_sec_ = 0;

@@ -20,22 +20,22 @@
 ***************************************************************************/
 
 /*!
- * @file  exact.ipp
- * @brief Exact class definition.
+ * @file  anchor_aware_ged.ipp
+ * @brief ged::AnchorAwareGED class definition.
  */
 
-#ifndef SRC_METHODS_EXACT_IPP_
-#define SRC_METHODS_EXACT_IPP_
+#ifndef SRC_METHODS_ANCHOR_AWARE_GED_IPP_
+#define SRC_METHODS_ANCHOR_AWARE_GED_IPP_
 
 namespace ged {
 
 template<class UserNodeLabel, class UserEdgeLabel>
-Exact<UserNodeLabel, UserEdgeLabel>::
-~Exact() {}
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
+~AnchorAwareGED() {}
 
 template<class UserNodeLabel, class UserEdgeLabel>
-Exact<UserNodeLabel, UserEdgeLabel>::
-Exact(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 GEDMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
 lsape_model_{LSAPESolver::ECBP},
 search_method_{DFS},
@@ -50,7 +50,7 @@ omega_{0.0} {}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 ged_init_() {
 	for (auto graph = this->ged_data_.begin(); graph != this->ged_data_.end(); graph++) {
 		init_graph_(*graph);
@@ -59,7 +59,7 @@ ged_init_() {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	best_feasible_ = NodeMap(g.num_nodes(), h.num_nodes());
 	open_ = std::priority_queue<TreeNode_>();
@@ -118,7 +118,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 ged_set_default_options_() {
 	lsape_model_ = LSAPESolver::ECBP;
 	search_method_ = DFS;
@@ -130,14 +130,14 @@ ged_set_default_options_() {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 std::string
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	return "[--lsape-model <arg>] [--search-method <arg>] [--lower-bound-method <arg>] [--threads <arg>] [--time-limit] [--map-root-to-root <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
 bool
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 ged_parse_option_(const std::string & option, const std::string & arg) {
 	if (option == "lsape-model") {
 		if (arg == "EBP") {
@@ -228,7 +228,7 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 
 // ==== Definition of private struct Edge_. ====
 template<class UserNodeLabel, class UserEdgeLabel>
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 Edge_ ::
 Edge_(LabelID label, GEDGraph::EdgeID edge_id) :
 label{label},
@@ -236,7 +236,7 @@ edge_id{edge_id}{}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 bool
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 Edge_ ::
 operator<(const Edge_ & rhs) const {
 	return label < rhs.label;
@@ -244,13 +244,13 @@ operator<(const Edge_ & rhs) const {
 
 // ==== Definition of private class SortedEdges_. ====
 template<class UserNodeLabel, class UserEdgeLabel>
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 SortedEdges_ ::
 SortedEdges_() :
 sorted_edges_() {}
 
 template<class UserNodeLabel, class UserEdgeLabel>
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 SortedEdges_ ::
 SortedEdges_(const GEDGraph & g):
 sorted_edges_(){
@@ -265,15 +265,15 @@ sorted_edges_(){
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 SortedEdges_ ::
 operator=(const SortedEdges_ & rhs) {
 	sorted_edges_ = rhs.sorted_edges_;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
-const std::vector<typename Exact<UserNodeLabel, UserEdgeLabel>::Edge_> &
-Exact<UserNodeLabel, UserEdgeLabel>::
+const std::vector<typename AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::Edge_> &
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 SortedEdges_::
 get_incident_edges(GEDGraph::NodeID node) const {
 	return sorted_edges_.at(node);
@@ -281,9 +281,9 @@ get_incident_edges(GEDGraph::NodeID node) const {
 
 // ==== Definition of private class TreeNode_. ====
 template<class UserNodeLabel, class UserEdgeLabel>
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_ ::
-TreeNode_(const GEDGraph & g, const GEDGraph & h, const Exact * exact) :
+TreeNode_(const GEDGraph & g, const GEDGraph & h, const AnchorAwareGED * exact) :
 exact_{exact},
 node_map_(g.num_nodes(), h.num_nodes()),
 is_matched_node_in_g_(g.num_nodes(), false),
@@ -307,7 +307,7 @@ num_matched_nodes_in_h_{0} {
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_ ::
 TreeNode_(const TreeNode_ & tree_node) :
 exact_{tree_node.exact_},
@@ -324,7 +324,7 @@ num_matched_nodes_in_h_{tree_node.num_matched_nodes_in_h_} {}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_ ::
 operator=(const TreeNode_ & rhs) {
 	exact_ = rhs.exact_;
@@ -342,7 +342,7 @@ operator=(const TreeNode_ & rhs) {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 double
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_ ::
 lower_bound() const {
 	return induced_cost_ + lower_bound_to_leaf_;
@@ -350,7 +350,7 @@ lower_bound() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 bool
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_ ::
 operator<(const TreeNode_ & rhs) const {
 	if (exact_->search_method_ == ASTAR){
@@ -361,7 +361,7 @@ operator<(const TreeNode_ & rhs) const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 GEDGraph::NodeID
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 next_unmatched_node_in_g() const {
 	if (num_matched_nodes_in_g_ < is_matched_node_in_g_.size()) {
@@ -372,7 +372,7 @@ next_unmatched_node_in_g() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 GEDGraph::NodeID
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 last_matched_node_in_g() const {
 	if (num_matched_nodes_in_g_ > 0) {
@@ -383,7 +383,7 @@ last_matched_node_in_g() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 prepare_for_child_generation() {
 	for (GEDGraph::NodeID node_in_h{0}; node_in_h < is_matched_node_in_h_.size(); node_in_h++) {
@@ -394,7 +394,7 @@ prepare_for_child_generation() {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 append_extension(const GEDGraph & g, const GEDGraph & h, const NodeMap & extension) {
 	std::vector<NodeMap::Assignment> assignments;
@@ -416,7 +416,7 @@ append_extension(const GEDGraph & g, const GEDGraph & h, const NodeMap & extensi
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 append_next_assignment(const NodeMap & extension) {
 	GEDGraph::NodeID next_node_in_g = num_matched_nodes_in_g_++;
@@ -436,7 +436,7 @@ append_next_assignment(const NodeMap & extension) {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 populate_lsape_instance(const GEDGraph & g, const GEDGraph & h, DMatrix & lsape_instance) {
 #ifdef _OPENMP
@@ -475,7 +475,7 @@ populate_lsape_instance(const GEDGraph & g, const GEDGraph & h, DMatrix & lsape_
 
 template<class UserNodeLabel, class UserEdgeLabel>
 double
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const {
 	// Collect node deletion cost.
@@ -498,7 +498,7 @@ compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 double
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 compute_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k) const {
 	// Collect node insertion cost.
@@ -521,7 +521,7 @@ compute_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k) const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 double
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 compute_branch_fast_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k) const {
 	// Collect node substitution costs.
@@ -615,7 +615,7 @@ compute_branch_fast_substitution_cost_(const GEDGraph & g, const GEDGraph & h, G
 
 template<class UserNodeLabel, class UserEdgeLabel>
 double
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 compute_branch_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k) const {
 	// Collect node substitution costs.
@@ -686,7 +686,7 @@ compute_branch_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGra
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 set_lower_bound_to_leaf(double lower_bound_to_leaf) {
 	lower_bound_to_leaf_ = lower_bound_to_leaf;
@@ -694,7 +694,7 @@ set_lower_bound_to_leaf(double lower_bound_to_leaf) {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 update_induced_cost(const GEDGraph & g, const GEDGraph & h) {
 	GEDGraph::NodeID i{last_matched_node_in_g()};
@@ -724,7 +724,7 @@ update_induced_cost(const GEDGraph & g, const GEDGraph & h) {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 double
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 induced_cost() const {
 	return induced_cost_;
@@ -732,7 +732,7 @@ induced_cost() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 const NodeMap &
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 node_map() const {
 	return node_map_;
@@ -740,7 +740,7 @@ node_map() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 bool
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 is_leaf_node() const {
 	return ((num_matched_nodes_in_g_ == is_matched_node_in_g_.size()) or (num_matched_nodes_in_h_ == is_matched_node_in_h_.size()));
@@ -748,7 +748,7 @@ is_leaf_node() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 extend_leaf_node(const GEDGraph & g, const GEDGraph & h) {
 	for (GEDGraph::NodeID i{0}; i < is_matched_node_in_g_.size(); i++) {
@@ -771,7 +771,7 @@ extend_leaf_node(const GEDGraph & g, const GEDGraph & h) {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 prepare_for_sibling_generation() {
 	GEDGraph::NodeID next_node_g{--num_matched_nodes_in_g_};
@@ -786,7 +786,7 @@ prepare_for_sibling_generation() {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 bool
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 has_unexplored_sibling() {
 	if (num_matched_nodes_in_g_ == 0) {
@@ -805,7 +805,7 @@ has_unexplored_sibling() {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 std::size_t
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 num_unmatched_nodes_in_g() const {
 	return is_matched_node_in_g_.size() - num_matched_nodes_in_g_;
@@ -813,7 +813,7 @@ num_unmatched_nodes_in_g() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 std::size_t
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 num_unmatched_nodes_in_h() const {
 	return is_matched_node_in_h_.size() - num_matched_nodes_in_h_;
@@ -821,7 +821,7 @@ num_unmatched_nodes_in_h() const {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 TreeNode_::
 update_original_id_of_unmatched_nodes_in_h() {
 	original_id_of_unmatched_nodes_in_h_.clear();
@@ -836,14 +836,14 @@ update_original_id_of_unmatched_nodes_in_h() {
 // ==== Definitions of private helper member functions. ====
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 init_graph_(const GEDGraph & graph) {
 	sorted_edges_[graph.id()] = SortedEdges_(graph);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 generate_next_tree_node_(const GEDGraph & g, const GEDGraph & h, TreeNode_ & next_tree_node, bool update_induced_cost, bool update_upper_bound) {
 
 	next_tree_node.update_original_id_of_unmatched_nodes_in_h();
@@ -880,7 +880,7 @@ generate_next_tree_node_(const GEDGraph & g, const GEDGraph & h, TreeNode_ & nex
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 generate_best_child_(const GEDGraph & g, const GEDGraph & h, const TreeNode_ & current_node) {
 	TreeNode_ child_node(current_node);
 	child_node.prepare_for_child_generation();
@@ -889,7 +889,7 @@ generate_best_child_(const GEDGraph & g, const GEDGraph & h, const TreeNode_ & c
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
-Exact<UserNodeLabel, UserEdgeLabel>::
+AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::
 generate_best_sibling_(const GEDGraph & g, const GEDGraph & h, const TreeNode_ & current_node) {
 	TreeNode_ sibling_node(current_node);
 	sibling_node.prepare_for_sibling_generation();
@@ -898,4 +898,4 @@ generate_best_sibling_(const GEDGraph & g, const GEDGraph & h, const TreeNode_ &
 
 }
 
-#endif /* SRC_METHODS_EXACT_IPP_ */
+#endif /* SRC_METHODS_ANCHOR_AWARE_GED_IPP_ */

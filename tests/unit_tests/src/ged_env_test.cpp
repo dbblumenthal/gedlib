@@ -168,6 +168,30 @@ TEST_CASE("testing on MAO graphs") {
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1\"\n";
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 	}
+	SECTION("F3") {
+		std::cout << "\n===running F3 ===\n";
+		env.set_method(ged::Options::GEDMethod::F3, "--threads 4 --tune TRUE --relax TRUE");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+
+		env.set_method(ged::Options::GEDMethod::F3, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1\"\n";
+		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+	}
+	SECTION("CompactMIP") {
+		std::cout << "\n===running CompactMIP ===\n";
+		env.set_method(ged::Options::GEDMethod::COMPACT_MIP, "--threads 4 --tune TRUE --relax TRUE");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+
+		env.set_method(ged::Options::GEDMethod::COMPACT_MIP, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1\"\n";
+		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+	}
 #endif
 
 	SECTION("Refine") {
@@ -201,23 +225,31 @@ TEST_CASE("testing on MAO graphs") {
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 	}
 
+
+	SECTION("AnchorAwareGED") {
+		std::cout << "\n===running AnchorAwareGED ===\n";
+		env.set_method(ged::Options::GEDMethod::ANCHOR_AWARE_GED, "--threads 5 --time-limit 1.0");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 5 --time-limit 1.0\"\n";
+		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+		CHECK(lower_bound <= env.get_upper_bound(g, h));
+	}
+
 	SECTION("Subgraph") {
 		std::cout << "\n=== Subgraph ===\n";
-		env.set_method(ged::Options::GEDMethod::SUBGRAPH, "--threads 1 --time-limit-subproblem 0.0001");
+		env.set_method(ged::Options::GEDMethod::SUBGRAPH, "--threads 5 --subproblem-solver-options '--time-limit 0.0001'");
 		env.run_method(g, h);
-		std::cout << "\noptions = \"--threads 1 --time-limit-subproblem 0.0001\"\n";
+		std::cout << "\noptions = \"--threads 5 --subproblem-solver-options '--time-limit 0.0001'\"\n";
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 		CHECK(lower_bound <= env.get_upper_bound(g, h));
-		env.set_method(ged::Options::GEDMethod::SUBGRAPH, "--threads 1 --time-limit-subproblem 0.001");
+#ifdef GUROBI
+		env.set_method(ged::Options::GEDMethod::SUBGRAPH, "--threads 5 --subproblem-solver F2 --subproblem-solver-options '--time-limit 0.01 --relax TRUE'");
 		env.run_method(g, h);
-		std::cout << "\noptions = \"--threads 5 --time-limit-subproblem 0.001\"\n";
+		std::cout << "\noptions = \"--threads 5 --subproblem-solver F2 --subproblem-solver-options '--time-limit 0.01 --relax TRUE'\"\n";
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 		CHECK(lower_bound <= env.get_upper_bound(g, h));
-		env.set_method(ged::Options::GEDMethod::SUBGRAPH, "--threads 1 --time-limit-subproblem 0.01");
-		env.run_method(g, h);
-		std::cout << "\noptions = \"--threads 5 --time-limit-subproblem 0.01\"\n";
-		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
-		CHECK(lower_bound <= env.get_upper_bound(g, h));
+#endif
+
 	}
 
 	SECTION("Walks") {
@@ -240,15 +272,6 @@ TEST_CASE("testing on MAO graphs") {
 		env.set_method(ged::Options::GEDMethod::WALKS, "--lsape-model FLWC --depth-range 1,1");
 		env.run_method(g, h);
 		std::cout << "\noptions = \"--lsape-model FLWC --depth-range 1,1\"\n";
-		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
-		CHECK(lower_bound <= env.get_upper_bound(g, h));
-	}
-
-	SECTION("Exact") {
-		std::cout << "\n===running Exact ===\n";
-		env.set_method(ged::Options::GEDMethod::EXACT, "--threads 5 --time-limit 1.0");
-		env.run_method(g, h);
-		std::cout << "\noptions = \"--threads 5 --time-limit 1.0\"\n";
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 		CHECK(lower_bound <= env.get_upper_bound(g, h));
 	}

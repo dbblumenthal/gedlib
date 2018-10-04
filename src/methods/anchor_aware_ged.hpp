@@ -20,12 +20,12 @@
 ***************************************************************************/
 
 /*!
- * @file  exact.hpp
- * @brief ged::Exact class declaration.
+ * @file  anchor_aware_ged.hpp
+ * @brief ged::AnchorAwareGED class declaration.
  */
 
-#ifndef SRC_METHODS_EXACT_HPP_
-#define SRC_METHODS_EXACT_HPP_
+#ifndef SRC_METHODS_ANCHOR_AWARE_GED_HPP_
+#define SRC_METHODS_ANCHOR_AWARE_GED_HPP_
 
 namespace ged {
 
@@ -47,13 +47,13 @@ namespace ged {
  * | <tt>\--map-root-to-root TRUE\|FALSE</tt> | decide if the roots of the input graphs are mapped to each other | @p FALSE | if @p TRUE, the nodes with ID 0 of the input graphs are mapped to each other |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
-class Exact : public GEDMethod<UserNodeLabel, UserEdgeLabel> {
+class AnchorAwareGED : public GEDMethod<UserNodeLabel, UserEdgeLabel> {
 
 public:
 
-	virtual ~Exact();
+	virtual ~AnchorAwareGED();
 
-	Exact(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data);
+	AnchorAwareGED(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data);
 
 private:
 
@@ -81,14 +81,14 @@ private:
 
 		const std::vector<Edge_> & get_incident_edges(GEDGraph::NodeID) const;
 	private:
-		std::map<GEDGraph::NodeID, std::vector<typename Exact<UserNodeLabel, UserEdgeLabel>::Edge_>> sorted_edges_;
+		std::map<GEDGraph::NodeID, std::vector<typename AnchorAwareGED<UserNodeLabel, UserEdgeLabel>::Edge_>> sorted_edges_;
 	};
 
 	class TreeNode_ {
 
 	public:
 
-		TreeNode_(const GEDGraph & g, const GEDGraph & h, const Exact * exact);
+		TreeNode_(const GEDGraph & g, const GEDGraph & h, const AnchorAwareGED * exact);
 
 		TreeNode_(const TreeNode_ & tree_node);
 
@@ -134,7 +134,7 @@ private:
 
 	private:
 
-		const Exact * exact_;
+		const AnchorAwareGED * exact_;
 
 		NodeMap node_map_;
 
@@ -210,4 +210,4 @@ private:
 
 }
 
-#endif /* SRC_METHODS_EXACT_HPP_ */
+#endif /* SRC_METHODS_ANCHOR_AWARE_GED_HPP_ */

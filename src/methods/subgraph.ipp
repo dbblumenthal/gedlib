@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file subgraph.ipp
@@ -44,8 +44,9 @@ min_depth_{1},
 max_depth_{5},
 infile_(""),
 outfile_(""),
-exact_options_("--search-method DFS --map-root-to-root TRUE --time-limit 0.001"),
-subgraphs_() {}
+exact_options_(""),
+subgraphs_(),
+exact_method_{Options::GEDMethod::ANCHOR_AWARE_GED} {}
 
 // === Definitions of member functions inherited from LSAPEBasedMethod.
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -57,27 +58,29 @@ lsape_set_default_options_() {
 	max_depth_ = 5;
 	infile_ = std::string("");
 	outfile_ = std::string("");
-	exact_options_ = std::string("--search-method DFS --map-root-to-root TRUE --time-limit 0.001");
+	exact_method_ = Options::GEDMethod::ANCHOR_AWARE_GED;
+	exact_options_ = std::string("");
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
 std::string
 Subgraph<UserNodeLabel, UserEdgeLabel>::
 lsape_valid_options_string_() const {
-	return "[--depth-range <arg>] [--load <arg>] [--save <arg>] [--time-limit-subproblem <arg>]";
+	return "[--depth-range <arg>] [--load <arg>] [--save <arg>] [--subproblem-solver <arg>] [--subproblem-solver-options <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
 bool
 Subgraph<UserNodeLabel, UserEdgeLabel>::
 lsape_parse_option_(const std::string & option, const std::string & arg) {
+	bool is_valid_option{false};
 	if (option == "load") {
 		infile_ = arg;
-		return true;
+		is_valid_option = true;
 	}
 	else if (option == "save") {
 		outfile_ = arg;
-		return true;
+		is_valid_option = true;
 	}
 	else if (option == "depth-range") {
 		std::stringstream depth_range(arg);
@@ -102,19 +105,65 @@ lsape_parse_option_(const std::string & option, const std::string & arg) {
 		else {
 			throw Error(std::string("Invalid argument \"") + arg + "\" for option depth-range. Usage: options = \"[--depth-range <smaller convertible to int greater 0>,<larger convertible to int greater 0>] [...]");
 		}
-		return true;
+		is_valid_option = true;
 	}
-	else if (option == "time-limit-subproblem") {
-		try {
-			std::stod(arg);
+	else if (option == "subproblem-solver") {
+#ifdef GUROBI
+		if (arg == "F2") {
+			exact_method_ = Options::GEDMethod::F2;
 		}
-		catch (...) {
-			throw Error(std::string("Invalid argument \"") + arg + "\" for option time-limit-subproblem. Usage: options = \"[--time-limit-subproblem <convertible to double>] [...]");
+		else if (arg == "F3") {
+			exact_method_ = Options::GEDMethod::F3;
 		}
-		exact_options_ = std::string("--search-method DFS --map-root-to-root TRUE --time-limit ") + arg;
-		return true;
+		else if (arg == "COMPACT_MIP") {
+			exact_method_ = Options::GEDMethod::COMPACT_MIP;
+		}
+		else if (arg != "ANCHOR_AWARE_GED") {
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option subproblem-solver. Usage: options = \"[--subproblem-solver ANCHOR_AWARE|F2|F3|COMPACT_MIP] [...]\"");
+		}
+#else
+		if (arg != "ANCHOR_AWARE_GED") {
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option subproblem-solver. Usage: options = \"[--subproblem-solver ANCHOR_AWARE] [...]\"");
+		}
+#endif
+		is_valid_option = true;
 	}
-	return false;
+	else if (option == "subproblem-solver-options") {
+		exact_options_ = arg;
+		std::size_t bad_option_start{exact_options_.find("--threads")};
+		std::size_t next_option_start;
+		if (bad_option_start != std::string::npos) {
+			next_option_start = exact_options_.find("--", bad_option_start + 1);
+			if (next_option_start != std::string::npos) {
+				exact_options_ = exact_options_.substr(0, bad_option_start) + exact_options_.substr(next_option_start);
+			}
+			else {
+				exact_options_ = exact_options_.substr(0, bad_option_start);
+			}
+		}
+		bad_option_start = exact_options_.find("--relax");
+		if (bad_option_start != std::string::npos) {
+			next_option_start = exact_options_.find("--", bad_option_start + 1);
+			if (next_option_start != std::string::npos) {
+				exact_options_ = exact_options_.substr(0, bad_option_start) + exact_options_.substr(next_option_start);
+			}
+			else {
+				exact_options_ = exact_options_.substr(0, bad_option_start);
+			}
+		}
+		bad_option_start = exact_options_.find("--map-root-to-root");
+		if (bad_option_start != std::string::npos) {
+			next_option_start = exact_options_.find("--", bad_option_start + 1);
+			if (next_option_start != std::string::npos) {
+				exact_options_ = exact_options_.substr(0, bad_option_start) + exact_options_.substr(next_option_start);
+			}
+			else {
+				exact_options_ = exact_options_.substr(0, bad_option_start);
+			}
+		}
+		is_valid_option = true;
+	}
+	return is_valid_option;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -127,11 +176,14 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 #pragma omp parallel for if(this->num_threads_ > 1)
 #endif
 	for (std::size_t row_in_master = 0; row_in_master < master_problem.num_rows(); row_in_master++) {
-		Exact<UserNodeLabel, UserEdgeLabel> exact(this->ged_data_);
-		exact.set_options(exact_options_);
+		GEDMethod<UserNodeLabel, UserEdgeLabel> * exact_method{nullptr};
+#pragma omp critical
+		{
+			exact_method = exact_method_factory_();
+		}
 		for (std::size_t col_in_master = 0; col_in_master < master_problem.num_cols(); col_in_master++) {
 			if ((row_in_master < g.num_nodes()) and (col_in_master < h.num_nodes())) {
-				master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, row_in_master, col_in_master, exact);
+				master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, row_in_master, col_in_master, exact_method);
 			}
 			else if (row_in_master < g.num_nodes()) {
 				master_problem(row_in_master, h.num_nodes()) = compute_deletion_cost_(g, row_in_master);
@@ -140,8 +192,8 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 				master_problem(g.num_nodes(), col_in_master) = compute_insertion_cost_(h, col_in_master);
 			}
 		}
+		delete exact_method;
 	}
-
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -149,6 +201,34 @@ void
 Subgraph<UserNodeLabel, UserEdgeLabel>::
 lsape_init_graph_(const GEDGraph & graph) {
 	build_subgraphs_(graph);
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+GEDMethod<UserNodeLabel, UserEdgeLabel> *
+Subgraph<UserNodeLabel, UserEdgeLabel>::
+exact_method_factory_() const {
+	GEDMethod<UserNodeLabel, UserEdgeLabel> * exact_method{nullptr};
+	if (exact_method_ == Options::GEDMethod::ANCHOR_AWARE_GED) {
+		exact_method = new AnchorAwareGED<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+	}
+#ifdef GUROBI
+	else if (exact_method_ == Options::GEDMethod::F2) {
+		exact_method = new F2<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+	}
+	else if (exact_method_ == Options::GEDMethod::F3) {
+		exact_method = new F3<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+	}
+	else if (exact_method_ == Options::GEDMethod::COMPACT_MIP) {
+		exact_method = new CompactMIP<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+	}
+#endif
+	if (exact_options_ == "") {
+		exact_method->set_options(std::string("--map-root-to-root TRUE --time-limit 0.0001 --threads ") + std::to_string(this->num_threads_));
+	}
+	else {
+		exact_method->set_options(exact_options_ + " --map-root-to-root TRUE --threads " + std::to_string(this->num_threads_));
+	}
+	return exact_method;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -247,11 +327,12 @@ load_config_file_() const {
 template<class UserNodeLabel, class UserEdgeLabel>
 double
 Subgraph<UserNodeLabel, UserEdgeLabel>::
-compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k, Exact<UserNodeLabel, UserEdgeLabel> & exact) const {
+compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k, GEDMethod<UserNodeLabel, UserEdgeLabel> * exact_method) const {
+
 	const GEDGraph & subgraph_i{subgraphs_.at(subgraph_id_(g, i))};
 	const GEDGraph & subgraph_k{subgraphs_.at(subgraph_id_(h, k))};
 	Result result;
-	exact.run_as_util(subgraph_i, subgraph_k, result);
+	exact_method->run_as_util(subgraph_i, subgraph_k, result);
 	return result.upper_bound();
 }
 

@@ -49,13 +49,13 @@ public:
 
 private:
 
-	std::map<std::pair<GEDGraph::NodeID, GEDGraph::NodeID>, GRBVar> x_;
+	std::map<NodeMap::Assignment, GRBVar> x_;
 
 	std::map<std::pair<GEDGraph::EdgeID, GEDGraph::EdgeID>, GRBVar> y_;
 
 	double constant_;
 
-	// Virtual member functions to be overridden by derived classes.
+	// Virtual member functions inherited from MIPBasedMethod.
 
 	virtual void mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) final;
 
@@ -70,8 +70,5 @@ private:
 };
 
 }
-
-
-
 
 #endif /* SRC_METHODS_F2_HPP_ */

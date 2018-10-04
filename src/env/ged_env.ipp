@@ -366,8 +366,8 @@ set_method(Options::GEDMethod method, const std::string & options) {
 	case Options::GEDMethod::RING:
 		ged_method_ = new Ring<UserNodeLabel, UserEdgeLabel>(ged_data_);
 		break;
-	case Options::GEDMethod::EXACT:
-		ged_method_ = new Exact<UserNodeLabel, UserEdgeLabel>(ged_data_);
+	case Options::GEDMethod::ANCHOR_AWARE_GED:
+		ged_method_ = new AnchorAwareGED<UserNodeLabel, UserEdgeLabel>(ged_data_);
 		break;
 	case Options::GEDMethod::WALKS:
 		ged_method_ = new Walks<UserNodeLabel, UserEdgeLabel>(ged_data_);
@@ -402,6 +402,12 @@ set_method(Options::GEDMethod method, const std::string & options) {
 #ifdef GUROBI
 	case Options::GEDMethod::F2:
 		ged_method_ = new F2<UserNodeLabel, UserEdgeLabel>(ged_data_);
+		break;
+	case Options::GEDMethod::F3:
+		ged_method_ = new F3<UserNodeLabel, UserEdgeLabel>(ged_data_);
+		break;
+	case Options::GEDMethod::COMPACT_MIP:
+		ged_method_ = new CompactMIP<UserNodeLabel, UserEdgeLabel>(ged_data_);
 		break;
 #endif
 	}

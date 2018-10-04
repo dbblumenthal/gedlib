@@ -40,6 +40,7 @@ namespace ged {
  * | <tt>\--relax TRUE\|FALSE </tt> | if @p TRUE, all integrality constraints are relaxed | @p FALSE | if @p TRUE, the model populated by mip_populate_model_() must be continuous |
  * | <tt>\--tune TRUE\|FALSE </tt> | if @p TRUE, the parameters of the model are tuned before optimization | @p FALSE | <a href="http://www.gurobi.com/documentation/8.0/refman/cpp_grbmodel_tune.html#cppmethod:GRBModel::tune">Gurobi Manual</a> |
  * | <tt>\--tune-time-limit @<convertible to double@></tt> | time limit for parameter tuning in seconds | @p 0 | if less or equal @p 0, the time limit is set automatically |
+ * | <tt>\--map-root-to-root TRUE\|FALSE</tt> | decide if the roots of the input graphs are mapped to each other | @p FALSE | if @p TRUE, the nodes with ID 0 of the input graphs are mapped to each other |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class MIPBasedMethod : public GEDMethod<UserNodeLabel, UserEdgeLabel> {
@@ -64,6 +65,11 @@ protected:
 	 * @brief If @p true, the model populated by mip_populate_model_() must be continuous.
 	 */
 	bool relax_;
+
+	/*!
+	 * @brief If @p true, the model populated by mip_populate_model_() must enforce that the nodes with ID 0 are mapped to each other.
+	 */
+	bool map_root_to_root_;
 
 private:
 

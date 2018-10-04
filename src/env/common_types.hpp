@@ -150,6 +150,8 @@ struct Options {
 	enum class GEDMethod {
 #ifdef GUROBI
 		F2,                  //!< Selects ged::F2.
+		F3,                  //!< Selects ged::F3.
+		COMPACT_MIP,         //!< Selects ged::CompactMIP.
 #endif
 		BRANCH,              //!< Selects ged::Branch.
 		BRANCH_FAST,         //!< Selects ged::BranchFast.
@@ -159,7 +161,7 @@ struct Options {
 		PARTITION,           //!< Selects ged::Partition.
 		HYBRID,              //!< Selects ged::Hybrid.
 		RING,                //!< Selects ged::Ring.
-		EXACT,               //!< Selects ged::Exact.
+		ANCHOR_AWARE_GED,    //!< Selects ged::AnchorAwareGED.
 		WALKS,               //!< Selects ged::Walks.
 		IPFP,                //!< Selects ged::IPFP
 		BIPARTITE,           //!< Selects ged::Bipartite.

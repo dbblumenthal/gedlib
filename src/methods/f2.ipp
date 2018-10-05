@@ -194,6 +194,31 @@ mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model,
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
+bool
+F2<UserNodeLabel, UserEdgeLabel>::
+mip_model_to_lsape_projection_problem_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, DMatrix & lsape_instance) {
+
+	std::vector<double> delete_node(g.num_nodes(), 0);
+	std::vector<double> insert_node(h.num_nodes(), 0);
+
+	GEDGraph::NodeID i, k;
+	for (auto it = x_.begin(); it != x_.end(); it++) {
+		i = it->first.first;
+		k = it->first.second;
+		lsape_instance(i, k) -= it->second.get(GRB_DoubleAttr_X);
+		delete_node[i] += it->second.get(GRB_DoubleAttr_X);
+		insert_node[k] += it->second.get(GRB_DoubleAttr_X);
+	}
+	for (i = 0; i < g.num_nodes(); i++) {
+		lsape_instance(i, h.num_nodes()) = delete_node.at(i);
+	}
+	for (k = 0; k < h.num_nodes(); k++) {
+		lsape_instance(g.num_nodes(), k) = insert_node.at(k);
+	}
+	return true;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
 char
 F2<UserNodeLabel, UserEdgeLabel>::
 variable_type_() const {

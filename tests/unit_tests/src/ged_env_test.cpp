@@ -161,7 +161,7 @@ TEST_CASE("testing on MAO graphs") {
 		env.set_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS, "--threads 4 --tune TRUE --relax TRUE");
 		env.run_method(g, h);
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
-		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 
 		env.set_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
 		env.run_method(g, h);
@@ -173,7 +173,7 @@ TEST_CASE("testing on MAO graphs") {
 		env.set_method(ged::Options::GEDMethod::F2, "--threads 4 --tune TRUE --relax TRUE");
 		env.run_method(g, h);
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
-		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 
 		env.set_method(ged::Options::GEDMethod::F2, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
 		env.run_method(g, h);
@@ -185,7 +185,7 @@ TEST_CASE("testing on MAO graphs") {
 		env.set_method(ged::Options::GEDMethod::F1, "--threads 4 --tune TRUE --relax TRUE");
 		env.run_method(g, h);
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
-		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 
 		env.set_method(ged::Options::GEDMethod::F1, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
 		env.run_method(g, h);
@@ -197,7 +197,7 @@ TEST_CASE("testing on MAO graphs") {
 		env.set_method(ged::Options::GEDMethod::COMPACT_MIP, "--threads 4 --tune TRUE --relax TRUE");
 		env.run_method(g, h);
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
-		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 
 		env.set_method(ged::Options::GEDMethod::COMPACT_MIP, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
 		env.run_method(g, h);

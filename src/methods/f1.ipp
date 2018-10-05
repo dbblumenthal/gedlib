@@ -204,6 +204,25 @@ mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model,
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
+bool
+F1<UserNodeLabel, UserEdgeLabel>::
+mip_model_to_lsape_projection_problem_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, DMatrix & lsape_instance) {
+	GEDGraph::NodeID i, k;
+	for (auto it = x_.begin(); it != x_.end(); it++) {
+		i = it->first.first;
+		k = it->first.second;
+		lsape_instance(i, k) -= it->second.get(GRB_DoubleAttr_X);
+	}
+	for (i = 0; i < g.num_nodes(); i++) {
+		lsape_instance(i, h.num_nodes()) -= u_.at(i).get(GRB_DoubleAttr_X);
+	}
+	for (k = 0; k < h.num_nodes(); k++) {
+		lsape_instance(g.num_nodes(), k) -= v_.at(k).get(GRB_DoubleAttr_X);
+	}
+	return true;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
 char
 F1<UserNodeLabel, UserEdgeLabel>::
 variable_type_() const {

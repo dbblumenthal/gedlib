@@ -60,6 +60,8 @@ private:
 
 	virtual void mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, NodeMap & node_map) final;
 
+	virtual bool mip_model_to_lsape_projection_problem_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, DMatrix & lsape_instance) final;
+
 	// Private helper function.
 
 	char variable_type_() const;

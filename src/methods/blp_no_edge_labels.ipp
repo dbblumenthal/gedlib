@@ -172,6 +172,19 @@ mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model,
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
+bool
+BLPNoEdgeLabels<UserNodeLabel, UserEdgeLabel>::
+mip_model_to_lsape_projection_problem_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, DMatrix & lsape_instance) {
+	GEDGraph::NodeID i, k;
+	for (auto it = x_.begin(); it != x_.end(); it++) {
+		i = std::min(it->first.first, g.num_nodes());
+		k = std::min(it->first.second, h.num_nodes());
+		lsape_instance(i, k) -= it->second.get(GRB_DoubleAttr_X);
+	}
+	return true;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
 char
 BLPNoEdgeLabels<UserNodeLabel, UserEdgeLabel>::
 variable_type_() const {

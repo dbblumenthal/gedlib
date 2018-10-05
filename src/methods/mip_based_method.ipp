@@ -39,11 +39,13 @@ MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 MIPBasedMethod(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 GEDMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
 relax_{false},
-map_root_to_root_{false},
+map_root_to_root_{true},
 num_threads_{1},
 time_limit_in_sec_{0},
 tune_{false},
-tune_time_limit_in_sec_{0} {}
+tune_time_limit_in_sec_{0},
+lsape_model_{LSAPESolver::ECBP},
+project_to_node_map_{true} {}
 
 // === Definitions of member functions inherited from GEDMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -98,10 +100,21 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 				result.set_lower_bound(model.get(GRB_DoubleAttr_ObjVal));
 			}
 			if (not relax_) {
-				std::size_t node_map_id{result.add_node_map(g.num_nodes(), h.num_nodes())};
-				mip_model_to_node_map_(g, h, model, result.node_map(node_map_id));
-				if (map_root_to_root_ and (result.node_map(node_map_id).image(0) != 0)) {
+				result.add_node_map(g.num_nodes(), h.num_nodes());
+				mip_model_to_node_map_(g, h, model, result.node_map(0));
+				if (map_root_to_root_ and (result.node_map(0).image(0) != 0)) {
 					throw Error("Root constrained model does not map root to root.");
+				}
+			}
+			else if (project_to_node_map_) {
+				DMatrix lsape_instance(g.num_nodes() + 1, h.num_nodes() + 1, 1);
+				if (mip_model_to_lsape_projection_problem_(g, h, model, lsape_instance)) {
+					LSAPESolver lsape_solver(&lsape_instance);
+					lsape_solver.set_model(lsape_model_);
+					lsape_solver.solve();
+					result.add_node_map(g.num_nodes(), h.num_nodes());
+					util::construct_node_map_from_solver(lsape_solver, result.node_map(0));
+					this->ged_data_.compute_induced_cost(g, h, result.node_map(0));
 				}
 			}
 		}
@@ -125,6 +138,39 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		else if (arg != "FALSE") {
 			throw Error(std::string("Invalid argument \"") + arg  + "\" for option relax. Usage: options = \"[--relax TRUE|FALSE] [...]\"");
+		}
+		is_valid_option = true;
+	}
+	else if (option == "project-to-node-map") {
+		if (arg == "FALSE") {
+			project_to_node_map_ = false;
+		}
+		else if (arg != "FALSE") {
+			throw Error(std::string("Invalid argument \"") + arg  + "\" for option project-to-node-map. Usage: options = \"[--project-to-node-map TRUE|FALSE] [...]\"");
+		}
+		is_valid_option = true;
+	}
+	else if (option == "lsape-model") {
+		if (arg == "EBP") {
+			lsape_model_ = LSAPESolver::EBP;
+		}
+		else if (arg  == "FLWC") {
+			lsape_model_ = LSAPESolver::FLWC;
+		}
+		else if (arg  == "FLCC") {
+			lsape_model_ = LSAPESolver::FLCC;
+		}
+		else if (arg  == "FBP") {
+			lsape_model_ = LSAPESolver::FBP;
+		}
+		else if (arg == "SFBP") {
+			lsape_model_ = LSAPESolver::SFBP;
+		}
+		else if (arg  == "FBP0") {
+			lsape_model_ = LSAPESolver::FBP0;
+		}
+		else if (arg  != "ECBP") {
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option lsape-model. Usage: options = \"[--lsape-model ECBP|EBP|FLWC|FLCC|FBP|SFBP|FBP0] [...]\"");
 		}
 		is_valid_option = true;
 	}
@@ -185,9 +231,9 @@ std::string
 MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (mip_valid_options_string_() == "") {
-		return "[--relax <arg>] [--map-root-to-root <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>]";
+		return "[--relax <arg>] [--map-root-to-root <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>] [--lsape-model <arg>]";
 	}
-	return mip_valid_options_string_() + " [--relax <arg>] [--map-root-to-root <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>]";
+	return mip_valid_options_string_() + " [--relax <arg>] [--project-to-node-map <arg>] [--map-root-to-root <arg>] [--tune <arg>] [--threads <arg>] [--time-limit <arg>] [--tune-time-limit <arg>] [--lsape-model <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -195,11 +241,13 @@ void
 MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_set_default_options_() {
 	relax_ = false;
+	project_to_node_map_ = true;
 	map_root_to_root_ = false;
 	tune_ = false;
 	num_threads_ = 1;
 	time_limit_in_sec_ = 0;
 	tune_time_limit_in_sec_ = 0;
+	lsape_model_ = LSAPESolver::ECBP;
 	mip_set_default_options_();
 }
 
@@ -214,6 +262,13 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, NodeMap & node_map) {}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+bool
+MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
+mip_model_to_lsape_projection_problem_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, DMatrix & lsape_instance) {
+	return false;
+}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void

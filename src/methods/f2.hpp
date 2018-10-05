@@ -31,7 +31,7 @@ namespace ged {
 
 /*!
  * @brief Mixed integer linear programming formulation of the graph edit distance.
- * @details Implements the MIP formulation suggested in:
+ * @details Implements the size-reduced MIP formulation F2 suggested in:
  * - J. Lerouge, Z. Abu-Aisheh, R. Raveaux, P. H&eacute;roux, and S. Adam:
  *   &ldquo;New binary linear programming formulation to compute the graph edit distance&rdquo;,
  *   https://doi.org/10.1016/j.patcog.2017.07.029
@@ -53,13 +53,9 @@ private:
 
 	std::map<std::pair<GEDGraph::EdgeID, GEDGraph::EdgeID>, GRBVar> y_;
 
-	double constant_;
-
 	// Virtual member functions inherited from MIPBasedMethod.
 
 	virtual void mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) final;
-
-	virtual double mip_objective_constant_(const GEDGraph & g, const GEDGraph & h) final;
 
 	virtual void mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, NodeMap & node_map) final;
 

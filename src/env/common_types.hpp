@@ -149,9 +149,10 @@ struct Options {
 	 */
 	enum class GEDMethod {
 #ifdef GUROBI
+		F1,                  //!< Selects ged::F1.
 		F2,                  //!< Selects ged::F2.
-		F3,                  //!< Selects ged::F3.
 		COMPACT_MIP,         //!< Selects ged::CompactMIP.
+		BLP_NO_EDGE_LABELS,  //!< Selects ged::BLPNoEdgeLabels.
 #endif
 		BRANCH,              //!< Selects ged::Branch.
 		BRANCH_FAST,         //!< Selects ged::BranchFast.

@@ -400,14 +400,17 @@ set_method(Options::GEDMethod method, const std::string & options) {
 		ged_method_ = new SimulatedAnnealing<UserNodeLabel, UserEdgeLabel>(ged_data_);
 		break;
 #ifdef GUROBI
+	case Options::GEDMethod::F1:
+		ged_method_ = new F1<UserNodeLabel, UserEdgeLabel>(ged_data_);
+		break;
 	case Options::GEDMethod::F2:
 		ged_method_ = new F2<UserNodeLabel, UserEdgeLabel>(ged_data_);
 		break;
-	case Options::GEDMethod::F3:
-		ged_method_ = new F3<UserNodeLabel, UserEdgeLabel>(ged_data_);
-		break;
 	case Options::GEDMethod::COMPACT_MIP:
 		ged_method_ = new CompactMIP<UserNodeLabel, UserEdgeLabel>(ged_data_);
+		break;
+	case Options::GEDMethod::BLP_NO_EDGE_LABELS:
+		ged_method_ = new BLPNoEdgeLabels<UserNodeLabel, UserEdgeLabel>(ged_data_);
 		break;
 #endif
 	}

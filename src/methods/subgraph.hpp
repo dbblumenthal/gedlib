@@ -41,8 +41,8 @@ namespace ged {
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--load @<filename@></tt> | path to existing configuration file | not specified | n.a. |
  * | <tt>\--save @<filename@></tt> | path where to save configuration file | not specified | n.a. |
- * | <tt>\--subproblem-solver ANCHOR_AWARE_GED\|%F2\|%F3\|COMPACT_MIP</tt> | method for exactly solving the subproblems | @p ANCHOR_AWARE_GED | the methods %F2, %F3, and COMPACT_MIP are available only if GEDLIB is installed with Gurobi |
- * | <tt>\--subproblem-solver-options '[--@<option@> @<arg@>] [...]'</tt> | options string passed to the ground truth method | @p '' | ged::AnchorAwareGED, ged::F2, ged::F3, ged::CompactMIP |
+ * | <tt>\--subproblem-solver ANCHOR_AWARE_GED\|%F1\|%F2\|COMPACT_MIP</tt> | method for exactly solving the subproblems | @p ANCHOR_AWARE_GED | the methods %F1, %F2, and COMPACT_MIP are available only if GEDLIB is installed with Gurobi |
+ * | <tt>\--subproblem-solver-options '[--@<option@> @<arg@>] [...]'</tt> | options string passed to the ground truth method | @p '' | ged::AnchorAwareGED, ged::F1, ged::F2, ged::CompactMIP |
  * | <tt>\--depth-range @<smaller convertible to int greater 0@>,@<larger convertible to int greater 0@></tt> | range that specifies possible depths of the subgraphs | <tt>1,5</tt> | if the range is larger than one, the best choice is determined via cross-validation during initialization and the mean is used if the method is run without prior initialization |
  */
 template<class UserNodeLabel, class UserEdgeLabel>

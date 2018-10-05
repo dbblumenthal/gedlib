@@ -20,46 +20,50 @@
 ***************************************************************************/
 
 /*!
- * @file f3.hpp
- * @brief ged::F3 class declaration.
+ * @file f1.hpp
+ * @brief ged::F1 class declaration.
  */
 
-#ifndef SRC_METHODS_F3_HPP_
-#define SRC_METHODS_F3_HPP_
+#ifndef SRC_METHODS_F1_HPP_
+#define SRC_METHODS_F1_HPP_
 
 namespace ged {
 
 /*!
  * @brief Mixed integer linear programming formulation of the graph edit distance.
- * @details Implements the MIP formulation suggested in:
- * - M. Darwiche, R. Raveaux, D. Conte, V. T'Kindt:
- *   &ldquo;Graph edit distance in the exact context&rdquo;,
- *  https://doi.org/10.1007/978-3-319-97785-0_29
+ * @details Implements the straightforward MIP formulation F1 suggested in:
+ * - J. Lerouge, Z. Abu-Aisheh, R. Raveaux, P. H&eacute;roux, and S. Adam:
+ *   &ldquo;New binary linear programming formulation to compute the graph edit distance&rdquo;,
+ *   https://doi.org/10.1016/j.patcog.2017.07.029
  *
  * Does not support any options except for the ones supported by ged::MIPBasedMethod.
  */
 template<class UserNodeLabel, class UserEdgeLabel>
-class F3 : public MIPBasedMethod<UserNodeLabel, UserEdgeLabel> {
+class F1 : public MIPBasedMethod<UserNodeLabel, UserEdgeLabel> {
 
 public:
 
-	virtual ~F3();
+	virtual ~F1();
 
-	F3(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data);
+	F1(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data);
 
 private:
 
 	std::map<std::pair<GEDGraph::NodeID, GEDGraph::NodeID>, GRBVar> x_;
 
-	std::map<std::pair<GEDGraph::EdgeID, std::pair<GEDGraph::NodeID, GEDGraph::NodeID>>, GRBVar> y_;
+	std::map<std::pair<GEDGraph::EdgeID, GEDGraph::EdgeID>, GRBVar> y_;
 
-	double constant_;
+	std::vector<GRBVar> u_;
+
+	std::vector<GRBVar> v_;
+
+	std::map<GEDGraph::EdgeID, GRBVar>  e_;
+
+	std::map<GEDGraph::EdgeID, GRBVar>  f_;
 
 	// Virtual member functions inherited from MIPBasedMethod.
 
 	virtual void mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) final;
-
-	virtual double mip_objective_constant_(const GEDGraph & g, const GEDGraph & h) final;
 
 	virtual void mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, NodeMap & node_map) final;
 
@@ -72,4 +76,4 @@ private:
 }
 
 
-#endif /* SRC_METHODS_F3_HPP_ */
+#endif /* SRC_METHODS_F1_HPP_ */

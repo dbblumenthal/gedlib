@@ -21,7 +21,7 @@
 
 /*!
  * @file compact_mip.ipp
- * @brief
+ * @brief ged::CompactMIP class definition.
  */
 
 #ifndef SRC_METHODS_COMPACT_MIP_IPP_
@@ -218,6 +218,9 @@ mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model,
 			node_map.add_assignment(i, k);
 		}
 	}
+
+	// Set induced cost.
+	node_map.set_induced_cost(model.get(GRB_DoubleAttr_ObjVal));
 
 }
 

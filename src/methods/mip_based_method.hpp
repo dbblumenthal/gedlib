@@ -105,20 +105,11 @@ private:
 	virtual void mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model);
 
 	/*!
-	 * @brief Returns constant for objective function.
-	 * @param[in] g Input graph.
-	 * @param[in] h Input graph.
-	 * @return Constant to be added to the objective function after optimization.
-	 * @note Must be overridden by derived classes of ged::MIPBasedMethod which require that a constant is added to the objective function.
-	 */
-	virtual double mip_objective_constant_(const GEDGraph & g, const GEDGraph & h);
-
-	/*!
-	 * @brief Constructs a node map from a, possibly sub-optimally, solved model.
+	 * @brief Given a, possibly sub-optimally, solved model, this method constructs a node map and sets its induced cost.
 	 * @param[in] g Input graph.
 	 * @param[in] h Input graph.
 	 * @param[in] model Possibly sub-optimally solved model.
-	 * @param[out] node_map Node map to be constructed.
+	 * @param[out] node_map Node map which has to be constructed and whose induced cost has to be set.
 	 * @note Must be overridden by derived classes of ged::MIPBasedMethod.
 	 */
 	virtual void mip_model_to_node_map_(const GEDGraph & g, const GEDGraph & h, GRBModel & model, NodeMap & node_map);

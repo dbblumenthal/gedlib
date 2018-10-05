@@ -294,20 +294,20 @@ lsape_parse_option_(const std::string & option, const std::string & arg) {
 			ground_truth_method_ = new AnchorAwareGED<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 		}
 #ifdef GUROBI
+		else if (arg == "F1") {
+			delete ground_truth_method_;
+			ground_truth_method_ = new F1<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+		}
 		else if (arg == "F2") {
 			delete ground_truth_method_;
 			ground_truth_method_ = new F2<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
-		}
-		else if (arg == "F3") {
-			delete ground_truth_method_;
-			ground_truth_method_ = new F3<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 		}
 		else if (arg == "COMPACT_MIP") {
 			delete ground_truth_method_;
 			ground_truth_method_ = new CompactMIP<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 		}
 		else if (arg != "IPFP") {
-			throw ged::Error(std::string("Invalid argument ") + arg  + " for option ground-truth-method. Usage: options = \"[--ground-truth-method ANCHOR_AWARE|F2|F3|COMPACT_MIP|IPFP] [...]\"");
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option ground-truth-method. Usage: options = \"[--ground-truth-method ANCHOR_AWARE|F1|F2|COMPACT_MIP|IPFP] [...]\"");
 		}
 #else
 		else if (arg != "IPFP") {

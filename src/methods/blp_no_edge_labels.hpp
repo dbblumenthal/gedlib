@@ -20,39 +20,42 @@
 ***************************************************************************/
 
 /*!
- * @file compact_mip.hpp
- * @brief ged::CompactMIP class declaration.
+ * @file blp_no_edge_labels.hpp
+ * @brief ged::BLPNoEdgeLabels class declaration.
  */
 
-#ifndef SRC_METHODS_COMPACT_MIP_HPP_
-#define SRC_METHODS_COMPACT_MIP_HPP_
-
+#ifndef SRC_METHODS_BLP_NO_EDGE_LABELS_HPP_
+#define SRC_METHODS_BLP_NO_EDGE_LABELS_HPP_
 
 namespace ged {
 
 /*!
- * @brief Mixed integer linear programming formulation of the graph edit distance.
- * @details Implements the compact MIP formulation suggested in:
- * - D. B. Blumenthal and J. Gamper:
- *   &ldquo;On the exact computation of the graph edit distance&rdquo;,
- *   https://doi.org/10.1016/j.patrec.2018.05.002
+ * @brief Binary linear programming formulation of the graph edit distance without edge labels.
+ * @details Implements the BLP formulation suggested in:
+ * - D. Justice and A. Hero:
+ *   &ldquo;A binary linear programming formulation of the graph edit distance&rdquo;,
+ *   https://doi.org/10.1109/TPAMI.2006.152
  *
  * Does not support any options except for the ones supported by ged::MIPBasedMethod.
+ * @note This BLP formulation is designed for graphs without edge labels. If used for general graphs,
+ * it only provides lower and upper bounds.
  */
 template<class UserNodeLabel, class UserEdgeLabel>
-class CompactMIP : public MIPBasedMethod<UserNodeLabel, UserEdgeLabel> {
+class BLPNoEdgeLabels : public MIPBasedMethod<UserNodeLabel, UserEdgeLabel> {
 
 public:
 
-	virtual ~CompactMIP();
+	virtual ~BLPNoEdgeLabels();
 
-	CompactMIP(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data);
+	BLPNoEdgeLabels(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data);
 
 private:
 
 	std::map<NodeMap::Assignment, GRBVar> x_;
 
-	std::map<NodeMap::Assignment, GRBVar> z_;
+	std::map<NodeMap::Assignment, GRBVar> s_;
+
+	std::map<NodeMap::Assignment, GRBVar> t_;
 
 	// Virtual member functions inherited from MIPBasedMethod.
 
@@ -69,4 +72,5 @@ private:
 }
 
 
-#endif /* SRC_METHODS_COMPACT_MIP_HPP_ */
+
+#endif /* SRC_METHODS_BLP_NO_EDGE_LABELS_HPP_ */

@@ -156,6 +156,18 @@ TEST_CASE("testing on MAO graphs") {
 	}
 
 #ifdef GUROBI
+	SECTION("BLPNoEdgeLabels") {
+		std::cout << "\n===running BLPNoEdgeLabels ===\n";
+		env.set_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS, "--threads 4 --tune TRUE --relax TRUE");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+
+		env.set_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1\"\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+	}
 	SECTION("F2") {
 		std::cout << "\n===running F2 ===\n";
 		env.set_method(ged::Options::GEDMethod::F2, "--threads 4 --tune TRUE --relax TRUE");
@@ -168,14 +180,14 @@ TEST_CASE("testing on MAO graphs") {
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1\"\n";
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 	}
-	SECTION("F3") {
-		std::cout << "\n===running F3 ===\n";
-		env.set_method(ged::Options::GEDMethod::F3, "--threads 4 --tune TRUE --relax TRUE");
+	SECTION("F1") {
+		std::cout << "\n===running F1 ===\n";
+		env.set_method(ged::Options::GEDMethod::F1, "--threads 4 --tune TRUE --relax TRUE");
 		env.run_method(g, h);
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --relax TRUE\"\n";
 		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 
-		env.set_method(ged::Options::GEDMethod::F3, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
+		env.set_method(ged::Options::GEDMethod::F1, "--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1");
 		env.run_method(g, h);
 		std::cout << "\noptions = \"--threads 4 --tune TRUE --time-limit 10 --tune-time-limit 1\"\n";
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";

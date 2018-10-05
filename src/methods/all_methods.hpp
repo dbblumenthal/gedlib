@@ -50,9 +50,10 @@
 // Declarations of concrete derived classes of MIPBasedMethod.
 
 #ifdef GUROBI
+#include "f1.hpp"				   // Declares F1. Dependencies: "mip_based_method.hpp".
 #include "f2.hpp"				   // Declares F2. Dependencies: "mip_based_method.hpp".
-#include "f3.hpp"				   // Declares F3. Dependencies: "mip_based_method.hpp".
 #include "compact_mip.hpp"		   // Declares CompactMIP. Dependencies: "mip_based_method.hpp".
+#include "blp_no_edge_labels.hpp"  // Declares BLPNoEdgeLabels. Dependencies "mip_based_method.hpp".
 #endif
 
 // Declarations of concrete derived classes of LSAPEBasedMethod.
@@ -99,9 +100,10 @@
 // Definitions of concrete derived classes of MIPBasedMethod.
 
 #ifdef GUROBI
+#include "f1.ipp"				   // Defines F1. Dependencies: "f1.hpp", "mip_based_method.hpp".
 #include "f2.ipp"				   // Defines F2. Dependencies: "f2.hpp", "mip_based_method.hpp".
-#include "f3.ipp"				   // Defines F3. Dependencies: "f3.hpp", "mip_based_method.hpp".
 #include "compact_mip.ipp"		   // Defines CompactMIP. Dependencies: "compact_mip.hpp", "mip_based_method.hpp".
+#include "blp_no_edge_labels.ipp"  // Defines BLPNoEdgeLabels. Dependencies "blp_no_edge_labels.hpp", "mip_based_method.hpp".
 #endif
 
 // Definitions of concrete derived classes of LSAPEBasedMethod.

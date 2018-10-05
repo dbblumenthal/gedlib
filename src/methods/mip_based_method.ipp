@@ -94,13 +94,11 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 			throw Error("The model is infeasible.");
 		}
 		else if ((model_status == GRB_OPTIMAL) or (model_status == GRB_SUBOPTIMAL) or (model_status == GRB_TIME_LIMIT)) {
-			double obj_val{model.get(GRB_DoubleAttr_ObjVal) + mip_objective_constant_(g, h)};
 			if (model_status == GRB_OPTIMAL) {
-				result.set_lower_bound(obj_val);
+				result.set_lower_bound(model.get(GRB_DoubleAttr_ObjVal));
 			}
 			if (not relax_) {
 				std::size_t node_map_id{result.add_node_map(g.num_nodes(), h.num_nodes())};
-				result.node_map(node_map_id).set_induced_cost(obj_val);
 				mip_model_to_node_map_(g, h, model, result.node_map(node_map_id));
 				if (map_root_to_root_ and (result.node_map(node_map_id).image(0) != 0)) {
 					throw Error("Root constrained model does not map root to root.");
@@ -211,13 +209,6 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
 mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) {}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-double
-MIPBasedMethod<UserNodeLabel, UserEdgeLabel>::
-mip_objective_constant_(const GEDGraph & g, const GEDGraph & h) {
-	return 0.0;
-}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void

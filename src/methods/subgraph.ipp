@@ -109,17 +109,17 @@ lsape_parse_option_(const std::string & option, const std::string & arg) {
 	}
 	else if (option == "subproblem-solver") {
 #ifdef GUROBI
-		if (arg == "F2") {
-			exact_method_ = Options::GEDMethod::F2;
+		if (arg == "F1") {
+			exact_method_ = Options::GEDMethod::F1;
 		}
-		else if (arg == "F3") {
-			exact_method_ = Options::GEDMethod::F3;
+		else if (arg == "F2") {
+			exact_method_ = Options::GEDMethod::F2;
 		}
 		else if (arg == "COMPACT_MIP") {
 			exact_method_ = Options::GEDMethod::COMPACT_MIP;
 		}
 		else if (arg != "ANCHOR_AWARE_GED") {
-			throw ged::Error(std::string("Invalid argument ") + arg  + " for option subproblem-solver. Usage: options = \"[--subproblem-solver ANCHOR_AWARE|F2|F3|COMPACT_MIP] [...]\"");
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option subproblem-solver. Usage: options = \"[--subproblem-solver ANCHOR_AWARE|F1|F2|COMPACT_MIP] [...]\"");
 		}
 #else
 		if (arg != "ANCHOR_AWARE_GED") {
@@ -212,11 +212,11 @@ exact_method_factory_() const {
 		exact_method = new AnchorAwareGED<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 	}
 #ifdef GUROBI
+	else if (exact_method_ == Options::GEDMethod::F1) {
+		exact_method = new F1<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+	}
 	else if (exact_method_ == Options::GEDMethod::F2) {
 		exact_method = new F2<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
-	}
-	else if (exact_method_ == Options::GEDMethod::F3) {
-		exact_method = new F3<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 	}
 	else if (exact_method_ == Options::GEDMethod::COMPACT_MIP) {
 		exact_method = new CompactMIP<UserNodeLabel, UserEdgeLabel>(this->ged_data_);

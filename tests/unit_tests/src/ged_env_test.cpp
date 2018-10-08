@@ -155,6 +155,18 @@ TEST_CASE("testing on MAO graphs") {
 		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 	}
 
+	SECTION("HED") {
+		std::cout << "\n===running HED ===\n";
+		env.set_method(ged::Options::GEDMethod::HED, "--threads 1");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 1\"\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+		env.set_method(ged::Options::GEDMethod::HED, "--threads 4");
+		env.run_method(g, h);
+		std::cout << "\noptions = \"--threads 4\"\n";
+		std::cout << "lower bound = " << env.get_lower_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+	}
+
 #ifdef GUROBI
 	SECTION("BLPNoEdgeLabels") {
 		std::cout << "\n===running BLPNoEdgeLabels ===\n";

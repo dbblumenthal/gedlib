@@ -172,7 +172,8 @@ struct Options {
 		BIPARTITE_ML,        //!< Selects ged::BipartiteML.
 		REFINE,              //!< Selects ged::Refine.
 		BP_BEAM,             //!< Selects ged::BPBeam.
-		SIMULATED_ANNEALING  //!< Selects ged::SimulatedAnnealing.
+		SIMULATED_ANNEALING, //!< Selects ged::SimulatedAnnealing.
+		HED				     //!< Selects ged::HED.
 	};
 
 	/*!

@@ -399,6 +399,9 @@ set_method(Options::GEDMethod method, const std::string & options) {
 	case Options::GEDMethod::SIMULATED_ANNEALING:
 		ged_method_ = new SimulatedAnnealing<UserNodeLabel, UserEdgeLabel>(ged_data_);
 		break;
+	case Options::GEDMethod::HED:
+		ged_method_ = new HED<UserNodeLabel, UserEdgeLabel>(ged_data_);
+		break;
 #ifdef GUROBI
 	case Options::GEDMethod::F1:
 		ged_method_ = new F1<UserNodeLabel, UserEdgeLabel>(ged_data_);

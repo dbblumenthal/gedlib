@@ -41,10 +41,11 @@
 // Declarations of concrete derived classes of GEDMethod.
 
 #include "branch_tight.hpp"        // Declares BranchTight. Dependencies: "ged_method.hpp".
-#include "anchor_aware_ged.hpp"               // Declares Exact. Dependencies: "ged_method.hpp".
+#include "anchor_aware_ged.hpp"    // Declares Exact. Dependencies: "ged_method.hpp".
 #include "partition.hpp"           // Declares Partition. Dependencies: "ged_method.hpp".
 #include "hybrid.hpp"              // Declares Hybrid. Dependencies: "ged_method.hpp", "partition.hpp".
 #include "branch_compact.hpp"      // Declares BranchCompact. Dependencies: "ged_method.hpp".
+#include "hed.hpp"                 // Declares HED. Dependencies: "ged_method.hpp".
 #include "simulated_annealing.hpp" // Declares SimulatedAnnealing. Dependencies: "ged_method.hpp", "lsape_based_method.hpp"
 
 // Declarations of concrete derived classes of MIPBasedMethod.
@@ -91,10 +92,11 @@
 // Definitions of concrete derived classes of GEDMethod.
 
 #include "branch_tight.ipp"        // Defines BranchTight. Dependencies: "branch_tight.hpp", "ged_method.hpp".
-#include "anchor_aware_ged.ipp"               // Defines Exact. Dependencies: "exact.hpp", "ged_method.hpp", "ipfp.hpp".
+#include "anchor_aware_ged.ipp"    // Defines Exact. Dependencies: "exact.hpp", "ged_method.hpp", "ipfp.hpp".
 #include "partition.ipp"           // Defines Partition. Dependencies: "partition.hpp", "ged_method.hpp".
 #include "hybrid.ipp"              // Defines Hybrid. Dependencies: "hybrid.hpp", "ged_method.hpp", "partition.hpp", "branch_uniform.hpp".
 #include "branch_compact.ipp"      // Defines BranchCompact. Dependencies: "branch_compact.hpp", "ged_method.hpp".
+#include "hed.ipp"                 // Defines HED. Dependencies: "hed.hpp", "ged_method.hpp".
 #include "simulated_annealing.ipp" // Defines SimulatedAnnealing. Dependencies: "simulated_annealing.hpp", "ged_method.hpp", "lsape_based_method.hpp", "bipartite.hpp", "branch_hpp", "branch_fast.hpp", "node.hpp", "ring.hpp", "subgraph.hpp", "walks.hpp".
 
 // Definitions of concrete derived classes of MIPBasedMethod.

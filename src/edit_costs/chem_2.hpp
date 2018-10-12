@@ -36,7 +36,7 @@ namespace ged {
  * @details Cost function for graphs that represent chemical compounds.
  * Nodes are expected to be attributed with a chemical symbol (named "chem").
  * Edges are expected to be attributed with their valence (named "valence").
- * The datasets PAH, MAO, Alkane, and Acyclic are part of GREYC's chemistry dataset which can be downloaded from https://brunl01.users.greyc.fr/CHEMISTRY/.
+ * The datasets pah, mao, alkane, and acyclic are part of GREYC's chemistry dataset which can be downloaded from https://brunl01.users.greyc.fr/CHEMISTRY/.
  * The datasets Mutagenicity and AIDS are contained in the IAM graph database repository which can be downloaded from http://www.fki.inf.unibe.ch/databases/iam-graph-database:
  * - K. Riesen, H. Bunke:
  *   &ldquo;IAM graph database repository for graph based pattern recognition and machine learning&rdquo;,

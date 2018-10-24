@@ -51,9 +51,6 @@ int main(int argc, char* argv[]) {
 	std::vector<std::string> datasets;
 	util::setup_datasets(datasets);
 	for (auto dataset : datasets) {
-		if (dataset == "Letter_HIGH" or dataset == "pah" or dataset == "AIDS") { // todo rm
-			continue;					// todo rm
-		}								// todo rm
 		try {
 			train_on_dataset(dataset);
 		}

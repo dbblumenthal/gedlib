@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file common_types.hpp
@@ -216,6 +216,86 @@ struct Options {
 	};
 
 };
+
+std::ostream & operator<<(std::ostream & os, const Options::GEDMethod & ged_method) {
+	switch (ged_method) {
+	case Options::GEDMethod::BRANCH:
+		os << "BRANCH";
+		break;
+	case Options::GEDMethod::BRANCH_FAST:
+		os << "BRANCH_FAST";
+		break;
+	case Options::GEDMethod::BRANCH_TIGHT:
+		os << "BRANCH_TIGHT";
+		break;
+	case Options::GEDMethod::BRANCH_UNIFORM:
+		os << "BRANCH_UNIFORM";
+		break;
+	case Options::GEDMethod::BRANCH_COMPACT:
+		os << "BRANCH_COMPACT";
+		break;
+	case Options::GEDMethod::PARTITION:
+		os << "PARTITION";
+		break;
+	case Options::GEDMethod::HYBRID:
+		os << "HYBRID";
+		break;
+	case Options::GEDMethod::RING:
+		os << "RING";
+		break;
+	case Options::GEDMethod::ANCHOR_AWARE_GED:
+		os << "ANCHOR_AWARE_GED";
+		break;
+	case Options::GEDMethod::WALKS:
+		os << "WALKS";
+		break;
+	case Options::GEDMethod::IPFP:
+		os << "IPFP";
+		break;
+	case Options::GEDMethod::BIPARTITE:
+		os << "BIPARTITE";
+		break;
+	case Options::GEDMethod::SUBGRAPH:
+		os << "SUBGRAPH";
+		break;
+	case Options::GEDMethod::NODE:
+		os << "NODE";
+		break;
+	case Options::GEDMethod::RING_ML:
+		os << "RING_ML";
+		break;
+	case Options::GEDMethod::BIPARTITE_ML:
+		os << "BIPARTITE_ML";
+		break;
+	case Options::GEDMethod::REFINE:
+		os << "REFINE";
+		break;
+	case Options::GEDMethod::BP_BEAM:
+		os << "BP_BEAM";
+		break;
+	case Options::GEDMethod::SIMULATED_ANNEALING:
+		os << "SIMULATED_ANNEALING";
+		break;
+	case Options::GEDMethod::HED:
+		os << "HED";
+		break;
+#ifdef GUROBI
+	case Options::GEDMethod::F1:
+		os << "F1";
+		break;
+	case Options::GEDMethod::F2:
+		os << "F2";
+		break;
+	case Options::GEDMethod::COMPACT_MIP:
+		os << "COMPACT_MIP";
+		break;
+	case Options::GEDMethod::BLP_NO_EDGE_LABELS:
+		os << "BLP_NO_EDGE_LABELS";
+		break;
+#endif
+	}
+	return os;
+}
 
 }
 

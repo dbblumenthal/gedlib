@@ -41,10 +41,6 @@ namespace ged {
  *   &ldquo;A first step towards exact graph edit distance using bipartite graph matching&rdquo;,
  *   https://doi.org/10.1007/978-3-319-18224-7_8,
  *
- * and the extension MLBP-Beam suggested in:
- * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
- *   &ldquo;Designing heuristics for graph edit distance.&rdquo;,
- *   To be submitted to PR.
  *
  * Supports the following options in addition to the ones supported by ged::LSBasedMethod:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |

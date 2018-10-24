@@ -140,6 +140,13 @@ public:
 	void init_method();
 
 	/*!
+	 * @brief Provides access to the IDs of the graphs contained in the environment.
+	 * @return Pair <tt>(ID of first graphs, ID of last graph + 1)</tt> of graph IDs.
+	 * If both entries equal 0, the environment does not contain any graphs.
+	 */
+	std::pair<GEDGraph::GraphID, GEDGraph::GraphID> graph_ids() const;
+
+	/*!
 	 * @brief Returns lower bound for edit distance between the input graphs.
 	 * @param[in] g_id ID of an input graph that has been added to the environment.
 	 * @param[in] h_id ID of an input graph that has been added to the environment.

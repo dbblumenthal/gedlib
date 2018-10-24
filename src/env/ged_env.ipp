@@ -457,6 +457,13 @@ run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+std::pair<GEDGraph::GraphID, GEDGraph::GraphID>
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+graph_ids() const {
+	return std::make_pair(0, static_cast<GEDGraph::GraphID>(ged_data_.num_graphs_without_shuffled_copies()));
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 init_method() {

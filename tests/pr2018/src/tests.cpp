@@ -30,9 +30,9 @@ class Method {
 private:
 	// method and options
 	ged::Options::GEDMethod ged_method_;
-	std::string centralities_;
 	std::size_t num_threads_;
 	std::size_t num_solutions_;
+	std::string centralities_;
 	std::string set_distances_;
 	std::string ml_method_;
 
@@ -74,23 +74,11 @@ private:
 		return options;
 	}
 
-	std::string name_() const {
-		std::stringstream name;
-		name << ged_method_ << "__T-" << num_threads_ << "__S-" << num_solutions_ << "__C-" << centralities_;
-		if (set_distances_ != "") {
-			name << "__LED-" << set_distances_;
-		}
-		if (ml_method_ != "") {
-			name << "__ML-" << ml_method_;
-		}
-		return name.str();
-	}
-
 public:
 	Method(ged::Options::GEDMethod ged_method, std::size_t threads, std::size_t solutions, std::string centralities, const std::string & set_distances = "", const std::string ml_method = "") :
 		ged_method_{ged_method},
-		num_solutions_{solutions},
 		num_threads_{threads},
+		num_solutions_{solutions},
 		centralities_{centralities},
 		set_distances_{set_distances},
 		ml_method_{ml_method} {
@@ -121,23 +109,62 @@ public:
 			}
 		}
 
-		void run_on_dataset(const std::string & dataset, ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env, const std::string & result_filename) {
-			std::ofstream result_file(result_filename.c_str(), std::ios_base::app);
+		std::string name() const {
+			std::stringstream name;
+			name << ged_method_ << "__C-" << centralities_;
+			if (set_distances_ != "") {
+				name << "__LED-" << set_distances_;
+			}
+			if (ml_method_ != "") {
+				name << "__ML-" << ml_method_;
+			}
+			return name.str();
+		}
+
+		std::size_t num_threads() const {
+			return num_threads_;
+		}
+
+		std::size_t num_solutions() const {
+			return num_solutions_;
+		}
+
+		void run_on_dataset(const std::string & dataset, ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> & env, double & avg_ub, double & avg_runtime, double & avg_classification_ratio) const {
 			env.set_method(ged_method_, options_(dataset));
 			env.init_method();
-			for (auto g_id = env.graph_ids().first; g_id != env.graph_ids().second; g_id++) {
-				for (auto h_id = env.graph_ids().first; h_id != env.graph_ids().second; h_id++) {
+			std::size_t num_runs{(env.graph_ids().second * env.graph_ids().second) - env.graph_ids().second};
+			ged::ProgressBar progress_bar(num_runs);
+			std::cout << "\r\t" << name() << ", " << num_threads_ << " threads, " << num_solutions_ << " solutions: " << progress_bar << std::flush;
+			ged::GEDGraph::GraphID closest_graph_id{std::numeric_limits<ged::GEDGraph::GraphID>::max()};
+			double distance_to_closest_graph{std::numeric_limits<double>::infinity()};
+			avg_runtime = 0;
+			avg_ub = 0;
+			avg_classification_ratio = 0;
+			for (ged::GEDGraph::GraphID g_id = env.graph_ids().first; g_id != env.graph_ids().second; g_id++) {
+				closest_graph_id = std::numeric_limits<ged::GEDGraph::GraphID>::max();
+				distance_to_closest_graph = std::numeric_limits<double>::infinity();
+				for (ged::GEDGraph::GraphID h_id = env.graph_ids().first; h_id != env.graph_ids().second; h_id++) {
 					if (g_id == h_id) {
 						continue;
 					}
 					env.run_method(g_id, h_id);
-					result_file << name_() << ",";
-					result_file << env.get_graph_name(g_id) << "," << env.get_graph_class(g_id) << ",";
-					result_file << env.get_graph_name(h_id) << "," << env.get_graph_class(h_id) << ",";
-					result_file << env.get_runtime(g_id, h_id) << "," << env.get_upper_bound(g_id, h_id) << "\n";
+					avg_ub += env.get_upper_bound(g_id, h_id);
+					avg_runtime += env.get_runtime(g_id, h_id);
+					if (env.get_upper_bound(g_id, h_id) < distance_to_closest_graph) {
+						distance_to_closest_graph = env.get_upper_bound(g_id, h_id);
+						closest_graph_id = h_id;
+					}
+					progress_bar.increment();
+					std::cout << "\r\t" << name() << ", " << num_threads() << " threads, " << num_solutions() << " solutions: " << progress_bar << std::flush;
+				}
+				if (env.get_graph_class(g_id) == env.get_graph_class(closest_graph_id)) {
+					avg_classification_ratio += 1.0;
 				}
 			}
-			result_file.close();
+			avg_ub /= static_cast<double>(num_runs);
+			avg_runtime /= static_cast<double>(num_runs);
+			avg_classification_ratio /= static_cast<double>(env.graph_ids().second);
+			std::cout << "\n";
 		}
 };
 
@@ -179,14 +206,20 @@ void test_on_dataset(const std::string & dataset) {
 			}
 		}
 	}
-
 	std::string result_filename("../output/");
-	result_filename += dataset + "tests.csv";
+	result_filename += dataset + "__RESULTS.csv";
 	std::ofstream result_file(result_filename.c_str());
-	result_file << "method,g,g_class,h,h_class,runtime,ub\n";
+	result_file << "method,num_threads,num_solutions,avg_ub,avg_runtime,avg_classification_ratio\n";
 	result_file.close();
+	double avg_ub{0};
+	double avg_runtime{0};
+	double avg_classification_ratio{0};
 	for (auto & method : methods) {
-		method.run_on_dataset(dataset, env, result_filename);
+		method.run_on_dataset(dataset, env, avg_ub, avg_runtime, avg_classification_ratio);
+		result_file.open(result_filename.c_str(),std::ios_base::app);
+		result_file << method.name() << "," << method.num_threads() << "," << method.num_solutions() << ",";
+		result_file << avg_ub << "," << avg_runtime << "," << avg_classification_ratio << "\n";
+		result_file.close();
 	}
 }
 

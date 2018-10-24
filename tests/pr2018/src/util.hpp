@@ -81,14 +81,13 @@ std::string train_collection(const std::string & dataset) {
 	return root_dir + dataset + "_50.xml";
 }
 
-
 std::string test_collection(const std::string & dataset) {
-	std::string root_dir("../../../data/collections/");
+	std::string root_dir("../collections/");
 	check_dataset(dataset);
 	if (is_letter_dataset(dataset)) {
-		return (root_dir + "Letter.xml");
+		return (root_dir + "Letter_100.xml");
 	}
-	return root_dir + dataset + ".xml";
+	return root_dir + dataset + "_100.xml";
 }
 
 std::string config_prefix(const std::string & dataset) {

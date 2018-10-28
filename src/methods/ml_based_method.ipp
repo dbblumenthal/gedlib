@@ -1188,9 +1188,9 @@ MLBasedMethod<UserNodeLabel, UserEdgeLabel>::
 SVMParams_ ::
 SVMParams_() :
 min_gamma_exp{-3},
-max_gamma_exp{4},
+max_gamma_exp{3},
 min_c_exp{-3},
-max_c_exp{4},
+max_c_exp{3},
 min_nu{0.5},
 max_nu{0.5} {}
 

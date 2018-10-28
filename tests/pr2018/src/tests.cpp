@@ -41,7 +41,7 @@ private:
 		std::string options("");
 		options += "--threads " + std::to_string(num_threads_) + " --max-num-solutions " + std::to_string(num_solutions_) + " --centrality-method " + centralities_;
 		if (set_distances_ != "") {
-			options += " --led_method " + set_distances_;
+			options += " --led-method " + set_distances_;
 			options += " --load ../output/" + dataset + "_ring_" + set_distances_ + ".ini";
 		}
 		if (ml_method_ != "") {

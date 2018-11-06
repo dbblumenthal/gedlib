@@ -29,34 +29,44 @@
 
 namespace ged {
 
-template<>
-Protein<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+Protein<UserNodeLabel, UserEdgeLabel>::
 ~Protein() {}
 
-template<>
-Protein<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+Protein<UserNodeLabel, UserEdgeLabel>::
 Protein(double node_ins_del_cost, double edge_ins_del_cost, double alpha) :
 node_ins_del_cost_{node_ins_del_cost},
 edge_ins_del_cost_{edge_ins_del_cost},
 alpha_{alpha} {}
 
-template<>
+template<class UserNodeLabel, class UserEdgeLabel>
 double
-Protein<GXLLabel, GXLLabel>::
-node_ins_cost_fun(const GXLLabel & node_label) const {
+Protein<UserNodeLabel, UserEdgeLabel>::
+node_ins_cost_fun(const UserNodeLabel & node_label) const {
+	return alpha_ * node_ins_del_cost_;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+Protein<UserNodeLabel, UserEdgeLabel>::
+node_del_cost_fun(const UserNodeLabel & node_label) const {
 	return alpha_ * node_ins_del_cost_;
 }
 
 template<>
 double
 Protein<GXLLabel, GXLLabel>::
-node_del_cost_fun(const GXLLabel & node_label) const {
-	return alpha_ * node_ins_del_cost_;
+node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
+	if (node_label_1.at("type") != node_label_2.at("type")) {
+		return  alpha_ * 2 * node_ins_del_cost_;
+	}
+	return (alpha_ * levenshtein_distance_(node_label_1.at("sequence"), node_label_2.at("sequence")));
 }
 
 template<>
 double
-Protein<GXLLabel, GXLLabel>::
+Protein<GXLLabel, double>::
 node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
 	if (node_label_1.at("type") != node_label_2.at("type")) {
 		return  alpha_ * 2 * node_ins_del_cost_;
@@ -73,9 +83,23 @@ edge_ins_cost_fun(const GXLLabel & edge_label) const {
 
 template<>
 double
+Protein<GXLLabel, double>::
+edge_ins_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
+}
+
+template<>
+double
 Protein<GXLLabel, GXLLabel>::
 edge_del_cost_fun(const GXLLabel & edge_label) const {
 	return (1 - alpha_) * edge_ins_del_cost_ * std::stod(edge_label.at("frequency"));
+}
+
+template<>
+double
+Protein<GXLLabel, double>::
+edge_del_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
 }
 
 template<>
@@ -102,6 +126,13 @@ edge_rel_cost_fun(const GXLLabel & edge_label_1, const GXLLabel & edge_label_2) 
 	LSAPESolver lsape_solver(&edge_rel_cost_matrix);
 	lsape_solver.solve();
 	return (1 - alpha_) * lsape_solver.minimal_cost();
+}
+
+template<>
+double
+Protein<GXLLabel, double>::
+edge_rel_cost_fun(const double & edge_label_1, const double & edge_label_2) const {
+	return (1 - alpha_) * std::fabs(edge_label_1 - edge_label_2);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>

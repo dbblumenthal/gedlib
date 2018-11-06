@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ged_env.hpp
@@ -107,10 +107,26 @@ public:
 	 * @param[in] irrelevant_node_attributes Set of node attributes that are irrelevant for the selected edit costs.
 	 * @param[in] irrelevant_edge_attributes Set of edge attributes that are irrelevant for the selected edit costs.
 	 * @return A vector containing the IDs of the newly added graphs.
-	 * @warning Calls to this method create a compiler error unless the template parameters @p UserNodeID is set to ged::GXLUserNodeID
+	 * @warning Calls to this method create a compiler error unless the template parameter @p UserNodeID is set to ged::GXLUserNodeID
 	 * and the template parameters @p UserNodeLabel and @p UserEdgeLabel are set to ged::GXLLabel.
 	 */
 	std::vector<GEDGraph::GraphID> load_gxl_graphs(const std::string & graph_dir, const std::string & collection_file,
+			Options::GXLNodeEdgeType node_type = Options::GXLNodeEdgeType::LABELED, Options::GXLNodeEdgeType edge_type = Options::GXLNodeEdgeType::LABELED,
+			const std::unordered_set<std::string> & irrelevant_node_attributes = std::unordered_set<std::string>(), const std::unordered_set<std::string> & irrelevant_edge_attributes = std::unordered_set<std::string>());
+
+	/*!
+	 * @brief Loads Fused Gromov-Wasserstein graphs from graphs given in the [GXL file format](http://www.gupro.de/GXL/).
+	 * @param[in] graph_dir The path to the directory containing the graphs.
+	 * @param[in] collection_file The path to a XML file thats lists the graphs contained in @p graph_dir that should be loaded.
+	 * @param[in] node_type Select if nodes are labeled or unlabeled.
+	 * @param[in] edge_type Select if edges are labeled or unlabeled.
+	 * @param[in] irrelevant_node_attributes Set of node attributes that are irrelevant for the selected edit costs.
+	 * @param[in] irrelevant_edge_attributes Set of edge attributes that are irrelevant for the selected edit costs.
+	 * @return A vector containing the IDs of the newly added graphs.
+	 * @warning Calls to this method create a compiler error unless the template parameter @p UserNodeID is set to ged::GXLUserNodeID,
+	 * the template parameter @p UserNodeLabel is set to ged::GXLLabel, and @p UserEdgeLabel is set to @p double.
+	 */
+	std::vector<GEDGraph::GraphID> load_fgw_gxl_graphs(const std::string & graph_dir, const std::string & collection_file,
 			Options::GXLNodeEdgeType node_type = Options::GXLNodeEdgeType::LABELED, Options::GXLNodeEdgeType edge_type = Options::GXLNodeEdgeType::LABELED,
 			const std::unordered_set<std::string> & irrelevant_node_attributes = std::unordered_set<std::string>(), const std::unordered_set<std::string> & irrelevant_edge_attributes = std::unordered_set<std::string>());
 
@@ -229,6 +245,9 @@ private:
 	GEDGraph::GraphID read_graph_from_gxl_(const std::string & dir, const std::string & filename, const std::string & graph_class, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
 			const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes);
 
+	GEDGraph::GraphID construct_fgw_graph_from_gxl_(const std::string & dir, const std::string & filename, const std::string & graph_class, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
+			const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes);
+
 	void read_gxl_label_from_ptree_(const boost::property_tree::ptree::value_type & node_or_edge, const std::unordered_set<std::string> & irrelevant_attributes, const std::string & file, GXLLabel & label);
 
 	void construct_shuffled_graph_copy_(GEDGraph::GraphID graph_id);
@@ -248,6 +267,12 @@ namespace ged {
 extern template class GEDEnv<GXLNodeID, GXLLabel, GXLLabel>;
 #endif /* SRC_ENV_GED_ENV_GXL_CPP_ */
 #endif /* GXL_GEDLIB_SHARED */
+
+#ifdef FGW_GEDLIB_SHARED
+#ifndef SRC_ENV_GED_ENV_FGW_CPP_
+extern template class GEDEnv<GXLNodeID, GXLLabel, double>;
+#endif /* SRC_ENV_GED_ENV_FGW_CPP_ */
+#endif /* FGW_GEDLIB_SHARED */
 
 }
 

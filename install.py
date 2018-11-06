@@ -132,6 +132,8 @@ def build_external_libraries():
 def build_gedlib(args):
 	if not os.path.isdir(args.boost):
 		raise Exception("Invalid argument \"" + args.boost + "\" for option boost: not a directory. Usage: python install.py [--boost <path-to-directory-containing-Boost-sources>] [...]")
+	if (not args.gurobi) and (args.tests == "all" or args.tests == "gbr2019"):
+		raise Exception("GBR 2019 tests require Gurobi.");
 	identifier = "gxl"
 	if args.lib and args.lib != "gxl":
 		identifier, node_id_type, node_label_type, edge_label_type = parse_custom_types(args.lib)
@@ -189,7 +191,7 @@ print("**************************************************")
 parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependencies unless they have already been installed.", epilog="If called without arguments, only the dependencies are installed.")
 parser.add_argument("--doc", help="build documentation; requires --boost <BOOST_ROOT>", action="store_true")
 parser.add_argument("--lib", help="build shared library; requires --boost <BOOST_ROOT>", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
-parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018"])
+parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|gbr2019", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "gbr2019"])
 parser.add_argument("--boost", metavar="<BOOST_ROOT>", help="specify path to directory containing Boost sources")
 parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")

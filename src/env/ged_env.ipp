@@ -174,6 +174,130 @@ read_graph_from_gxl_(const std::string & dir, const std::string & filename, cons
 }
 
 template<>
+GEDGraph::GraphID
+GEDEnv<GXLNodeID, GXLLabel, double>::
+construct_fgw_graph_from_gxl_(const std::string & dir, const std::string & filename, const std::string & graph_class, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
+		const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes) {
+
+	// typedef for Johnson's algorithm.
+	typedef boost::property<boost::edge_weight_t, double> EdgeWeightProperty;
+	typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, boost::no_property, EdgeWeightProperty> AuxGraph;
+	typedef boost::property_map<AuxGraph, boost::edge_weight_t>::type WeightMap;
+	typedef boost::exterior_vertex_property<AuxGraph, double> DistanceProperty;
+	typedef DistanceProperty::matrix_type DistanceMatrix;
+	typedef DistanceProperty::matrix_map_type DistanceMatrixMap;
+
+	AuxGraph aux_graph;
+
+	// read the file into a property tree
+	boost::property_tree::ptree root;
+	try {
+		read_xml(dir + filename, root);
+	}
+	catch (const boost::property_tree::xml_parser_error & error) {
+		throw Error(std::string("Error reading file ") + filename + ": " + error.message() + ".");
+	}
+
+	// first sanity checks
+	if (root.count("gxl") == 0) {
+		throw Error("The file " + filename + " has the wrong format: no xml-element <gxl>.");
+	}
+	if (root.count("gxl") >= 2) {
+		throw Error("The file " + filename + " has the wrong format: more than one xml-element <gxl>.");
+	}
+	root = root.get_child("gxl");
+	if (root.count("graph") == 0) {
+		throw Error("The file " + filename + " has the wrong format: no xml-element <gxl>.<graph>");
+	}
+	if (root.count("graph") >= 2) {
+		throw Error("The file " + filename + " has the wrong format: more than one xml-element <gxl>.<graph>");
+	}
+	root = root.get_child("graph");
+
+	// add new graph to the environment
+	GEDGraph::GraphID graph_id{add_graph(filename, graph_class)};
+
+	// initialize local variables needed for construction of the graph
+	GXLLabel label;
+	std::string attr_name;
+	std::string attr_val;
+	GXLNodeID v_id, from, to;
+
+	// iterate through the property tree to construct the graph
+	for (const boost::property_tree::ptree::value_type & node_or_edge : root) {
+
+		// encountered a new vertex that has to be added to the graph
+		if (node_or_edge.first == "node") {
+			// determine the vertex ID
+			try {
+				v_id = node_or_edge.second.get<std::string>("<xmlattr>.id");
+			}
+			catch (const boost::property_tree::ptree_bad_path & error) {
+				throw Error("The file " + filename + " has the wrong format: missing xml-attribute \"id\" in element <gxl>.<graph>.<node>.");
+			}
+			// read the node label and add the vertex to the graph
+
+			label.clear();
+			if (node_type == Options::GXLNodeEdgeType::LABELED) {
+				read_gxl_label_from_ptree_(node_or_edge, irrelevant_node_attributes, filename, label);
+			}
+			add_node(graph_id, v_id, label);
+			boost::add_vertex(aux_graph);
+		}
+
+		// encountered a new edge that has to be added to the graph
+		else if (node_or_edge.first == "edge") {
+			// determine the edge's tail and head
+			try {
+				from = node_or_edge.second.get<std::string>("<xmlattr>.from");
+			}
+			catch (const boost::property_tree::ptree_bad_path & error) {
+				throw Error("The file " + filename + " has the wrong format: missing xml-attribute \"from\" in element <gxl>.<graph>.<edge>.");
+			}
+			try {
+				to = node_or_edge.second.get<std::string>("<xmlattr>.to");
+			}
+			catch (const boost::property_tree::ptree_bad_path & error) {
+				throw Error("The file " + filename + " has the wrong format: missing xml-attribute \"to\" in element <gxl>.<graph>.<edge>.");
+			}
+			// read the edge label and add the edge to the graph
+			label.clear();
+			if (edge_type == Options::GXLNodeEdgeType::LABELED) {
+				read_gxl_label_from_ptree_(node_or_edge, irrelevant_edge_attributes, filename, label);
+			}
+			boost::add_edge(original_to_internal_node_ids_.at(graph_id).at(from), original_to_internal_node_ids_.at(graph_id).at(to), 1.0, aux_graph);
+		}
+
+		// sanity check
+		else if (node_or_edge.first != "<xmlattr>"){
+			throw Error("The file " + filename + " has the wrong format: unexpected element <gxl>.<graph>.<" + node_or_edge.first + ">.");
+		}
+	}
+
+	// compute distances
+	WeightMap weight_pmap = boost::get(boost::edge_weight, aux_graph);
+	DistanceMatrix distances(boost::num_vertices(aux_graph));
+	DistanceMatrixMap dm(distances, aux_graph);
+	bool valid = boost::floyd_warshall_all_pairs_shortest_paths(aux_graph, dm,  boost::weight_map(weight_pmap));
+	if (not valid) {
+		throw Error("Computing all shortest path distances failed.");
+	}
+
+	// add edges to FGW graph
+	double fgw_edge_label{1.0};
+	for (GEDGraph::NodeID i{0}; i < boost::num_vertices(aux_graph); i++) {
+		for (GEDGraph::NodeID j{0}; j < boost::num_vertices(aux_graph); j++) {
+			if ((i != j) and (distances[i][j] < std::numeric_limits<double>::max())) {
+				fgw_edge_label = 1.0 / distances[i][j];
+				add_edge(graph_id, internal_to_original_node_ids_.at(graph_id).at(i), internal_to_original_node_ids_.at(graph_id).at(j), fgw_edge_label);
+			}
+		}
+	}
+	// return ID of newly constructed graph
+	return graph_id;
+}
+
+template<>
 std::vector<GEDGraph::GraphID>
 GEDEnv<GXLNodeID, GXLLabel, GXLLabel>::
 load_gxl_graphs(const std::string & graph_dir, const std::string & file, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
@@ -221,6 +345,62 @@ load_gxl_graphs(const std::string & graph_dir, const std::string & file, Options
 				throw Error("The file " + file + " has the wrong format: corrupted content in xml-attribute \"class\" of element <GraphCollection>.<graph>");
 			}
 			graph_ids.push_back(read_graph_from_gxl_(graph_dir, gxl_file, graph_class, node_type, edge_type, irrelevant_node_attributes, irrelevant_edge_attributes));
+		}
+		else if (val.first != "<xmlattr>") {
+			throw Error("The file " + file + " has the wrong format: unexpected element <GraphCollection>.<" + val.first + ">.");
+		}
+	}
+	return graph_ids;
+}
+
+template<>
+std::vector<GEDGraph::GraphID>
+GEDEnv<GXLNodeID, GXLLabel, double>::
+load_fgw_gxl_graphs(const std::string & graph_dir, const std::string & file, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
+		const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes) {
+	// read the file into a property tree
+	boost::property_tree::ptree root;
+	try {
+		read_xml(file, root);
+	}
+	catch (const boost::property_tree::xml_parser_error & error) {
+		throw Error(std::string("Error reading file ") + file + ": " + error.message() + ".");
+	}
+	// first sanity checks
+	if (root.count("GraphCollection") == 0) {
+		throw Error("The file " + file + " has the wrong format: no xml-element <GraphCollection>.");
+	}
+	if (root.count("GraphCollection") >= 2) {
+		throw Error("The file " + file + " has the wrong format: more than one xml-element <GraphCollection>.");
+	}
+	root = root.get_child("GraphCollection");
+
+
+	// Read the listed .gxl-files into the environment.
+	std::vector<GEDGraph::GraphID> graph_ids;
+	std::string gxl_file("");
+	std::string graph_class("");
+	for (const boost::property_tree::ptree::value_type & val : root) {
+		if (val.first == "graph") {
+			try {
+				gxl_file = val.second.get<std::string>("<xmlattr>.file");
+			}
+			catch (const boost::property_tree::ptree_bad_path & error) {
+				throw Error("The file " + file + " has the wrong format: missing xml-attribute \"file\" in element <GraphCollection>.<graph>");
+			}
+			catch (const boost::property_tree::ptree_bad_data & error) {
+				throw Error("The file " + file + " has the wrong format: corrupted content in xml-attribute \"file\" of element <GraphCollection>.<graph>");
+			}
+			try {
+				graph_class = val.second.get<std::string>("<xmlattr>.class");
+			}
+			catch (const boost::property_tree::ptree_bad_path & error) {
+				throw Error("The file " + file + " has the wrong format: missing xml-attribute \"class\" in element <GraphCollection>.<graph>");
+			}
+			catch (const boost::property_tree::ptree_bad_data & error) {
+				throw Error("The file " + file + " has the wrong format: corrupted content in xml-attribute \"class\" of element <GraphCollection>.<graph>");
+			}
+			graph_ids.push_back(construct_fgw_graph_from_gxl_(graph_dir, gxl_file, graph_class, node_type, edge_type, irrelevant_node_attributes, irrelevant_edge_attributes));
 		}
 		else if (val.first != "<xmlattr>") {
 			throw Error("The file " + file + " has the wrong format: unexpected element <GraphCollection>.<" + val.first + ">.");

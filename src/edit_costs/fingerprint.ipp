@@ -30,35 +30,35 @@
 
 namespace ged {
 
-template<>
-Fingerprint<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+Fingerprint<UserNodeLabel, UserEdgeLabel>::
 ~Fingerprint() {}
 
-template<>
-Fingerprint<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+Fingerprint<UserNodeLabel, UserEdgeLabel>::
 Fingerprint(double node_ins_del_cost, double edge_ins_del_cost, double alpha) :
 node_ins_del_cost_{node_ins_del_cost},
 edge_ins_del_cost_{edge_ins_del_cost},
 alpha_{alpha} {}
 
-template<>
+template<class UserNodeLabel, class UserEdgeLabel>
 double
-Fingerprint<GXLLabel, GXLLabel>::
-node_ins_cost_fun(const GXLLabel & node_label) const {
+Fingerprint<UserNodeLabel, UserEdgeLabel>::
+node_ins_cost_fun(const UserNodeLabel & node_label) const {
 	return alpha_ * node_ins_del_cost_;
 }
 
-template<>
+template<class UserNodeLabel, class UserEdgeLabel>
 double
-Fingerprint<GXLLabel, GXLLabel>::
-node_del_cost_fun(const GXLLabel & node_label) const {
+Fingerprint<UserNodeLabel, UserEdgeLabel>::
+node_del_cost_fun(const UserNodeLabel & node_label) const {
 	return alpha_ * node_ins_del_cost_;
 }
 
-template<>
+template<class UserNodeLabel, class UserEdgeLabel>
 double
-Fingerprint<GXLLabel, GXLLabel>::
-node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
+Fingerprint<UserNodeLabel, UserEdgeLabel>::
+node_rel_cost_fun(const UserNodeLabel & node_label_1, const UserNodeLabel & node_label_2) const {
 	return 0;
 }
 
@@ -71,9 +71,23 @@ edge_ins_cost_fun(const GXLLabel & edge_label) const {
 
 template<>
 double
+Fingerprint<GXLLabel, double>::
+edge_ins_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
+}
+
+template<>
+double
 Fingerprint<GXLLabel, GXLLabel>::
 edge_del_cost_fun(const GXLLabel & edge_label) const {
 	return (1 - alpha_) * edge_ins_del_cost_;
+}
+
+template<>
+double
+Fingerprint<GXLLabel, double>::
+edge_del_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
 }
 
 template<>
@@ -82,6 +96,13 @@ Fingerprint<GXLLabel, GXLLabel>::
 edge_rel_cost_fun(const GXLLabel & edge_label_1, const GXLLabel & edge_label_2) const {
 	double orient_diff{std::fabs(std::stod(edge_label_1.at("orient")) - std::stod(edge_label_2.at("orient")))};
 	return (1 - alpha_) * std::min(pi_() - orient_diff, orient_diff);
+}
+
+template<>
+double
+Fingerprint<GXLLabel, double>::
+edge_rel_cost_fun(const double & edge_label_1, const double & edge_label_2) const {
+	return (1 - alpha_) * std::fabs(edge_label_1 - edge_label_2);
 }
 
 }

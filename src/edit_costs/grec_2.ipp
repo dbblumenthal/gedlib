@@ -29,34 +29,46 @@
 
 namespace ged {
 
-template<>
-GREC2<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+GREC2<UserNodeLabel, UserEdgeLabel>::
 ~GREC2() {}
 
-template<>
-GREC2<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+GREC2<UserNodeLabel, UserEdgeLabel>::
 GREC2(double node_ins_del_cost, double edge_ins_del_cost, double alpha) :
 node_ins_del_cost_{node_ins_del_cost},
 edge_ins_del_cost_{edge_ins_del_cost},
 alpha_{alpha} {}
 
-template<>
+template<class UserNodeLabel, class UserEdgeLabel>
 double
-GREC2<GXLLabel, GXLLabel>::
-node_ins_cost_fun(const GXLLabel & node_label) const {
+GREC2<UserNodeLabel, UserEdgeLabel>::
+node_ins_cost_fun(const UserNodeLabel & node_label) const {
+	return alpha_ * node_ins_del_cost_;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+GREC2<UserNodeLabel, UserEdgeLabel>::
+node_del_cost_fun(const UserNodeLabel & node_label) const {
 	return alpha_ * node_ins_del_cost_;
 }
 
 template<>
 double
 GREC2<GXLLabel, GXLLabel>::
-node_del_cost_fun(const GXLLabel & node_label) const {
-	return alpha_ * node_ins_del_cost_;
+node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
+	if (node_label_1.at("type") != node_label_2.at("type")) {
+		return  alpha_ * 2 * node_ins_del_cost_;
+	}
+	double x_l_minus_x_r(std::stod(node_label_1.at("x")) - std::stod(node_label_2.at("x")));
+	double y_l_minus_y_r(std::stod(node_label_1.at("y")) - std::stod(node_label_2.at("y")));
+	return alpha_ * std::sqrt(std::pow(x_l_minus_x_r, 2) + std::pow(y_l_minus_y_r, 2));
 }
 
 template<>
 double
-GREC2<GXLLabel, GXLLabel>::
+GREC2<GXLLabel, double>::
 node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
 	if (node_label_1.at("type") != node_label_2.at("type")) {
 		return  alpha_ * 2 * node_ins_del_cost_;
@@ -75,9 +87,23 @@ edge_ins_cost_fun(const GXLLabel & edge_label) const {
 
 template<>
 double
+GREC2<GXLLabel, double>::
+edge_ins_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
+}
+
+template<>
+double
 GREC2<GXLLabel, GXLLabel>::
 edge_del_cost_fun(const GXLLabel & edge_label) const {
 	return (1 - alpha_) * edge_ins_del_cost_ * std::stod(edge_label.at("frequency"));
+}
+
+template<>
+double
+GREC2<GXLLabel, double>::
+edge_del_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
 }
 
 template<>
@@ -104,6 +130,13 @@ edge_rel_cost_fun(const GXLLabel & edge_label_1, const GXLLabel & edge_label_2) 
 	LSAPESolver lsape_solver(&edge_rel_cost_matrix);
 	lsape_solver.solve();
 	return (1 - alpha_) * lsape_solver.minimal_cost();
+}
+
+template<>
+double
+GREC2<GXLLabel, double>::
+edge_rel_cost_fun(const double & edge_label_1, const double & edge_label_2) const {
+	return (1 - alpha_) * std::fabs(edge_label_1 - edge_label_2);
 }
 
 }

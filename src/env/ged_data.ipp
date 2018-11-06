@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ged_data.ipp
@@ -76,6 +76,86 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	default:
 		throw Error("Selected edit costs unavailable for template parameters UserNodeLabel = " + std::string(typeid(UserNodeLabel).name()) + " and UserEdgeLabel = " + std::string(typeid(UserEdgeLabel).name()) + ".");
+	}
+	delete_edit_costs_ = true;
+}
+
+template<>
+void
+GEDData<GXLLabel, double>::
+set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_cost_constants) {
+	if (delete_edit_costs_) {
+		delete edit_costs_;
+	}
+	switch (edit_costs) {
+	case Options::EditCosts::CHEM_2:
+		if (edit_cost_constants.size() == 3) {
+			edit_costs_ = new CHEM2<GXLLabel, double>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+		}
+		else if (edit_cost_constants.size() == 0) {
+			edit_costs_ = new CHEM2<GXLLabel, double>();
+		}
+		else {
+			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::CHEM_2. Expected: 3 or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
+		}
+		break;
+	case Options::EditCosts::GREC_2:
+		if (edit_cost_constants.size() == 3) {
+			edit_costs_ = new GREC2<GXLLabel, double>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+		}
+		else if (edit_cost_constants.size() == 0) {
+			edit_costs_ = new GREC2<GXLLabel, double>();
+		}
+		else {
+			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::CHEM_2. Expected: 3 or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
+		}
+		break;
+	case Options::EditCosts::LETTER:
+		if (edit_cost_constants.size() == 3) {
+			edit_costs_ = new Letter<GXLLabel, double>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+		}
+		else if (edit_cost_constants.size() == 0) {
+			edit_costs_ = new Letter<GXLLabel, double>();
+		}
+		else {
+			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::LETTER. Expected: 3 or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
+		}
+		break;
+	case Options::EditCosts::PROTEIN:
+		if (edit_cost_constants.size() == 3) {
+			edit_costs_ = new Protein<GXLLabel, double>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+		}
+		else if (edit_cost_constants.size() == 0) {
+			edit_costs_ = new Protein<GXLLabel, double>();
+		}
+		else {
+			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::PROTEIN. Expected: 3 or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
+		}
+		break;
+	case Options::EditCosts::FINGERPRINT:
+		if (edit_cost_constants.size() == 3) {
+			edit_costs_ = new Fingerprint<GXLLabel, double>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+		}
+		else if (edit_cost_constants.size() == 0) {
+			edit_costs_ = new Fingerprint<GXLLabel, double>();
+		}
+		else {
+			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::FINGERPRINT. Expected: 3 or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
+		}
+		break;
+	case Options::EditCosts::CONSTANT:
+		if (edit_cost_constants.size() == 6) {
+			edit_costs_ = new Constant<GXLLabel, double>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2), edit_cost_constants.at(3), edit_cost_constants.at(4), edit_cost_constants.at(5));
+		}
+		else if (edit_cost_constants.size() == 0) {
+			edit_costs_ = new Constant<GXLLabel, double>();
+		}
+		else {
+			throw Error("Wrong number of constants for selected edit costs ged::Options::EditCosts::CONSTANT. Expected: 6 or 0; actual: " + std::to_string(edit_cost_constants.size()) + ".");
+		}
+		break;
+	default:
+		throw Error("Selected edit costs unavailable for template parameters UserNodeLabel = ged::GXLLabel and UserEdgeLabel = double.");
 	}
 	delete_edit_costs_ = true;
 }

@@ -60,6 +60,9 @@
 #include <boost/graph/max_cardinality_matching.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/graph/exterior_property.hpp>
+#include <boost/graph/floyd_warshall_shortest.hpp>
+#include <boost/graph/johnson_all_pairs_shortest.hpp>
 
 // Include Gurobi.
 #ifdef GUROBI

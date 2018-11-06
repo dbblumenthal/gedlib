@@ -29,34 +29,44 @@
 
 namespace ged {
 
-template<>
-CHEM2<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+CHEM2<UserNodeLabel, UserEdgeLabel>::
 ~CHEM2() {}
 
-template<>
-CHEM2<GXLLabel, GXLLabel>::
+template<class UserNodeLabel, class UserEdgeLabel>
+CHEM2<UserNodeLabel, UserEdgeLabel>::
 CHEM2(double node_ins_del_cost, double edge_ins_del_cost, double alpha) :
 node_ins_del_cost_{node_ins_del_cost},
 edge_ins_del_cost_{edge_ins_del_cost},
 alpha_{alpha} {}
 
-template<>
+template<class UserNodeLabel, class UserEdgeLabel>
 double
-CHEM2<GXLLabel, GXLLabel>::
-node_ins_cost_fun(const GXLLabel & node_label) const {
+CHEM2<UserNodeLabel, UserEdgeLabel>::
+node_ins_cost_fun(const UserNodeLabel & node_label) const {
+	return alpha_ * node_ins_del_cost_;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+CHEM2<UserNodeLabel, UserEdgeLabel>::
+node_del_cost_fun(const UserNodeLabel & node_label) const {
 	return alpha_ * node_ins_del_cost_;
 }
 
 template<>
 double
 CHEM2<GXLLabel, GXLLabel>::
-node_del_cost_fun(const GXLLabel & node_label) const {
-	return alpha_ * node_ins_del_cost_;
+node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
+	if (node_label_1.at("chem") != node_label_2.at("chem")) {
+		return alpha_ * 2 * node_ins_del_cost_;
+	}
+	return 0.0;
 }
 
 template<>
 double
-CHEM2<GXLLabel, GXLLabel>::
+CHEM2<GXLLabel, double>::
 node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
 	if (node_label_1.at("chem") != node_label_2.at("chem")) {
 		return alpha_ * 2 * node_ins_del_cost_;
@@ -73,9 +83,23 @@ edge_ins_cost_fun(const GXLLabel & edge_label) const {
 
 template<>
 double
+CHEM2<GXLLabel, double>::
+edge_ins_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
+}
+
+template<>
+double
 CHEM2<GXLLabel, GXLLabel>::
 edge_del_cost_fun(const GXLLabel & edge_label) const {
 	return (1 - alpha_) * edge_ins_del_cost_;
+}
+
+template<>
+double
+CHEM2<GXLLabel, double>::
+edge_del_cost_fun(const double & edge_label) const {
+	return (1 - alpha_) * std::fabs(edge_label);
 }
 
 template<>
@@ -86,6 +110,13 @@ edge_rel_cost_fun(const GXLLabel & edge_label_1, const GXLLabel & edge_label_2) 
 		return (1 - alpha_) * edge_ins_del_cost_;
 	}
 	return 0.0;
+}
+
+template<>
+double
+CHEM2<GXLLabel, double>::
+edge_rel_cost_fun(const double & edge_label_1, const double & edge_label_2) const {
+	return (1 - alpha_) * std::fabs(edge_label_1 - edge_label_2);
 }
 
 }

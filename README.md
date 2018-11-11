@@ -23,7 +23,7 @@
 
 ## 1. About GEDLIB
 
-GEDLIB is a C++ library for (suboptimally) computing edit distances between graphs using various state-of-the-art methods. GEDLIB allows you to build your graphs via the C++ API or load them from [GXL files](http://www.gupro.de/GXL/index.html). Several benchmark datasets are distributed with GEDLIB. For these datasets, GEDLIB provides predefined edit cost functions. You can easily extend GEDLIB by implementing new edit cost functions or new methods for computing the graph edit distance.
+GEDLIB is a C++ library for (suboptimally) computing edit distances between graphs using various state-of-the-art methods. GEDLIB allows you to build your graphs via the C++ API or load them from [GXL files](http://www.gupro.de/GXL/index.html). Several benchmark datasets are distributed with GEDLIB. For these datasets, GEDLIB provides predefined edit cost functions. You can easily extend GEDLIB by implementing new edit cost functions or new methods for computing the graph edit distance. An extensive Doxygen documentation is availabe [here](https://dbblumenthal.github.io/gedlib/).
 
 ## 2. License
 
@@ -54,7 +54,7 @@ After having installed CMake, Doxygen, and OpenMP and having downloaded Boost, e
 python install.py [--help] [-h] [--doc] [--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests] [--boost <BOOST_ROOT>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
 ```
 
-Use the option `--doc` to build the documentation, the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
+Use the option `--doc` to build the [Doxygen documentation](https://dbblumenthal.github.io/gedlib/), the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
 
 Use the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>` to build GEDLIB as a shared for graphs with custom node ID, node label, and edge label types:
 

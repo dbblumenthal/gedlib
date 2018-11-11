@@ -51,10 +51,10 @@ GEDLIB uses the following external libraries:
 After having installed CMake, Doxygen, and OpenMP and having downloaded Boost, execute the script `<GEDLIB_ROOT>/install.py` for installing GEDLIB and the external libraries distributed with GEDLIB:
 
 ```sh
-python install.py [--help] [-h] [--doc] [--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests] [--boost <BOOST_ROOT>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--update_makefile] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
+python install.py [--help] [-h] [--doc] [--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests] [--boost <BOOST_ROOT>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
 ```
 
-Use the option `--doc` to build the documentation, the option `--clean` to delete the build directoy, the option `--update_makefile` to re-run CMake for updating the makefile, the option `--lib gxl` to build the shared library `<GEDLIB_ROOT>/lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
+Use the option `--doc` to build the documentation, the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `<GEDLIB_ROOT>/lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
 
 Use the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>` to build GEDLIB as a shared for graphs with custom node ID, node label, and edge label types:
 

@@ -91,7 +91,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	std::size_t terminated_runs{0};
 #ifdef _OPENMP
 	omp_set_num_threads(num_threads_ - 1);
-#pragma omp parallel for if(num_threads_ > 1)
+#pragma omp parallel for if(num_threads_ > 1) schedule(dynamic)
 #endif
 	for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
 		if (not found_optimum and (terminated_runs < num_runs_from_initial_solutions_)) {

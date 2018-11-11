@@ -109,6 +109,10 @@ private:
 
 		const GEDGraph * h_;
 
+		std::size_t num_nodes_g_;
+
+		std::size_t num_nodes_h_;
+
 		double translation_factor_;
 	};
 

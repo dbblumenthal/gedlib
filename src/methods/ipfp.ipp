@@ -513,6 +513,8 @@ QAPInstance_() :
 ipfp_{nullptr},
 g_{nullptr},
 h_{nullptr},
+num_nodes_g_{0},
+num_nodes_h_{0},
 translation_factor_{0.0} {}
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -523,11 +525,13 @@ init(const IPFP<UserNodeLabel, UserEdgeLabel> * ipfp, const GEDGraph & g, const 
 	ipfp_ = ipfp;
 	g_ = &g;
 	h_ = &h;
+	num_nodes_g_ = g_->num_nodes();
+	num_nodes_h_ = h_->num_nodes();
 	if (ipfp_->quadratic_model_ == C_QAP) {
-		if (g_->num_nodes() > h_->num_nodes()) {
+		if (num_nodes_g_ > num_nodes_h_) {
 			translation_factor_ = 3 * std::max(ipfp_->ged_data_.max_node_del_cost(*g_), ipfp_->ged_data_.max_edge_del_cost(*g_));
 		}
-		else if (g_->num_nodes() < h_->num_nodes()) {
+		else if (num_nodes_g_ < num_nodes_h_) {
 			translation_factor_ = 3 * std::max(ipfp_->ged_data_.max_node_ins_cost(*h_), ipfp_->ged_data_.max_edge_ins_cost(*h_));
 		}
 	}
@@ -540,11 +544,11 @@ QAPInstance_ ::
 num_rows() const {
 	switch(ipfp_->quadratic_model_) {
 	case QAPE:
-		return static_cast<std::size_t>(g_->num_nodes()) + 1;
+		return static_cast<std::size_t>(num_nodes_g_) + 1;
 	case B_QAP:
-		return static_cast<std::size_t>(g_->num_nodes()) + static_cast<std::size_t>(h_->num_nodes());
+		return static_cast<std::size_t>(num_nodes_g_) + static_cast<std::size_t>(num_nodes_h_);
 	default:
-		return static_cast<std::size_t>(g_->num_nodes());
+		return static_cast<std::size_t>(num_nodes_g_);
 	}
 }
 
@@ -555,11 +559,11 @@ QAPInstance_ ::
 num_cols() const {
 	switch(ipfp_->quadratic_model_) {
 	case QAPE:
-		return static_cast<std::size_t>(h_->num_nodes()) + 1;
+		return static_cast<std::size_t>(num_nodes_h_) + 1;
 	case B_QAP:
-		return static_cast<std::size_t>(h_->num_nodes()) + static_cast<std::size_t>(g_->num_nodes());
+		return static_cast<std::size_t>(num_nodes_h_) + static_cast<std::size_t>(num_nodes_g_);
 	default:
-		return static_cast<std::size_t>(h_->num_nodes());
+		return static_cast<std::size_t>(num_nodes_h_);
 	}
 }
 
@@ -568,7 +572,7 @@ std::size_t
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 num_nodes_g() const {
-	return g_->num_nodes();
+	return num_nodes_g_;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -576,7 +580,7 @@ std::size_t
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 num_nodes_h() const {
-	return h_->num_nodes();
+	return num_nodes_h_;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -594,41 +598,41 @@ operator() (std::size_t row, std::size_t col) const {
 		break;
 	case C_QAP:
 		return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), h_->get_node_label(col));
-		if (g_->num_nodes() > h_->num_nodes()) {
+		if (num_nodes_g_ > num_nodes_h_) {
 			return_val -= ipfp_->ged_data_.node_cost(g_->get_node_label(row), dummy_label());
 		}
-		else if (g_->num_nodes() < h_->num_nodes()) {
+		else if (num_nodes_g_ < num_nodes_h_) {
 			return_val -= ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(col));
 		}
-		if (g_->num_nodes() != h_->num_nodes()) {
+		if (num_nodes_g_ != num_nodes_h_) {
 			return_val += translation_factor_;
 		}
 		break;
 	case QAPE:
-		if (row < g_->num_nodes() and col < h_->num_nodes()) {
+		if (row < num_nodes_g_ and col < num_nodes_h_) {
 			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), h_->get_node_label(col));
 		}
-		else if (row < g_->num_nodes()) {
+		else if (row < num_nodes_g_) {
 			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), dummy_label());
 		}
-		else if (col < h_->num_nodes()) {
+		else if (col < num_nodes_h_) {
 			return_val += ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(col));
 		}
 		break;
 	case B_QAP:
-		if (row < g_->num_nodes() and col >= h_->num_nodes() and col != row + h_->num_nodes()) {
+		if (row < num_nodes_g_ and col >= num_nodes_h_ and col != row + num_nodes_h_) {
 			return_val += ipfp_->omega_;
 		}
-		else if (row >= g_->num_nodes() and col < h_->num_nodes() and row != col + g_->num_nodes()) {
+		else if (row >= num_nodes_g_ and col < num_nodes_h_ and row != col + num_nodes_g_) {
 			return_val += ipfp_->omega_;
 		}
-		else if (row < g_->num_nodes() and col < h_->num_nodes()) {
+		else if (row < num_nodes_g_ and col < num_nodes_h_) {
 			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), h_->get_node_label(col));
 		}
-		else if (row < g_->num_nodes()) {
+		else if (row < num_nodes_g_) {
 			return_val += ipfp_->ged_data_.node_cost(g_->get_node_label(row), dummy_label());
 		}
-		else if (col < h_->num_nodes()) {
+		else if (col < num_nodes_h_) {
 			return_val += ipfp_->ged_data_.node_cost(dummy_label(), h_->get_node_label(col));
 		}
 		break;
@@ -642,19 +646,19 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
-	if (row_1 < g_->num_nodes() and  col_1 >= h_->num_nodes() and col_1 != row_1 + h_->num_nodes()) {
+	if (row_1 < num_nodes_g_ and  col_1 >= num_nodes_h_ and col_1 != row_1 + num_nodes_h_) {
 		return_val += ipfp_->omega_;
 	}
-	else if (row_2 < g_->num_nodes() and col_2 >= h_->num_nodes() and col_2 != row_2 + h_->num_nodes()) {
+	else if (row_2 < num_nodes_g_ and col_2 >= num_nodes_h_ and col_2 != row_2 + num_nodes_h_) {
 		return_val += ipfp_->omega_;
 	}
-	else if (col_1 < h_->num_nodes() and row_1 >= g_->num_nodes() and row_1 != col_1 + g_->num_nodes()) {
+	else if (col_1 < num_nodes_h_ and row_1 >= num_nodes_g_ and row_1 != col_1 + num_nodes_g_) {
 		return_val += ipfp_->omega_;
 	}
-	else if (col_2 < h_->num_nodes() and row_2 >= g_->num_nodes() and row_2 != col_2 + g_->num_nodes()) {
+	else if (col_2 < num_nodes_h_ and row_2 >= num_nodes_g_ and row_2 != col_2 + num_nodes_g_) {
 		return_val += ipfp_->omega_;
 	}
-	else if (row_1 < g_->num_nodes() and col_1 < h_->num_nodes() and row_2 < g_->num_nodes() and col_2 < h_->num_nodes()) {
+	else if (row_1 < num_nodes_g_ and col_1 < num_nodes_h_ and row_2 < num_nodes_g_ and col_2 < num_nodes_h_) {
 		if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
@@ -665,12 +669,12 @@ quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
 	}
-	else if (row_1 < g_->num_nodes() and row_2 < g_->num_nodes()) {
+	else if (row_1 < num_nodes_g_ and row_2 < num_nodes_g_) {
 		if (g_->is_edge(row_1, row_2)) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 		}
 	}
-	else if (col_1 < h_->num_nodes() and col_2 < h_->num_nodes()) {
+	else if (col_1 < num_nodes_h_ and col_2 < num_nodes_h_) {
 		if (h_->is_edge(col_1, col_2)) {
 			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
@@ -693,13 +697,13 @@ quadratic_cost_c_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 	else if (h_->is_edge(col_1, col_2)) {
 		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 	}
-	if (g_->is_edge(row_1, row_2) and g_->num_nodes() > h_->num_nodes()) {
+	if (g_->is_edge(row_1, row_2) and num_nodes_g_ > num_nodes_h_) {
 		return_val -= 3 * ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 	}
-	else if (h_->is_edge(col_1, col_2) and g_->num_nodes() < h_->num_nodes()) {
+	else if (h_->is_edge(col_1, col_2) and num_nodes_g_ < num_nodes_h_) {
 		return_val -= 3 * ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 	}
-	if (g_->num_nodes() != h_->num_nodes()) {
+	if (num_nodes_g_ != num_nodes_h_) {
 		return_val += translation_factor_;
 	}
 	return return_val;
@@ -729,7 +733,7 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
-	if (row_1 < g_->num_nodes() and col_1 < h_->num_nodes() and row_2 < g_->num_nodes() and col_2 < h_->num_nodes()) {
+	if (row_1 < num_nodes_g_ and col_1 < num_nodes_h_ and row_2 < num_nodes_g_ and col_2 < num_nodes_h_) {
 		if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
@@ -740,12 +744,12 @@ quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, st
 			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}
 	}
-	else if (row_1 < g_->num_nodes() and row_2 < g_->num_nodes()) {
+	else if (row_1 < num_nodes_g_ and row_2 < num_nodes_g_) {
 		if (g_->is_edge(row_1, row_2)) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
 		}
 	}
-	else if (col_1 < h_->num_nodes() and col_2 < h_->num_nodes()) {
+	else if (col_1 < num_nodes_h_ and col_2 < num_nodes_h_) {
 		if (h_->is_edge(col_1, col_2)) {
 			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
 		}

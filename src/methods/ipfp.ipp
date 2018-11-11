@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ipfp.ipp
@@ -646,6 +646,8 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
+	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
+	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
 	if (row_1 < num_nodes_g_ and  col_1 >= num_nodes_h_ and col_1 != row_1 + num_nodes_h_) {
 		return_val += ipfp_->omega_;
 	}
@@ -659,24 +661,24 @@ quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 		return_val += ipfp_->omega_;
 	}
 	else if (row_1 < num_nodes_g_ and col_1 < num_nodes_h_ and row_2 < num_nodes_g_ and col_2 < num_nodes_h_) {
-		if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+		if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 		}
-		else if (g_->is_edge(row_1, row_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
+		else if (edge_g != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 		}
-		else if (h_->is_edge(col_1, col_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+		else if (edge_h != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 		}
 	}
 	else if (row_1 < num_nodes_g_ and row_2 < num_nodes_g_) {
-		if (g_->is_edge(row_1, row_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
+		if (edge_g != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 		}
 	}
 	else if (col_1 < num_nodes_h_ and col_2 < num_nodes_h_) {
-		if (h_->is_edge(col_1, col_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+		if (edge_h != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 		}
 	}
 	return return_val;
@@ -688,20 +690,22 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_c_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
-	if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
+	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
+	if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 	}
-	else if (g_->is_edge(row_1, row_2)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
+	else if (edge_g != GEDGraph::dummy_edge()) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 	}
-	else if (h_->is_edge(col_1, col_2)) {
-		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+	else if (edge_h != GEDGraph::dummy_edge()) {
+		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 	}
-	if (g_->is_edge(row_1, row_2) and num_nodes_g_ > num_nodes_h_) {
-		return_val -= 3 * ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
+	if (edge_g != GEDGraph::dummy_edge() and num_nodes_g_ > num_nodes_h_) {
+		return_val -= 3 * ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 	}
-	else if (h_->is_edge(col_1, col_2) and num_nodes_g_ < num_nodes_h_) {
-		return_val -= 3 * ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+	else if (edge_h != GEDGraph::dummy_edge() and num_nodes_g_ < num_nodes_h_) {
+		return_val -= 3 * ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 	}
 	if (num_nodes_g_ != num_nodes_h_) {
 		return_val += translation_factor_;
@@ -715,14 +719,16 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
-	if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
+	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
+	if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 	}
-	else if (g_->is_edge(row_1, row_2)) {
-		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
+	else if (edge_g != GEDGraph::dummy_edge()) {
+		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 	}
-	else if (h_->is_edge(col_1, col_2)) {
-		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+	else if (edge_h != GEDGraph::dummy_edge()) {
+		return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 	}
 	return return_val;
 }
@@ -733,25 +739,27 @@ IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	double return_val{0.0};
+	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
+	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
 	if (row_1 < num_nodes_g_ and col_1 < num_nodes_h_ and row_2 < num_nodes_g_ and col_2 < num_nodes_h_) {
-		if (g_->is_edge(row_1, row_2) and h_->is_edge(col_1, col_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+		if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 		}
-		else if (g_->is_edge(row_1, row_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
+		else if (edge_g != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 		}
-		else if (h_->is_edge(col_1, col_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+		else if (edge_h != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 		}
 	}
 	else if (row_1 < num_nodes_g_ and row_2 < num_nodes_g_) {
-		if (g_->is_edge(row_1, row_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(g_->get_edge(row_1, row_2)), dummy_label());
+		if (edge_g != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 		}
 	}
 	else if (col_1 < num_nodes_h_ and col_2 < num_nodes_h_) {
-		if (h_->is_edge(col_1, col_2)) {
-			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(h_->get_edge(col_1, col_2)));
+		if (edge_h != GEDGraph::dummy_edge()) {
+			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 		}
 	}
 	return return_val;

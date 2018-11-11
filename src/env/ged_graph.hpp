@@ -244,7 +244,7 @@ public:
 	 * @brief Retrieves an edge from its incident nodes.
 	 * @param[in] tail First incident node of the edge.
 	 * @param[in] head Second incident node of the edge.
-	 * @return The ID of the edge that connects @p tail with @p head.
+	 * @return The ID of the edge that connects @p tail with @p head, if the edge exists. Otherwise, dummy_edge() is returned.
 	 * @warning This function uses the adjacency matrix. Ensure you called setup_adjacency_matrix() before calling.
 	 */
 	EdgeID get_edge(NodeID tail, NodeID head) const;
@@ -254,7 +254,7 @@ public:
 	 * @brief Retrieves an edge from its incident nodes.
 	 * @param[in] tail First incident node of the edge.
 	 * @param[in] head Second incident node of the edge.
-	 * @return The ID of the edge that connects @p tail with @p head.
+	 * @return The ID of the edge that connects @p tail with @p head, if the edge exists. Otherwise, dummy_edge() is returned.
 	 * @note This function uses the adjacency list. It is hence slower than get_edge() but does not expect that setup_adjacency_matrix() has been called.
 	 */
 	EdgeID safe_get_edge(NodeID tail, NodeID head) const;

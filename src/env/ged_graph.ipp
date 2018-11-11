@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ged_graph.ipp
@@ -210,32 +210,31 @@ num_edges() const {
 	return static_cast<std::size_t>(boost::num_edges(alist_));
 }
 
-GEDGraph :: EdgeID
-GEDGraph ::
+GEDGraph::EdgeID
+GEDGraph::
 get_edge(NodeID source, NodeID target) const {
 	auto am_edge = boost::edge(source, target, amatrix_);
-
 	if (am_edge.second == false) {
-		throw Error(std::string("Missing edge between ") + std::to_string(source) + " and " + std::to_string(target));
+		return dummy_edge();
 	}
 	return amatrix_[am_edge.first].cref;
 }
 
-GEDGraph :: EdgeID
-GEDGraph ::
+GEDGraph::EdgeID
+GEDGraph::
 safe_get_edge(NodeID source, NodeID target) const {
 	for (auto iedges = incident_edges(source); iedges.first != iedges.second; ++iedges.first) {
 		EdgeID e { *iedges.first };
 		NodeID n { this->head( e ) };
 		if (n == target) return e;
 	}
-	throw Error(std::string("Missing edge between ") + std::to_string(source) + " and " + std::to_string(target));
+	return dummy_edge();
 }
 
 bool
 GEDGraph ::
 is_edge(NodeID source, NodeID target) const {
-	if (source >= this->num_nodes() || target >= this->num_nodes()) {
+	if (source >= this->num_nodes() or target >= this->num_nodes()) {
 		return false;
 	}
 	auto am_edge = boost::edge(source, target, amatrix_);

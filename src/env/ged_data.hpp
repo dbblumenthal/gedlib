@@ -174,7 +174,7 @@ public:
 
 	/*!
 	 * @brief Computes an edge label's representation as a real-valued vector.
-	 * @param[in] node_label An edge label.
+	 * @param[in] edge_label An edge label.
 	 * @param[out] vector_representation The edge label's vector representation.
 	 * @note If the selected edit costs do not override ged::EditCosts::vectorize_edge_label(), @p vector_representation is empty.
 	 */

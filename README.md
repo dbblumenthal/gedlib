@@ -37,7 +37,7 @@ GEDLIB uses the following external libraries:
 - [Doxygen](http://www.stack.nl/~dimitri/doxygen/), for creating the documentation. For installation instructions, see [https://www.stack.nl/~dimitri/doxygen/manual/install.html](https://www.stack.nl/~dimitri/doxygen/manual/install.html).
 - [OpenMP](http://www.openmp.org/) compatible C++ compiler. Under Linux, OpenMP is supported by default. Under macOS, you can install clang-omp++ using [Homebrew](https://brew.sh/).  After installing Homebrew, open a shell and execute `$ brew install clang-omp`.
 - [Boost (version 1.59.0 or higher)](https://www.boost.org/). Does not require compilation. Just download the sources into a directory `<BOOST_ROOT>`.
-- [Gurobi (version 8.01 or higher)](http://www.gurobi.com/), for solving mixed integer and linear programming problems. Gurobi is commercial software, but has a free academic licence. Download the binaries and header files into a directory `<GUROBI_ROOT>`and activate your Gurobi licence as described in the Gurobi documentation. If you cannot obtain a licence for Gurobi, you can install GEDLIB without it. In this case, the methods which use mixed integer or linear programming are not available.
+- [Gurobi (version 8.01 or higher)](http://www.gurobi.com/), for solving mixed integer and linear programming problems. Gurobi is commercial software, but has a free academic licence. Download the binaries and header files into a directory `<GUROBI_ROOT>` and activate your Gurobi licence as described in the Gurobi documentation. If you cannot obtain a licence for Gurobi, you can install GEDLIB without it. In this case, the methods which use mixed integer or linear programming are not available.
 - The following external libraries are distributed with GEDLIB:
     - [Eigen (version 3.3.4)](http://eigen.tuxfamily.org/index.php?title=Main_Page)
     - [NOMAD (version 3.8)](https://www.gerad.ca/nomad/Project/Home.html)
@@ -48,13 +48,13 @@ GEDLIB uses the following external libraries:
   For installing them, follow the instructions given in the next paragraph.
 
 
-After having installed CMake, Doxygen, and OpenMP and having downloaded Boost, execute the script `<GEDLIB_ROOT>/install.py` for installing GEDLIB and the external libraries distributed with GEDLIB:
+After having installed CMake, Doxygen, and OpenMP and having downloaded Boost, execute the script `install.py` for installing GEDLIB and the external libraries distributed with GEDLIB:
 
 ```sh
 python install.py [--help] [-h] [--doc] [--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests] [--boost <BOOST_ROOT>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
 ```
 
-Use the option `--doc` to build the documentation, the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `<GEDLIB_ROOT>/lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
+Use the option `--doc` to build the documentation, the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|pr2018|sspr2018|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
 
 Use the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>` to build GEDLIB as a shared for graphs with custom node ID, node label, and edge label types:
 
@@ -63,13 +63,13 @@ Use the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>
 - `<UserNodeLabel>` is the type of your graphs' node labels.
 - `<UserEdgeLabel>` is the type of your graphs' edge labels. 
 
-Doing so builds the shared library `<GEDLIB_ROOT>/lib/lib<indentifier>gedlib.so`, which can be used for graphs with node IDs of type `<UserNodeID>`, node labels of type `<UserNodeLabel>`, and edge labels of type `<UserEdgeLabel>`. For example, executing `$ python install.py --lib mytypes,int,double,double` builds the shared library `<GEDLIB_ROOT>/lib/libmytypesgedlib.so` for usage with graphs whose node IDs are of type `int` and whose node and edge labels are of type `double`.
+Doing so builds the shared library `lib/lib<indentifier>gedlib.so`, which can be used for graphs with node IDs of type `<UserNodeID>`, node labels of type `<UserNodeLabel>`, and edge labels of type `<UserEdgeLabel>`. For example, executing `$ python install.py --lib mytypes,int,double,double` builds the shared library `lib/libmytypesgedlib.so` for usage with graphs whose node IDs are of type `int` and whose node and edge labels are of type `double`.
 
 ## 4. Building an Application that Uses GEDLIB
 
 ### 4.1 Building an Application that Uses GEDLIB as Header-Only Library
 
-For building an application that uses GEDLIB as a header-only library, it suffices to execute the installation script `<GEDLIB_ROOT>/install.py` without any options. Subsequently, carry out the following steps:
+For building an application that uses GEDLIB as a header-only library, it suffices to execute the installation script `install.py` without any options. Subsequently, carry out the following steps:
 
 - Add the following directories to your include directories:
     - `<GEDLIB_ROOT>`
@@ -97,7 +97,7 @@ For building an application that uses GEDLIB as a header-only library, it suffic
     - If you want to install GEDLIB with Gurobi, additionally link your application against the following libraries:
         - Under MacOS: `<GUROBI_ROOT>/mac64/lib/libgurobi80.so` and `<GUROBI_ROOT>/mac64/lib/libgurobi_c++.a`
         - Under Linux: `<GUROBI_ROOT>/linux64/lib/libgurobi80.so` and `<GUROBI_ROOT>/linux64/lib/libgurobi_c++.a`
-- If you want to install GEDLIB with Gurobi, `#define GUROBI` before including the header `<GEDLIB_ROOT>/src/env/ged_env.hpp`.
+- If you want to install GEDLIB with Gurobi, define `GUROBI` before including the header `src/env/ged_env.hpp`.
 
 ### 4.2 Building an Application that Uses GEDLIB as Shared Library
 
@@ -106,20 +106,20 @@ For building an application that uses GEDLIB as a header-only library, it suffic
 If you want to build an application that uses GEDLIB as a shared for graphs given as GXL files, make sure that you have installed GEDLIB with the option `--lib gxl`. Subsequently, carry out the folowing steps:
 
 - Add the directory `<GEDLIB_ROOT>/lib` to your link directories.
-- Link your application against the shared library `<GEDLIB_ROOT>/lib/libgxlgedlib.so`.
+- Link your application against the shared library `libgxlgedlib.so`.
 
 #### 4.2.2 Graphs with User-Defined Node ID, Node Label, and Edge Label Types
 
 If you want to build an application that uses GEDLIB as a shared library for graphs with custom node ID, node label, and edge label types, make sure that you have installed GEDLIB with the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>`. Subsequently, carry out the folowing steps:
 
 - Add the directory `<GEDLIB_ROOT>/lib` to your link directories.
-- Link your application against the shared library `<GEDLIB_ROOT>/lib/lib<indentifier>gedlib.so`.
+- Link your application against the shared library `lib<indentifier>gedlib.so`.
 
 ## 5. Using GEDLIB
 
 ### 5.1 General Usage
 
-In your source file, include the header `<GEDLIB_ROOT>/src/env/ged_env.hpp` and create your environment object:
+In your source file, include the header `src/env/ged_env.hpp` and create your environment object:
 
 ```cpp
 #include "src/env/ged_env.hpp"
@@ -138,7 +138,7 @@ If you use GEDLIB with the template parameter `UserNodeID` set to `ged::GXLNodeI
 
 #### 5.3.1 Graphs Given as GXL Files
 
-If you want to use GEDLIB as a shared library for graphs given as GXL files, make sure that you have installed GEDLIB with the option `--lib gxl`. In your source file, you have to `#define GXL_GEDLIB_SHARED` before including `<GEDLIB_ROOT>/src/env/ged_env.hpp`:
+If you want to use GEDLIB as a shared library for graphs given as GXL files, make sure that you have installed GEDLIB with the option `--lib gxl`. In your source file, you have to define `GXL_GEDLIB_SHARED` before including `src/env/ged_env.hpp`:
 
   ```cpp
   #define GXL_GEDLIB_SHARED  
@@ -149,7 +149,7 @@ If you want to use GEDLIB as a shared library for graphs given as GXL files, mak
 
 #### 5.3.2 Graphs with User-Defined Node ID, Node Label, and Edge Label Types
   
-If you want to use GEDLIB as a shared library for graphs with custom node ID, node label, and edge label types, make sure that you have installed GEDLIB with the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>`. In your source file, you have to `#define <IDENTIFIER>_GEDLIB_SHARED` before including `<GEDLIB_ROOT>/src/env/ged_env.hpp`, where `<IDENTIFIER>` is the upper case transformation of `<identifier>`. For example, if you have installed GEDLIB by executing `$ python install.py --lib mytypes,int,double,double`, you have to do the following:
+If you want to use GEDLIB as a shared library for graphs with custom node ID, node label, and edge label types, make sure that you have installed GEDLIB with the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>`. In your source file, you have to define `<IDENTIFIER>_GEDLIB_SHARED` before including `src/env/ged_env.hpp`, where `<IDENTIFIER>` is the upper case transformation of `<identifier>`. For example, if you have installed GEDLIB by executing `$ python install.py --lib mytypes,int,double,double`, you have to do the following:
 
   ```cpp
   #define MYTYPES_GEDLIB_SHARED  
@@ -160,7 +160,7 @@ If you want to use GEDLIB as a shared library for graphs with custom node ID, no
 
 ### 5.4 Examples
 
-For exacmples of how to use GEDLIB, have a look at the `.cpp` files contained in the subdirectories of `<GEDLIB_ROOT>/tests/`. 
+For exacmples of how to use GEDLIB, have a look at the `.cpp` files contained in the subdirectories of `tests/`. 
 
 ## 6. Reproducability Packages
 
@@ -178,11 +178,11 @@ $ ./learn_subgraph_depths
 $ ./learn_walks_depth
 $ ./test_lsape_based_methods
 ```
-After having executed these commands, the results of the experiments are contained in the folder `<GEDLIB_ROOT>/tests/sspr2018/output/`.
+After having executed these commands, the results of the experiments are contained in the folder `tests/sspr2018/output/`.
 
 # 7. Datasets
 
-GEDLIB comes with several datassets which contain graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html). They are contained in the following subdirectories of the directory `<GEDLIB_ROOT>/data/datasets/`:
+GEDLIB comes with several datassets which contain graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html). They are contained in the following subdirectories of the directory `data/datasets/`:
 
 - <b>`AIDS`, `Fingerprint`, `GREC`, `Letter`, `Mutagenicity`, `Protein`:</b> These datasets are taken from the [IAM Graph Database](http://www.fki.inf.unibe.ch/databases/iam-graph-database). 
   You can use them for scientific work, but are requested to include the following reference to your paper:
@@ -196,11 +196,11 @@ GEDLIB comes with several datassets which contain graphs given in the [GXL file 
       [https://doi.org/10.1007/978-3-319-18224-7\_14](https://doi.org/10.1007/978-3-319-18224-7_14)
 - <b>`acyclic`, `alkane`, `mao`, `pah`:</b> These datasets are taken from [GREYC's Chemistry Dataset](https://brunl01.users.greyc.fr/CHEMISTRY/).
 
-For each dataset, the directory `<GEDLIB_ROOT>/data/collections/` contains an XML file which lists the contained graphs' GXL files along with their classes. These files match the document type definition `<GEDLIB_ROOT>/data/collections/GraphCollection.dtd` and can hence be used as input for `ged::GEDEnv::load_gxl_graphs()`. The Python script `<GEDLIB_ROOT>/data/collections/sample.py` can be used to generate samples of the datasets.
+For each dataset, the directory `data/collections/` contains an XML file which lists the contained graphs' GXL files along with their classes. These files match the document type definition `data/collections/GraphCollection.dtd` and can hence be used as input for `ged::GEDEnv::load_gxl_graphs()`. The Python script `data/collections/sample.py` can be used to generate samples of the datasets.
 
 ## 8. Directory Structure
 
-After executing `<GEDLIB_ROOT>/install.py`, the directoy `<GEDLIB_ROOT>` has the following internal structure:
+After executing `install.py`, the directoy `<GEDLIB_ROOT>` has the following internal structure:
 
 ```
 .

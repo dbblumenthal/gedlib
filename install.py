@@ -1,5 +1,4 @@
-##
-############################################################################
+#//////////////////////////////////////////////////////////////////////////#
 #                                                                          #
 #   Copyright (C) 2018 by David B. Blumenthal                              #
 #                                                                          #
@@ -18,8 +17,9 @@
 #   You should have received a copy of the GNU Lesser General Public       #
 #   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. #
 #                                                                          #
-############################################################################
+#//////////////////////////////////////////////////////////////////////////#
 
+##
 # @file install.py
 # @brief Installs GEDLIB and its dependencies.
 #

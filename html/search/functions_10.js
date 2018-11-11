@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['safe_5fget_5fedge',['safe_get_edge',['../classged_1_1GEDGraph.html#a8331984dab3fe2ee6a634b476271736a',1,'ged::GEDGraph']]],
+  ['safe_5fis_5fedge',['safe_is_edge',['../classged_1_1GEDGraph.html#a9bc459c0dd290ba0b421d14391ab38f5',1,'ged::GEDGraph']]],
+  ['save_5fas_5fconfig_5ffile',['save_as_config_file',['../namespaceged_1_1util.html#a6f461cac1eeeb517a76e1f507d04ab02',1,'ged::util']]],
+  ['save_5fnode_5fmap',['save_node_map',['../classged_1_1GEDData.html#a9897945019e5a640a79e6974386f3b3d',1,'ged::GEDData']]],
+  ['set_5fedit_5fcosts',['set_edit_costs',['../classged_1_1GEDEnv.html#afe315188c73f0f95624b7c65fbcb6651',1,'ged::GEDEnv::set_edit_costs(Options::EditCosts edit_costs, std::initializer_list&lt; double &gt; edit_cost_constants={})'],['../classged_1_1GEDEnv.html#a7b4d88ca0d49282b381365741eceb6df',1,'ged::GEDEnv::set_edit_costs(EditCosts&lt; UserNodeLabel, UserEdgeLabel &gt; *edit_costs)']]],
+  ['set_5fgreedy_5fmethod',['set_greedy_method',['../classged_1_1LSAPSolver.html#ac060567467c41519b3fd6f95b8d562c6',1,'ged::LSAPSolver::set_greedy_method()'],['../classged_1_1LSAPESolver.html#a083048a787f67d954d6a1892286cd7c5',1,'ged::LSAPESolver::set_greedy_method()']]],
+  ['set_5fhungarian_5falgorithm',['set_hungarian_algorithm',['../classged_1_1LSAPSolver.html#a0aee96d47a7dc26aae5cf82b1f434d09',1,'ged::LSAPSolver']]],
+  ['set_5finduced_5fcost',['set_induced_cost',['../classged_1_1NodeMap.html#a168a343efebc6069a744f9a0ce813c08',1,'ged::NodeMap']]],
+  ['set_5flabel',['set_label',['../classged_1_1GEDGraph.html#a151ca448acadd56979ca1b4f681704d1',1,'ged::GEDGraph::set_label(NodeID node, LabelID label)'],['../classged_1_1GEDGraph.html#af6df180a55f2982d82c464308e6cf19d',1,'ged::GEDGraph::set_label(EdgeID edge, LabelID label)']]],
+  ['set_5flower_5fbound',['set_lower_bound',['../classged_1_1Result.html#a72e6b2fd5ee0a16e004f92187651122b',1,'ged::Result']]],
+  ['set_5fmethod',['set_method',['../classged_1_1GEDEnv.html#a22bb02634a1ab028a4e5c4ff1110345f',1,'ged::GEDEnv']]],
+  ['set_5fmodel',['set_model',['../classged_1_1LSAPESolver.html#ac892f2f8b4b66a6979ceaee0e0be1d93',1,'ged::LSAPESolver']]],
+  ['set_5foptions',['set_options',['../classged_1_1GEDMethod.html#adcd0378ae616212496b63ed85e819a7b',1,'ged::GEDMethod']]],
+  ['set_5fproblem',['set_problem',['../classged_1_1LSAPSolver.html#af4fa30daae05be9ea7bd10f8ee5fe774',1,'ged::LSAPSolver::set_problem()'],['../classged_1_1LSAPESolver.html#ab9cf192d2d6a63265dfeaa247c0dff8f',1,'ged::LSAPESolver::set_problem()']]],
+  ['set_5fto_5fval',['set_to_val',['../classged_1_1Matrix.html#a28f11633a9e4839cac41b46f3eba726b',1,'ged::Matrix']]],
+  ['setup_5fadjacency_5fmatrix',['setup_adjacency_matrix',['../classged_1_1GEDGraph.html#abe32fd54ba880a90a438188599653800',1,'ged::GEDGraph']]],
+  ['shuffled_5fgraph_5fcopies_5favailable',['shuffled_graph_copies_available',['../classged_1_1GEDData.html#a799447d64f56209a1f22f5a00e1c3556',1,'ged::GEDData']]],
+  ['solve',['solve',['../classged_1_1LSAPSolver.html#a405f69e5341120e5e6cf04757b9da047',1,'ged::LSAPSolver::solve()'],['../classged_1_1LSAPESolver.html#adb689cb5538236f0c3514a247c703e73',1,'ged::LSAPESolver::solve()']]],
+  ['sort_5fnode_5fmaps_5fand_5fset_5fupper_5fbound',['sort_node_maps_and_set_upper_bound',['../classged_1_1Result.html#a55675ecd2f4a04edd7467d13a568c791',1,'ged::Result']]],
+  ['swap',['swap',['../classged_1_1Matrix.html#a52fd3cb802b91ebb9f737784713571c5',1,'ged::Matrix']]],
+  ['swap_5fassignments',['swap_assignments',['../classged_1_1GEDData.html#ad9fb7373c799b229aea8eabfebfd1ac3',1,'ged::GEDData']]],
+  ['swap_5fcost',['swap_cost',['../classged_1_1GEDData.html#a2f2f86d1e258423da49a174892d0b93f',1,'ged::GEDData']]]
+];

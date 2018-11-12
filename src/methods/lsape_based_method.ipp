@@ -69,7 +69,6 @@ void
 LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel>::
 populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result & result, DMatrix & lsape_instance) {
 
-
 	// Populate the LSAPE instance and set up the solver.
 	populate_instance(g, h, lsape_instance);
 	LSAPESolver lsape_solver(&lsape_instance);
@@ -82,7 +81,6 @@ populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result
 		lsape_solver.set_greedy_method(greedy_method_);
 	}
 	lsape_solver.solve(max_num_solutions_);
-
 
 	// Compute and store lower and upper bound
 	if (compute_lower_bound_ and solve_optimally_) {

@@ -97,10 +97,12 @@ solve(int num_solutions) {
 					dual_var_rows_.data(), dual_var_cols_.data(), further_row_to_col_assignments);
 			row_to_col_assignments_.clear();
 			col_to_row_assignments_.clear();
-			for (auto row_to_col_assignment = further_row_to_col_assignments.begin(); row_to_col_assignment != further_row_to_col_assignments.end(); row_to_col_assignment++) {
-				row_to_col_assignments_.push_back(std::vector<std::size_t>(*row_to_col_assignment, *row_to_col_assignment + num_rows()));
+			for (auto row_to_col_assignment : further_row_to_col_assignments) {
+				row_to_col_assignments_.push_back(std::vector<std::size_t>(row_to_col_assignment, row_to_col_assignment + num_rows()));
 				col_to_row_assignments_.push_back(construct_col_to_row_asignment_(row_to_col_assignments_.back()));
-				delete *row_to_col_assignment;
+			}
+			for (auto && row_to_col_assignment : further_row_to_col_assignments) {
+				delete row_to_col_assignment;
 			}
 		}
 	}

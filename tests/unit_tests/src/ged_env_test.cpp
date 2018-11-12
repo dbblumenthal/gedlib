@@ -26,16 +26,23 @@
 
 TEST_CASE("testing on MAO graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
-	env.set_edit_costs(ged::Options::EditCosts::CHEM_1);
-	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/mao/", "../collections/mao_5.xml"));
+	env.set_edit_costs(ged::Options::EditCosts::CHEM_2);
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/AIDS/data/", "../collections/AIDS_2.xml"));
 	ged::GEDGraph::GraphID g {graph_ids[0]};
 	ged::GEDGraph::GraphID h {graph_ids[1]};
 	//env.init();
-	env.init(ged::Options::InitType::EAGER_WITH_SHUFFLED_COPIES);
+	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 	double lower_bound{0.0};
 	double exact{0.0};
 
+	SECTION("find bug in BIPARTITE__C-NONE__T-1__S-4") {
+		std::cout << "\n=== running Bipartite ===\n";
+		env.set_method(ged::Options::GEDMethod::BIPARTITE, "--threads 1 --max-num-solutions 4 --centrality-method NONE");
+		env.run_method(g, h);
+		std::cout << "upper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+	}
 
+	/*
 	SECTION("Branch, BranchFast, BranchTight, Node") {
 		std::cout << "\n=== running Branch ===\n";
 		env.set_method(ged::Options::GEDMethod::BRANCH, "--lsape-model FLWC --threads 5");
@@ -335,7 +342,7 @@ TEST_CASE("testing on MAO graphs") {
 		CHECK(lower_bound <= env.get_upper_bound(g, h));
 	}
 
-	/*SECTION("Ring") {
+	SECTION("Ring") {
 		std::cout << "\n===running Ring ===\n";
 		env.set_method(ged::Options::GEDMethod::RING, "--threads 5 --led-method LSAPE_OPTIMAL --save ../output/mao_ring_LSAPE_OPTIMAL.ini");
 		env.init_method();

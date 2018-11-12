@@ -24,7 +24,7 @@
  * @brief Trains the method ged::Ring for different datasets.
  * @details The binary built from this file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
- *   &ldquo;Designing heuristics for graph edit distance&rdquo;,
+ *   &ldquo;Upper Bounding GED via Transformations to LSAPE Based on Rings and Machine Learninge&rdquo;,
  *   Submitted to PR.
  */
 

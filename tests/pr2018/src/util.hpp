@@ -21,7 +21,11 @@
 
 /*!
  * @file util.hpp
- * @brief Provides utility functions for tests.
+ * @brief Provides utility functions for tests of PR submission.
+ * @details This file was used for the experiments in the following submission:
+ * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
+ *   &ldquo;Upper Bounding GED via Transformations to LSAPE Based on Rings and Machine Learning&rdquo;,
+ *   Submitted to PR.
  */
 
 #ifndef SRC_TESTS_PR2018_UTIL_HPP_

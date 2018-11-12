@@ -876,9 +876,12 @@ namespace lsape {
     LSAPE_IndexType *match = NULL, i;
     for (typename std::list<LSAPE_IndexType*>::iterator it = solutions.begin(); it != solutions.end(); it++)
     {
-      match = *it;
-      for (i = 0; i < n; i++) if (match[i] > m) match[i] = m;
-      match = (LSAPE_IndexType*)std::realloc(match,n*sizeof(LSAPE_IndexType));
+     match = *it;
+     *it = new LSAPE_IndexType[n];
+     for (i = 0; i < n; i++) if (match[i] > m) {(*it)[i] = m;} else {(*it)[i] = match[i];}
+     delete match;
+     match = NULL;
+      //match = (LSAPE_IndexType*)std::realloc(match,n*sizeof(LSAPE_IndexType));
     }
     
     delete[] Cext; delete[] R2C; delete[] uX; delete[] vX;

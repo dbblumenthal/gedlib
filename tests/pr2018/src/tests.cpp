@@ -21,7 +21,11 @@
 
 /*!
  * @file tests.cpp
- * @brief
+ * @brief Carries out the tests for PR submission.
+ * @details The binary built from this file was used for the experiments in the following submission:
+ * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
+ *   &ldquo;Upper Bounding GED via Transformations to LSAPE Based on Rings and Machine Learning&rdquo;,
+ *   Submitted to PR.
  */
 
 #include "util.hpp"
@@ -169,7 +173,7 @@ public:
 };
 
 
-void test_on_dataset(const std::string & dataset) {
+void test_on_dataset(const std::string & dataset, const std::vector<string> & ml_methods) {
 
 	// Initialize environment.
 	std::cout << "\n=== " << dataset << " ===\n";
@@ -183,7 +187,6 @@ void test_on_dataset(const std::string & dataset) {
 	std::vector<std::string> centralities{"NONE", "PAGERANK"};
 	std::vector<std::size_t> threads{1, 4, 7, 10};
 	std::vector<std::size_t> solutions{1, 4, 7, 10};
-	std::vector<std::string> ml_methods{"DNN", "SVM", "ONE_CLASS_SVM_LIKELIHOOD", "ONE_CLASS_SVM_SCALE"};
 	std::vector<Method> methods;
 	for (auto ged_method : ged_methods) {
 		for (auto num_threads : threads) {
@@ -225,7 +228,19 @@ void test_on_dataset(const std::string & dataset) {
 
 int main(int argc, char* argv[]) {
 	std::vector<std::string> datasets;
-	for (int i{1}; i < argc; i++) {
+	std::vector<std::string> ml_methods{"DNN", "SVM", "ONE_CLASS_SVM_LIKELIHOOD", "ONE_CLASS_SVM_SCALE"};
+	int i{1};
+	if (argc > 1) {
+		std::string first_option(argv[i]);
+		if (first_option == "--no-svm") {
+			ml_methods = {"DNN", "ONE_CLASS_SVM_LIKELIHOOD"};
+			i++;
+		}
+		else {
+			std::cout << "first option = \"" << first_option << "\"\n";
+		}
+	}
+	for (; i < argc; i++) {
 		datasets.push_back(std::string(argv[i]));
 		util::check_dataset(datasets.back());
 	}
@@ -234,7 +249,7 @@ int main(int argc, char* argv[]) {
 	}
 	for (auto dataset : datasets) {
 		try {
-			test_on_dataset(dataset);
+			test_on_dataset(dataset, ml_methods);
 		}
 		catch (const std::exception & error) {
 			std::cerr << error.what() << ". " << "Error on " << dataset << ".\n";

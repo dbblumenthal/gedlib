@@ -27,7 +27,7 @@
 TEST_CASE("testing on AIDS graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 	env.set_edit_costs(ged::Options::EditCosts::CHEM_2);
-	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_30.xml"));
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/mao/", "../collections/mao_small.xml"));
 	ged::GEDGraph::GraphID g {graph_ids[0]};
 	ged::GEDGraph::GraphID h {graph_ids[1]};
 	//env.init();

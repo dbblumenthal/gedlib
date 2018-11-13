@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file refine.ipp
@@ -50,13 +50,14 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 		NodeMap::Assignment best_swap_assignment_1;
 		NodeMap::Assignment best_swap_assignment_2;
 		best_swap_cost = 0.0;
-		for (auto i = g.nodes().first; i != g.nodes().second; i++) {
-			for (auto j = g.nodes().first; j != g.nodes().second; j++) {
-				if (*i == *j) {
+		std::vector<NodeMap::Assignment> assignments;
+		output_node_map.as_relation(assignments);
+		assignments.emplace_back(GEDGraph::dummy_node(), GEDGraph::dummy_node());
+		for (const NodeMap::Assignment & assignment_1 : assignments) {
+			for (const NodeMap::Assignment & assignment_2 : assignments) {
+				if (assignment_1 == assignment_2) {
 					continue;
 				}
-				NodeMap::Assignment assignment_1(*i, output_node_map.image(*i));
-				NodeMap::Assignment assignment_2(*j, output_node_map.image(*j));
 				double swap_cost{this->ged_data_.swap_cost(g, h, assignment_1, assignment_2, output_node_map)};
 				if (swap_cost < best_swap_cost) {
 					best_swap_cost = swap_cost;

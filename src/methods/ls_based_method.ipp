@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file ls_based_method.ipp
@@ -48,7 +48,10 @@ lower_bound_method_{nullptr},
 lower_bound_method_options_(""),
 random_substitution_ratio_{1.0},
 num_initial_solutions_{1},
-num_runs_from_initial_solutions_{std::numeric_limits<std::size_t>::max()} {}
+num_runs_from_initial_solutions_{std::numeric_limits<std::size_t>::max()},
+num_randpost_loops_{0},
+max_randpost_retrials_{0},
+randpost_penalty_{0.0} {}
 
 // === Definitions of member functions inherited from GEDMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -74,33 +77,60 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 	// Generate the initial node maps and allocate output node maps.
 	std::vector<NodeMap> initial_node_maps;
+	std::vector<NodeMap> result_node_maps;
+	std::vector<NodeMap> visited_node_maps;
+	double upper_bound{std::numeric_limits<double>::infinity()};
+	double lower_bound{0.0};
+	std::vector<std::vector<double>> counts_matrix(g.num_nodes(), std::vector<double>(h.num_nodes() + 1, 0.0));
 	generate_initial_node_maps(g, h, initial_node_maps, result);
 	for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
-		result.add_node_map(g.num_nodes(), h.num_nodes());
+		result_node_maps.emplace_back(g.num_nodes(), h.num_nodes());
+		visited_node_maps.emplace_back(initial_node_maps.at(node_map_id));
+		//result.add_node_map(g.num_nodes(), h.num_nodes());
 	}
 
 	// Initialize lower bound.
 	if (lower_bound_method_) {
 		Result lower_bound_result;
 		lower_bound_method_->run_as_util(g, h, lower_bound_result);
-		result.set_lower_bound(std::max(result.lower_bound(), lower_bound_result.lower_bound()));
+		lower_bound = std::max(result.lower_bound(), lower_bound_result.lower_bound());
+		result.set_lower_bound(lower_bound);
 	}
 
 	// Parallelly run local searches starting at the initial node maps. Stop if the optimal solution has been found or if the desired number of terminated runs has been reached.
 	bool found_optimum{false};
-	std::size_t terminated_runs{0};
+	for (std::size_t loop{0}; loop <= num_randpost_loops_; loop++) {
+		if (found_optimum) {
+			break;
+		}
+		if (loop > 0) {
+			for (NodeMap & node_map : initial_node_maps) {
+				node_map.clear();
+			}
+			generate_node_maps_from_counts_matrix_(counts_matrix, visited_node_maps, initial_node_maps);
+		}
+		std::size_t terminated_runs{0};
 #ifdef _OPENMP
-	omp_set_num_threads(num_threads_ - 1);
+		omp_set_num_threads(num_threads_ - 1);
 #pragma omp parallel for if(num_threads_ > 1) schedule(dynamic)
 #endif
-	for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
-		if (not found_optimum and (terminated_runs < num_runs_from_initial_solutions_)) {
-			ls_run_from_initial_solution_(g, h, result.lower_bound(), initial_node_maps.at(node_map_id), result.node_map(node_map_id));
+		for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
+			if (not found_optimum and (terminated_runs < num_runs_from_initial_solutions_)) {
+				ls_run_from_initial_solution_(g, h, result.lower_bound(), initial_node_maps.at(node_map_id), result_node_maps.at(node_map_id));
 #pragma omp critical
-			{
-				found_optimum = (found_optimum or (result.lower_bound() >= result.node_map(node_map_id).induced_cost()));
-				terminated_runs++;
+				{
+					upper_bound = std::min(upper_bound, result_node_maps.at(node_map_id).induced_cost());
+					found_optimum = (found_optimum or (result.lower_bound() >= upper_bound));
+					terminated_runs++;
+				}
 			}
+		}
+		if (not found_optimum and loop < num_randpost_loops_) {
+			update_counts_matrix_and_visited_node_maps_(result_node_maps, upper_bound, lower_bound, visited_node_maps, counts_matrix);
+		}
+		for (NodeMap & node_map : result_node_maps) {
+			result.add_node_map(node_map);
+			node_map.clear();
 		}
 	}
 
@@ -211,6 +241,18 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		is_valid_option = true;
 	}
+	else if (option == "randpost-penalty") {
+		try {
+			randpost_penalty_ = std::stod(arg);
+		}
+		catch (...) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option randpost-penalty. Usage: options = \"[--randpost-penalty <convertible to double between 0 and 1>]\"");
+		}
+		if (randpost_penalty_ < 0 or randpost_penalty_ > 1) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option randpost-penalty. Usage: options = \"[--randpost-penalty <convertible to double between 0 and 1>]\"");
+		}
+		is_valid_option = true;
+	}
 	else if (option == "initial-solutions") {
 		try {
 			num_initial_solutions_ = std::stoul(arg);
@@ -264,6 +306,24 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		lower_bound_method_options_ += "--threads " + std::to_string(num_threads_);
 		is_valid_option = true;
 	}
+	else if (option == "num-randpost-loops") {
+		try {
+			num_randpost_loops_ = std::stoul(arg);
+		}
+		catch (...) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option num-randpost-loops. Usage: options = \"[--num-randpost-loops <convertible to int greater equal 0>]\"");
+		}
+		is_valid_option = true;
+	}
+	else if (option == "max-randpost-retrials") {
+		try {
+			max_randpost_retrials_ = std::stoul(arg);
+		}
+		catch (...) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option max-randpost-retrials. Usage: options = \"[--max-randpost-retrials <convertible to int greater equal 0>]\"");
+		}
+		is_valid_option = true;
+	}
 	if (initialization_method_) {
 		initialization_method_->set_options(initialization_options_);
 	}
@@ -279,9 +339,9 @@ std::string
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (ls_valid_options_string_() == "") {
-		return "[--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>]";
+		return "[--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 	}
-	return ls_valid_options_string_() + " [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>]";
+	return ls_valid_options_string_() + " [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -298,6 +358,9 @@ ged_set_default_options_() {
 	num_initial_solutions_ = 1;
 	num_runs_from_initial_solutions_ = std::numeric_limits<std::size_t>::max();
 	num_threads_ = 1;
+	num_randpost_loops_ = 0;
+	max_randpost_retrials_ = 0;
+	randpost_penalty_ = 0;
 	ls_set_default_options_();
 }
 
@@ -320,7 +383,28 @@ generate_lsape_based_initial_node_maps(const GEDGraph & g, const GEDGraph & h, s
 	initialization_method_->run_as_util(g, h, lsape_result);
 	initial_node_maps = lsape_result.node_maps();
 	result.set_lower_bound(lsape_result.lower_bound());
+}
 
+template<class UserNodeLabel, class UserEdgeLabel>
+void
+LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
+update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const double & upper_bound, const double & lower_bound,
+		std::vector<NodeMap> & visited_node_maps, std::vector<std::vector<double>> & counts_matrix) const {
+	std::size_t num_nodes_g{counts_matrix.size()};
+	std::size_t num_nodes_h{counts_matrix[0].size() - 1};
+	GEDGraph::NodeID k{GEDGraph::dummy_node()};
+	for (const NodeMap & node_map : result_node_maps) {
+		for (GEDGraph::NodeID i{0}; i < num_nodes_g; i++) {
+			k = node_map.image(i);
+			if (k != GEDGraph::dummy_node()) {
+				counts_matrix[i][k] += (1 - randpost_penalty_) + randpost_penalty_ * (upper_bound - lower_bound) / (node_map.induced_cost() - lower_bound);
+			}
+			else {
+				counts_matrix[i][num_nodes_h]++;
+			}
+		}
+		visited_node_maps.emplace_back(node_map);
+	}
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -355,6 +439,74 @@ generate_random_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::v
 			initial_node_maps.back().add_assignment(permutation_g[pos], permutation_h[pos]);
 		}
 		this->ged_data_.compute_induced_cost(g, h, initial_node_maps.back());
+	}
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+void
+LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
+generate_node_maps_from_counts_matrix_(const std::vector<std::vector<double>> & counts_matrix, std::vector<NodeMap> & visited_node_maps, std::vector<NodeMap> & initial_node_maps) const {
+	std::size_t num_nodes_g{counts_matrix.size()};
+	std::size_t num_nodes_h{counts_matrix[0].size() - 1};
+	double max_count{0};
+	for (const auto & row : counts_matrix) {
+		for (const auto & cell : row) {
+			max_count = std::max(max_count, cell);
+		}
+	}
+	std::random_device rng;
+	std::mt19937 urng(rng());
+	std::size_t node_map_id{0};
+	std::size_t num_unsuccessful_trials{0};
+	while (node_map_id < initial_node_maps.size()) {
+		std::vector<std::vector<double>> temp_counts_matrix(counts_matrix);
+
+		// flatten the distribution if necessary
+		if (max_randpost_retrials_ > 0 and num_unsuccessful_trials > 0) {
+			for (auto & row : temp_counts_matrix) {
+				for (auto & cell : row) {
+					cell += max_count * static_cast<double>(num_unsuccessful_trials) / static_cast<double>(max_randpost_retrials_);
+				}
+			}
+		}
+		// generate a node map
+		std::vector<bool> is_assigned_target_node(num_nodes_h, false);
+		for (GEDGraph::NodeID i{0}; i < num_nodes_g; i++) {
+			std::discrete_distribution<std::size_t> distribution(temp_counts_matrix[i].begin(), temp_counts_matrix[i].end());
+			GEDGraph::NodeID k{distribution(urng)};
+			if (k < num_nodes_h) {
+				initial_node_maps.at(node_map_id).add_assignment(i, k);
+				is_assigned_target_node[k] = true;
+			}
+			else {
+				initial_node_maps.at(node_map_id).add_assignment(i, GEDGraph::dummy_node());
+			}
+			for (GEDGraph::NodeID j{i+1}; j < num_nodes_g; j++) {
+				temp_counts_matrix[j][k] = 0.0;
+			}
+		}
+		for (GEDGraph::NodeID k{0}; k < num_nodes_h; k++) {
+			if (not is_assigned_target_node[k]) {
+				initial_node_maps.at(node_map_id).add_assignment(GEDGraph::dummy_node(), k);
+			}
+		}
+
+		// check if node map has not been visited yet
+		bool retry{false};
+		if (num_unsuccessful_trials < max_randpost_retrials_) {
+			for (auto visited_node_map = visited_node_maps.crbegin(); visited_node_map != visited_node_maps.crend(); visited_node_map++) {
+				if (*visited_node_map == initial_node_maps.at(node_map_id)) {
+					retry = true;
+					num_unsuccessful_trials++;
+					initial_node_maps.at(node_map_id).clear();
+					break;
+				}
+			}
+		}
+		if (not retry) {
+			visited_node_maps.emplace_back(initial_node_maps.at(node_map_id));
+			node_map_id++;
+		}
 	}
 }
 

@@ -105,11 +105,11 @@ private:
 
 	// Private helper member functions.
 
-	void generate_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result);
+	void generate_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result);
 
-	void generate_random_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps);
+	void generate_random_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps);
 
-	void generate_lsape_based_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result);
+	void generate_lsape_based_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result);
 
 	void update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const double & upper_bound, const double & lower_bound,
 			std::vector<NodeMap> & visited_node_maps, std::vector<std::vector<double>> & counts_matrix) const;

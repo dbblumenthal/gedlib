@@ -82,7 +82,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	double upper_bound{std::numeric_limits<double>::infinity()};
 	double lower_bound{0.0};
 	std::vector<std::vector<double>> counts_matrix(g.num_nodes(), std::vector<double>(h.num_nodes() + 1, 0.0));
-	generate_initial_node_maps(g, h, initial_node_maps, result);
+	generate_initial_node_maps_(g, h, initial_node_maps, result);
 	for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
 		result_node_maps.emplace_back(g.num_nodes(), h.num_nodes());
 		visited_node_maps.emplace_back(initial_node_maps.at(node_map_id));
@@ -368,17 +368,17 @@ ged_set_default_options_() {
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
-generate_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result) {
+generate_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result) {
 	if (initialization_method_) {
-		generate_lsape_based_initial_node_maps(g, h, initial_node_maps, result);
+		generate_lsape_based_initial_node_maps_(g, h, initial_node_maps, result);
 	}
-	generate_random_initial_node_maps(g, h, initial_node_maps);
+	generate_random_initial_node_maps_(g, h, initial_node_maps);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
-generate_lsape_based_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result) {
+generate_lsape_based_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result) {
 	Result lsape_result;
 	initialization_method_->run_as_util(g, h, lsape_result);
 	initial_node_maps = lsape_result.node_maps();
@@ -410,7 +410,7 @@ update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
-generate_random_initial_node_maps(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps) {
+generate_random_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps) {
 	std::vector<GEDGraph::NodeID> permutation_g;
 	for (auto node = g.nodes().first; node != g.nodes().second; node++) {
 		permutation_g.push_back(*node);

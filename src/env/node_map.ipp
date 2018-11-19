@@ -91,18 +91,46 @@ num_target_nodes() const {
 bool
 NodeMap::
 complete(const GEDGraph & g, const GEDGraph & h) const {
-	for (const auto & node_id : forward_map_) {
-		if (node_id == GEDGraph::undefined_node()) {
+	if (forward_map_.size() != g.num_nodes()) {
+		return false;
+	}
+	if (backward_map_.size() != g.num_nodes()) {
+		return false;
+	}
+	std::vector<bool> is_assigned_col(backward_map_.size(), false);
+	for (std::size_t i{0}; i < forward_map_.size(); i++) {
+		std::size_t k{forward_map_.at(i)};
+		if (k == GEDGraph::undefined_node()) {
 			return false;
 		}
+		if (k != GEDGraph::dummy_node()) {
+			if (is_assigned_col.at(k)) {
+				return false;
+			}
+			is_assigned_col[k] = false;
+			if (backward_map_.at(k) != i) {
+				return false;
+			}
+		}
 	}
-	for (const auto & node_id : backward_map_) {
-		if (node_id == GEDGraph::undefined_node()) {
+	std::vector<bool> is_assigned_row(forward_map_.size(), false);
+	for (std::size_t k{0}; k < backward_map_.size(); k++) {
+		std::size_t i{backward_map_.at(k)};
+		if (i == GEDGraph::undefined_node()) {
 			return false;
+		}
+		if (i != GEDGraph::dummy_node()) {
+			if (is_assigned_row.at(i)) {
+				return false;
+			}
+			is_assigned_row[i] = false;
+			if (forward_map_.at(i) != k) {
+				return false;
+			}
 		}
 	}
 	return true;
-}
+	}
 
 GEDGraph::NodeID
 NodeMap::

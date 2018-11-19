@@ -91,6 +91,8 @@ private:
 
 	double randpost_penalty_;
 
+	std::string logfile_name_;
+
 	// Member functions inherited from GEDMethod.
 
 	virtual void ged_init_() final;
@@ -111,10 +113,10 @@ private:
 
 	void generate_lsape_based_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result);
 
-	void update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const double & upper_bound, const double & lower_bound,
-			std::vector<NodeMap> & visited_node_maps, std::vector<std::vector<double>> & counts_matrix) const;
+	double update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const double & upper_bound, const double & lower_bound,
+			std::vector<NodeMap> & visited_node_maps, std::size_t loop, std::vector<std::vector<double>> & counts_matrix) const;
 
-	void generate_node_maps_from_counts_matrix_(const std::vector<std::vector<double>> & counts_matrix, std::vector<NodeMap> & visited_node_maps, std::vector<NodeMap> & initial_node_maps) const;
+	void generate_node_maps_from_counts_matrix_(const GEDGraph & g, const GEDGraph & h,const std::vector<std::vector<double>> & counts_matrix, std::vector<NodeMap> & visited_node_maps, std::vector<NodeMap> & initial_node_maps) const;
 
 	// Virtual member functions to be overridden by derived classes.
 

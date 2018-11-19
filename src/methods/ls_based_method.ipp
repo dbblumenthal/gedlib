@@ -109,17 +109,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 				node_map.clear();
 			}
 			generate_node_maps_from_counts_matrix_(g,h,counts_matrix, visited_node_maps, initial_node_maps);
-			/*
-			for (const auto & current_node_map : initial_node_maps){
-                if (!current_node_map.complete(g,h)){
-                    std::cout <<"\n"<< current_node_map << "\n";
-                    throw Error("non complete nodemap");
-                }
-
-
-			}
-			*/
-		}
+        }
 		double former_upper_bound = upper_bound;
 		std::size_t terminated_runs{0};
 #ifdef _OPENMP

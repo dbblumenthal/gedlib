@@ -64,11 +64,12 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
             for(std::size_t index : swapped_original_indices){
                 swapped_original_assignments.emplace_back(assignments[index]);
             }
-            // test all possible cycle within the swapping set
+            // initialization of the swapping cycle inside the current subset
             std::vector<std::size_t> cycle(swap_size-1);
             for (std::size_t i=0; i<swap_size-1;i++) {
                 cycle[i]=i+1;
             }
+            // test all possible cycle within the swapping set
             do {
                 std::vector<NodeMap::Assignment> swapped_new_assignments;
                 for (std::size_t i=0; i<swap_size;i++) {
@@ -209,44 +210,34 @@ else{
                 }
 		}
         }
-
-
     }
-
     for(std::size_t h_vertex_index{0}; h_vertex_index< h_swapped_vertices.size();h_vertex_index++){
         GEDGraph::NodeID h_vertex = h_swapped_vertices[h_vertex_index];
         if (h_vertex != GEDGraph::dummy_node()) {
-		for (auto edge = h.incident_edges(h_vertex).first; edge != h.incident_edges(h_vertex).second; edge++) {
-		    // check if the edge has not been added yet
-		    bool added_edge = false ;
-		    for(std::size_t i=0; i<h_vertex_index; ++i){
-		    	if (h.head(*edge) == h_swapped_vertices[i]) {
-                            added_edge = true;
-                            break;
-				}
-			}
-			if (!added_edge){
-                    h_incident_edges.push_back(*edge);
+            for (auto edge = h.incident_edges(h_vertex).first; edge != h.incident_edges(h_vertex).second; edge++) {
+                // check if the edge has not been added yet
+                bool added_edge = false ;
+                for(std::size_t i=0; i<h_vertex_index; ++i){
+                    if (h.head(*edge) == h_swapped_vertices[i]) {
+                                added_edge = true;
+                                break;
+                    }
                 }
-		}
+                if (!added_edge){
+                        h_incident_edges.push_back(*edge);
+                }
+            }
         }
-
-
     }
-
-
     // Compute swap cost.
 	double delta{0.0};
-
 	// Compute node cost delta.
-
 	for(auto&& assignment: this->original_assignments){
 	delta -= ged_data.node_cost(g.get_node_label(assignment.first), h.get_node_label(assignment.second));
     }
     for(auto&& assignment: this->new_assignments){
 	delta += ged_data.node_cost(g.get_node_label(assignment.first), h.get_node_label(assignment.second));
     }
-
 	// Compute negative part of edge cost delta.
 	for (const auto & edge : g_incident_edges) {
 		delta -= ged_data.edge_cost(g.get_edge_label(edge), h.get_edge_label(node_map.image(g.tail(edge)), node_map.image(g.head(edge))));
@@ -256,10 +247,8 @@ else{
 			delta -= ged_data.edge_cost(dummy_label(), h.get_edge_label(edge));
 		}
 	}
-
-	// Carry out the swap.
+	// Carry out the swap, (note : the node_map induced cost is unaffected)
 	this->do_swap(node_map);
-
 	// Compute positive part of edge cost delta.
 	for (const auto & edge : g_incident_edges) {
 		delta += ged_data.edge_cost(g.get_edge_label(edge), h.get_edge_label(node_map.image(g.tail(edge)), node_map.image(g.head(edge))));
@@ -269,17 +258,10 @@ else{
 			delta += ged_data.edge_cost(dummy_label(), h.get_edge_label(edge));
 		}
 	}
-
 	// Undo the swap.
 	this->undo_swap(node_map);
-
 	// Return the overall swap cost.
 	return delta;
-
-
-
-
-
     }
 
 }

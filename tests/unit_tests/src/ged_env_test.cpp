@@ -23,114 +23,90 @@
 
 #define GXL_GEDLIB_SHARED
 #include "../../../src/env/ged_env.hpp"
+#include<string>
 
 TEST_CASE("testing on AIDS graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
-	env.set_edit_costs(ged::Options::EditCosts::CHEM_2);
-	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/mao/", "../collections/mao_small.xml"));
-	ged::GEDGraph::GraphID g {graph_ids[0]};
-	ged::GEDGraph::GraphID h {graph_ids[1]};
+	env.set_edit_costs(ged::Options::EditCosts::CHEM_1);
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_10.xml"));
+	//ged::GEDGraph::GraphID g {graph_ids[0]};
+	//ged::GEDGraph::GraphID h {graph_ids[4]};
 	//env.init();
 	env.init(ged::Options::InitType::EAGER_WITH_SHUFFLED_COPIES);
 	double lower_bound{0.0};
 	double exact{0.0};
 	double upper_bound;
 	double runtime;
+	//std::size_t num_runs{1};
 	std::size_t num_runs{graph_ids.size() * graph_ids.size()};
 	ged::ProgressBar progress(num_runs);
+        std::vector<std::string> exp_numsols{"20","10"};
+ 	std::vector<std::string> exp_numloops{"0","1"};
+
 
 	SECTION("RANDPOST") {
 
 
-
-		std::cout << "\n=== running REFINE RANDPOST (T1, I5, L0, R0, P0) ===\n";
-		std::cout << "\r" << progress << std::flush;
-		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions 5 --num-randpost-loops 0 --log ../output/Refine_log_sz2.csv");
-		upper_bound = 0;
-		runtime = 0;
-		progress.reset();
-		for (ged::GEDGraph::GraphID g : graph_ids) {
-			for (ged::GEDGraph::GraphID h : graph_ids) {
-				env.run_method(g, h);
-				upper_bound += env.get_upper_bound(g, h);
-				runtime += env.get_runtime(g, h);
-				progress.increment();
-				std::cout << "\r" << progress << std::flush;
+		for (std::size_t i=0;i<exp_numsols.size();i++){
+			std::cout << "\n=== running REFINE RANDPOST (T1, I"<< exp_numsols[i]<<", L"<<exp_numloops[i] <<", R0, P0) ===\n";
+			std::cout << "\r" << progress << std::flush;
+			env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions "+ exp_numsols[i] +" --num-randpost-loops " + exp_numloops[i]);
+			upper_bound = 0;
+			runtime = 0;
+			progress.reset();
+			for (ged::GEDGraph::GraphID g : graph_ids) {
+				for (ged::GEDGraph::GraphID h : graph_ids) {
+					env.run_method(g, h);
+					upper_bound += env.get_upper_bound(g, h);
+					runtime += env.get_runtime(g, h);
+					progress.increment();
+					std::cout << "\r" << progress << std::flush;
+				}
 			}
+
+			std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 		}
-
-		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
-
-
-		std::cout << "\n=== running REFINE RANDPOST (T1, I5, L1, R0, P0) ===\n";
-		std::cout << "\r" << progress << std::flush;
-		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions 5 --num-randpost-loops 1 --log ../output/Refine_log_sz2.csv");
-		upper_bound = 0;
-		runtime = 0;
-		progress.reset();
-		for (ged::GEDGraph::GraphID g : graph_ids) {
-			for (ged::GEDGraph::GraphID h : graph_ids) {
-				env.run_method(g, h);
-				upper_bound += env.get_upper_bound(g, h);
-				runtime += env.get_runtime(g, h);
-				progress.increment();
-				std::cout << "\r" << progress << std::flush;
+		/*
+   		for (std::size_t i=0;i<exp_numsols.size();i++){
+			std::cout << "\n=== running REFINE RANDPOST (T8, I"<< exp_numsols[i]<<", L"<<exp_numloops[i] <<", R0, P0,SW3) ===\n";
+			std::cout << "\r" << progress << std::flush;
+			env.set_method(ged::Options::GEDMethod::REFINE, "--threads 8 --initial-solutions "+ exp_numsols[i] +" --num-randpost-loops " + exp_numloops[i] + " --max-swap-size 3");
+			upper_bound = 0;
+			runtime = 0;
+			progress.reset();
+			for (ged::GEDGraph::GraphID g : graph_ids) {
+				for (ged::GEDGraph::GraphID h : graph_ids) {
+					env.run_method(g, h);
+					upper_bound += env.get_upper_bound(g, h);
+					runtime += env.get_runtime(g, h);
+					progress.increment();
+					std::cout << "\r" << progress << std::flush;
+				}
 			}
+
+			std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 		}
-		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+		*/
 
-
-		std::cout << "\n=== running REFINE RANDPOST (T1, I5, L2, R0, P0) ===\n";
-		std::cout << "\r" << progress << std::flush;
-		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions 5 --num-randpost-loops 2 --log ../output/Refine_log_sz2.csv");
-		upper_bound = 0;
-		runtime = 0;
-		progress.reset();
-		for (ged::GEDGraph::GraphID g : graph_ids) {
-			for (ged::GEDGraph::GraphID h : graph_ids) {
-				env.run_method(g, h);
-				upper_bound += env.get_upper_bound(g, h);
-				runtime += env.get_runtime(g, h);
-				progress.increment();
-				std::cout << "\r" << progress << std::flush;
+		for (std::size_t i=0;i<exp_numsols.size();i++){
+			std::cout << "\n=== running IPFP RANDPOST (T1, I"<< exp_numsols[i]<<", L"<<exp_numloops[i] <<", R0, P0) ===\n";
+			std::cout << "\r" << progress << std::flush;
+			env.set_method(ged::Options::GEDMethod::IPFP, " --threads 1 --initial-solutions "+ exp_numsols[i] +" --num-randpost-loops " + exp_numloops[i]);
+			upper_bound = 0;
+			runtime = 0;
+			progress.reset();
+			for (ged::GEDGraph::GraphID g : graph_ids) {
+				for (ged::GEDGraph::GraphID h : graph_ids) {
+					env.run_method(g, h);
+					upper_bound += env.get_upper_bound(g, h);
+					runtime += env.get_runtime(g, h);
+					progress.increment();
+					std::cout << "\r" << progress << std::flush;
+				}
 			}
-		}
-		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 
-        std::cout << "\n=== running REFINE RANDPOST (T4, I5, L5, R0, P0, SZ3) ===\n";
-		std::cout << "\r" << progress << std::flush;
-		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 4 --initial-solutions 5 --num-randpost-loops 5 --max-swap-size 3 --log ../output/Refine_log_sz3.csv");
-		upper_bound = 0;
-		runtime = 0;
-		progress.reset();
-		for (ged::GEDGraph::GraphID g : graph_ids) {
-			for (ged::GEDGraph::GraphID h : graph_ids) {
-				env.run_method(g, h);
-				upper_bound += env.get_upper_bound(g, h);
-				runtime += env.get_runtime(g, h);
-				progress.increment();
-				std::cout << "\r" << progress << std::flush;
-			}
+			std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 		}
-		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
-
-		std::cout << "\n=== running IPFP RANDPOST (T4, I5, L5, R0, P0) ===\n";
-		std::cout << "\r" << progress << std::flush;
-		env.set_method(ged::Options::GEDMethod::IPFP, "--threads 4 --initial-solutions 5 --num-randpost-loops 5 --log ../output/Ipfp_log.csv");
-		upper_bound = 0;
-		runtime = 0;
-		progress.reset();
-		for (ged::GEDGraph::GraphID g : graph_ids) {
-			for (ged::GEDGraph::GraphID h : graph_ids) {
-				env.run_method(g, h);
-				upper_bound += env.get_upper_bound(g, h);
-				runtime += env.get_runtime(g, h);
-				progress.increment();
-				std::cout << "\r" << progress << std::flush;
-			}
-		}
-		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
-
 
 
 	}

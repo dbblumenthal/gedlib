@@ -56,7 +56,7 @@ namespace ged {
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--iterations @<convertible to int greater equal 0@></tt> | maximal number of iterations | @p 100 | if @p 0, no iteration based termination criterion is used |
  * | <tt>\--time-limit @<convertible to double@></tt> | time limit in seconds | @p 0 | if less or equal @p 0, no time limit is enforced |
- * | <tt>\--epsilon @<convertible to double@></tt> | range | @p 0.000001 | if less or equal @p 0, no convergence based termination criterion is used |
+ * | <tt>\--epsilon @<convertible to double@></tt> | convergence threshold | @p 0.001 | if less or equal @p 0, no convergence based termination criterion is used |
  * | <tt>\--lsape-model ECBP\|EBP\|FLWC\|FLCC\|FBP\|SFBP\|FBP0</tt> | model for optimally solving LSAPE | @p ECBP | ged::LSAPESolver::Model |
  * | <tt>\--quadratic-model QAPE\|B-QAP\|C-QAP</tt> | quadratic assignment model | @p QAPE | ICPR paper |
  */
@@ -146,29 +146,29 @@ private:
 
 	void node_map_to_matrix_(const NodeMap & node_map, DMatrix & matrix) const;
 
-	double compute_induced_linear_cost_(const QAPInstance_ & qap_instance, const DMatrix & x_k) const;
+	double compute_induced_linear_cost_(const QAPInstance_ & qap_instance, const DMatrix & x) const;
 
 	double compute_induced_linear_cost_(const QAPInstance_ & qap_instance, const LSAPSolver & solver) const;
 
 	double compute_induced_linear_cost_(const QAPInstance_ & qap_instance, const LSAPESolver & solver) const;
-
-	double compute_induced_quadratic_cost_(const QAPInstance_ & qap_instance, const DMatrix & x_k) const;
 
 	double compute_induced_quadratic_cost_(const QAPInstance_ & qap_instance, const LSAPSolver & solver) const;
 
 	double compute_induced_quadratic_cost_(const QAPInstance_ & qap_instance, const LSAPESolver & solver) const;
 
 	void solve_linear_problem_(const QAPInstance_ & qap_instance, LSAPSolver & solver,
-			double & min_linear_problem, double & linear_cost_b, double & overall_cost_b) const;
+			double & min_linear_problem, double & linear_cost_b, double & overall_cost_b, DMatrix & b) const;
 
 	void solve_linear_problem_(const QAPInstance_ & qap_instance, LSAPESolver & solver,
-			double & min_linear_problem, double & linear_cost_b, double & overall_cost_b) const;
+			double & min_linear_problem, double & linear_cost_b, double & overall_cost_b, DMatrix & b) const;
 
-	void solver_to_matrix_(const LSAPSolver & solver, DMatrix & b_k_plus_1) const;
+	void solver_to_matrix_(const LSAPSolver & solver, DMatrix & b) const;
 
-	void solver_to_matrix_(const LSAPESolver & solver, DMatrix & b_k_plus_1) const;
+	void solver_to_matrix_(const LSAPESolver & solver, DMatrix & b) const;
 
-	void init_next_linear_problem_(const QAPInstance_ & qap_instance, const DMatrix & x_k, DMatrix & linear_problem) const;
+	void init_linear_cost_matrix_(const QAPInstance_ & qap_instance, DMatrix & linear_cost_matrix) const;
+
+	void init_next_linear_problem_(const QAPInstance_ & qap_instance, const DMatrix & x, const DMatrix & linear_cost_matrix, DMatrix & linear_problem) const;
 
 	bool termination_criterion_met_(const Timer & timer, const double & alpha, const double & min_linear_problem, const std::size_t & current_itr, double lower_bound, double upper_bound) const;
 

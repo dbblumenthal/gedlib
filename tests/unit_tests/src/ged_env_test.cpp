@@ -57,40 +57,41 @@ TEST_CASE("testing on AIDS graphs") {
 		}
 		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 
-		std::cout << "\n=== running IPFP (C-QAP) ===\n";
-		env.set_method(ged::Options::GEDMethod::IPFP, "--threads 5 --initial-solutions 4 --quadratic-model C-QAP");
-		upper_bound = 0;
-		runtime = 0;
-		progress.reset();
-		for (ged::GEDGraph::GraphID g : graph_ids) {
-			for (ged::GEDGraph::GraphID h : graph_ids) {
-				env.run_method(g, h);
-				upper_bound += env.get_upper_bound(g, h);
-				runtime += env.get_runtime(g, h);
-				progress.increment();
-				std::cout << "\r" << progress << std::flush;
-			}
-		}
-		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
-
-		std::cout << "\n=== running IPFP (B-QAP) ===\n";
-		env.set_method(ged::Options::GEDMethod::IPFP, "--threads 5 --initial-solutions 4 --quadratic-model B-QAP");
-		upper_bound = 0;
-		runtime = 0;
-		progress.reset();
-		for (ged::GEDGraph::GraphID g : graph_ids) {
-			for (ged::GEDGraph::GraphID h : graph_ids) {
-				env.run_method(g, h);
-				upper_bound += env.get_upper_bound(g, h);
-				runtime += env.get_runtime(g, h);
-				progress.increment();
-				std::cout << "\r" << progress << std::flush;
-			}
-		}
-		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 
 		std::cout << "\n=== running REFINE ===\n";
 		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 5 --initial-solutions 4");
+		upper_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running BP-BEAM ===\n";
+		env.set_method(ged::Options::GEDMethod::BP_BEAM, "--threads 5 --initial-solutions 4");
+		upper_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running IBP-BEAM ===\n";
+		env.set_method(ged::Options::GEDMethod::BP_BEAM, "--threads 5 --initial-solutions 4 --num-orderings 4");
 		upper_bound = 0;
 		runtime = 0;
 		progress.reset();

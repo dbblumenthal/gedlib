@@ -46,9 +46,7 @@ namespace ged {
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * |<tt>\--beam-size @<convertible to int greater 0@></tt> | the size of the priority queue used by the beam search | @p 5 | https://doi.org/10.1007/978-3-319-11656-3_11 |
- * |<tt>\--ordering-method BIPARTITE_ML\|RING_ML\|RANDOM</tt> | the machine learning method used for ordering the assignments | @p RANDOM | if @p BIPARTITE_ML or @p RING_ML, MLBP-BEAM is used and the option @p \--num-random-orderings has no effect <br> if @p RANDOM, the option @p \--ordering-options has no effect |
- * |<tt>\--ordering-options '[--@<option@> @<arg@>] [...]'</tt> | the options string passed to the machine learning method | @p '' | ged::BipartiteML and ged::RingML |
- * |<tt>\--num-random-orderings @<convertible to int greater equal 0@></tt> | the number of random orderings | @p 0 | https://doi.org/10.1007/978-3-319-18224-7_8 <br> if greater 0 and not overruled by options @p \--ordering-method, IBP-Beam is used |
+ * |<tt>\--num-orderings @<convertible to int greater 0@></tt> | the number of orderings | @p 1 | https://doi.org/10.1007/978-3-319-18224-7_8 <br> if greater 1, IBP-Beam is used |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class BPBeam : public LSBasedMethod<UserNodeLabel, UserEdgeLabel> {
@@ -67,9 +65,9 @@ private:
 
 		TreeNode_(const TreeNode_ & tree_node);
 
-		TreeNode_(const NodeMap & node_map);
+		TreeNode_(const NodeMap & node_map, const std::vector<NodeMap::Assignment> & assignments);
 
-		TreeNode_(const TreeNode_ & tree_node, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, const GEDGraph & g, const GEDGraph & h, const NodeMap::Assignment & assignment_t, const NodeMap::Assignment & assignment_2);
+		TreeNode_(const TreeNode_ & tree_node, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, const GEDGraph & g, const GEDGraph & h, std::size_t pos_swapped_assignment);
 
 		const NodeMap & node_map() const;
 
@@ -81,14 +79,14 @@ private:
 
 		NodeMap node_map_;
 
+		std::vector<NodeMap::Assignment> assignments_;
+
 		std::size_t depth_;
 	};
 
 	std::size_t beam_size_;
 
-	std::size_t num_random_orderings_;
-
-	MLBasedMethod<UserNodeLabel, UserEdgeLabel> * ordering_method_;
+	std::size_t num_orderings_;
 
 	// Member functions inherited from LSBasedMethod.
 
@@ -100,13 +98,11 @@ private:
 
 	virtual std::string ls_valid_options_string_() const final;
 
-	virtual void ls_init_() final;
-
 	// Private helper member functions.
 
 	void sort_and_shrink_to_beam_size_(std::vector<TreeNode_> & open) const;
 
-	void order_assignments_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap::Assignment> & assignments);
+	void shuffle_assignments_(std::vector<NodeMap::Assignment> & assignments);
 
 };
 

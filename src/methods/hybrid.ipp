@@ -50,6 +50,7 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 	Timer timer(time_limit_in_sec_);
 	GEDGraph g(gg);
 	GEDGraph h(hh);
+	double min_edit_cost{this->ged_data_.min_edit_cost(gg, hh)};
 
 	// Run Partition.
 	Partition<UserNodeLabel, UserEdgeLabel> partition(this->ged_data_);
@@ -65,7 +66,7 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 	SubstructItr_ end_substructs{partition.get_unmatched_substructs_().cend()};
 	double lower_bound{std::numeric_limits<double>::infinity()};
 	if (branch_uniform_dfs_(timer, options, g, h, current_substruct, end_substructs, lower_bound)) {
-		result.set_lower_bound(result.lower_bound() + lower_bound);
+		result.set_lower_bound(result.lower_bound() + (lower_bound * min_edit_cost));
 	}
 }
 

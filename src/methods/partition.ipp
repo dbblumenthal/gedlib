@@ -79,7 +79,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	check_node_edge_node_subtructs_(h, is_substruct_in_g, is_deleted_node, is_deleted_edge);
 	check_node_edge_edge_subtructs_(h, is_substruct_in_g, is_deleted_node, is_deleted_edge);
 
-	result.set_lower_bound(unmatched_substructs_.size());
+	result.set_lower_bound(static_cast<double>(unmatched_substructs_.size()) * this->ged_data_.min_edit_cost(g, h));
 }
 
 // === Definitions of private helper member functions. ===

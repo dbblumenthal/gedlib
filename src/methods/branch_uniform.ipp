@@ -57,6 +57,7 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 
 	const SortedUserEdgeLabels_ & sorted_edge_labels_g = sorted_edge_labels_.at(g.id());
 	const SortedUserEdgeLabels_ & sorted_edge_labels_h = sorted_edge_labels_.at(h.id());
+	double min_edit_cost{this->ged_data_.min_edit_cost(g, h)};
 
 #ifdef _OPENMP
 	omp_set_num_threads(this->num_threads_ - 1);
@@ -66,21 +67,21 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 		for (std::size_t col_in_master = 0; col_in_master < master_problem.num_cols(); col_in_master++) {
 			if ((row_in_master < g.num_nodes()) and (col_in_master < h.num_nodes())) {
 				if (wildcard_option_) {
-					master_problem(row_in_master, col_in_master) = compute_wildcard_substitution_cost_(g, h, row_in_master, col_in_master);
+					master_problem(row_in_master, col_in_master) = compute_wildcard_substitution_cost_(g, h, row_in_master, col_in_master) * min_edit_cost;
 				}
 				else {
-					master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, row_in_master, col_in_master, sorted_edge_labels_g, sorted_edge_labels_h);
+					master_problem(row_in_master, col_in_master) = compute_substitution_cost_(g, h, row_in_master, col_in_master, sorted_edge_labels_g, sorted_edge_labels_h) * min_edit_cost;
 				}
 			}
 			else if (row_in_master < g.num_nodes()) {
-				master_problem(row_in_master, h.num_nodes()) = compute_deletion_cost_(g, row_in_master);
+				master_problem(row_in_master, h.num_nodes()) = compute_deletion_cost_(g, row_in_master) * min_edit_cost;
 			}
 			else if (col_in_master < h.num_nodes()) {
 				if (wildcard_option_) {
-					master_problem(g.num_nodes(), col_in_master) = compute_wildcard_insertion_cost_(h, col_in_master);
+					master_problem(g.num_nodes(), col_in_master) = compute_wildcard_insertion_cost_(h, col_in_master) * min_edit_cost;
 				}
 				else {
-					master_problem(g.num_nodes(), col_in_master) = compute_insertion_cost_(h, col_in_master);
+					master_problem(g.num_nodes(), col_in_master) = compute_insertion_cost_(h, col_in_master) * min_edit_cost;
 				}
 			}
 		}

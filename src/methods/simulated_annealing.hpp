@@ -65,9 +65,13 @@ private:
 
 	LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel> * lsape_method_;
 
+	std::string lsape_method_name_;
+
 	std::string lsape_method_options_;
 
 	GEDMethod<UserNodeLabel, UserEdgeLabel> * lower_bound_method_;
+
+	std::string lower_bound_method_name_;
 
 	std::string lower_bound_method_options_;
 

@@ -53,13 +53,13 @@ private:
 
 	enum SortMethod_ {STD, COUNTING};
 
-	class SortedUserEdgeLabels_ {
+	class SortedEdgeLabels_ {
 	public:
-		SortedUserEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method);
+		SortedEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method);
 
-		SortedUserEdgeLabels_();
+		SortedEdgeLabels_();
 
-		void operator=(const SortedUserEdgeLabels_ & sorted_edge_labels);
+		void operator=(const SortedEdgeLabels_ & sorted_edge_labels);
 
 		const std::vector<LabelID> & get_incident_labels(GEDGraph::NodeID) const;
 	private:
@@ -68,7 +68,7 @@ private:
 
 	SortMethod_ sort_method_;
 
-	std::map<GEDGraph::GraphID, SortedUserEdgeLabels_> sorted_edge_labels_;
+	std::map<GEDGraph::GraphID, SortedEdgeLabels_> sorted_edge_labels_;
 
 	// Member functions inherited from LSAPEBasedMethod.
 
@@ -85,7 +85,7 @@ private:
 	// Private helper member functions.
 
 	double compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k,
-			const SortedUserEdgeLabels_ & sorted_edge_labels_g, const SortedUserEdgeLabels_ & sorted_edge_labels_h) const;
+			const SortedEdgeLabels_ & sorted_edge_labels_g, const SortedEdgeLabels_ & sorted_edge_labels_h) const;
 
 	double compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const;
 

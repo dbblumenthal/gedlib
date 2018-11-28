@@ -65,6 +65,7 @@
 #include "branch_uniform.hpp"      // Declares BranchUniform. Dependencies: "lsape_based_method.hpp".
 #include "node.hpp"                // Declares Node. Dependencies: "lsape_based_method.hpp".
 #include "ring.hpp"                // Declares Ring. Dependencies: "lsape_based_method.hpp".
+#include "star.hpp"                // Declares Star. Dependencies: "lsape_based_method.hpp".
 #include "subgraph.hpp"            // Declares Subgraph. Dependencies: "lsape_based_method.hpp".
 #include "walks.hpp"               // Declares Walks. Dependencies: "lsape_based_method.hpp".
 
@@ -116,6 +117,7 @@
 #include "branch_uniform.ipp"      // Defines BranchUniform. Dependencies: "branch_uniform.hpp", "lsape_based_method.hpp".
 #include "node.ipp"                // Defines Node. Dependencies: "node.hpp", "lsape_based_method.hpp".
 #include "ring.ipp"                // Defines Ring. Dependencies: "ring.hpp", "lsape_based_method.hpp".
+#include "star.ipp"                // Defines Star. Dependencies: "star.hpp", "lsape_based_method.hpp".
 #include "subgraph.ipp"            // Defines Subgraph. Dependencies: "subgraph.hpp", "lsape_based_method.hpp", "exact.hpp".
 #include "walks.ipp"               // Defines Walks. Dependencies: "walks.hpp", "lsape_based_method.hpp".
 

@@ -24,7 +24,7 @@
 #define GXL_GEDLIB_SHARED
 #include "../../../src/env/ged_env.hpp"
 
-TEST_CASE("testing on AIDS graphs") {
+TEST_CASE("testing on MUTA graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 	env.set_edit_costs(ged::Options::EditCosts::CHEM_1);
 	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_10.xml"));
@@ -40,6 +40,144 @@ TEST_CASE("testing on AIDS graphs") {
 	ged::ProgressBar progress(num_runs);
 
 	SECTION("RANDPOST") {
+
+		std::cout << "\n=== running Star ===\n";
+		env.set_method(ged::Options::GEDMethod::STAR, "--threads 5");
+		upper_bound = 0;
+		lower_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				lower_bound += env.get_lower_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", lower bound = " << lower_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running BranchUniform ===\n";
+		env.set_method(ged::Options::GEDMethod::BRANCH_UNIFORM, "--threads 5");
+		upper_bound = 0;
+		lower_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				lower_bound += env.get_lower_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", lower bound = " << lower_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running BranchFast ===\n";
+		env.set_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 5");
+		upper_bound = 0;
+		lower_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				lower_bound += env.get_lower_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", lower bound = " << lower_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running Branch ===\n";
+		env.set_method(ged::Options::GEDMethod::BRANCH, "--threads 5");
+		upper_bound = 0;
+		lower_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				lower_bound += env.get_lower_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", lower bound = " << lower_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running BranchTight ===\n";
+		env.set_method(ged::Options::GEDMethod::BRANCH_TIGHT, "--threads 5");
+		upper_bound = 0;
+		lower_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				lower_bound += env.get_lower_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", lower bound = " << lower_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running SimulatedAnnealing ===\n";
+		env.set_method(ged::Options::GEDMethod::SIMULATED_ANNEALING, "--threads 5 --lower-bound-method BRANCH_FAST");
+		upper_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				upper_bound += env.get_upper_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running Partition ===\n";
+		env.set_method(ged::Options::GEDMethod::PARTITION);
+		lower_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				lower_bound += env.get_lower_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nlower bound = " << lower_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
+
+		std::cout << "\n=== running Hybrid ===\n";
+		env.set_method(ged::Options::GEDMethod::HYBRID, "--threads 5");
+		lower_bound = 0;
+		runtime = 0;
+		progress.reset();
+		for (ged::GEDGraph::GraphID g : graph_ids) {
+			for (ged::GEDGraph::GraphID h : graph_ids) {
+				env.run_method(g, h);
+				lower_bound += env.get_lower_bound(g, h);
+				runtime += env.get_runtime(g, h);
+				progress.increment();
+				std::cout << "\r" << progress << std::flush;
+			}
+		}
+		std::cout << "\nlower bound = " << lower_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 
 		std::cout << "\n=== running IPFP (QAPE) ===\n";
 		env.set_method(ged::Options::GEDMethod::IPFP, "--threads 5 --initial-solutions 4");

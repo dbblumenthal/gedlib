@@ -54,13 +54,13 @@ private:
 
 	enum SortMethod_ {STD, COUNTING};
 
-	class SortedUserEdgeLabels_ {
+	class SortedEdgeLabels_ {
 	public:
-		SortedUserEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method);
+		SortedEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method);
 
-		SortedUserEdgeLabels_();
+		SortedEdgeLabels_();
 
-		void operator=(const SortedUserEdgeLabels_ & sorted_edge_labels);
+		void operator=(const SortedEdgeLabels_ & sorted_edge_labels);
 
 		const std::vector<LabelID> & get_incident_labels(GEDGraph::NodeID) const;
 
@@ -72,7 +72,7 @@ private:
 
 	bool wildcard_option_;
 
-	std::map<GEDGraph::GraphID, SortedUserEdgeLabels_> sorted_edge_labels_;
+	std::map<GEDGraph::GraphID, SortedEdgeLabels_> sorted_edge_labels_;
 
 	// Member functions inherited from LSAPEBasedMethod.
 
@@ -89,15 +89,13 @@ private:
 	// Private helper member functions.
 
 	double compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k,
-			const SortedUserEdgeLabels_ & sorted_edge_labels_g, const SortedUserEdgeLabels_ & sorted_edge_labels_h) const;
+			const SortedEdgeLabels_ & sorted_edge_labels_g, const SortedEdgeLabels_ & sorted_edge_labels_h,
+			double min_edge_subs_cost, double min_edge_del_cost, double min_edge_ins_cost) const;
 
-	double compute_wildcard_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k) const;
+	double compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i, double min_edge_edit_cost) const;
 
-	double compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const;
+	double compute_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k, double min_edge_edit_cost) const;
 
-	double compute_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k) const;
-
-	double compute_wildcard_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k) const;
 };
 
 }

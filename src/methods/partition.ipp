@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  partition.ipp
@@ -59,7 +59,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	unmatched_substructs_.clear();
 
 	if (not this->initialized_) {
-		init_graph_(g);
+		init_graphs_(g, h);
 	}
 	SubstructMap_ & is_substruct_in_g = substruct_maps_.at(g.id());
 	unmatched_substructs_.clear();
@@ -120,6 +120,63 @@ init_graph_(const GEDGraph & graph) {
 				Substruct_ node_edge_edge_substruct(NODE_EDGE_EDGE, node_label_1, edge_label_1, edge_label_2);
 				if (contains_node_edge_substruct) {
 					is_substruct[node_edge_edge_substruct] = contains_substruct_(graph, node_edge_edge_substruct);
+				}
+				else {
+					is_substruct[node_edge_edge_substruct] = false;
+				}
+			}
+		}
+	}
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+void
+Partition<UserNodeLabel, UserEdgeLabel>::
+init_graphs_(const GEDGraph & g, const GEDGraph & h) {
+
+	std::vector<LabelID> node_labels_h;
+	for (auto node = h.nodes().first; node != h.nodes().second; node++) {
+		node_labels_h.push_back(h.get_node_label(*node));
+	}
+
+	std::vector<LabelID> edge_labels_h;
+	for (auto edge = h.edges().first; edge != h.edges().second; edge++) {
+		edge_labels_h.push_back(h.get_edge_label(*edge));
+	}
+
+	substruct_maps_[g.id()] = SubstructMap_();
+	SubstructMap_ & is_substruct = substruct_maps_.at(g.id());
+	for (LabelID edge_label_1 : edge_labels_h) {
+		Substruct_ edge_substruct(EDGE, edge_label_1);
+		is_substruct[edge_substruct] = contains_substruct_(g, edge_substruct);
+	}
+	for (LabelID node_label_1 : node_labels_h) {
+		Substruct_ node_substruct(NODE, node_label_1);
+		bool contains_node_substruct{contains_substruct_(g, node_substruct)};
+		is_substruct[node_substruct] = contains_node_substruct;
+		for (LabelID edge_label_1 : edge_labels_h) {
+			Substruct_ node_edge_substruct(NODE_EDGE, node_label_1, edge_label_1);
+			bool contains_node_edge_substruct{false};
+			if (contains_node_substruct) {
+				contains_node_edge_substruct = contains_substruct_(g, node_edge_substruct);
+				is_substruct[node_edge_substruct] = contains_node_edge_substruct;
+			}
+			else {
+				is_substruct[node_edge_substruct] = false;
+			}
+			for (LabelID node_label_2 : node_labels_h) {
+				Substruct_ node_edge_node_substruct(NODE_EDGE_NODE, node_label_1, edge_label_1, node_label_2);
+				if (contains_node_edge_substruct) {
+					is_substruct[node_edge_node_substruct] = contains_substruct_(g, node_edge_node_substruct);
+				}
+				else {
+					is_substruct[node_edge_node_substruct] = false;
+				}
+			}
+			for (LabelID edge_label_2 : edge_labels_h) {
+				Substruct_ node_edge_edge_substruct(NODE_EDGE_EDGE, node_label_1, edge_label_1, edge_label_2);
+				if (contains_node_edge_substruct) {
+					is_substruct[node_edge_edge_substruct] = contains_substruct_(g, node_edge_edge_substruct);
 				}
 				else {
 					is_substruct[node_edge_edge_substruct] = false;

@@ -173,7 +173,8 @@ struct Options {
 		REFINE,              //!< Selects ged::Refine.
 		BP_BEAM,             //!< Selects ged::BPBeam.
 		SIMULATED_ANNEALING, //!< Selects ged::SimulatedAnnealing.
-		HED				     //!< Selects ged::HED.
+		HED,				 //!< Selects ged::HED.
+		STAR				 //!< Selects ged::Star.
 	};
 
 	/*!
@@ -278,6 +279,9 @@ std::ostream & operator<<(std::ostream & os, const Options::GEDMethod & ged_meth
 		break;
 	case Options::GEDMethod::HED:
 		os << "HED";
+		break;
+	case Options::GEDMethod::STAR:
+		os << "STAR";
 		break;
 #ifdef GUROBI
 	case Options::GEDMethod::F1:

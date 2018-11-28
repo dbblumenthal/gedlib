@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  branch_fast.ipp
@@ -46,7 +46,7 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 BranchFast<UserNodeLabel, UserEdgeLabel>::
 lsape_init_graph_(const GEDGraph & graph) {
-	sorted_edge_labels_[graph.id()] = SortedUserEdgeLabels_(graph, sort_method_);
+	sorted_edge_labels_[graph.id()] = SortedEdgeLabels_(graph, sort_method_);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -87,8 +87,8 @@ void
 BranchFast<UserNodeLabel, UserEdgeLabel>::
 lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem) {
 
-	const SortedUserEdgeLabels_ & sorted_edge_labels_g = sorted_edge_labels_.at(g.id());
-	const SortedUserEdgeLabels_ & sorted_edge_labels_h = sorted_edge_labels_.at(h.id());
+	const SortedEdgeLabels_ & sorted_edge_labels_g = sorted_edge_labels_.at(g.id());
+	const SortedEdgeLabels_ & sorted_edge_labels_h = sorted_edge_labels_.at(h.id());
 
 #ifdef _OPENMP
 	omp_set_num_threads(this->num_threads_ - 1);
@@ -113,8 +113,8 @@ lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & maste
 // === Definition of private class SortedUserEdgeLabels_. ===
 template<class UserNodeLabel, class UserEdgeLabel>
 BranchFast<UserNodeLabel, UserEdgeLabel>::
-SortedUserEdgeLabels_ ::
-SortedUserEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method) :
+SortedEdgeLabels_ ::
+SortedEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method) :
 sorted_edge_labels_() {
 	for (auto node = g.nodes().first; node != g.nodes().second; node++) {
 		sorted_edge_labels_[*node] = std::vector<LabelID>();
@@ -134,22 +134,22 @@ sorted_edge_labels_() {
 
 template<class UserNodeLabel, class UserEdgeLabel>
 BranchFast<UserNodeLabel, UserEdgeLabel>::
-SortedUserEdgeLabels_ ::
-SortedUserEdgeLabels_() :
+SortedEdgeLabels_ ::
+SortedEdgeLabels_() :
 sorted_edge_labels_() {}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 BranchFast<UserNodeLabel, UserEdgeLabel>::
-SortedUserEdgeLabels_ ::
-operator=(const SortedUserEdgeLabels_ & sorted_edge_labels) {
+SortedEdgeLabels_ ::
+operator=(const SortedEdgeLabels_ & sorted_edge_labels) {
 	sorted_edge_labels_ = sorted_edge_labels.sorted_edge_labels_;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
 const std::vector<LabelID> &
 BranchFast<UserNodeLabel, UserEdgeLabel>::
-SortedUserEdgeLabels_ ::
+SortedEdgeLabels_ ::
 get_incident_labels(GEDGraph::NodeID node) const {
 	return sorted_edge_labels_.at(node);
 }
@@ -159,34 +159,34 @@ template<class UserNodeLabel, class UserEdgeLabel>
 double
 BranchFast<UserNodeLabel, UserEdgeLabel>::
 compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k,
-		const SortedUserEdgeLabels_ & sorted_edge_labels_g, const SortedUserEdgeLabels_ & sorted_edge_labels_h) const {
+		const SortedEdgeLabels_ & sorted_edge_labels_g, const SortedEdgeLabels_ & sorted_edge_labels_h) const {
 	// Collect node substitution cost.
 	double cost{this->ged_data_.node_cost(g.get_node_label(i), h.get_node_label(k))};
 
 	// Compute and add minimal edge insertion costs.
 	if (g.degree(i) < h.degree(k)) {
-		double min_ins_cost{std::numeric_limits<double>::infinity()};
+		double min_edge_ins_cost{std::numeric_limits<double>::infinity()};
 		for (auto label_h = sorted_edge_labels_h.get_incident_labels(k).begin(); label_h != sorted_edge_labels_h.get_incident_labels(k).end(); label_h++) {
-			min_ins_cost = std::min(min_ins_cost, this->ged_data_.edge_cost(dummy_label(), *label_h));
+			min_edge_ins_cost = std::min(min_edge_ins_cost, this->ged_data_.edge_cost(dummy_label(), *label_h));
 		}
-		cost += static_cast<double>(h.degree(k) - g.degree(i)) * min_ins_cost * 0.5;
+		cost += static_cast<double>(h.degree(k) - g.degree(i)) * min_edge_ins_cost * 0.5;
 	}
 
 	// Compute and add minimal edge deletion costs.
 	if (g.degree(i) > h.degree(k)) {
-		double min_del_cost{std::numeric_limits<double>::infinity()};
+		double min_edge_del_cost{std::numeric_limits<double>::infinity()};
 		for (auto label_g = sorted_edge_labels_g.get_incident_labels(i).begin(); label_g != sorted_edge_labels_g.get_incident_labels(i).end(); label_g++) {
-			min_del_cost = std::min(min_del_cost, this->ged_data_.edge_cost(*label_g, dummy_label()));
+			min_edge_del_cost = std::min(min_edge_del_cost, this->ged_data_.edge_cost(*label_g, dummy_label()));
 		}
-		cost += static_cast<double>(g.degree(i) - h.degree(k)) * min_del_cost * 0.5;
+		cost += static_cast<double>(g.degree(i) - h.degree(k)) * min_edge_del_cost * 0.5;
 	}
 
 	// Compute minimal edge relabelling costs.
-	double min_rel_cost{std::numeric_limits<double>::infinity()};
+	double min_edge_subs_cost{std::numeric_limits<double>::infinity()};
 	for (auto label_g = sorted_edge_labels_g.get_incident_labels(i).begin(); label_g != sorted_edge_labels_g.get_incident_labels(i).end(); label_g++) {
 		for (auto label_h = sorted_edge_labels_h.get_incident_labels(k).begin(); label_h != sorted_edge_labels_h.get_incident_labels(k).end(); label_h++) {
 			if (*label_g != *label_h) {
-				min_rel_cost = std::min(min_rel_cost, this->ged_data_.edge_cost(*label_g, *label_h));
+				min_edge_subs_cost = std::min(min_edge_subs_cost, this->ged_data_.edge_cost(*label_g, *label_h));
 			}
 		}
 	}
@@ -210,9 +210,8 @@ compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::Nod
 	}
 
 	// Collect edge relabelling costs.
-	std::size_t gamma(std::min(g.degree(i), h.degree(k)) - intersection_size);
-	if (gamma > 0) {
-		cost += static_cast<double>(gamma) * min_rel_cost * 0.5;
+	if (std::min(g.degree(i), h.degree(k)) - intersection_size > 0) {
+		cost += static_cast<double>(std::min(g.degree(i), h.degree(k)) - intersection_size) * min_edge_subs_cost * 0.5;
 	}
 
 	// Return overall substitution cost.

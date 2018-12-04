@@ -37,6 +37,7 @@ from subprocess import call
 import argparse
 import shutil
 import os.path
+import glob
 
 def append_ged_env_hpp(identifier, node_id_type, node_label_type, edge_label_type):
 	append = ""
@@ -128,6 +129,13 @@ def build_external_libraries():
 		call(commands, shell=True)
 		f = open("ext/.INSTALLED", "w")
 		f.close()
+		
+def determine_gurobi_version(gurobi_root):
+	if not os.path.isdir(gurobi_root):
+		raise Exception("Invalid argument \"" + gurobi_root + "\" for option gurobi: not a directory. Usage: python install.py [--gurobi <path-to-root-directory-of-Gurobi>] [...]")
+	gurobi_shared_lib = glob.glob(gurobi_root + "*/lib/libgurobi*.so")
+	return gurobi_shared_lib[len(gurobi_shared_lib)-5:len(gurobi_shared_lib)-3]
+	
 
 def build_gedlib(args):
 	if not os.path.isdir(args.boost):
@@ -159,7 +167,7 @@ def build_gedlib(args):
 		else:
 			commands = commands + "Release"
 		if args.gurobi:
-			commands = commands + " -DGUROBI_ROOT=" + args.gurobi
+			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_VERSION=" + determine_gurobi_version(args.gurobi)
 		call(commands, shell=True)
 
 	if args.doc:

@@ -41,8 +41,8 @@ TEST_CASE("testing on MUTA graphs") {
 	//std::size_t num_runs{1};
 	std::size_t num_runs{graph_ids.size() * graph_ids.size()};
 	ged::ProgressBar progress(num_runs);
-        std::vector<std::string> exp_numsols{"20","10"};
- 	std::vector<std::string> exp_numloops{"0","1"};
+	std::vector<std::string> exp_numsols{"20","10"};
+	std::vector<std::string> exp_numloops{"0","1"};
 
 
 	SECTION("RANDPOST") {
@@ -63,8 +63,8 @@ TEST_CASE("testing on MUTA graphs") {
 					progress.increment();
 					std::cout << "\r" << progress << std::flush;
 				}
-      }
-    }
+			}
+		}
 		std::cout << "\n=== running Star ===\n";
 		env.set_method(ged::Options::GEDMethod::STAR, "--threads 5");
 		upper_bound = 0;
@@ -354,8 +354,9 @@ TEST_CASE("testing on MUTA graphs") {
 
 			std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 		}
-		/*
-   		for (std::size_t i=0;i<exp_numsols.size();i++){
+		 */
+
+		for (std::size_t i=0;i<exp_numsols.size();i++){
 			std::cout << "\n=== running REFINE RANDPOST (T8, I"<< exp_numsols[i]<<", L"<<exp_numloops[i] <<", R0, P0,SW3) ===\n";
 			std::cout << "\r" << progress << std::flush;
 			env.set_method(ged::Options::GEDMethod::REFINE, "--threads 8 --initial-solutions "+ exp_numsols[i] +" --num-randpost-loops " + exp_numloops[i] + " --max-swap-size 3");
@@ -374,7 +375,7 @@ TEST_CASE("testing on MUTA graphs") {
 
 			std::cout << "\nupper bound = " << upper_bound / static_cast<double>(num_runs) << ", runtime = " << runtime / static_cast<double>(num_runs) << "\n";
 		}
-		*/
+
 
 		for (std::size_t i=0;i<exp_numsols.size();i++){
 			std::cout << "\n=== running IPFP RANDPOST (T1, I"<< exp_numsols[i]<<", L"<<exp_numloops[i] <<", R0, P0) ===\n";
@@ -397,7 +398,7 @@ TEST_CASE("testing on MUTA graphs") {
 		}
 
 
-		 */
+
 	}
 
 	/*

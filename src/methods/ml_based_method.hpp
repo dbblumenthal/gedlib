@@ -49,7 +49,7 @@ namespace ged {
  * | <tt>\--dnn-neurons-per-layer-range @<smaller convertible to int greater 0@>,@<larger convertible to int greater 0@></tt> | range that specifies possible number of neurons per hidden layer | <tt>1,20</tt> | if the range is larger than one, the best choice is determined via cross-validation during training |
  * | <tt>\--svm-gamma-exp-range @<smaller convertible to int@>,@<larger convertible to int@></tt> | range that specifies possible exponents to the basis 10 of the parameter @f$\gamma@f$ used by SVM | <tt>-3,4</tt> | if the range is larger than one, the best choice is determined via cross-validation during training |
  * | <tt>\--svm-c-exp-range @<smaller convertible to int@>,@<larger convertible to int@></tt> | range that specifies possible exponents to the basis 10 of the parameter @f$C@f$ used by SVM | <tt>-3,4</tt> | if the range is larger than one, the best choice is determined via cross-validation during training |
- * | <tt>\--one-class-svm-likelihood TRUE\|FALSE</tt> | use likelihood to define probability estimates based on one class SVM output | @p FALSE | n.a. |
+ * | <tt>\--one-class-svm-likelihood TRUE\|FALSE</tt> | use likelihood to define probability estimates based on one class SVM output | @p TRUE | n.a. |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class MLBasedMethod : public LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel> {

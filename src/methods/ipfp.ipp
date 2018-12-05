@@ -50,7 +50,7 @@ qap_instance_() {}
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 IPFP<UserNodeLabel, UserEdgeLabel>::
-ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double lower_bound, const NodeMap & initial_node_map, NodeMap & output_node_map) { 
+ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double lower_bound, const NodeMap & initial_node_map, NodeMap & output_node_map) {
 
 	// Start timer.
 	Timer timer(time_limit_in_sec_);

@@ -62,6 +62,7 @@ populate_instance(const GEDGraph & g, const GEDGraph & h, DMatrix & lsape_instan
 		lsape_default_post_graph_init_();
 	}
 	lsape_populate_instance_(g, h, lsape_instance);
+	lsape_instance(g.num_nodes(), h.num_nodes()) = 0.0;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -84,7 +85,7 @@ populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result
 
 	// Compute and store lower and upper bound
 	if (compute_lower_bound_ and solve_optimally_) {
-		result.set_lower_bound(lsape_solver.minimal_cost());
+		result.set_lower_bound(lsape_solver.minimal_cost() * lsape_lower_bound_scaling_factor_(g, h));
 	}
 
 	for (std::size_t solution_id{0}; solution_id < lsape_solver.num_solutions(); solution_id++) {
@@ -338,7 +339,7 @@ add_centralities_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_probl
 	for (std::size_t row = 0; row < master_problem.num_rows(); row++) {
 		for (std::size_t col = 0; col < master_problem.num_cols(); col++) {
 			if (row < g.num_nodes() and col < h.num_nodes()) {
-				master_problem(row, col) += centrality_weight_ * std::fabs(centralities_.at(g.id()).at(row) - centralities_.at(h.id()).at(col));
+				master_problem(row, col) += centrality_weight_ * std::fabs(static_cast<double>(centralities_.at(g.id()).at(row) - centralities_.at(h.id()).at(col)));
 			}
 			else if (row < g.num_nodes()) {
 				master_problem(row, h.num_nodes()) += centrality_weight_ * centralities_.at(g.id()).at(row);
@@ -412,6 +413,13 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel>::
 lsape_default_post_graph_init_() {}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel>::
+lsape_lower_bound_scaling_factor_(const GEDGraph & g, const GEDGraph & h) {
+	return 1.0;
+}
 
 }
 

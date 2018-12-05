@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ged_data.hpp
@@ -261,6 +261,38 @@ public:
 	 * @return Minimal edit cost between the graphs @p g and @p h.
 	 */
 	double min_edit_cost(const GEDGraph & g, const GEDGraph & h) const;
+
+	/*!
+	 * @brief Returns the maximal node edit cost between two graphs.
+	 * @param[in] g Input graph.
+	 * @param[in] h Input graph.
+	 * @return Maximal node edit cost between the graphs @p g and @p h.
+	 */
+	double max_node_edit_cost(const GEDGraph & g, const GEDGraph & h) const;
+
+	/*!
+	 * @brief Returns the minimal node edit cost between two graphs.
+	 * @param[in] g Input graph.
+	 * @param[in] h Input graph.
+	 * @return Minimal node edit cost between the graphs @p g and @p h.
+	 */
+	double min_node_edit_cost(const GEDGraph & g, const GEDGraph & h) const;
+
+	/*!
+	 * @brief Returns the maximal edge edit cost between two graphs.
+	 * @param[in] g Input graph.
+	 * @param[in] h Input graph.
+	 * @return Maximal node edit cost between the graphs @p g and @p h.
+	 */
+	double max_edge_edit_cost(const GEDGraph & g, const GEDGraph & h) const;
+
+	/*!
+	 * @brief Returns the minimal edge edit cost between two graphs.
+	 * @param[in] g Input graph.
+	 * @param[in] h Input graph.
+	 * @return Minimal edge edit cost between the graphs @p g and @p h.
+	 */
+	double min_edge_edit_cost(const GEDGraph & g, const GEDGraph & h) const;
 
 	/*!
 	 * @brief Returns the maximal cost of deleting a node contained in a graph.

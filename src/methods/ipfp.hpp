@@ -73,7 +73,7 @@ private:
 
 	enum QuadraticModel_ {C_QAP, B_QAP, QAPE, QAP};
 
-	class QAPInstance_ { 
+	class QAPInstance_ {
 
 	public:
 

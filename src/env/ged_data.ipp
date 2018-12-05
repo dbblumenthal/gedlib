@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ged_data.ipp
@@ -792,7 +792,9 @@ min_node_subs_cost(const GEDGraph & g, const GEDGraph & h) const {
 	double min_cost{std::numeric_limits<double>::max()};
 	for (auto node_g = g.nodes().first; node_g != g.nodes().second; node_g++) {
 		for (auto node_h = h.nodes().first; node_h != h.nodes().second; node_h++) {
-			min_cost = std::min(min_cost, node_cost(g.get_node_label(*node_g), h.get_node_label(*node_h)));
+			if (g.get_node_label(*node_g) != h.get_node_label(*node_h)) {
+				min_cost = std::min(min_cost, node_cost(g.get_node_label(*node_g), h.get_node_label(*node_h)));
+			}
 		}
 	}
 	return min_cost;
@@ -834,7 +836,9 @@ min_edge_subs_cost(const GEDGraph & g, const GEDGraph & h) const {
 	double min_cost{std::numeric_limits<double>::max()};
 	for (auto egde_g = g.edges().first; egde_g != g.edges().second; egde_g++) {
 		for (auto edge_h = h.edges().first; edge_h != h.edges().second; edge_h++) {
-			min_cost = std::min(min_cost, edge_cost(g.get_edge_label(*egde_g), h.get_edge_label(*edge_h)));
+			if (g.get_edge_label(*egde_g) != h.get_edge_label(*edge_h)) {
+				min_cost = std::min(min_cost, edge_cost(g.get_edge_label(*egde_g), h.get_edge_label(*edge_h)));
+			}
 		}
 	}
 	return min_cost;
@@ -967,6 +971,46 @@ min_edit_cost(const GEDGraph & g, const GEDGraph & h) const {
 	min_cost = std::min(min_cost, min_node_del_cost(g));
 	min_cost = std::min(min_cost, min_node_ins_cost(h));
 	min_cost = std::min(min_cost, min_node_subs_cost(g, h));
+	return min_cost;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+GEDData<UserNodeLabel, UserEdgeLabel>::
+max_node_edit_cost(const GEDGraph & g, const GEDGraph & h) const {
+	double max_cost{max_node_del_cost(g)};
+	max_cost = std::max(max_cost, max_node_ins_cost(h));
+	max_cost = std::max(max_cost, max_node_subs_cost(g, h));
+	return max_cost;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+GEDData<UserNodeLabel, UserEdgeLabel>::
+min_node_edit_cost(const GEDGraph & g, const GEDGraph & h) const {
+	double min_cost{min_node_del_cost(g)};
+	min_cost = std::min(min_cost, min_node_ins_cost(h));
+	min_cost = std::min(min_cost, min_node_subs_cost(g, h));
+	return min_cost;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+GEDData<UserNodeLabel, UserEdgeLabel>::
+max_edge_edit_cost(const GEDGraph & g, const GEDGraph & h) const {
+	double max_cost{max_edge_del_cost(g)};
+	max_cost = std::max(max_cost, max_edge_ins_cost(h));
+	max_cost = std::max(max_cost, max_edge_subs_cost(g, h));
+	return max_cost;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+double
+GEDData<UserNodeLabel, UserEdgeLabel>::
+min_edge_edit_cost(const GEDGraph & g, const GEDGraph & h) const {
+	double min_cost{min_edge_del_cost(g)};
+	min_cost = std::min(min_cost, min_edge_ins_cost(h));
+	min_cost = std::min(min_cost, min_edge_subs_cost(g, h));
 	return min_cost;
 }
 

@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file simulated_annealing.ipp
@@ -42,8 +42,10 @@ SimulatedAnnealing<UserNodeLabel, UserEdgeLabel>::
 SimulatedAnnealing(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 GEDMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
 lsape_method_{new Bipartite<UserNodeLabel, UserEdgeLabel>(this->ged_data_)},
+lsape_method_name_("BIPARTITE"),
 lsape_method_options_(""),
 lower_bound_method_{nullptr},
+lower_bound_method_name_("NONE"),
 lower_bound_method_options_(""),
 num_threads_{1},
 num_iterations_{1000},
@@ -67,7 +69,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	}
 
 	// Initialize lower bound.
-	if (lower_bound_method_) {
+	if (lower_bound_method_ and (lower_bound_method_name_ != lsape_method_name_)) {
 		Result lower_bound_result;
 		lower_bound_method_->run_as_util(g, h, lower_bound_result);
 		result.set_lower_bound(std::max(result.lower_bound(), lower_bound_result.lower_bound()));
@@ -108,10 +110,10 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 		}
 		else {
 			num_iterations_without_improvement++;
-		}
-		random_number = distr(urng);
-		if (random_number < static_cast<double>(num_iterations_without_improvement) / static_cast<double>(num_iterations_)) {
-			std::shuffle(current_order.begin(), current_order.end(), urng);
+			random_number = distr(urng);
+			if (random_number < static_cast<double>(num_iterations_without_improvement) / static_cast<double>(num_iterations_)) {
+				std::shuffle(current_order.begin(), current_order.end(), urng);
+			}
 		}
 		temperature *= cooling_factor;
 	}
@@ -140,9 +142,11 @@ SimulatedAnnealing<UserNodeLabel, UserEdgeLabel>::
 ged_set_default_options_() {
 	delete lsape_method_;
 	lsape_method_ = new Bipartite<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
+	lsape_method_name_ = std::string("BIPARTITE");
 	lsape_method_options_ = std::string("");
 	delete lower_bound_method_;
 	lower_bound_method_ = nullptr;
+	lower_bound_method_name_ = std::string("NONE");
 	lower_bound_method_options_ = std::string("");
 	num_iterations_ = 1000;
 	num_threads_ = 1;
@@ -219,6 +223,7 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		is_valid_option = true;
 	}
 	else if (option == "lower-bound-method") {
+		lower_bound_method_name_ = arg;
 		if (arg == "BRANCH") {
 			lower_bound_method_ = new Branch<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 		}
@@ -238,6 +243,7 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		is_valid_option = true;
 	}
 	else if (option == "lsape-method") {
+		lsape_method_name_ = arg;
 		if (arg == "BRANCH_FAST") {
 			lsape_method_ = new BranchFast<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
 		}

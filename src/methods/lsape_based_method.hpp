@@ -210,6 +210,15 @@ private:
 	 */
 	virtual void lsape_default_post_graph_init_();
 
+	/*!
+	 * @brief Returns scaling factor for lower bound.
+	 * @param g[in] g Input graph.
+	 * @param h[in] h Input graph.
+	 * @return The factor by which the optimal LSAPE solution has to be scaled in order to arrive at a valid lower bound.
+	 * @note Must be overridden by derived classes of ged::LSAPEBasedMethod that require scaling of the optimal LSAPE solution for computing their lower bounds.
+	 */
+	virtual double lsape_lower_bound_scaling_factor_(const GEDGraph & g, const GEDGraph & h);
+
 };
 
 }

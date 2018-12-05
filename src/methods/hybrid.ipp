@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  hybrid.ipp
@@ -55,17 +55,30 @@ ged_run_(const GEDGraph & gg, const GEDGraph & hh, Result & result) {
 	Partition<UserNodeLabel, UserEdgeLabel> partition(this->ged_data_);
 	Result partition_result;
 	partition.run_as_util(g, h, partition_result);
-	result.set_lower_bound(partition_result.lower_bound());
 
-	// Initialize BranchUniform with wildcards.
-	std::string options(std::string("--wildcards YES --lsape-method ") + to_string_(lsape_model_) + " --threads " + std::to_string(num_threads_));
+	// Initialize and run BranchUniform without wildcards.
+	std::string options(std::string("--lsape-model ") + to_string_(lsape_model_) + " --threads " + std::to_string(num_threads_));
+	BranchUniform<UserNodeLabel, UserEdgeLabel> branch_uniform(this->ged_data_);
+	branch_uniform.set_options(options);
+	Result bu_result;
+	branch_uniform.run_as_util(gg, hh, bu_result);
 
 	// Run BranchUniform DFS over mismatching substructures to find minimal wildcard Branch matching cost.
 	SubstructItr_ current_substruct{partition.get_unmatched_substructs_().cbegin()};
 	SubstructItr_ end_substructs{partition.get_unmatched_substructs_().cend()};
-	double lower_bound{std::numeric_limits<double>::infinity()};
-	if (branch_uniform_dfs_(timer, options, g, h, current_substruct, end_substructs, lower_bound)) {
-		result.set_lower_bound(result.lower_bound() + lower_bound);
+
+	if (current_substruct == end_substructs) {
+		result.set_lower_bound(bu_result.lower_bound());
+	}
+	else {
+		options += " --wildcards YES";
+		double lower_bound{std::numeric_limits<double>::infinity()};
+		if (branch_uniform_dfs_(timer, options, g, h, current_substruct, end_substructs, lower_bound)) {
+			result.set_lower_bound(std::max(partition_result.lower_bound() + lower_bound, bu_result.lower_bound()));
+		}
+		else {
+			result.set_lower_bound(std::max(partition_result.lower_bound(), bu_result.lower_bound()));
+		}
 	}
 }
 

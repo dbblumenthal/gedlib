@@ -26,7 +26,7 @@
 # @details 
 # Usage: 
 # ```sh
-# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|unit_tests] [--boost \<BOOST_ROOT\>] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
+# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests] [--boost \<BOOST_ROOT\>] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
 # ```
 #
 # For more information, execute `$ python install.py --help`.
@@ -37,6 +37,7 @@ from subprocess import call
 import argparse
 import shutil
 import os.path
+import glob
 
 def append_ged_env_hpp(identifier, node_id_type, node_label_type, edge_label_type):
 	append = ""
@@ -128,6 +129,13 @@ def build_external_libraries():
 		call(commands, shell=True)
 		f = open("ext/.INSTALLED", "w")
 		f.close()
+		
+def determine_gurobi_version(gurobi_root):
+	if not os.path.isdir(gurobi_root):
+		raise Exception("Invalid argument \"" + gurobi_root + "\" for option gurobi: not a directory. Usage: python install.py [--gurobi <path-to-root-directory-of-Gurobi>] [...]")
+	gurobi_shared_lib = glob.glob(gurobi_root + "*/lib/libgurobi*.so")[0]
+	return gurobi_shared_lib[len(gurobi_shared_lib)-5:len(gurobi_shared_lib)-3]
+	
 
 def build_gedlib(args):
 	if not os.path.isdir(args.boost):
@@ -159,7 +167,7 @@ def build_gedlib(args):
 		else:
 			commands = commands + "Release"
 		if args.gurobi:
-			commands = commands + " -DGUROBI_ROOT=" + args.gurobi
+			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_VERSION=" + determine_gurobi_version(args.gurobi)
 		call(commands, shell=True)
 
 	if args.doc:
@@ -190,7 +198,7 @@ print("**************************************************")
 parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependencies unless they have already been installed.", epilog="If called without arguments, only the dependencies are installed.")
 parser.add_argument("--doc", help="build documentation; requires --boost <BOOST_ROOT>", action="store_true")
 parser.add_argument("--lib", help="build shared library; requires --boost <BOOST_ROOT>", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
-parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018"])
+parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "vldbj2019"])
 parser.add_argument("--boost", metavar="<BOOST_ROOT>", help="specify path to directory containing Boost sources")
 parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")

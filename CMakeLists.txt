@@ -72,6 +72,7 @@ link_directories(${NOMAD_HOME}/lib ${FANN_HOME}/lib ${LIBSVM_HOME} ${GUROBI_HOME
 
 if(GUROBI_ROOT)
   add_definitions(-DGUROBI)
+  set(GUROBI_SHARED_LIB gurobi${GUROBI_VERSION})
   if(APPLE)
     set(GUROBI_HOME ${GUROBI_ROOT}/mac64)
   else()

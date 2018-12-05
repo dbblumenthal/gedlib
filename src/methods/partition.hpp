@@ -95,6 +95,8 @@ private:
 
 	void init_graph_(const GEDGraph & graph);
 
+	void init_graphs_(const GEDGraph & g, const GEDGraph & h);
+
 	const std::vector<Substruct_> & get_unmatched_substructs_() const;
 
 	void check_node_subtructs_(const GEDGraph & h, const SubstructMap_ & is_substruct_in_g, std::map<GEDGraph::NodeID, bool> & is_deleted_node);

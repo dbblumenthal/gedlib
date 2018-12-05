@@ -62,6 +62,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	}
 	std::list<Branch_> branches_g{branches_.at(g.id())};
 	std::list<Branch_> branches_h{branches_.at(h.id())};
+	double min_edit_cost{this->ged_data_.min_edit_cost(g, h)};
 
 	// Delete common branches.
 	auto branch_g = branches_g.begin();
@@ -89,7 +90,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 		if (branch_g->node_label == branch_h->node_label) {
 			branch_g = branches_g.erase(branch_g);
 			branch_h = branches_h.erase(branch_h);
-			lower_bound += 0.5;
+			lower_bound += 0.5 * min_edit_cost;
 		}
 		else if (comp == -1) {
 			branch_g++;
@@ -98,7 +99,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 			branch_h++;
 		}
 	}
-	lower_bound += static_cast<double>(std::max(branches_g.size(), branches_h.size()));
+	lower_bound += (static_cast<double>(std::max(branches_g.size(), branches_h.size())) * min_edit_cost);
 	result.set_lower_bound(lower_bound);
 }
 

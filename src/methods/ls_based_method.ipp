@@ -51,7 +51,8 @@ num_initial_solutions_{1},
 num_runs_from_initial_solutions_{std::numeric_limits<std::size_t>::max()},
 num_randpost_loops_{0},
 max_randpost_retrials_{0},
-randpost_penalty_{0.0} {}
+randpost_penalty_{0.0},
+logfile_name_("") {}
 
 // === Definitions of member functions inherited from GEDMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -74,7 +75,6 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 	// Initialize the method for the run between g and h.
 	ls_runtime_init_(g, h);
-
 	// Generate the initial node maps and allocate output node maps.
 	std::vector<NodeMap> initial_node_maps;
 	std::vector<NodeMap> result_node_maps;
@@ -82,6 +82,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	double upper_bound{std::numeric_limits<double>::infinity()};
 	double lower_bound{0.0};
 	std::vector<std::vector<double>> counts_matrix(g.num_nodes(), std::vector<double>(h.num_nodes() + 1, 0.0));
+	double skewdness_counts_matrix{1.0};
 	generate_initial_node_maps_(g, h, initial_node_maps, result);
 	for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
 		result_node_maps.emplace_back(g.num_nodes(), h.num_nodes());
@@ -107,8 +108,9 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 			for (NodeMap & node_map : initial_node_maps) {
 				node_map.clear();
 			}
-			generate_node_maps_from_counts_matrix_(counts_matrix, visited_node_maps, initial_node_maps);
-		}
+			generate_node_maps_from_counts_matrix_(g,h,counts_matrix, visited_node_maps, initial_node_maps);
+        }
+		double former_upper_bound = upper_bound;
 		std::size_t terminated_runs{0};
 #ifdef _OPENMP
 		omp_set_num_threads(num_threads_ - 1);
@@ -125,8 +127,13 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 				}
 			}
 		}
+		if (logfile_name_!="" and loop !=0) {
+            std::ofstream result_file(logfile_name_.c_str(), std::ios_base::app);
+            result_file << g.id() << "," << h.id() << "," << loop << "," << skewdness_counts_matrix << "," << (former_upper_bound - upper_bound)/former_upper_bound << "\n" ;
+            result_file.close();
+        }
 		if (not found_optimum and loop < num_randpost_loops_) {
-			update_counts_matrix_and_visited_node_maps_(result_node_maps, upper_bound, lower_bound, visited_node_maps, counts_matrix);
+			skewdness_counts_matrix = update_counts_matrix_and_visited_node_maps_(result_node_maps, upper_bound, lower_bound, visited_node_maps, loop, counts_matrix);
 		}
 		for (NodeMap & node_map : result_node_maps) {
 			result.add_node_map(node_map);
@@ -241,6 +248,10 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		is_valid_option = true;
 	}
+	else if (option == "log") {
+		logfile_name_ = arg;
+		is_valid_option = true;
+	}
 	else if (option == "randpost-penalty") {
 		try {
 			randpost_penalty_ = std::stod(arg);
@@ -339,9 +350,9 @@ std::string
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (ls_valid_options_string_() == "") {
-		return "[--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+		return "[--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 	}
-	return ls_valid_options_string_() + " [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+	return ls_valid_options_string_() + " [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -361,6 +372,7 @@ ged_set_default_options_() {
 	num_randpost_loops_ = 0;
 	max_randpost_retrials_ = 0;
 	randpost_penalty_ = 0;
+	logfile_name_ = std::string("");
 	ls_set_default_options_();
 }
 
@@ -386,10 +398,10 @@ generate_lsape_based_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, 
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
-void
+double
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
 update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const double & upper_bound, const double & lower_bound,
-		std::vector<NodeMap> & visited_node_maps, std::vector<std::vector<double>> & counts_matrix) const {
+		std::vector<NodeMap> & visited_node_maps, std::size_t loop, std::vector<std::vector<double>> & counts_matrix) const {
 	std::size_t num_nodes_g{counts_matrix.size()};
 	std::size_t num_nodes_h{counts_matrix[0].size() - 1};
 	GEDGraph::NodeID k{GEDGraph::dummy_node()};
@@ -405,6 +417,22 @@ update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_
 		}
 		visited_node_maps.emplace_back(node_map);
 	}
+	double skewdness{0.0};
+	std::size_t num_non_zeros_row{0};
+	std::size_t num_solutions = (loop +1) * result_node_maps.size();
+	if (num_solutions == 1){
+        return 1.0;
+	}
+	for (const auto & row : counts_matrix) {
+        num_non_zeros_row = 0;
+        for (const auto & cell : row) {
+            if (cell > 0) {
+                num_non_zeros_row++;
+            }
+        }
+        skewdness += static_cast<double>(num_solutions-num_non_zeros_row)/static_cast<double>(num_solutions-1);
+	}
+	return skewdness/static_cast<double>(counts_matrix.size());
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -445,7 +473,7 @@ generate_random_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
-generate_node_maps_from_counts_matrix_(const std::vector<std::vector<double>> & counts_matrix, std::vector<NodeMap> & visited_node_maps, std::vector<NodeMap> & initial_node_maps) const {
+generate_node_maps_from_counts_matrix_(const GEDGraph & g, const GEDGraph & h,const std::vector<std::vector<double>> & counts_matrix, std::vector<NodeMap> & visited_node_maps, std::vector<NodeMap> & initial_node_maps) const {
 	std::size_t num_nodes_g{counts_matrix.size()};
 	std::size_t num_nodes_h{counts_matrix[0].size() - 1};
 	double max_count{0};
@@ -474,16 +502,31 @@ generate_node_maps_from_counts_matrix_(const std::vector<std::vector<double>> & 
 		for (GEDGraph::NodeID i{0}; i < num_nodes_g; i++) {
 			std::discrete_distribution<std::size_t> distribution(temp_counts_matrix[i].begin(), temp_counts_matrix[i].end());
 			GEDGraph::NodeID k{distribution(urng)};
+			if (k == 0){
+                bool is_all_zero{true};
+                for (const auto  & cell : temp_counts_matrix[i]){
+                    if (cell != 0){
+                        is_all_zero = true;
+                        break;
+                    }
+
+                }
+                if (is_all_zero) {
+                    k=num_nodes_h;
+                }
+            }
+
 			if (k < num_nodes_h) {
 				initial_node_maps.at(node_map_id).add_assignment(i, k);
 				is_assigned_target_node[k] = true;
+				for (GEDGraph::NodeID j{i+1}; j < num_nodes_g; j++) {
+                    temp_counts_matrix[j][k] = 0.0;
+                }
 			}
 			else {
 				initial_node_maps.at(node_map_id).add_assignment(i, GEDGraph::dummy_node());
 			}
-			for (GEDGraph::NodeID j{i+1}; j < num_nodes_g; j++) {
-				temp_counts_matrix[j][k] = 0.0;
-			}
+
 		}
 		for (GEDGraph::NodeID k{0}; k < num_nodes_h; k++) {
 			if (not is_assigned_target_node[k]) {
@@ -505,6 +548,7 @@ generate_node_maps_from_counts_matrix_(const std::vector<std::vector<double>> & 
 		}
 		if (not retry) {
 			visited_node_maps.emplace_back(initial_node_maps.at(node_map_id));
+			this->ged_data_.compute_induced_cost(g, h, initial_node_maps.at(node_map_id));
 			node_map_id++;
 		}
 	}

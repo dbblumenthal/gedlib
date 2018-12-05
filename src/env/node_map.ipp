@@ -104,6 +104,7 @@ complete(const GEDGraph & g, const GEDGraph & h) const {
 	return true;
 }
 
+
 GEDGraph::NodeID
 NodeMap::
 image(GEDGraph::NodeID node) const {

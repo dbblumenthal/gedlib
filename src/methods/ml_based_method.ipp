@@ -56,7 +56,7 @@ svm_(),
 svm_training_data_(),
 svm_feature_vectors_(),
 svm_types_(),
-one_class_svm_use_likelihood_{false},
+one_class_svm_use_likelihood_{true},
 one_class_svm_(),
 infile_(""),
 outfile_(""),
@@ -259,7 +259,7 @@ lsape_set_default_options_() {
 	svm_params_.max_gamma_exp = 4;
 	svm_params_.min_c_exp = -3;
 	svm_params_.max_c_exp = 4;
-	one_class_svm_use_likelihood_ = false;
+	one_class_svm_use_likelihood_ = true;
 	infile_ = std::string("");
 	outfile_ = std::string("");
 	logfile_ = std::string("");

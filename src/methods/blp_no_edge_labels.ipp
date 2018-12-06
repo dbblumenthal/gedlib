@@ -61,8 +61,8 @@ mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) {
 	// Add substitution variables to the model.
 	NodeMap::Assignment key;
 	for (GEDGraph::GraphID i{0}; i < N; i++) {
-		key.first = i;
 		for (GEDGraph::GraphID k{0}; k < N; k++) {
+			key.first = i;
 			key.second = k;
 			if ((i == 0) and (k == 0) and this->map_root_to_root_) {
 				x_[key] = model.addVar(1, 1, this->ged_data_.node_cost(g.get_node_label(i), h.get_node_label(k)), variable_type_());
@@ -107,8 +107,8 @@ mip_populate_model_(const GEDGraph & g, const GEDGraph & h, GRBModel & model) {
 
 	// Add topology constraints to the model.
 	for (GEDGraph::GraphID i{0}; i < N; i++) {
-		key.first = i;
 		for (GEDGraph::GraphID k{0}; k < N; k++) {
+			key.first = i;
 			key.second = k;
 			lhs = s_.at(key) - t_.at(key);
 			if (i < g.num_nodes()) {

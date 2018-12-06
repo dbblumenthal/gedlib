@@ -48,9 +48,9 @@ lower_bound_method_{nullptr},
 lower_bound_method_options_(""),
 random_substitution_ratio_{1.0},
 num_initial_solutions_{1},
-num_runs_from_initial_solutions_{std::numeric_limits<std::size_t>::max()},
+ratio_runs_from_initial_solutions_{1.0},
 num_randpost_loops_{0},
-max_randpost_retrials_{0},
+max_randpost_retrials_{10},
 randpost_penalty_{0.0},
 logfile_name_("") {}
 
@@ -109,7 +109,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 				node_map.clear();
 			}
 			generate_node_maps_from_counts_matrix_(g,h,counts_matrix, visited_node_maps, initial_node_maps);
-        }
+		}
 		double former_upper_bound = upper_bound;
 		std::size_t terminated_runs{0};
 #ifdef _OPENMP
@@ -117,7 +117,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 #pragma omp parallel for if(num_threads_ > 1) schedule(dynamic)
 #endif
 		for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
-			if (not found_optimum and (terminated_runs < num_runs_from_initial_solutions_)) {
+			if (not found_optimum and (terminated_runs < num_runs_from_initial_solutions_())) {
 				ls_run_from_initial_solution_(g, h, result.lower_bound(), initial_node_maps.at(node_map_id), result_node_maps.at(node_map_id));
 #pragma omp critical
 				{
@@ -128,10 +128,10 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 			}
 		}
 		if (logfile_name_!="" and loop !=0) {
-            std::ofstream result_file(logfile_name_.c_str(), std::ios_base::app);
-            result_file << g.id() << "," << h.id() << "," << loop << "," << skewdness_counts_matrix << "," << (former_upper_bound - upper_bound)/former_upper_bound << "\n" ;
-            result_file.close();
-        }
+			std::ofstream result_file(logfile_name_.c_str(), std::ios_base::app);
+			result_file << g.id() << "," << h.id() << "," << loop << "," << skewdness_counts_matrix << "," << (former_upper_bound - upper_bound)/former_upper_bound << "\n" ;
+			result_file.close();
+		}
 		if (not found_optimum and loop < num_randpost_loops_) {
 			skewdness_counts_matrix = update_counts_matrix_and_visited_node_maps_(result_node_maps, upper_bound, lower_bound, visited_node_maps, loop, counts_matrix);
 		}
@@ -142,7 +142,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	}
 
 	// Determine the best node map.
-	result.sort_node_maps_and_set_upper_bound(num_runs_from_initial_solutions_);
+	result.sort_node_maps_and_set_upper_bound(num_runs_from_initial_solutions_());
 
 }
 
@@ -280,20 +280,15 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		initialization_options_ += "--max-num-solutions " + std::to_string(num_initial_solutions_);
 		is_valid_option = true;
 	}
-	else if (option == "runs-from-initial-solutions") {
-		if (arg == "ALL") {
-			num_runs_from_initial_solutions_ = std::numeric_limits<std::size_t>::max();
+	else if (option == "ratio-runs-from-initial-solutions") {
+		try {
+			ratio_runs_from_initial_solutions_ = std::stod(arg);
 		}
-		else {
-			try {
-				num_runs_from_initial_solutions_ = std::stoul(arg);
-			}
-			catch (...) {
-				throw Error(std::string("Invalid argument \"") + arg + "\" for option runs-from-initial-solutions. Usage: options = \"[--runs-from-initial-solutions ALL|<convertible to int greater 0>]\"");
-			}
-			if (num_runs_from_initial_solutions_ <= 0) {
-				throw Error(std::string("Invalid argument \"") + arg + "\" for option runs-from-initial-solutions. Usage: options = \"[--runs-from-initial-solutions ALL|<convertible to int greater 0>]\"");
-			}
+		catch (...) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option ratio-runs-from-initial-solutions. Usage: options = \"[--ratio-runs-from-initial-solutions <convertible to double greater 0 and smaller equal 1>]\"");
+		}
+		if (ratio_runs_from_initial_solutions_ <= 0 or ratio_runs_from_initial_solutions_ > 1) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option ratio-runs-from-initial-solutions. Usage: options = \"[--ratio-runs-from-initial-solutions <convertible to double greater 0 and smaller equal 1>]\"");
 		}
 		is_valid_option = true;
 	}
@@ -350,9 +345,9 @@ std::string
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (ls_valid_options_string_() == "") {
-		return "[--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+		return "[--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 	}
-	return ls_valid_options_string_() + " [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+	return ls_valid_options_string_() + " [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -367,16 +362,25 @@ ged_set_default_options_() {
 	lower_bound_method_options_ = std::string("");
 	random_substitution_ratio_ = 1.0;
 	num_initial_solutions_ = 1;
-	num_runs_from_initial_solutions_ = std::numeric_limits<std::size_t>::max();
+	ratio_runs_from_initial_solutions_ = 1.0;
 	num_threads_ = 1;
 	num_randpost_loops_ = 0;
-	max_randpost_retrials_ = 0;
+	max_randpost_retrials_ = 10;
 	randpost_penalty_ = 0;
 	logfile_name_ = std::string("");
 	ls_set_default_options_();
 }
 
 // Definitions of private helper member functions.
+
+
+template<class UserNodeLabel, class UserEdgeLabel>
+std::size_t
+LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
+num_runs_from_initial_solutions_() const {
+	return static_cast<std::size_t>(std::ceil(ratio_runs_from_initial_solutions_ * static_cast<double>(num_initial_solutions_)));
+}
+
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
@@ -421,16 +425,16 @@ update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_
 	std::size_t num_non_zeros_row{0};
 	std::size_t num_solutions = (loop +1) * result_node_maps.size();
 	if (num_solutions == 1){
-        return 1.0;
+		return 1.0;
 	}
 	for (const auto & row : counts_matrix) {
-        num_non_zeros_row = 0;
-        for (const auto & cell : row) {
-            if (cell > 0) {
-                num_non_zeros_row++;
-            }
-        }
-        skewdness += static_cast<double>(num_solutions-num_non_zeros_row)/static_cast<double>(num_solutions-1);
+		num_non_zeros_row = 0;
+		for (const auto & cell : row) {
+			if (cell > 0) {
+				num_non_zeros_row++;
+			}
+		}
+		skewdness += static_cast<double>(num_solutions-num_non_zeros_row)/static_cast<double>(num_solutions-1);
 	}
 	return skewdness/static_cast<double>(counts_matrix.size());
 }
@@ -503,25 +507,25 @@ generate_node_maps_from_counts_matrix_(const GEDGraph & g, const GEDGraph & h,co
 			std::discrete_distribution<std::size_t> distribution(temp_counts_matrix[i].begin(), temp_counts_matrix[i].end());
 			GEDGraph::NodeID k{distribution(urng)};
 			if (k == 0){
-                bool is_all_zero{true};
-                for (const auto  & cell : temp_counts_matrix[i]){
-                    if (cell != 0){
-                        is_all_zero = true;
-                        break;
-                    }
+				bool is_all_zero{true};
+				for (const auto  & cell : temp_counts_matrix[i]){
+					if (cell != 0){
+						is_all_zero = true;
+						break;
+					}
 
-                }
-                if (is_all_zero) {
-                    k=num_nodes_h;
-                }
-            }
+				}
+				if (is_all_zero) {
+					k=num_nodes_h;
+				}
+			}
 
 			if (k < num_nodes_h) {
 				initial_node_maps.at(node_map_id).add_assignment(i, k);
 				is_assigned_target_node[k] = true;
 				for (GEDGraph::NodeID j{i+1}; j < num_nodes_g; j++) {
-                    temp_counts_matrix[j][k] = 0.0;
-                }
+					temp_counts_matrix[j][k] = 0.0;
+				}
 			}
 			else {
 				initial_node_maps.at(node_map_id).add_assignment(i, GEDGraph::dummy_node());

@@ -39,10 +39,10 @@ namespace ged {
  * | <tt>\--lower-bound-method BRANCH\|BRANCH_FAST\|BRANCH_TIGHT\|NONE</tt> | method for computing lower bound used as a termination criterion | @p NONE | if @p NONE, the lower bound computed by the initialization method is used |
  * | <tt>\--random-substitution-ratio @<convertible to double between 0 and 1@></tt> | ratio of node substitutions in randomly constructed initial solutions | @p 1 | n.a |
  * | <tt>\--initial-solutions @<convertible to int greater 0@></tt> | number of initial solutions | @p 1 | if greater @p 1 and if a non-random initialization method is chosen, those initial solution that cannot be computed non-randomly because the initialization method does not yield enough solutions are computed randomly |
- * | <tt>\--runs-from-initial-solutions ALL\|<convertible to int greater 0@></tt> | number of runs from initial solutions | @p ALL | if not @p ALL and less than the number of initial solutions, all remaining initial solutions are discarded as soon as the desired number of runs has been reached |
+ * | <tt>\--ratio-runs-from-initial-solutions @<convertible to double greater 0 and smaller equal 1@></tt> | determines number of runs from initial solutions | @p 1 | if set to @p r and @p \--initial-solutions is set to <tt>k</tt>, all remaining initial solutions are discarded as soon as @p r * @p k runs have been completed |
  * | <tt>\--threads @<convertible to int greater 0@></tt> | number of threads | @p 1 | used for initializing the initialization method and for parallelly running local searches from several initial solutions |
  * | <tt>\--num-randpost-loops @<convertible to int greater equal 0@></tt> | number of loops of RANDPOST algorithm | @p 0 | https://doi.org/10.1007/978-3-319-97785-0_44 |
- * | <tt>\--max-randpost-retrials @<convertible to int greater equal 0@></tt> | number of times the RANDPOST algorithm flattens the probability distribution if it encounters already converged solutions | @p 0 | https://doi.org/10.1007/978-3-319-97785-0_44 |
+ * | <tt>\--max-randpost-retrials @<convertible to int greater equal 0@></tt> | number of times the RANDPOST algorithm flattens the probability distribution if it encounters already converged solutions | @p 10 | https://doi.org/10.1007/978-3-319-97785-0_44 |
  * | <tt>\--randpost-penalty @<convertible to double between 0 and 1@></tt> | if set value close to @p 1, expensive solutions count less for constructing the counts matrix | @p 0 | n.a. |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -83,7 +83,7 @@ private:
 
 	std::size_t num_initial_solutions_;
 
-	std::size_t num_runs_from_initial_solutions_;
+	double ratio_runs_from_initial_solutions_;
 
 	std::size_t num_randpost_loops_;
 
@@ -106,6 +106,8 @@ private:
 	virtual void ged_set_default_options_() final;
 
 	// Private helper member functions.
+
+	std::size_t num_runs_from_initial_solutions_() const;
 
 	void generate_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result);
 

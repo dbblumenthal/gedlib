@@ -35,7 +35,7 @@ namespace ged {
  * @details All derived methods support the following options:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
- * | <tt>\--threads @<convertible to int greater 0@></tt> | number of threads | @p 1 | used for initializing the initialization method and for parallelly running local searches from several initial solutions |
+ * | <tt>\--threads @<convertible to int greater 0@></tt> | number of threads | @p 1 | number of threads to be used by MIP/LP solver |
  * | <tt>\--time-limit @<convertible to double@></tt> | time limit in seconds | @p 0 | if less or equal @p 0, no time limit is enforced |
  * | <tt>\--relax TRUE\|FALSE </tt> | if @p TRUE, all integrality constraints are relaxed | @p FALSE | if @p TRUE, the model populated by mip_populate_model_() must be continuous |
  * | <tt>\--project-to-node-map TRUE\|FALSE </tt> | if @p TRUE, continuous solutions of relaxed models are projected to node maps | @p TRUE | mip_model_to_lsape_projection_problem_() |

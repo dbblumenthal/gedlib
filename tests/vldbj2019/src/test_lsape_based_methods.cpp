@@ -34,7 +34,6 @@ class Method {
 private:
 	// method and options
 	ged::Options::GEDMethod ged_method_;
-	std::size_t num_threads_;
 	std::size_t num_solutions_;
 	std::string centralities_;
 	std::string set_distances_;
@@ -43,7 +42,7 @@ private:
 
 	std::string options_(const std::string & dataset) const {
 		std::string options("");
-		options += "--threads " + std::to_string(num_threads_) + " --max-num-solutions " + std::to_string(num_solutions_) + " --centrality-method " + centralities_;
+		options += "--threads 6 --max-num-solutions " + std::to_string(num_solutions_) + " --centrality-method " + centralities_;
 		if (set_distances_ != "") {
 			options += " --led-method " + set_distances_;
 			options += " --load ../ini/" + dataset + "_ring_" + set_distances_ + ".ini";
@@ -70,14 +69,10 @@ private:
 public:
 	Method(ged::Options::GEDMethod ged_method, std::size_t num_solutions, std::string centralities, const std::string & set_distances = "", const std::string ml_method = "") :
 		ged_method_{ged_method},
-		num_threads_{8},
 		num_solutions_{num_solutions},
 		centralities_{centralities},
 		set_distances_{set_distances},
 		ml_method_{ml_method} {
-			if (num_threads_ <= 0) {
-				throw ged::Error("Invalid number of threads.");
-			}
 			if (num_solutions_ <= 0) {
 				throw ged::Error("Invalid number of solutions.");
 			}
@@ -104,7 +99,7 @@ public:
 
 		std::string name() const {
 			std::stringstream name;
-			name << ged_method_ << "__C-" << centralities_;
+			name << ged_method_ << "__C-" << centralities_ << "__S-" << num_solutions_;
 			if (set_distances_ != "") {
 				name << "__LED-" << set_distances_;
 			}
@@ -112,14 +107,6 @@ public:
 				name << "__ML-" << ml_method_;
 			}
 			return name.str();
-		}
-
-		std::size_t num_threads() const {
-			return num_threads_;
-		}
-
-		std::size_t num_solutions() const {
-			return num_solutions_;
 		}
 
 		void run_on_dataset(const std::string & dataset, ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> & env, double & avg_lb, double & avg_ub, double & avg_runtime,
@@ -151,7 +138,7 @@ public:
 					if (env.get_upper_bound(g_id, h_id) > largest_ub) {
 						largest_ub = env.get_upper_bound(g_id, h_id);
 					}
-					if (env.get_graph_class(g_id) == env.get_graph_class(g_id)) {
+					if (env.get_graph_class(g_id) == env.get_graph_class(h_id)) {
 						avg_intra_class_lb += env.get_lower_bound(g_id, h_id);
 						avg_intra_class_ub += env.get_upper_bound(g_id, h_id);
 						num_intra_class_runs++;
@@ -197,7 +184,7 @@ void test_on_dataset(const std::string & dataset) {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 	util::setup_environment(dataset, false, env);
 
-	// Learn the parameters.
+	// Collect all tested methods.
 	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::BIPARTITE, ged::Options::GEDMethod::NODE, ged::Options::GEDMethod::WALKS, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::BRANCH, ged::Options::GEDMethod::SUBGRAPH, ged::Options::GEDMethod::BIPARTITE_ML, ged::Options::GEDMethod::RING, ged::Options::GEDMethod::RING_ML};
 	std::vector<std::string> set_distances{"GAMMA", "LSAPE_OPTIMAL"};
 	std::vector<std::string> centralities{"NONE", "PAGERANK"};
@@ -223,10 +210,12 @@ void test_on_dataset(const std::string & dataset) {
 			}
 		}
 	}
+
+	// Run the tests.
 	std::string result_filename("../results/");
 	result_filename += dataset + "__lsape_based_methods.csv";
 	std::ofstream result_file(result_filename.c_str());
-	result_file << "method,num_solutions,avg_lb,avg_ub,avg_runtime,classification_coefficient_lb,classification_coefficient_ub\n";
+	result_file << "method,avg_lb,avg_ub,avg_runtime,classification_coefficient_lb,classification_coefficient_ub\n";
 	result_file.close();
 	double avg_ub{0};
 	double avg_lb{0};
@@ -236,8 +225,7 @@ void test_on_dataset(const std::string & dataset) {
 	for (auto & method : methods) {
 		method.run_on_dataset(dataset, env, avg_lb, avg_ub, avg_runtime, classification_coefficient_lb, classification_coefficient_ub);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << method.name() << "," << method.num_threads() << "," << method.num_solutions() << ",";
-		result_file << avg_lb << ", " << avg_ub << "," << avg_runtime << "," << classification_coefficient_lb << "," << classification_coefficient_ub << "\n";
+		result_file << method.name() << "," << avg_lb << ", " << avg_ub << "," << avg_runtime << "," << classification_coefficient_lb << "," << classification_coefficient_ub << "\n";
 		result_file.close();
 	}
 }

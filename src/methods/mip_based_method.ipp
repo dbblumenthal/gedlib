@@ -93,7 +93,10 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 			throw Error("The model is unbounded.");
 		}
 		else if (model_status == GRB_INFEASIBLE) {
-			throw Error("The model is infeasible.");
+			model.computeIIS();
+			model.write("infeasible_model.lp");
+			model.write("infeasible_model.ilp");
+			throw Error("The model for the graphs with IDs " + std::to_string(g.id()) + " and " + std::to_string(h.id()) + " is infeasible. For more information, investigate files 'infeasible_model.lp' and 'infeasible_model.ilp'.");
 		}
 		else if ((model_status == GRB_OPTIMAL) or (model_status == GRB_SUBOPTIMAL) or (model_status == GRB_TIME_LIMIT)) {
 			if (model_status == GRB_OPTIMAL) {
@@ -145,7 +148,7 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		if (arg == "FALSE") {
 			project_to_node_map_ = false;
 		}
-		else if (arg != "FALSE") {
+		else if (arg != "TRUE") {
 			throw Error(std::string("Invalid argument \"") + arg  + "\" for option project-to-node-map. Usage: options = \"[--project-to-node-map TRUE|FALSE] [...]\"");
 		}
 		is_valid_option = true;

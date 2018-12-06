@@ -53,6 +53,10 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 		std::vector<NodeMap::Assignment> assignments;
 		output_node_map.as_relation(assignments);
 		assignments.emplace_back(GEDGraph::dummy_node(), GEDGraph::dummy_node());
+		// terminate if there are not enough assignments to carry out swaps of the current swap size
+		if (swap_size > assignments.size()) {
+			break;
+		}
 		// initialization of swapped assignments
 		std::vector<std::size_t> swapped_original_indices;
 		for (std::size_t i=0; i<swap_size; i++) {
@@ -64,6 +68,19 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			for(std::size_t index : swapped_original_indices){
 				swapped_original_assignments.emplace_back(assignments[index]);
 			}
+			// continue if all nodes on the left or all nodes on the right are dummy nodes
+			bool real_node_on_left{false};
+			bool real_node_on_right{false};
+			for (const auto & assignment : swapped_original_assignments) {
+				real_node_on_left = (real_node_on_left or (assignment.first != GEDGraph::dummy_node()));
+				real_node_on_right = (real_node_on_right or (assignment.second != GEDGraph::dummy_node()));
+				if (real_node_on_left and real_node_on_right) {
+					break;
+				}
+			}
+			if (not (real_node_on_left and real_node_on_right)) {
+				continue;
+			}
 			// initialization of the swapping cycle inside the current subset
 			std::vector<std::size_t> cycle(swap_size-1);
 			for (std::size_t i=0; i<swap_size-1;i++) {
@@ -72,6 +89,10 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			// test all possible cycle within the swapping set
 			do {
 				std::vector<NodeMap::Assignment> swapped_new_assignments;
+				/* I think this is incorrect:
+				 * Assume you have swapped_original_assignments = [(0,0), (1,1), (2,2)] and cycle = [2, 1].
+				 * Then we get swapped_new_assignments = [(0,2), (1,1), (2,0)], i.e., (1,1) is not involved in the swap.
+				 * With the new loop below we get swapped_new_assignments = [(2,0), (1,2), (0,1)] as expected.
 				for (std::size_t i=0; i < swap_size; i++) {
 					if (i != swap_size - 1) {
 						NodeMap::Assignment new_assignment{swapped_original_assignments[i].first,swapped_original_assignments[cycle[i]].second};
@@ -82,6 +103,13 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 						swapped_new_assignments.emplace_back(new_assignment);
 					}
 				}
+				*/
+				NodeMap::Assignment original_assignment(swapped_original_assignments.at(0));
+				for (std::size_t i=0; i < swap_size - 1; i++) {
+					swapped_new_assignments.emplace_back(swapped_original_assignments.at(cycle.at(i)).first, original_assignment.second);
+					original_assignment = swapped_original_assignments.at(cycle.at(i));
+				}
+				swapped_new_assignments.emplace_back(swapped_original_assignments.at(0).first, original_assignment.second);
 				Swap_ current_swap;
 				current_swap.original_assignments = swapped_original_assignments;
 				current_swap.new_assignments = swapped_new_assignments;
@@ -92,7 +120,7 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 				}
 			} while (std::next_permutation(cycle.data(),cycle.data() + swap_size-1));
 		} while (this->next_subset_(assignments.size(), swapped_original_indices));
-		if (best_swap_cost < 0) {
+		if (best_swap_cost < -0.000000001) {
 			best_swap.do_swap(output_node_map, best_swap_cost);
 			best_swap_cost = 0.0;
 		}
@@ -286,6 +314,27 @@ undo_swap(NodeMap & node_map) const {
 	for(auto new_assignment : this->original_assignments)
 		node_map.add_assignment(new_assignment.first,new_assignment.second);
 }
+
+template<class UserNodeLabel, class UserEdgeLabel>
+std::string
+Refine<UserNodeLabel, UserEdgeLabel>::
+Swap_::
+print() const {
+	std::stringstream ss;
+	ss << "original assignments: { ";
+	for (const auto & assignment : original_assignments) {
+		ss << assignment << " ";
+	}
+	ss << "}";
+	ss << ", new assignments: { ";
+	for (const auto & assignment : new_assignments) {
+		ss << assignment << " ";
+	}
+	ss << "}";
+	return ss.str();
+}
+
+
 
 }
 

@@ -61,10 +61,12 @@ private:
 		double cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, NodeMap & node_map) const;
 
 		void do_swap(NodeMap & node_map, double delta_cost=0) const;
+
 		void undo_swap(NodeMap & node_map) const;
 
-	};
+		std::string print() const;
 
+	};
 
 	virtual void ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double lower_bound, const NodeMap & initial_node_map,NodeMap & output_node_map) final;
 

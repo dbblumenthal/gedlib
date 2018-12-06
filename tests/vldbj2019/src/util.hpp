@@ -96,7 +96,7 @@ std::string test_collection(const std::string & dataset) {
 
 std::string config_prefix(const std::string & dataset) {
 	check_dataset(dataset);
-	return std::string("../output/" + dataset + "_");
+	return std::string("../ini/" + dataset + "_");
 }
 
 std::string init_options(const std::string & dataset, const std::string & config_suffix, const std::string & data_suffix = "", bool save_train = false, bool load_train = false, std::size_t threads = 8) {

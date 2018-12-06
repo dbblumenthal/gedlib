@@ -55,7 +55,7 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 		assignments.emplace_back(GEDGraph::dummy_node(), GEDGraph::dummy_node());
 		// initialization of swapped assignments
 		std::vector<std::size_t> swapped_original_indices;
-		for(std::size_t i=0; i<swap_size; i++){
+		for (std::size_t i=0; i<swap_size; i++) {
 			swapped_original_indices.emplace_back(i);
 		}
 		// test all possible subsets
@@ -72,8 +72,8 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			// test all possible cycle within the swapping set
 			do {
 				std::vector<NodeMap::Assignment> swapped_new_assignments;
-				for (std::size_t i=0; i<swap_size;i++) {
-					if (i!=swap_size-1) {
+				for (std::size_t i=0; i < swap_size; i++) {
+					if (i != swap_size - 1) {
 						NodeMap::Assignment new_assignment{swapped_original_assignments[i].first,swapped_original_assignments[cycle[i]].second};
 						swapped_new_assignments.emplace_back(new_assignment);
 					}
@@ -86,13 +86,13 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 				current_swap.original_assignments = swapped_original_assignments;
 				current_swap.new_assignments = swapped_new_assignments;
 				double current_swap_cost = current_swap.cost(g,h,this->ged_data_,output_node_map);
-				if (current_swap_cost < best_swap_cost){
+				if (current_swap_cost < best_swap_cost) {
 					best_swap_cost = current_swap_cost;
 					best_swap = current_swap;
 				}
 			} while (std::next_permutation(cycle.data(),cycle.data() + swap_size-1));
 		} while (this->next_subset_(assignments.size(), swapped_original_indices));
-		if (best_swap_cost < 0){
+		if (best_swap_cost < 0) {
 			best_swap.do_swap(output_node_map, best_swap_cost);
 			best_swap_cost = 0.0;
 		}

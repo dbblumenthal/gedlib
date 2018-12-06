@@ -39,7 +39,7 @@ namespace ged {
  * Supports the following options in addition tothe ones supported by ged::LSBasedMethod.
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
- * | <tt>\--max-swap-size @<convertible to int greater equal 2@> | maximum size of swap | @p 2 | n.a. |
+ * | <tt>\--max-swap-size @<convertible to int greater equal 2@> | maximum size of swap | @p 2 | If set to a value greater @p 2, K-Refine is used. |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class Refine : public LSBasedMethod<UserNodeLabel, UserEdgeLabel> {

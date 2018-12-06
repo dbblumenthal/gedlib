@@ -130,11 +130,13 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 		}
 	}
 	//Last Check that the cost is valid before exiting
+	/*
 	NodeMap copied_node_map(output_node_map);
 	this->ged_data_.compute_induced_cost(g,h,copied_node_map);
 	if(std::fabs(copied_node_map.induced_cost()-output_node_map.induced_cost()) > 0.000000001){
 		throw Error("actual_cost = " + std::to_string(output_node_map.induced_cost()) + " , real cost = " +  std::to_string(copied_node_map.induced_cost()) );
 	}
+	*/
 
 }
 

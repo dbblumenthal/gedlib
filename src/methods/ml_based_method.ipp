@@ -727,6 +727,9 @@ load_or_generate_training_data_() {
 				if (this->ged_data_.is_shuffled_graph_copy(h->id())) {
 					continue;
 				}
+				if (g->num_nodes() == 0 or h->num_nodes() == 0) {
+					continue;
+				}
 				// Generate assignments between g and h.
 				if (this->ged_data_.shuffled_graph_copies_available() and (g->id() == h->id())) {
 					generate_assignments_(*g, this->ged_data_.graph(this->ged_data_.id_shuffled_graph_copy(h->id())));

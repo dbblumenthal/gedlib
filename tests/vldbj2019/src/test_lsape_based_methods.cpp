@@ -99,13 +99,55 @@ public:
 
 		std::string name() const {
 			std::stringstream name;
-			name << ged_method_ << "__C-" << centralities_ << "__S-" << num_solutions_;
-			if (set_distances_ != "") {
-				name << "__LED-" << set_distances_;
+			if (ged_method_ == ged::Options::GEDMethod::RING) {
+				if (set_distances_ == "GAMMA") {
+					name << "RINGMS";
+				}
+				else {
+					name << "RINGOPT";
+				}
 			}
-			if (ml_method_ != "") {
-				name << "__ML-" << ml_method_;
+			else if (ged_method_ == ged::Options::GEDMethod::RING_ML) {
+				if (ml_method_ == "DNN") {
+					name << "RINGMLDNN";
+				}
+				else {
+					name << "RINGMLSVM";
+				}
 			}
+			else if (ged_method_ == ged::Options::GEDMethod::BIPARTITE_ML) {
+				if (ml_method_ == "DNN") {
+					name << "PREDICTDNN";
+				}
+				else {
+					name << "PREDICTSVM";
+				}
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::BIPARTITE) {
+				name << "BP";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::BRANCH_FAST) {
+				name << "BRANCHFAST";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::BRANCH_UNIFORM) {
+				name << "BRANCHUNI";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::STAR) {
+				name << "STAR";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::SUBGRAPH) {
+				name << "SUBGGRAPH";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::NODE) {
+				name << "NODE";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::WALKS) {
+				name << "WALKS";
+			}
+			if (centralities_ != "NONE") {
+				name << "C";
+			}
+			name << ",$(" << num_solutions_ << ")$";
 			return name.str();
 		}
 
@@ -215,7 +257,7 @@ void test_on_dataset(const std::string & dataset) {
 	std::string result_filename("../results/");
 	result_filename += dataset + "__lsape_based_methods.csv";
 	std::ofstream result_file(result_filename.c_str());
-	result_file << "method,avg_lb,avg_ub,avg_runtime,classification_coefficient_lb,classification_coefficient_ub\n";
+	result_file << "method;avg_lb;avg_ub;avg_runtime;classification_coefficient_lb;classification_coefficient_ub\n";
 	result_file.close();
 	double avg_ub{0};
 	double avg_lb{0};
@@ -225,7 +267,7 @@ void test_on_dataset(const std::string & dataset) {
 	for (auto & method : methods) {
 		method.run_on_dataset(dataset, env, avg_lb, avg_ub, avg_runtime, classification_coefficient_lb, classification_coefficient_ub);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << method.name() << "," << avg_lb << ", " << avg_ub << "," << avg_runtime << "," << classification_coefficient_lb << "," << classification_coefficient_ub << "\n";
+		result_file << method.name() << ";" << avg_lb << "; " << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
 		result_file.close();
 	}
 }

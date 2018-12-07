@@ -46,7 +46,18 @@ public:
 
 		std::string name() const {
 			std::stringstream name;
-			name << ged_method_;
+			if (ged_method_ == ged::Options::GEDMethod::F1) {
+				name << "FONE";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::F2) {
+				name << "FTWO";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::COMPACT_MIP) {
+				name << "COMPACTMIP";
+			}
+			else if (ged_method_ == ged::Options::GEDMethod::BLP_NO_EDGE_LABELS) {
+				name << "JUSTICEIP";
+			}
 			return name.str();
 		}
 
@@ -136,7 +147,7 @@ void test_on_dataset(const std::string & dataset) {
 	std::string result_filename("../results/");
 	result_filename += dataset + "__lp_based_methods.csv";
 	std::ofstream result_file(result_filename.c_str());
-	result_file << "method,avg_lb,avg_ub,avg_runtime,classification_coefficient_lb,classification_coefficient_ub\n";
+	result_file << "method;avg_lb;avg_ub;avg_runtime;classification_coefficient_lb;classification_coefficient_ub\n";
 	result_file.close();
 	double avg_ub{0};
 	double avg_lb{0};
@@ -146,7 +157,7 @@ void test_on_dataset(const std::string & dataset) {
 	for (auto & method : methods) {
 		method.run_on_dataset(dataset, env, avg_lb, avg_ub, avg_runtime, classification_coefficient_lb, classification_coefficient_ub);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << method.name() << "," << avg_lb << ", " << avg_ub << "," << avg_runtime << "," << classification_coefficient_lb << "," << classification_coefficient_ub << "\n";
+		result_file << method.name() << ";" << avg_lb << "; " << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
 		result_file.close();
 	}
 }

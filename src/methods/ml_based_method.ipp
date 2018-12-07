@@ -728,6 +728,8 @@ load_or_generate_training_data_() {
 					continue;
 				}
 				if (g->num_nodes() == 0 or h->num_nodes() == 0) {
+					progress_bar.increment();
+					std::cout << "\rGenerating training data: " << progress_bar << std::flush;
 					continue;
 				}
 				// Generate assignments between g and h.

@@ -35,6 +35,7 @@ private:
 	// method and options
 	ged::Options::GEDMethod ged_method_;
 	std::size_t num_initial_solutions_;
+	double ratio_initial_solutions_;
 	double randpost_penalty_;
 	std::size_t num_randpost_loops_;
 	std::size_t max_swap_size_;
@@ -43,7 +44,7 @@ private:
 
 	std::string options_() const {
 		std::string options("");
-		options += "--threads 6 --initial-solutions " + std::to_string(num_initial_solutions_) + " --num-randpost-loops " + std::to_string(num_randpost_loops_) + " --randpost-penalty " + std::to_string(randpost_penalty_);
+		options += "--threads 6 --initial-solutions " + std::to_string(num_initial_solutions_) + " --ratio-runs-from-initial-solutions " + std::to_string(ratio_initial_solutions_) + " --num-randpost-loops " + std::to_string(num_randpost_loops_) + " --randpost-penalty " + std::to_string(randpost_penalty_);
 		if (ged_method_ == ged::Options::GEDMethod::REFINE) {
 			options += " --max-swap-size " + std::to_string(max_swap_size_);
 		}
@@ -54,9 +55,10 @@ private:
 	}
 
 public:
-	Method(ged::Options::GEDMethod ged_method, std::size_t num_initial_solutions, std::size_t num_randpost_loops, double randpost_penalty = 0.0, std::size_t max_swap_size = 2, std::size_t num_orderings = 1) :
+	Method(ged::Options::GEDMethod ged_method, std::size_t num_initial_solutions, double ratio_initial_solutions, std::size_t num_randpost_loops, double randpost_penalty = 0.0, std::size_t max_swap_size = 2, std::size_t num_orderings = 1) :
 		ged_method_{ged_method},
 		num_initial_solutions_{num_initial_solutions},
+		ratio_initial_solutions_{ratio_initial_solutions},
 		randpost_penalty_{randpost_penalty},
 		num_randpost_loops_{num_randpost_loops},
 		max_swap_size_{max_swap_size},
@@ -64,16 +66,26 @@ public:
 
 		std::string name() const {
 			std::stringstream name;
-			name << ged_method_ << "__S-" << num_initial_solutions_ << "__RPL-" << num_randpost_loops_;
-			if (num_randpost_loops_ > 0) {
-				name << "__RPP-" << randpost_penalty_;
+			if (ged_method_ == ged::Options::GEDMethod::BP_BEAM) {
+				if (num_orderings_ == 1) {
+					name << "BPBEAM";
+				}
+				else {
+					name << "IBPBEAM";
+				}
 			}
-			if (ged_method_ == ged::Options::GEDMethod::REFINE) {
-				name << "__MSS-" << max_swap_size_;
+			else if (ged_method_ == ged::Options::GEDMethod::REFINE) {
+				if (max_swap_size_ == 2) {
+					name << "REFINE";
+				}
+				else {
+					name << "KREFINE" << max_swap_size_ << "";
+				}
 			}
-			else if (ged_method_ == ged::Options::GEDMethod::BP_BEAM) {
-				name << "__NI-" << num_orderings_;
+			else {
+				name << "IPFP";
 			}
+			name << ",$(" << num_initial_solutions_ << "," << ratio_initial_solutions_ << "," << num_randpost_loops_ << "," << randpost_penalty_ << ")$";
 			return name.str();
 		}
 
@@ -143,6 +155,16 @@ public:
 		}
 };
 
+struct RandpostSetup {
+	std::size_t num_initial_solutions;
+	double ratio_initial_solutions;
+	std::size_t num_randpost_loops;
+	RandpostSetup (std::size_t num_initial_solutions, double ratio_initial_solutions, std::size_t num_randpost_loops) :
+		num_initial_solutions{num_initial_solutions},
+		ratio_initial_solutions{ratio_initial_solutions},
+		num_randpost_loops{num_randpost_loops} {}
+};
+
 
 void test_on_dataset(const std::string & dataset) {
 
@@ -156,54 +178,50 @@ void test_on_dataset(const std::string & dataset) {
 	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BP_BEAM};
 	std::vector<std::size_t> nums_orderings{1, 20};
 	std::vector<std::size_t> max_swap_sizes{2, 3, 4};
-	std::vector<std::pair<std::size_t, std::size_t>> nums_initial_solutions_and_randpost_loops;
-	nums_initial_solutions_and_randpost_loops.emplace_back(80, 0);
-	nums_initial_solutions_and_randpost_loops.emplace_back(40, 1);
-	nums_initial_solutions_and_randpost_loops.emplace_back(20, 2);
-	nums_initial_solutions_and_randpost_loops.emplace_back(10, 4);
-	nums_initial_solutions_and_randpost_loops.emplace_back(40, 0);
-	nums_initial_solutions_and_randpost_loops.emplace_back(20, 0);
-	nums_initial_solutions_and_randpost_loops.emplace_back(10, 0);
-	nums_initial_solutions_and_randpost_loops.emplace_back(1, 0);
+	std::vector<RandpostSetup> randpost_setups;
+	randpost_setups.emplace_back(1, 1, 0);
+	randpost_setups.emplace_back(10, 1, 0);
+	randpost_setups.emplace_back(20, 1, 0);
+	randpost_setups.emplace_back(30, 1, 0);
+	randpost_setups.emplace_back(40, 1, 0);
+	randpost_setups.emplace_back(40, 0.5, 1);
+	randpost_setups.emplace_back(40, 0.25, 3);
+	randpost_setups.emplace_back(40, 0.125, 7);
 	std::vector<double> randpost_penalties{0.0, 0.5, 1.0};
 
-	std::size_t num_initial_solutions;
-	std::size_t num_randpost_loops;
 	std::vector<Method> methods;
 	for (auto ged_method : ged_methods) {
-		for (auto num_initial_solutions_and_randpost_loops : nums_initial_solutions_and_randpost_loops) {
-			num_initial_solutions = num_initial_solutions_and_randpost_loops.first;
-			num_randpost_loops = num_initial_solutions_and_randpost_loops.second;
-			if (num_randpost_loops > 0) {
+		for (auto randpost_setup : randpost_setups) {
+			if (randpost_setup.num_randpost_loops > 0) {
 				for (auto randpost_penalty : randpost_penalties) {
 					if (ged_method == ged::Options::GEDMethod::REFINE) {
 						for (auto max_swap_size : max_swap_sizes) {
-							methods.emplace_back(ged_method, num_initial_solutions, num_randpost_loops, randpost_penalty, max_swap_size);
+							methods.emplace_back(ged_method, randpost_setup.num_initial_solutions, randpost_setup.ratio_initial_solutions, randpost_setup.num_randpost_loops, randpost_penalty, max_swap_size);
 						}
 					}
 					else if (ged_method == ged::Options::GEDMethod::BP_BEAM) {
 						for (auto num_orderings : nums_orderings) {
-							methods.emplace_back(ged_method, num_initial_solutions, num_randpost_loops, randpost_penalty, 2, num_orderings);
+							methods.emplace_back(ged_method, randpost_setup.num_initial_solutions, randpost_setup.ratio_initial_solutions, randpost_setup.num_randpost_loops, randpost_penalty, 2, num_orderings);
 						}
 					}
 					else {
-						methods.emplace_back(ged_method, num_initial_solutions, num_randpost_loops, randpost_penalty);
+						methods.emplace_back(ged_method, randpost_setup.num_initial_solutions, randpost_setup.ratio_initial_solutions, randpost_setup.num_randpost_loops, randpost_penalty);
 					}
 				}
 			}
 			else {
 				if (ged_method == ged::Options::GEDMethod::REFINE) {
 					for (auto max_swap_size : max_swap_sizes) {
-						methods.emplace_back(ged_method, num_initial_solutions, num_randpost_loops, 0.0, max_swap_size);
+						methods.emplace_back(ged_method, randpost_setup.num_initial_solutions, randpost_setup.ratio_initial_solutions, randpost_setup.num_randpost_loops, 0.0, max_swap_size);
 					}
 				}
 				else if (ged_method == ged::Options::GEDMethod::BP_BEAM) {
 					for (auto num_orderings : nums_orderings) {
-						methods.emplace_back(ged_method, num_initial_solutions, num_randpost_loops, 0.0, 2, num_orderings);
+						methods.emplace_back(ged_method, randpost_setup.num_initial_solutions, randpost_setup.ratio_initial_solutions, randpost_setup.num_randpost_loops, 0.0, 2, num_orderings);
 					}
 				}
 				else {
-					methods.emplace_back(ged_method, num_initial_solutions, num_randpost_loops);
+					methods.emplace_back(ged_method, randpost_setup.num_initial_solutions, randpost_setup.ratio_initial_solutions, randpost_setup.num_randpost_loops);
 				}
 			}
 		}
@@ -213,7 +231,7 @@ void test_on_dataset(const std::string & dataset) {
 	std::string result_filename("../results/");
 	result_filename += dataset + "__ls_based_methods.csv";
 	std::ofstream result_file(result_filename.c_str());
-	result_file << "method,avg_lb,avg_ub,avg_runtime,classification_coefficient_lb,classification_coefficient_ub\n";
+	result_file << "method;avg_lb;avg_ub;avg_runtime;classification_coefficient_lb;classification_coefficient_ub\n";
 	result_file.close();
 	double avg_ub{0};
 	double avg_lb{0};
@@ -223,7 +241,7 @@ void test_on_dataset(const std::string & dataset) {
 	for (auto & method : methods) {
 		method.run_on_dataset(dataset, env, avg_lb, avg_ub, avg_runtime, classification_coefficient_lb, classification_coefficient_ub);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << method.name() << "," << avg_lb << ", " << avg_ub << "," << avg_runtime << "," << classification_coefficient_lb << "," << classification_coefficient_ub << "\n";
+		result_file << method.name() << ";" << avg_lb << "; " << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
 		result_file.close();
 	}
 }

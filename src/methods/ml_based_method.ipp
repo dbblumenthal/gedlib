@@ -249,7 +249,7 @@ lsape_set_default_options_() {
 	delete ground_truth_method_;
 	ground_truth_options_ = "";
 	ground_truth_method_ = new IPFP<UserNodeLabel, UserEdgeLabel>(this->ged_data_);
-	ground_truth_method_->set_options(std::string("--initial-solutions 80 --runs-from-initial-solutions 40 --lower-bound-method BRANCH_TIGHT --threads ") + std::to_string(this->num_threads_));
+	ground_truth_method_->set_options(std::string("--initial-solutions 80 --ratio-runs-from-initial-solutions 0.5 --lower-bound-method BRANCH_TIGHT --threads ") + std::to_string(this->num_threads_));
 	dnn_params_.activation_candidates = {FANN::activation_function_enum::RELU, FANN::activation_function_enum::SIGMOID};
 	dnn_params_.min_num_hidden_layers = 1;
 	dnn_params_.max_num_hidden_layers = 10;
@@ -496,7 +496,7 @@ lsape_parse_option_(const std::string & option, const std::string & arg) {
 	}
 	if (dynamic_cast<IPFP<UserNodeLabel, UserEdgeLabel> *>(ground_truth_method_)) {
 		if (ground_truth_options_ == "") {
-			ground_truth_method_->set_options(std::string("--initial-solutions 80 --runs-from-initial-solutions 40 --lower-bound-method BRANCH_TIGHT --threads ") + std::to_string(this->num_threads_));
+			ground_truth_method_->set_options(std::string("--initial-solutions 80 --ratio-runs-from-initial-solutions 0.5 --lower-bound-method BRANCH_TIGHT --threads ") + std::to_string(this->num_threads_));
 		}
 		else {
 			ground_truth_method_->set_options(ground_truth_options_ + " --threads " + std::to_string(this->num_threads_));

@@ -100,6 +100,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 	// Parallelly run local searches starting at the initial node maps. Stop if the optimal solution has been found or if the desired number of terminated runs has been reached.
 	bool found_optimum{false};
+	std::size_t num_runs_from_initial_solutions{num_runs_from_initial_solutions_()};
 	for (std::size_t loop{0}; loop <= num_randpost_loops_; loop++) {
 		if (found_optimum) {
 			break;
@@ -112,15 +113,17 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 		}
 		double former_upper_bound = upper_bound;
 		std::size_t terminated_runs{0};
+		std::vector<bool> is_converged_node_map(initial_node_maps.size(), false);
 #ifdef _OPENMP
 		omp_set_num_threads(num_threads_ - 1);
 #pragma omp parallel for if(num_threads_ > 1) schedule(dynamic)
 #endif
 		for (std::size_t node_map_id = 0; node_map_id < initial_node_maps.size(); node_map_id++) {
-			if (not found_optimum and (terminated_runs < num_runs_from_initial_solutions_())) {
+			if (not found_optimum and (terminated_runs < num_runs_from_initial_solutions)) {
 				ls_run_from_initial_solution_(g, h, result.lower_bound(), initial_node_maps.at(node_map_id), result_node_maps.at(node_map_id));
 #pragma omp critical
 				{
+					is_converged_node_map[node_map_id] = true;
 					upper_bound = std::min(upper_bound, result_node_maps.at(node_map_id).induced_cost());
 					found_optimum = (found_optimum or (result.lower_bound() >= upper_bound));
 					terminated_runs++;
@@ -133,7 +136,7 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 			result_file.close();
 		}
 		if (not found_optimum and loop < num_randpost_loops_) {
-			skewdness_counts_matrix = update_counts_matrix_and_visited_node_maps_(result_node_maps, upper_bound, lower_bound, visited_node_maps, loop, counts_matrix);
+			skewdness_counts_matrix = update_counts_matrix_and_visited_node_maps_(result_node_maps, is_converged_node_map, upper_bound, lower_bound, visited_node_maps, loop, counts_matrix);
 		}
 		for (NodeMap & node_map : result_node_maps) {
 			result.add_node_map(node_map);
@@ -404,12 +407,16 @@ generate_lsape_based_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, 
 template<class UserNodeLabel, class UserEdgeLabel>
 double
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
-update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const double & upper_bound, const double & lower_bound,
-		std::vector<NodeMap> & visited_node_maps, std::size_t loop, std::vector<std::vector<double>> & counts_matrix) const {
+update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const std::vector<bool> & is_converged_node_map, const double & upper_bound,
+		const double & lower_bound, std::vector<NodeMap> & visited_node_maps, std::size_t loop, std::vector<std::vector<double>> & counts_matrix) const {
 	std::size_t num_nodes_g{counts_matrix.size()};
 	std::size_t num_nodes_h{counts_matrix[0].size() - 1};
 	GEDGraph::NodeID k{GEDGraph::dummy_node()};
+	std::size_t node_map_id{0};
 	for (const NodeMap & node_map : result_node_maps) {
+		if (not is_converged_node_map.at(node_map_id++)) {
+			continue;
+		}
 		for (GEDGraph::NodeID i{0}; i < num_nodes_g; i++) {
 			k = node_map.image(i);
 			if (k != GEDGraph::dummy_node()) {
@@ -421,9 +428,12 @@ update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_
 		}
 		visited_node_maps.emplace_back(node_map);
 	}
+	if (logfile_name_ == "") {
+		return 0.0;
+	}
 	double skewdness{0.0};
 	std::size_t num_non_zeros_row{0};
-	std::size_t num_solutions = (loop +1) * result_node_maps.size();
+	std::size_t num_solutions = (loop + 1) * num_runs_from_initial_solutions_();
 	if (num_solutions == 1){
 		return 1.0;
 	}

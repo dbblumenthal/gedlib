@@ -44,6 +44,7 @@ namespace ged {
  * | <tt>\--num-randpost-loops @<convertible to int greater equal 0@></tt> | number of loops of RANDPOST algorithm | @p 0 | https://doi.org/10.1007/978-3-319-97785-0_44 |
  * | <tt>\--max-randpost-retrials @<convertible to int greater equal 0@></tt> | number of times the RANDPOST algorithm flattens the probability distribution if it encounters already converged solutions | @p 10 | https://doi.org/10.1007/978-3-319-97785-0_44 |
  * | <tt>\--randpost-penalty @<convertible to double between 0 and 1@></tt> | if set value close to @p 1, expensive solutions count less for constructing the counts matrix | @p 0 | n.a. |
+ * | <tt>\--log @<file name></tt> | name of log-file for RANDPOST | @p "" | if not empty, a log-file for RANDPOST is created |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class LSBasedMethod : public GEDMethod<UserNodeLabel, UserEdgeLabel> {
@@ -115,8 +116,8 @@ private:
 
 	void generate_lsape_based_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::vector<NodeMap> & initial_node_maps, Result & result);
 
-	double update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const double & upper_bound, const double & lower_bound,
-			std::vector<NodeMap> & visited_node_maps, std::size_t loop, std::vector<std::vector<double>> & counts_matrix) const;
+	double update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const std::vector<bool> & is_converged_node_map, const double & upper_bound,
+			const double & lower_bound, std::vector<NodeMap> & visited_node_maps, std::size_t loop, std::vector<std::vector<double>> & counts_matrix) const;
 
 	void generate_node_maps_from_counts_matrix_(const GEDGraph & g, const GEDGraph & h,const std::vector<std::vector<double>> & counts_matrix, std::vector<NodeMap> & visited_node_maps, std::vector<NodeMap> & initial_node_maps) const;
 

@@ -27,11 +27,11 @@
 
 TEST_CASE("testing on Letter graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
-	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Letter/HIGH/", "../collections/Letter_train.xml"));
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Letter/HIGH/", "../collections/Letter_test.xml"));
 	env.set_edit_costs(ged::Options::EditCosts::LETTER);
 
 	ged::GEDGraph::GraphID g {graph_ids[0]};
-	ged::GEDGraph::GraphID h {graph_ids[9]};
+	ged::GEDGraph::GraphID h {graph_ids[1]};
 	//env.init();
 	env.init(ged::Options::InitType::LAZY_WITHOUT_SHUFFLED_COPIES);
 	double lower_bound{0.0};
@@ -47,8 +47,8 @@ TEST_CASE("testing on Letter graphs") {
 
 	SECTION("RANDPOST") {
 
-		std::cout << "\n=== running REFINE T1 S1 SW3 ===\n";
-		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions 1 --max-swap-size 3");
+		std::cout << "\n=== running REFINE 40, 0.5, 1 ===\n";
+		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions 40 --ratio-runs-from-initial-solutions 0.5 --num-randpost-loops 1");
 		env.run_method(g, h);
 		std::cout << "\nupper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 

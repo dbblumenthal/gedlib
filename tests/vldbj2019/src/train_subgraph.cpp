@@ -45,7 +45,13 @@ void train_on_dataset(const std::string & dataset) {
 
 int main(int argc, char* argv[]) {
 	std::vector<std::string> datasets;
-	util::setup_datasets(datasets);
+	for (int i{1}; i < argc; i++) {
+		datasets.push_back(std::string(argv[i]));
+		util::check_dataset(datasets.back());
+	}
+	if (datasets.empty()) {
+		util::setup_datasets(datasets);
+	}
 	for (auto dataset : datasets) {
 		try {
 			train_on_dataset(dataset);

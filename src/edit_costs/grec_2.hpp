@@ -65,7 +65,7 @@ public:
 	 * @param[in] alpha Importance of node edit operations vs. importance of edge edit operations.
 	 * @note Calling the constructor with the default arguments constructs the edit costs suggested in https://doi.org/10.1016/j.patrec.2017.10.007.
 	 */
-	GREC2(double node_ins_del_cost = 45, double edge_ins_del_cost = 90, double alpha = 0.5);
+	GREC2(double node_ins_del_cost = 90, double edge_ins_del_cost = 15, double alpha = 0.5);
 
 	virtual double node_ins_cost_fun(const UserNodeLabel & node_label) const final;
 

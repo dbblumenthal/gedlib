@@ -79,7 +79,7 @@ public:
 					name << "REFINE";
 				}
 				else {
-					name << "KREFINE" << max_swap_size_ << "";
+					name << "KREFINE";
 				}
 			}
 			else {
@@ -177,7 +177,7 @@ void test_on_dataset(const std::string & dataset) {
 	// Collect all tested methods.
 	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BP_BEAM};
 	std::vector<std::size_t> nums_orderings{1, 20};
-	std::vector<std::size_t> max_swap_sizes{2, 3, 4};
+	std::vector<std::size_t> max_swap_sizes{2, 3};
 	std::vector<RandpostSetup> randpost_setups;
 	randpost_setups.emplace_back(1, 1, 0);
 	randpost_setups.emplace_back(10, 1, 0);
@@ -187,7 +187,7 @@ void test_on_dataset(const std::string & dataset) {
 	randpost_setups.emplace_back(40, 0.5, 1);
 	randpost_setups.emplace_back(40, 0.25, 3);
 	randpost_setups.emplace_back(40, 0.125, 7);
-	std::vector<double> randpost_penalties{0.0, 0.5, 1.0};
+	std::vector<double> randpost_penalties{0.0, 1.0};
 
 	std::vector<Method> methods;
 	for (auto ged_method : ged_methods) {
@@ -241,7 +241,7 @@ void test_on_dataset(const std::string & dataset) {
 	for (auto & method : methods) {
 		method.run_on_dataset(dataset, env, avg_lb, avg_ub, avg_runtime, classification_coefficient_lb, classification_coefficient_ub);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << method.name() << ";" << avg_lb << "; " << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
+		result_file << method.name() << ";" << avg_lb << ";" << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
 		result_file.close();
 	}
 }

@@ -60,7 +60,7 @@ public:
 	 * @param[in] alpha Importance of node edit operations vs. importance of edge edit operations.
 	 * @note Calling the constructor with the default arguments constructs the edit costs for suggested in https://doi.org/10.1142/9789814304726_0004.
 	 */
-	Fingerprint(double node_ins_del_cost = 0.9, double edge_ins_del_cost = 1.7, double alpha = 0.75);
+	Fingerprint(double node_ins_del_cost = 0.7, double edge_ins_del_cost = 0.5, double alpha = 0.75);
 
 	virtual double node_ins_cost_fun(const UserNodeLabel & node_label) const final;
 

@@ -157,7 +157,7 @@ void test_on_dataset(const std::string & dataset) {
 	for (auto & method : methods) {
 		method.run_on_dataset(dataset, env, avg_lb, avg_ub, avg_runtime, classification_coefficient_lb, classification_coefficient_ub);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << method.name() << ";" << avg_lb << "; " << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
+		result_file << method.name() << ";" << avg_lb << ";" << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
 		result_file.close();
 	}
 }

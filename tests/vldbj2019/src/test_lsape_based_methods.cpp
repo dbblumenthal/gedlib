@@ -144,10 +144,13 @@ public:
 			else if (ged_method_ == ged::Options::GEDMethod::WALKS) {
 				name << "WALKS";
 			}
-			if (centralities_ != "NONE") {
-				name << "C";
+			name << ",$(" << num_solutions_;
+			if (centralities_ == "NONE") {
+				name << ",0.0)$";
 			}
-			name << ",$(" << num_solutions_ << ")$";
+			else {
+				name << ",0.7)$";
+			}
 			return name.str();
 		}
 
@@ -267,7 +270,7 @@ void test_on_dataset(const std::string & dataset) {
 	for (auto & method : methods) {
 		method.run_on_dataset(dataset, env, avg_lb, avg_ub, avg_runtime, classification_coefficient_lb, classification_coefficient_ub);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << method.name() << ";" << avg_lb << "; " << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
+		result_file << method.name() << ";" << avg_lb << ";" << avg_ub << ";" << avg_runtime << ";" << classification_coefficient_lb << ";" << classification_coefficient_ub << "\n";
 		result_file.close();
 	}
 }

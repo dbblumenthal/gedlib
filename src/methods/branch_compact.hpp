@@ -72,7 +72,7 @@ private:
 
 		LabelID node_label;
 
-		const std::vector<LabelID> & sorted_edge_labels;
+		std::vector<LabelID> sorted_edge_labels;
 
 		int compare(const Branch_ & rhs) const;
 

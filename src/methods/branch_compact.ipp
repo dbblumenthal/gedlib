@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  branch_compact.ipp
@@ -60,10 +60,9 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 		init_graph_(g);
 		init_graph_(h);
 	}
-	std::list<Branch_> branches_g{branches_.at(g.id())};
-	std::list<Branch_> branches_h{branches_.at(h.id())};
+	std::list<Branch_> branches_g(branches_.at(g.id()));
+	std::list<Branch_> branches_h(branches_.at(h.id()));
 	double min_edit_cost{this->ged_data_.min_edit_cost(g, h)};
-
 	// Delete common branches.
 	auto branch_g = branches_g.begin();
 	auto branch_h = branches_h.begin();
@@ -80,7 +79,6 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 			branch_h++;
 		}
 	}
-
 	// Compute lower bound from remaining branches.
 	double lower_bound{0.0};
 	branch_g = branches_g.begin();
@@ -142,11 +140,12 @@ void
 BranchCompact<UserNodeLabel, UserEdgeLabel>::
 init_graph_(const GEDGraph & graph) {
 	SortedUserEdgeLabels_ sorted_edge_labels(graph, sort_method_);
-	branches_[graph.id()] = std::list<Branch_>();
+	std::list<Branch_> branches;
 	for (auto node = graph.nodes().first; node != graph.nodes().second; node++) {
-		branches_[graph.id()].push_back(Branch_(graph.get_node_label(*node), sorted_edge_labels.get_incident_labels(*node)));
+		branches.emplace_back(graph.get_node_label(*node), sorted_edge_labels.get_incident_labels(*node));
 	}
-	branches_[graph.id()].sort();
+	branches.sort();
+	branches_[graph.id()] = branches;
 }
 
 // === Definition of private class SortedUserEdgeLabels_. ===
@@ -156,7 +155,7 @@ SortedUserEdgeLabels_ ::
 SortedUserEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method):
 sorted_edge_labels_(){
 	for (auto node = g.nodes().first; node != g.nodes().second; node++) {
-		sorted_edge_labels_[*node] = std::vector<LabelID>();
+		sorted_edge_labels_[*node] = std::vector<LabelID>(0);
 		for (auto edge = g.incident_edges(*node).first; edge != g.incident_edges(*node).second; edge++) {
 			sorted_edge_labels_[*node].push_back(g.get_edge_label(*edge));
 		}
@@ -185,14 +184,14 @@ BranchCompact<UserNodeLabel, UserEdgeLabel>::
 Branch_ ::
 Branch_(LabelID node_label, const std::vector<LabelID> & sorted_edge_labels) :
 node_label{node_label},
-sorted_edge_labels{sorted_edge_labels}{}
+sorted_edge_labels(sorted_edge_labels){}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 BranchCompact<UserNodeLabel, UserEdgeLabel>::
 Branch_ ::
 Branch_(const Branch_ & branch) :
 node_label{branch.node_label},
-sorted_edge_labels{branch.sorted_edge_labels}{}
+sorted_edge_labels(branch.sorted_edge_labels){}
 
 template<class UserNodeLabel, class UserEdgeLabel>
 int
@@ -207,7 +206,7 @@ compare(const Branch_ & rhs) const {
 	}
 	auto label_l = sorted_edge_labels.begin();
 	auto label_r = rhs.sorted_edge_labels.begin();
-	while ((label_l != sorted_edge_labels.end()) && (label_r != rhs.sorted_edge_labels.end())) {
+	while ((label_l != sorted_edge_labels.end()) and (label_r != rhs.sorted_edge_labels.end())) {
 		if (*label_l == *label_r) {
 			label_l++;
 			label_r++;
@@ -219,7 +218,7 @@ compare(const Branch_ & rhs) const {
 			return 1;
 		}
 	}
-	if ((label_l == sorted_edge_labels.end()) && (label_r == rhs.sorted_edge_labels.end())) {
+	if ((label_l == sorted_edge_labels.end()) and (label_r == rhs.sorted_edge_labels.end())) {
 		return 0;
 	}
 	if (label_l == sorted_edge_labels.end()) {

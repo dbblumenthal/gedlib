@@ -3,6 +3,52 @@ from pickle import NONE
 import argparse
 from decimal import Decimal
 
+def computes_no_lb(method_name):
+    if method_name == "BP":
+        return True
+    elif method_name == "SUBGRAPH":
+        return True
+    elif method_name == "WALKS":
+        return True
+    elif method_name == "RINGOPT":
+        return True
+    elif method_name == "RINGMS":
+        return True
+    elif method_name == "RINGMLDNN":
+        return True
+    elif method_name == "RINGMLSVM":
+        return True
+    elif method_name == "PREDICTDNN":
+        return True
+    elif method_name == "PREDICTSVM":
+        return True
+    elif method_name == "REFINE":
+        return True
+    elif method_name == "KREFINE":
+        return True
+    elif method_name == "BPBEAM":
+        return True
+    elif method_name == "IBPBEAM":
+        return True
+    elif method_name == "IPFP":
+        return True
+    elif method_name == "SA":
+        return True
+    else:
+        return False
+
+def computes_no_ub(method_name):
+    if method_name == "HED":
+        return True
+    elif method_name == "BRANCHCOMPACT":
+        return True
+    elif method_name == "PARTITION":
+        return True
+    elif method_name == "HYBRID":
+        return True
+    else:
+        return False
+
 class Method:
     
     def __init__(self, consider_lb, name, lb, ub, t, coeff_lb, coeff_ub):
@@ -12,13 +58,13 @@ class Method:
         self.lb = float("{:.2E}".format(Decimal(lb)))
         self.ub = float("{:.2E}".format(Decimal(ub)))
         self.t = float("{:.2E}".format(Decimal(t)))
-        self.coeff_lb = float("{:.2E}".format(Decimal(coeff_lb)))
-        self.coeff_ub = float("{:.2E}".format(Decimal(coeff_ub)))
+        self.coeff_lb = float("{:.2}".format(Decimal(coeff_lb)))
+        self.coeff_ub = float("{:.2}".format(Decimal(coeff_ub)))
         self.is_fastest = True
         self.is_tightest = True
         self.has_best_coeff = True
         self.is_maximum = True
-        self.discard = False
+        self.discard = (self.consider_lb and computes_no_lb(self.name)) or ((not self.consider_lb) and computes_no_ub(self.name))
             
     def stats(self):
         method_stats = ""
@@ -34,13 +80,12 @@ class Method:
         return method_stats
     
     def tikz_descriptor(self):
-        if not self.is_maximum:
-            return self.config
-        else:
-            if self.config == "":
-                return self.stats()
-            else:
-                return (self.config + "\\\\" + self.stats())    
+        descriptor = "\\" + self.name
+        if self.config != "":
+            descriptor = descriptor + "\\\\" + self.config
+        if self.is_maximum:
+            descriptor = descriptor + "\\\\" + self.stats()
+        return descriptor  
     
     def label(self):
         label = ""
@@ -142,12 +187,33 @@ class Method:
         else:
             return ""
     
-    def as_csv_row(self):
-        csv_row = self.name
+    def as_table_row(self):
+        table_row = "\\" + self.name
+        if self.is_maximum:
+            table_row = table_row + " $\star$"
         if self.config != "":
-            csv_row = csv_row + "," + self.config
-        csv_row = csv_row + ";" + str(self.lb) + ";" + str(self.ub) + ";" + str(self.t) + ";" + str(self.coeff_lb) + ";" + str(self.coeff_ub) + "\n"
-        return csv_row
+            table_row = table_row + " & " + self.config
+        else:
+            table_row = table_row + " & {--}"
+        if not computes_no_lb(self.name):
+            table_row = table_row + " & " + "{:.2E}".format(Decimal(str(self.lb)))
+        else:
+            table_row = table_row + " & {--}"
+        if not computes_no_ub(self.name):
+            table_row = table_row + " & " + "{:.2E}".format(Decimal(str(self.ub)))
+        else:
+            table_row = table_row + " & {--}"
+        table_row = table_row + " & " + "{:.2E}".format(Decimal(str(self.t)))
+        if not computes_no_lb(self.name):
+            table_row = table_row + " & " + "{:.2}".format(Decimal(str(self.coeff_lb)))
+        else:
+            table_row = table_row + " & {--}"
+        if not computes_no_ub(self.name):
+            table_row = table_row + " & " + "{:.2}".format(Decimal(str(self.coeff_ub)))
+        else:
+            table_row = table_row + " & {--}"
+        table_row = table_row + " \\\\\n"
+        return table_row
         
 
 def parse_method_name(method_name):
@@ -164,7 +230,7 @@ def dfs(adj_list, is_discarded_edge, method_id, child, seen):
         dfs(adj_list, is_discarded_edge, method_id, grandchild, seen)
     seen[child] = True
 
-def build_dependency_graph(result_file_name, consider_lb, tikz_file_name):
+def build_dependency_graph(result_file_name, consider_lb, tikz_file_name, table_file_name):
     # read csv file
     methods = []
     with open(result_file_name, "r") as result_file:  
@@ -180,8 +246,12 @@ def build_dependency_graph(result_file_name, consider_lb, tikz_file_name):
     adj_list_labels = [[] for method_id in range(0,num_methods)]
     for id_1 in range(0, num_methods):
         method_1 = methods[id_1]
+        if method_1.discard:
+            continue
         for id_2 in range(0, num_methods):
             method_2 = methods[id_2]
+            if method_2.discard:
+                continue
             edge_label = method_1.get_edge_label(method_2)
             if edge_label != "":
                 adj_list[id_1].append(id_2)
@@ -216,17 +286,17 @@ def build_dependency_graph(result_file_name, consider_lb, tikz_file_name):
                 edges.append((id_1, id_2))
                 edge_labels.append(undiscarded_adj_list_labels[id_1][index])
     # write csv file containing only maxima
-    maxima_file_name = result_file_name.split(".")[0]
-    if consider_lb:
-        maxima_file_name = maxima_file_name + "__LB_maxima.csv"
-    else:
-        maxima_file_name = maxima_file_name + "__UB_maxima.csv"
-    maxima_file = open(maxima_file_name, "w")
-    maxima_file.write("method;avg_lb;avg_ub;avg_runtime;classification_coefficient_lb;classification_coefficient_ub\n")
+    table_file = open(table_file_name, "w")
+    table_file.write("%!TEX root = ../root.tex\n")
+    table_file.write("\\begin{tabular}{llSSSS[table-format=1.2]S[table-format=1.2]}\n")
+    table_file.write("\\toprule\n")
+    table_file.write("heuristic & configuration & {$d$ (\LB)} & {$d$ (\UB)} & {$t$} & {$c$ (\LB)} & {$c$ (\UB)} \\\\\n")
+    table_file.write("\midrule\n")
     for method in methods:
-        if method.is_maximum:
-            maxima_file.write(method.as_csv_row())
-    maxima_file.close()
+        table_file.write(method.as_table_row())
+    table_file.write("\\bottomrule\n")
+    table_file.write("\end{tabular}")
+    table_file.close()
     # construct tikz file
     tikz_file = open(tikz_file_name, "w")
     tikz_file.write("%!TEX root = ../root.tex\n")
@@ -257,7 +327,8 @@ def build_dependency_graph(result_file_name, consider_lb, tikz_file_name):
     
 parser = argparse.ArgumentParser(description="Generates TikZ dominance graph from CSV file.")
 parser.add_argument("result_file_name", help="path to existing CSV file")
-parser.add_argument("tikz_file_name", help="path to existing CSV file")
+parser.add_argument("tikz_file_name", help="name of TikZ file that is to be created")
+parser.add_argument("table_file_name", help="name of table file that is to be created")
 parser.add_argument("--lb", help="generate dominance graph for lower bounds", action="store_true")
 args = parser.parse_args()
-build_dependency_graph(args.result_file_name, args.lb, args.tikz_file_name)
+build_dependency_graph(args.result_file_name, args.lb, args.tikz_file_name, args.table_file_name)

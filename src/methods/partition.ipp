@@ -57,10 +57,8 @@ Partition<UserNodeLabel, UserEdgeLabel>::
 ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 	unmatched_substructs_.clear();
+	init_graphs_(g, h);
 
-	if (not this->initialized_) {
-		init_graphs_(g, h);
-	}
 	SubstructMap_ & is_substruct_in_g = substruct_maps_.at(g.id());
 	unmatched_substructs_.clear();
 

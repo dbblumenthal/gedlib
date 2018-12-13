@@ -235,6 +235,14 @@ public:
 	bool quasimetric_costs() const;
 
 	/*!
+	 * @brief Checks if the edit costs between two graphs are quasimetric.
+	 * @param[in] g Input graph.
+	 * @param[in] h Input graph.
+	 * @return Boolean @p true if the edit costs between the graphs @p g and @p h quasimetric and @p false otherwise.
+	 */
+	bool quasimetric_costs(const GEDGraph & g, const GEDGraph & h) const;
+
+	/*!
 	 * @brief Returns the maximal node edit cost between any two graphs contained in the instance.
 	 * @return Maximal node edit cost.
 	 */

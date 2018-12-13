@@ -685,6 +685,43 @@ quasimetric_costs() const {
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
+bool
+GEDData<UserNodeLabel, UserEdgeLabel>::
+quasimetric_costs(const GEDGraph & g, const GEDGraph & h) const {
+	std::vector<LabelID> node_labels_g;
+	for (auto node = g.nodes().first; node != g.nodes().second; node++) {
+		node_labels_g.push_back(g.get_node_label(*node));
+	}
+	std::vector<LabelID> node_labels_h;
+	for (auto node = h.nodes().first; node != h.nodes().second; node++) {
+		node_labels_h.push_back(h.get_node_label(*node));
+	}
+	std::vector<LabelID> edge_labels_g;
+	for (auto edge = g.edges().first; edge != g.edges().second; edge++) {
+		edge_labels_g.push_back(g.get_edge_label(*edge));
+	}
+	std::vector<LabelID> edge_labels_h;
+	for (auto edge = h.edges().first; edge != h.edges().second; edge++) {
+		edge_labels_h.push_back(h.get_edge_label(*edge));
+	}
+	for (auto label_1 : node_labels_g) {
+		for (auto label_2 : node_labels_h) {
+			if (node_cost(label_1, label_2) > node_cost(label_1, ged::dummy_label()) + node_cost(ged::dummy_label(), label_2)) {
+				return false;
+			}
+		}
+	}
+	for (auto label_1 : edge_labels_g) {
+		for (auto label_2 : edge_labels_h) {
+			if (edge_cost(label_1, label_2) > edge_cost(label_1, ged::dummy_label()) + edge_cost(ged::dummy_label(), label_2)) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
 double
 GEDData<UserNodeLabel, UserEdgeLabel>::
 max_node_edit_cost() const {

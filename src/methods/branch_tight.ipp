@@ -361,7 +361,7 @@ BranchTight<UserNodeLabel, UserEdgeLabel>::
 regularize_(GEDGraph & g, GEDGraph & h) const {
 
 	// Add dummy nodes to smaller graph or to both graphs if the costs are not quasimetric.
-	if (this->ged_data_.quasimetric_costs()) {
+	if (this->ged_data_.quasimetric_costs(g, h)) {
 		fill_up_smaller_graph_(g, h);
 	}
 	else {

@@ -175,15 +175,17 @@ class Method:
     def label(self):
         labels = []
         if self.consider_lb and self.has_tightest_lb:
-            labels.append("\\textcolor{Blue}{$d_{\LB}$}")
+            labels.append("\\textcolor{Blue}{$d^\star_{\LB}$}")
         if (not self.consider_lb) and self.has_tightest_ub:
-            labels.append("\\textcolor{Blue}{$d_{\UB}$}")
-        if self.is_fastest():
-            labels.append("\\textcolor{Red}{$t$}")
+            labels.append("\\textcolor{Blue}{$d^\star_{\UB}$}")
+        if self.consider_lb and self.is_fastest_lb:
+            labels.append("\\textcolor{Red}{$t^\star_{\LB}$}")
+        if (not self.consider_lb) and self.is_fastest_ub:
+            labels.append("\\textcolor{Red}{$t^\star_{\UB}$}")
         if self.consider_lb and self.has_best_coeff_lb:
-            labels.append("\\textcolor{Green}{$c_{\LB}$}")
+            labels.append("\\textcolor{Green}{$c^\star_{\LB}$}")
         if (not self.consider_lb) and self.has_best_coeff_ub:
-            labels.append("\\textcolor{Green}{$c_{\UB}$}")
+            labels.append("\\textcolor{Green}{$c^\star_{\UB}$}")
         if len(labels) == 0:
             return ""
         label = labels[0]

@@ -68,6 +68,9 @@ public:
 			else if (ged_method_ == ged::Options::GEDMethod::BRANCH_TIGHT) {
 				name << "BRANCHTIGHT";
 			}
+			else if (ged_method_ == ged::Options::GEDMethod::HED) {
+				name << "HED";
+			}
 			return name.str();
 		}
 
@@ -147,7 +150,7 @@ void test_on_dataset(const std::string & dataset) {
 	util::setup_environment(dataset, false, env);
 
 	// Collect all tested methods.
-	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::BRANCH_COMPACT, ged::Options::GEDMethod::PARTITION, ged::Options::GEDMethod::SIMULATED_ANNEALING, ged::Options::GEDMethod::HYBRID, ged::Options::GEDMethod::BRANCH_TIGHT};
+	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::HED, ged::Options::GEDMethod::BRANCH_COMPACT, ged::Options::GEDMethod::PARTITION, ged::Options::GEDMethod::SIMULATED_ANNEALING, ged::Options::GEDMethod::HYBRID, ged::Options::GEDMethod::BRANCH_TIGHT};
 	std::vector<Method> methods;
 	for (auto ged_method : ged_methods) {
 		methods.emplace_back(ged_method);

@@ -284,7 +284,7 @@ lsape_parse_option_(const std::string & option, const std::string & arg) {
 			ml_method_ = ONE_CLASS_SVM;
 		}
 		else if (arg != "DNN"){
-			throw ged::Error(std::string("Invalid argument ") + arg  + " for option ml-method. Usage: options = \"[--ml-method DNN|SVM] [...]\"");
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option ml-method. Usage: options = \"[--ml-method DNN|ONE_CLASS_SVM] [...]\"");
 		}
 		is_valid_option = true;
 	}

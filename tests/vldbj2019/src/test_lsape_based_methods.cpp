@@ -88,7 +88,7 @@ public:
 				throw ged::Error("Invalid set distances.");
 			}
 			if (ged_method_ == ged::Options::GEDMethod::BIPARTITE_ML or ged_method_ == ged::Options::GEDMethod::RING_ML) {
-				if (ml_method != "DNN" and ml_method != "SVM" and ml_method != "ONE_CLASS_SVM_LIKELIHOOD" and ml_method != "ONE_CLASS_SVM_SCALE") {
+				if (ml_method != "DNN" and ml_method != "ONE_CLASS_SVM") {
 					throw ged::Error("Invalid machine learning method.");
 				}
 			}
@@ -129,6 +129,9 @@ public:
 			else if (ged_method_ == ged::Options::GEDMethod::BRANCH_FAST) {
 				name << "BRANCHFAST";
 			}
+			else if (ged_method_ == ged::Options::GEDMethod::BRANCH) {
+				name << "BRANCH";
+			}
 			else if (ged_method_ == ged::Options::GEDMethod::BRANCH_UNIFORM) {
 				name << "BRANCHUNI";
 			}
@@ -136,7 +139,7 @@ public:
 				name << "STAR";
 			}
 			else if (ged_method_ == ged::Options::GEDMethod::SUBGRAPH) {
-				name << "SUBGGRAPH";
+				name << "SUBGRAPH";
 			}
 			else if (ged_method_ == ged::Options::GEDMethod::NODE) {
 				name << "NODE";
@@ -160,7 +163,7 @@ public:
 			env.init_method();
 			std::size_t num_runs{env.graph_ids().second * env.graph_ids().second};
 			ged::ProgressBar progress_bar(num_runs);
-			std::cout << "\r\t" << name() << ", " << num_solutions_ << " solutions: " << progress_bar << std::flush;
+			std::cout << "\r\t" << name() << ": " << progress_bar << std::flush;
 			std::size_t num_intra_class_runs{0};
 			std::size_t num_inter_class_runs{0};
 			double largest_lb{0.0};
@@ -194,7 +197,7 @@ public:
 						num_inter_class_runs++;
 					}
 					progress_bar.increment();
-					std::cout << "\r\t" << name() << ", " << num_solutions_ << " solutions: " << progress_bar << std::flush;
+					std::cout << "\r\t" << name() << ": " << progress_bar << std::flush;
 				}
 			}
 			avg_lb /= static_cast<double>(num_runs);
@@ -230,7 +233,7 @@ void test_on_dataset(const std::string & dataset) {
 	util::setup_environment(dataset, false, env);
 
 	// Collect all tested methods.
-	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::BIPARTITE, ged::Options::GEDMethod::NODE, ged::Options::GEDMethod::WALKS, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::BRANCH, ged::Options::GEDMethod::SUBGRAPH, ged::Options::GEDMethod::BIPARTITE_ML, ged::Options::GEDMethod::RING, ged::Options::GEDMethod::RING_ML};
+	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::BIPARTITE, ged::Options::GEDMethod::STAR, ged::Options::GEDMethod::BRANCH_UNIFORM, ged::Options::GEDMethod::NODE, ged::Options::GEDMethod::WALKS, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::BRANCH, ged::Options::GEDMethod::SUBGRAPH, ged::Options::GEDMethod::BIPARTITE_ML, ged::Options::GEDMethod::RING, ged::Options::GEDMethod::RING_ML};
 	std::vector<std::string> set_distances{"GAMMA", "LSAPE_OPTIMAL"};
 	std::vector<std::string> centralities{"NONE", "PAGERANK"};
 	std::vector<std::string> ml_methods{"DNN", "ONE_CLASS_SVM"};

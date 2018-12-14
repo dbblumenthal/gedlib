@@ -46,7 +46,9 @@ infile_(""),
 outfile_(""),
 exact_options_(""),
 subgraphs_(),
-exact_method_{Options::GEDMethod::ANCHOR_AWARE_GED} {}
+exact_method_{Options::GEDMethod::ANCHOR_AWARE_GED} {
+	this->compute_lower_bound_ = false;
+}
 
 // === Definitions of member functions inherited from LSAPEBasedMethod.
 template<class UserNodeLabel, class UserEdgeLabel>

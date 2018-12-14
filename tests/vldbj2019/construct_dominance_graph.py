@@ -4,7 +4,7 @@ import argparse
 from decimal import Decimal
 import os.path
 
-def computes_no_lb(method_name):
+def computes_no_lb(method_name, method_config=""):
     if method_name == "BP":
         return True
     elif method_name == "SUBGRAPH":
@@ -34,6 +34,8 @@ def computes_no_lb(method_name):
     elif method_name == "IPFP":
         return True
     elif method_name == "SA":
+        return True
+    elif (method_config != "") and (int(method_config[2:-2].split(",")[0]) > 1):
         return True
     else:
         return False
@@ -127,21 +129,23 @@ class Method:
     def __init__(self, name, lb, ub, t, coeff_lb, coeff_ub):
         self.consider_lb = True
         self.name = name[0]
+        if self.name == "SUBGGRAPH":
+            self.name = "SUBGRAPH"
         self.config = name[1]
         self.lb = float("{:.2E}".format(Decimal(lb)))
         self.ub = float("{:.2E}".format(Decimal(ub)))
         self.t = float("{:.2E}".format(Decimal(str(float(t)*1000.0))))
         self.coeff_lb = float("{:.2}".format(Decimal(coeff_lb)))
         self.coeff_ub = float("{:.2}".format(Decimal(coeff_ub)))
-        self.is_fastest_lb = not computes_no_lb(self.name)
+        self.is_fastest_lb = not computes_no_lb(self.name, self.config)
         self.is_fastest_ub = not computes_no_ub(self.name)
-        self.has_tightest_lb = not computes_no_lb(self.name)
+        self.has_tightest_lb = not computes_no_lb(self.name, self.config)
         self.has_tightest_ub = not computes_no_ub(self.name)
-        self.has_best_coeff_lb = not computes_no_lb(self.name)
+        self.has_best_coeff_lb = not computes_no_lb(self.name, self.config)
         self.has_best_coeff_ub = not computes_no_ub(self.name)
-        self.is_maximum_lb = not computes_no_lb(self.name)
+        self.is_maximum_lb = not computes_no_lb(self.name, self.config)
         self.is_maximum_ub = not computes_no_ub(self.name)
-        self.discard_for_lb = computes_no_lb(self.name)
+        self.discard_for_lb = computes_no_lb(self.name, self.config)
         self.discard_for_ub = computes_no_ub(self.name)
         self.score_lb = 0
         self.score_ub = 0
@@ -438,6 +442,21 @@ def build_dependency_graph(methods, consider_lb):
                     if edge_label != "":
                         new_adj_list.append((id_2, edge_label))
         method_1.set_adj_list(new_adj_list)
+    # compute scores    
+    best_dist = 0
+    best_t = 0
+    best_coeff = 0
+    for method in methods:
+        if method.discard():
+            continue
+        if method.has_tightest_dist():
+            best_dist = method.dist()
+        if method.is_fastest():
+            best_t = method.t
+        if method.has_best_coeff():
+            best_coeff = method.coeff()
+    for method in methods:
+        method.set_score(best_dist, best_t, best_coeff)
     # discard methods that are dominated by themselves with a different configuration
     undiscarded_method_ids = []
     for id_1 in range(0, num_methods):
@@ -467,21 +486,6 @@ def build_dependency_graph(methods, consider_lb):
                 if not is_discarded_edge[id_1][edge[0]]:
                     new_adj_list.append(edge)
         method_1.set_adj_list(new_adj_list)
-    # compute scores    
-    best_dist = 0
-    best_t = 0
-    best_coeff = 0
-    for method in methods:
-        if method.discard():
-            continue
-        if method.has_tightest_dist():
-            best_dist = method.dist()
-        if method.is_fastest():
-            best_t = method.t
-        if method.has_best_coeff():
-            best_coeff = method.coeff()
-    for method in methods:
-        method.set_score(best_dist, best_t, best_coeff)
     return methods
 
 def infix(args):

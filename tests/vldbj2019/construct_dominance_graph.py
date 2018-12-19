@@ -153,23 +153,29 @@ class Method:
         self.adj_list_ub = []
             
     def stats(self):
-        method_stats = "$t=\\SI{" + "{:.2E}".format(Decimal(str(self.t))) + "}{\milli\second}$\\\\"
+        method_stats = "$\left(\\begin{smallmatrix}\\\\"
         if self.consider_lb:
-            method_stats = method_stats + "$d_{\LB}=\\num{" + "{:.2E}".format(Decimal(str(self.lb))) + "}$\\\\"
+            method_stats = method_stats + "t\\text{ in \si{\milli\second}} & d_{\LB} & c_{\LB} & s_{LB}\\\\"
         else:
-            method_stats = method_stats + "$d_{\UB}=\\num{" + "{:.2E}".format(Decimal(str(self.ub))) + "}$\\\\"
+            method_stats = method_stats + "t\\text{ in \si{\milli\second}} & d_{\UB} & c_{\UB} & s_{UB}\\\\"
+        method_stats = method_stats + "\\num{" + "{:.2E}".format(Decimal(str(self.t))) + "} & "
         if self.consider_lb:
-            method_stats = method_stats + "$c_{\LB}=\\num{" + "{:.2}".format(Decimal(str(self.coeff_lb))) + "}$\\\\"
-            method_stats = method_stats + "$s_{\LB}=\\num{" + "{:.2}".format(Decimal(str(self.score_lb))) + "}$"
+            method_stats = method_stats + "\\num{" + "{:.2E}".format(Decimal(str(self.lb))) + "} & "
+            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.coeff_lb))) + "} & "
+            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.score_lb))) + "}"
         else:
-            method_stats = method_stats + "$c_{\UB}=\\num{" + "{:.2}".format(Decimal(str(self.coeff_ub))) + "}$\\\\"
-            method_stats = method_stats + "$s_{\UB}=\\num{" + "{:.2}".format(Decimal(str(self.score_ub))) + "}$"
+            method_stats = method_stats + "\\num{" + "{:.2E}".format(Decimal(str(self.ub))) + "} &"
+            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.coeff_ub))) + "} &"
+            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.score_ub))) + "}"
+        method_stats = method_stats + "\\end{smallmatrix}\\right)$"
         return method_stats
     
     def tikz_descriptor(self):
-        descriptor = "\\" + self.name + "\\\\"
-        if self.config != "":
-            descriptor = descriptor + self.config
+        descriptor = "\\" + self.name
+        if self.is_maximum() and (self.config != ""):
+            descriptor = descriptor + " " + self.config
+        if not self.is_maximum():
+            descriptor = descriptor + "\\\\" + self.config
         if self.consider_lb and self.is_maximum_lb:
             descriptor = descriptor + "\\\\" + self.stats()
         if (not self.consider_lb) and self.is_maximum_ub:
@@ -194,7 +200,7 @@ class Method:
             return ""
         label = labels[0]
         for index in range(1, len(labels)):
-            label = label + " " + labels[index]
+            label = label + " \\\\ " + labels[index]
         return label
     
     def compare_tightness(self, other):
@@ -279,12 +285,8 @@ class Method:
         if is_better_or_equal and (label != ""):
             if self.consider_lb:
                 other.is_maximum_lb = False
-                if self.name == other.name:
-                    other.discard_for_lb = True
             else:
                 other.is_maximum_ub = False
-                if self.name == other.name:
-                    other.discard_for_ub = True
         if is_better_or_equal:
             return label
         else:
@@ -339,6 +341,12 @@ class Method:
             return self.lb
         else:
             return self.ub
+        
+    def score(self):
+        if self.consider_lb:
+            return self.score_lb
+        else:
+            return self.score_ub
     
     def coeff(self):
         if self.consider_lb:
@@ -350,7 +358,7 @@ class Method:
         if self.consider_lb:
             return self.has_tightest_lb
         else:
-            return self.has_best_coeff_ub
+            return self.has_tightest_ub
         
     def is_fastest(self):
         if self.consider_lb:
@@ -369,6 +377,12 @@ class Method:
             return self.discard_for_lb
         else:
             return self.discard_for_ub
+        
+    def do_discard(self):
+        if self.consider_lb:
+            self.discard_for_lb = True 
+        else:
+            self.discard_for_ub = True
     
     def get_adj_list(self):
         if self.consider_lb:
@@ -408,13 +422,13 @@ def read_results_from_csv_files(args):
     methods = []
     result_file_names = []
     prefix = os.path.join("results", args.dataset) + "__"
-    if args.lsape:
+    if not args.no_lsape:
         result_file_names.append(prefix + "lsape_based_methods.csv")
-    if args.ls:
+    if not args.no_ls:
         result_file_names.append(prefix + "ls_based_methods.csv")
-    if args.lp:
+    if not args.no_lp:
         result_file_names.append(prefix + "lp_based_methods.csv")
-    if args.misc:
+    if not args.no_misc:
         result_file_names.append(prefix + "misc_methods.csv")
     for result_file_name in result_file_names:
         with open(result_file_name, "r") as result_file:  
@@ -457,7 +471,18 @@ def build_dependency_graph(methods, consider_lb):
             best_coeff = method.coeff()
     for method in methods:
         method.set_score(best_dist, best_t, best_coeff)
-    # discard methods that are dominated by themselves with a different configuration
+    # discard methods such that are not maximal w.r.t. their score within their heuristic
+    method_names = set()
+    for method in methods:
+        method_names.add(method.name)
+    best_scores = {method_name : -1 for method_name in method_names}
+    for method in methods:
+        if method.score() > best_scores[method.name]:
+            best_scores[method.name] = method.score()
+    for method in methods:
+        if (method.score() < best_scores[method.name]) and (not method.is_maximum()):
+            method.do_discard()
+    # select undiscarded methods
     undiscarded_method_ids = []
     for id_1 in range(0, num_methods):
         method_1 = methods[id_1]
@@ -490,53 +515,99 @@ def build_dependency_graph(methods, consider_lb):
 
 def infix(args):
     the_infix = ""
-    if args.lsape:
-        the_infix = the_infix + "_lsape"
-    if args.ls:
-        the_infix = the_infix + "_ls"
-    if args.lp:
-        the_infix = the_infix + "_lp"
-    if args.misc:
-        the_infix = the_infix + "_misc"
+    if args.no_lsape:
+        the_infix = the_infix + "_no-lsape"
+    if args.no_ls:
+        the_infix = the_infix + "_no-ls"
+    if args.no_lp:
+        the_infix = the_infix + "_no-lp"
+    if args.no_misc:
+        the_infix = the_infix + "_no-misc"
     return the_infix
 
 class AggregatedScores:
     
-    def __init__(self, method_names, scores_lb, scores_ub, multi_sol_score, centralities_score, multi_start_score, randpost_score):
+    def __init__(self, method_names, scores_lb, scores_ub, has_tightest_lb, is_fastest_lb, has_best_coeff_lb, has_tightest_ub, is_fastest_ub, has_best_coeff_ub):
         self.method_names = method_names
         self.scores_lb = scores_lb
         self.scores_ub = scores_ub
-        self.multi_sol_score = multi_sol_score
-        self.centralities_score = centralities_score
-        self.multi_start_score = multi_start_score
-        self.ranpost_score = randpost_score
+        self.has_tightest_lb = has_tightest_lb
+        self.is_fastest_lb = is_fastest_lb
+        self.has_best_coeff_lb = has_best_coeff_lb
+        self.has_tightest_ub = has_tightest_ub
+        self.is_fastest_ub = is_fastest_ub
+        self.has_best_coeff_ub = has_best_coeff_ub
+    
+    def chi_lb(self, method_name):
+        chi = "("
+        if self.has_tightest_lb[method_name]:
+            chi = chi + "1,"
+        else:
+            chi = chi + "0,"
+        if self.is_fastest_lb[method_name]:
+            chi = chi + "1,"
+        else:
+            chi = chi + "0,"
+        if self.has_best_coeff_lb[method_name]:
+            chi = chi + "1)"
+        else:
+            chi = chi + "0)"
+        return chi
+    
+    def chi_ub(self, method_name):
+        chi = "("
+        if self.has_tightest_ub[method_name]:
+            chi = chi + "1,"
+        else:
+            chi = chi + "0,"
+        if self.is_fastest_ub[method_name]:
+            chi = chi + "1,"
+        else:
+            chi = chi + "0,"
+        if self.has_best_coeff_ub[method_name]:
+            chi = chi + "1)"
+        else:
+            chi = chi + "0)"
+        return chi
     
     def write_to_csv_file(self, args):
-        csv_file_name = os.path.join(args.table_dir, args.dataset) + infix(args) + ".csv"
+        csv_file_name = os.path.join(args.table_dir, args.dataset) + infix(args) + "_scores.csv"
         csv_file = open(csv_file_name, "w")
-        csv_file.write("heuristic;score_lb;score_ub\n")
+        csv_file.write("heuristic;chi_lb;score_lb;chi_ub;score_ub\n")
         for method_name in self.method_names:
             csv_file.write(method_name + ";")
             if computes_no_lb(method_name):
-                csv_file.write("na;")
+                csv_file.write("na;na;")
             else:
-                csv_file.write(str(self.scores_lb[method_name]) + ";")
+                csv_file.write(self.chi_lb(method_name) + ";" + str(self.scores_lb[method_name]) + ";")
             if computes_no_ub(method_name):
-                csv_file.write("na\n")
+                csv_file.write("na;na\n")
             else:
-                csv_file.write(str(self.scores_ub[method_name]) + "\n")
-        csv_file.write("MULTISOL;na;" + str(self.multi_sol_score) + "\n")
-        csv_file.write("CENTRALITIES;na;" + str(self.centralities_score) + "\n")
-        csv_file.write("MULTISTART;na;" + str(self.multi_start_score) + "\n")
-        csv_file.write("RANDPOST;na;" + str(self.ranpost_score) + "\n")
+                csv_file.write(self.chi_ub(method_name) + ";" + str(self.scores_ub[method_name]) + "\n")
+        ext_names = ["MULTISOL", "CENTRALITIES", "MULTISTART", "RANDPOST"]
+        for ext_name in ext_names:
+            csv_file.write(ext_name + ";na;na;")
+            csv_file.write(self.chi_ub(ext_name) + ";" + str(self.scores_ub[ext_name]) + "\n")
         csv_file.close()
                 
 def aggregate_scores(methods):
     method_names = set()
+    method_ext_names = set()
     for method in methods:
         method_names.add(method.name)
+        method_ext_names.add(method.name)
+    method_ext_names.add("MULTISOL")
+    method_ext_names.add("CENTRALITIES")
+    method_ext_names.add("MULTISTART")
+    method_ext_names.add("RANDPOST")
     scores_lb = {method_name : 0.0 for method_name in method_names}
-    scores_ub = {method_name : 0.0 for method_name in method_names}
+    scores_ub = {method_name : 0.0 for method_name in method_ext_names}
+    has_tightest_lb = {method_name : False for method_name in method_names}
+    is_fastest_lb = {method_name : False for method_name in method_names}
+    has_best_coeff_lb = {method_name : False for method_name in method_names}
+    has_tightest_ub = {method_name : False for method_name in method_ext_names}
+    is_fastest_ub = {method_name : False for method_name in method_ext_names}
+    has_best_coeff_ub = {method_name : False for method_name in method_ext_names}
     sum_scores_ub_lsape = 0.0
     sum_scores_ub_centralities = 0.0
     sum_scores_ub_multi_sol = 0.0
@@ -562,32 +633,69 @@ def aggregate_scores(methods):
                 sum_scores_ub_multi_start = sum_scores_ub_multi_start + method.score_ub
             if uses_randpost(method):
                 sum_scores_ub_randpost = sum_scores_ub_randpost + method.score_ub
-    multi_sol_score = 0
-    centralities_score = 0
-    multi_start_score = 0
-    randpost_score = 0
+        if method.has_tightest_lb:
+            has_tightest_lb[method.name] = True
+        if method.is_fastest_lb:
+            is_fastest_lb[method.name] = True
+        if method.has_best_coeff_lb:
+            has_best_coeff_lb[method.name] = True
+        if method.has_tightest_ub:
+            has_tightest_ub[method.name] = True
+            if uses_centralities(method):
+                has_tightest_ub["CENTRALITIES"] = True
+            if uses_multi_sol(method):
+                has_tightest_ub["MULTISOL"] = True
+            if uses_multi_start(method):
+                has_tightest_ub["MULTISTART"] = True
+            if uses_randpost(method):
+                has_tightest_ub["RANDPOST"] = True
+        if method.is_fastest_ub:
+            is_fastest_ub[method.name] = True
+            if uses_centralities(method):
+                is_fastest_ub["CENTRALITIES"] = True
+            if uses_multi_sol(method):
+                is_fastest_ub["MULTISOL"] = True
+            if uses_multi_start(method):
+                is_fastest_ub["MULTISTART"] = True
+            if uses_randpost(method):
+                is_fastest_ub["RANDPOST"] = True
+        if method.has_best_coeff_ub:
+            has_best_coeff_ub[method.name] = True
+            if uses_centralities(method):
+                has_best_coeff_ub["CENTRALITIES"] = True
+            if uses_multi_sol(method):
+                has_best_coeff_ub["MULTISOL"] = True
+            if uses_multi_start(method):
+                has_best_coeff_ub["MULTISTART"] = True
+            if uses_randpost(method):
+                has_best_coeff_ub["RANDPOST"] = True
     if sum_scores_ub_lsape > 0:
-        multi_sol_score = sum_scores_ub_multi_sol / sum_scores_ub_lsape
-        centralities_score = sum_scores_ub_centralities / sum_scores_ub_lsape
+        scores_ub["MULTISOL"] = sum_scores_ub_multi_sol / sum_scores_ub_lsape
+        scores_ub["CENTRALITIES"] = sum_scores_ub_centralities / sum_scores_ub_lsape
     if sum_scores_ub_ls > 0:
-        multi_start_score = sum_scores_ub_multi_start / sum_scores_ub_ls
-        randpost_score = sum_scores_ub_randpost / sum_scores_ub_ls
-    return AggregatedScores(method_names, scores_lb, scores_ub, multi_sol_score, centralities_score, multi_start_score, randpost_score)
+        scores_ub["MULTISTART"] = sum_scores_ub_multi_start / sum_scores_ub_ls
+        scores_ub["RANDPOST"] = sum_scores_ub_randpost / sum_scores_ub_ls
+    return AggregatedScores(method_names, scores_lb, scores_ub, has_tightest_lb, is_fastest_lb, has_best_coeff_lb, has_tightest_ub, is_fastest_ub, has_best_coeff_ub)
                 
 
-def create_table(args, methods):
-    table_file_name = os.path.join(args.table_dir, args.dataset) + infix(args) + ".tex"
-    # write csv file containing only maxima
+def create_table(args, methods, consider_lb):
+    table_file_name = os.path.join(args.table_dir, args.dataset) + infix(args)
+    if consider_lb:
+        table_file_name = table_file_name + "_LB.csv"
+    else:
+        table_file_name = table_file_name + "_UB.csv"
     table_file = open(table_file_name, "w")
-    table_file.write("%!TEX root = ../root.tex\n")
-    table_file.write("\\begin{tabular}{llSSSS[table-format=1.2]S[table-format=1.2]S[table-format=1.2]S[table-format=1.2]}\n")
-    table_file.write("\\toprule\n")
-    table_file.write("heuristic & configuration & {$d_{\LB}$} & {$d_{\UB}$} & {$t$} & {$c_{\LB}$} & {$c_{\UB}$} & {$s_{\LB}$} & {$s_{\UB}$} \\\\\n")
-    table_file.write("\midrule\n")
+    if consider_lb:
+        table_file.write("avg_lb,coeff_lb\n")
+    else:
+        table_file.write("avg_ub,coeff_ub\n")
     for method in methods:
-        table_file.write(method.as_table_row())
-    table_file.write("\\bottomrule\n")
-    table_file.write("\end{tabular}")
+        if consider_lb:
+            if not computes_no_lb(method.name, method.config):
+                table_file.write(str(method.lb) + "," + str(method.coeff_lb) + "\n")
+        else:
+            if not computes_no_ub(method.name):
+                table_file.write(str(method.ub) + "," + str(method.coeff_ub) + "\n")
     table_file.close()
     
 
@@ -600,10 +708,17 @@ def create_tikz_file(args, methods, consider_lb):
     # construct tikz file
     tikz_file = open(tikz_file_name, "w")
     tikz_file.write("%!TEX root = ../root.tex\n")
-    tikz_file.write("\input{img/tikzstyles}\n")
-    tikz_file.write("\\begin{tikzpicture}[rounded corners]\n")
-    tikz_file.write("\graph[layered layout,\n")
-    tikz_file.write("level distance=15mm,\n")
+    tikz_file.write("\\begin{tikzpicture}[rounded corners,every label/.style={align=center}]\n")
+    tikz_file.write("\graph[layered layout,grow=right,\n")
+    tikz_file.write("sibling distance=5pt,\n")
+    tikz_file.write("part distance=5pt,\n")
+    tikz_file.write("component distance=5pt,\n")
+    tikz_file.write("sibling sep=5pt,\n")
+    tikz_file.write("level sep=15pt,\n")
+    tikz_file.write("part sep=5pt,\n")
+    tikz_file.write("component sep=5pt,\n")
+    tikz_file.write("component direction=up,\n")
+    tikz_file.write("component align=first node,\n")
     tikz_file.write("nodes={minimum width=4mm, minimum height=4mm, align=center, font=\scriptsize},\n")
     tikz_file.write("edge quotes mid,\n")
     tikz_file.write("edges={nodes={font=\scriptsize, fill=white, inner sep=1.5pt}}] {\n")
@@ -612,12 +727,12 @@ def create_tikz_file(args, methods, consider_lb):
     for method_id in range(0, len(methods)):
         method = methods[method_id]
         if (not method.discard()) and method.is_maximum():
-            tikz_file.write(str(method_id) + " [" + method.name + ", as={" + method.tikz_descriptor() + "}, label=above:{\\footnotesize " + method.label() + "}],\n");
+            tikz_file.write(str(method_id) + " [" + method.name + ", minimum width=2.5cm, as={" + method.tikz_descriptor() + "}, label=left:{\\footnotesize " + method.label() + "}],\n");
     tikz_file.write("};\n")
     for method_id in range(0, len(methods)):
         method = methods[method_id]
         if (not method.discard()) and (not method.is_maximum()):
-            tikz_file.write(str(method_id) + " [" + method.name + ", as={" + method.tikz_descriptor() + "}];\n");
+            tikz_file.write(str(method_id) + " [" + method.name + ", minimum width=1.6cm, as={" + method.tikz_descriptor() + "}];\n");
     for method_id in range(0, len(methods)):
         for edge in methods[method_id].get_adj_list():
             tikz_file.write(str(method_id) + " -> [" + edge[1] + "] " + str(edge[0]) + ";\n")
@@ -630,16 +745,16 @@ parser = argparse.ArgumentParser(description="Generates TikZ dominance graph fro
 parser.add_argument("dataset", help="name of dataset")
 parser.add_argument("tikz_dir", help="name of output directory for TikZ files")
 parser.add_argument("table_dir", help="name of output directory for table")
-parser.add_argument("--lsape", help="consider LSAPE based methods", action="store_true")
-parser.add_argument("--ls", help="consider local search based methods", action="store_true")
-parser.add_argument("--lp", help="consider LP based methods", action="store_true")
-parser.add_argument("--misc", help="consider miscellaneous methods", action="store_true")
+parser.add_argument("--no_lsape", help="do not consider LSAPE based methods", action="store_true")
+parser.add_argument("--no_ls", help="do not consider local search based methods", action="store_true")
+parser.add_argument("--no_lp", help="do not consider LP based methods", action="store_true")
+parser.add_argument("---no_misc", help="do not consider miscellaneous methods", action="store_true")
 
 args = parser.parse_args()
 methods = read_results_from_csv_files(args)
 for consider_lb in [True, False]:
     methods = build_dependency_graph(methods, consider_lb)
     create_tikz_file(args, methods, consider_lb)
-create_table(args, methods)
+    create_table(args, methods, consider_lb)
 aggregated_scores = aggregate_scores(methods)
 aggregated_scores.write_to_csv_file(args)

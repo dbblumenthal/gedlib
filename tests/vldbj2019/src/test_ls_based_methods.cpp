@@ -166,7 +166,7 @@ struct RandpostSetup {
 };
 
 
-void test_on_dataset(const std::string & dataset) {
+void test_on_dataset(const std::string & dataset, bool only_ipfp) {
 
 	// Initialize environment.
 	std::cout << "\n=== " << dataset << " ===\n";
@@ -175,7 +175,13 @@ void test_on_dataset(const std::string & dataset) {
 	util::setup_environment(dataset, false, env);
 
 	// Collect all tested methods.
-	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BP_BEAM};
+	std::vector<ged::Options::GEDMethod> ged_methods;
+	if (only_ipfp) {
+		ged_methods = {ged::Options::GEDMethod::IPFP};
+	}
+	else {
+		ged_methods = {ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BP_BEAM};
+	}
 	std::vector<std::size_t> nums_orderings{1, 20};
 	std::vector<std::size_t> max_swap_sizes{2, 3};
 	std::vector<RandpostSetup> randpost_setups;
@@ -229,7 +235,12 @@ void test_on_dataset(const std::string & dataset) {
 
 
 	std::string result_filename("../results/");
-	result_filename += dataset + "__ls_based_methods.csv";
+	if (only_ipfp) {
+		result_filename += dataset + "__ls_based_methods_IPFP.csv";
+	}
+	else {
+		result_filename += dataset + "__ls_based_methods.csv";
+	}
 	std::ofstream result_file(result_filename.c_str());
 	result_file << "method;avg_lb;avg_ub;avg_runtime;classification_coefficient_lb;classification_coefficient_ub\n";
 	result_file.close();
@@ -247,8 +258,16 @@ void test_on_dataset(const std::string & dataset) {
 }
 
 int main(int argc, char* argv[]) {
+	int i{1};
+	bool only_ipfp{false};
+	if (argc > 1) {
+		if (std::string(argv[i]) == "--ipfp") {
+			only_ipfp = true;
+			i++;
+		}
+	}
 	std::vector<std::string> datasets;
-	for (int i{1}; i < argc; i++) {
+	for (; i < argc; i++) {
 		datasets.push_back(std::string(argv[i]));
 		util::check_dataset(datasets.back());
 	}
@@ -257,7 +276,7 @@ int main(int argc, char* argv[]) {
 	}
 	for (auto dataset : datasets) {
 		try {
-			test_on_dataset(dataset);
+			test_on_dataset(dataset, only_ipfp);
 		}
 		catch (const std::exception & error) {
 			std::cerr << error.what() << ". " << "Error on " << dataset << ".\n";

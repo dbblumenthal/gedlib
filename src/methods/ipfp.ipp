@@ -103,6 +103,7 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
 				util::construct_node_map_from_solver(lsape_solver, output_node_map);
+				output_node_map.set_induced_cost(upper_bound);
 			}
 		}
 		else {
@@ -110,6 +111,7 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
 				util::construct_node_map_from_solver(lsap_solver, output_node_map);
+				output_node_map.set_induced_cost(upper_bound);
 			}
 		}
 
@@ -139,26 +141,22 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 	if (not x_is_integral) {
 		DMatrix projection_problem(qap_instance_.num_rows(), qap_instance_.num_cols(), 1.0);
 		projection_problem -= x;
+		NodeMap projected_node_map(output_node_map);
 		if (quadratic_model_ == QAPE) {
 			lsape_solver.set_problem(&projection_problem);
-			solve_linear_problem_(qap_instance_, lsape_solver, min_linear_problem, linear_cost_b, overall_cost_b, b);
-			if (overall_cost_b < upper_bound) {
-				upper_bound = overall_cost_b;
-				util::construct_node_map_from_solver(lsape_solver, output_node_map);
-			}
+			lsape_solver.solve();
+			util::construct_node_map_from_solver(lsape_solver, projected_node_map);
 		}
 		else {
 			lsap_solver.set_problem(&projection_problem);
-			solve_linear_problem_(qap_instance_, lsap_solver, min_linear_problem, linear_cost_b, overall_cost_b, b);
-			if (overall_cost_b < upper_bound) {
-				upper_bound = overall_cost_b;
-				util::construct_node_map_from_solver(lsap_solver, output_node_map);
-			}
+			lsap_solver.solve();
+			util::construct_node_map_from_solver(lsap_solver, projected_node_map);
+		}
+		this->ged_data_.compute_induced_cost(g, h, projected_node_map);
+		if (projected_node_map.induced_cost() < output_node_map.induced_cost()) {
+			output_node_map = projected_node_map;
 		}
 	}
-
-	// Set the induced cost of the output node map to the computed upper bound.
-	output_node_map.set_induced_cost(upper_bound);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>

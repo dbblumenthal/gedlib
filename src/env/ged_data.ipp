@@ -561,6 +561,7 @@ compute_induced_cost(const GEDGraph & g, const GEDGraph & h, NodeMap & node_map)
 			cost += edge_cost(dummy_label(), h.get_edge_label(*kl));
 		}
 	}
+
 	node_map.set_induced_cost(cost);
 }
 

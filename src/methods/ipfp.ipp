@@ -103,6 +103,10 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			if (overall_cost_b < upper_bound) {
 				upper_bound = overall_cost_b;
 				util::construct_node_map_from_solver(lsape_solver, output_node_map);
+				this->ged_data_.compute_induced_cost(g, h, output_node_map);
+				if (std::fabs(upper_bound - output_node_map.induced_cost()) > 0.000001) {
+					throw Error("upper_bound: " + std::to_string(upper_bound) + ", linear_cost_b: " + std::to_string(linear_cost_b) + ", quadratic_cost_b: " + std::to_string(2*(upper_bound - linear_cost_b)) + ". Induced cost: " + std::to_string(output_node_map.induced_cost()) + ".");
+				}
 				output_node_map.set_induced_cost(upper_bound);
 			}
 		}
@@ -136,6 +140,7 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			linear_cost_x = compute_induced_linear_cost_(qap_instance_, x);
 		}
 	}
+
 
 	// If converged solution x is fractional, project it to integral solution.
 	if (not x_is_integral) {
@@ -636,6 +641,9 @@ double
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
+	if (row_1 == row_2 or col_1 == col_2) {
+		return 0.0;
+	}
 	double return_val{0.0};
 	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
 	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
@@ -680,6 +688,9 @@ double
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_c_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
+	if (row_1 == row_2 or col_1 == col_2) {
+		return 0.0;
+	}
 	double return_val{0.0};
 	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
 	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
@@ -709,6 +720,9 @@ double
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
+	if (row_1 == row_2 or col_1 == col_2) {
+		return 0.0;
+	}
 	double return_val{0.0};
 	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
 	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
@@ -729,6 +743,15 @@ double
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
+	if (row_1 == row_2 and col_1 == col_2) {
+		return 0.0;
+	}
+	if (row_1 == row_2 and row_1 < num_nodes_g_) {
+		return 0.0;
+	}
+	if (col_1 == col_2 and col_1 < num_nodes_h_) {
+		return 0.0;
+	}
 	double return_val{0.0};
 	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
 	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
@@ -763,9 +786,6 @@ QAPInstance_ ::
 operator() (std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
 	if (row_1 >= num_rows() or col_1 >= num_cols() or row_2 >= num_rows() or col_2 >= num_cols()) {
 		throw Error("Out of range error for FrankWolfe<UserNodeLabel, UserEdgeLabel>::QAPInstance_.");
-	}
-	if (row_1 == row_2 or col_1 == col_2) {
-		return 0.0;
 	}
 	double return_val{0.0};
 	switch(ipfp_->quadratic_model_) {

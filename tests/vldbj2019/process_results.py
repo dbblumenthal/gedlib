@@ -132,11 +132,13 @@ class Method:
         if self.name == "SUBGGRAPH":
             self.name = "SUBGRAPH"
         self.config = name[1]
-        self.lb = float("{:.2E}".format(Decimal(lb)))
-        self.ub = float("{:.2E}".format(Decimal(ub)))
-        self.t = float("{:.2E}".format(Decimal(str(float(t)*1000.0))))
-        self.coeff_lb = float("{:.2}".format(Decimal(coeff_lb)))
-        self.coeff_ub = float("{:.2}".format(Decimal(coeff_ub)))
+        self.lb = float("{0:.2f}".format(Decimal(lb)))
+        self.ub = float("{0:.2f}".format(Decimal(ub)))
+        self.t = float("{:.6f}".format(Decimal(t)))
+        self.coeff_lb = float("{:.2f}".format(Decimal(coeff_lb)))
+        self.precise_coeff_lb = coeff_lb
+        self.coeff_ub = float("{:.2f}".format(Decimal(coeff_ub)))
+        self.precise_coeff_ub = coeff_ub
         self.is_fastest_lb = not computes_no_lb(self.name, self.config)
         self.is_fastest_ub = not computes_no_ub(self.name)
         self.has_tightest_lb = not computes_no_lb(self.name, self.config)
@@ -155,18 +157,18 @@ class Method:
     def stats(self):
         method_stats = "$\left(\\begin{smallmatrix}\\\\"
         if self.consider_lb:
-            method_stats = method_stats + "t\\text{ in \si{\milli\second}} & d_{\LB} & c_{\LB} & s_{LB}\\\\"
+            method_stats = method_stats + "t\\text{ in \si{\second}} & d_{\LB} & c_{\LB} & s_{LB}\\\\"
         else:
-            method_stats = method_stats + "t\\text{ in \si{\milli\second}} & d_{\UB} & c_{\UB} & s_{UB}\\\\"
+            method_stats = method_stats + "t\\text{ in \si{\second}} & d_{\UB} & c_{\UB} & s_{UB}\\\\"
         method_stats = method_stats + "\\num{" + "{:.2E}".format(Decimal(str(self.t))) + "} & "
         if self.consider_lb:
-            method_stats = method_stats + "\\num{" + "{:.2E}".format(Decimal(str(self.lb))) + "} & "
-            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.coeff_lb))) + "} & "
-            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.score_lb))) + "}"
+            method_stats = method_stats + "\\num{" + str(self.lb) + "} & "
+            method_stats = method_stats + "\\num{" + str(self.coeff_lb) + "} & "
+            method_stats = method_stats + "\\num{" + "{:.2f}".format(Decimal(str(self.score_ub))) + "}"
         else:
-            method_stats = method_stats + "\\num{" + "{:.2E}".format(Decimal(str(self.ub))) + "} &"
-            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.coeff_ub))) + "} &"
-            method_stats = method_stats + "\\num{" + "{:.2}".format(Decimal(str(self.score_ub))) + "}"
+            method_stats = method_stats + "\\num{" + str(self.ub) + "} &"
+            method_stats = method_stats + "\\num{" + str(self.coeff_ub) + "} &"
+            method_stats = method_stats + "\\num{" + "{:.2f}".format(Decimal(str(self.score_ub))) + "}"
         method_stats = method_stats + "\\end{smallmatrix}\\right)$"
         return method_stats
     
@@ -303,20 +305,20 @@ class Method:
         else:
             table_row = table_row + " & {--}"
         if not computes_no_lb(self.name):
-            table_row = table_row + " & " + "{:.2E}".format(Decimal(str(self.lb)))
+            table_row = table_row + " & " + str(self.lb)
         else:
             table_row = table_row + " & {--}"
         if not computes_no_ub(self.name):
-            table_row = table_row + " & " + "{:.2E}".format(Decimal(str(self.ub)))
+            table_row = table_row + " & " + str(self.ub)
         else:
             table_row = table_row + " & {--}"
         table_row = table_row + " & " + "{:.2E}".format(Decimal(str(self.t)))
         if not computes_no_lb(self.name):
-            table_row = table_row + " & " + "{:.2}".format(Decimal(str(self.coeff_lb)))
+            table_row = table_row + " & " + str(self.coeff_lb)
         else:
             table_row = table_row + " & {--}"
         if not computes_no_ub(self.name):
-            table_row = table_row + " & " + "{:.2}".format(Decimal(str(self.coeff_ub)))
+            table_row = table_row + " & " + str(self.coeff_ub)
         else:
             table_row = table_row + " & {--}"
         if not computes_no_lb(self.name):
@@ -692,10 +694,10 @@ def create_table(args, methods, consider_lb):
     for method in methods:
         if consider_lb:
             if not computes_no_lb(method.name, method.config):
-                table_file.write(str(method.lb) + "," + str(method.coeff_lb) + "\n")
+                table_file.write(str(method.lb) + "," + str(method.precise_coeff_lb) + "\n")
         else:
             if not computes_no_ub(method.name):
-                table_file.write(str(method.ub) + "," + str(method.coeff_ub) + "\n")
+                table_file.write(str(method.ub) + "," + str(method.precise_coeff_ub) + "\n")
     table_file.close()
     
 

@@ -78,6 +78,7 @@ public:
 			double avg_inter_class_ub{0.0};
 			avg_runtime = 0;
 			avg_ub = 0;
+			avg_lb = 0;
 			for (ged::GEDGraph::GraphID g_id = env.graph_ids().first; g_id != env.graph_ids().second; g_id++) {
 				for (ged::GEDGraph::GraphID h_id = env.graph_ids().first; h_id != env.graph_ids().second; h_id++) {
 					env.run_method(g_id, h_id);

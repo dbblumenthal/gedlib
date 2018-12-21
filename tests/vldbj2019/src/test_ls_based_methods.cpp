@@ -166,7 +166,7 @@ struct RandpostSetup {
 };
 
 
-void test_on_dataset(const std::string & dataset, bool only_ipfp) {
+void test_on_dataset(const std::string & dataset, bool only_refine, bool only_ipfp, bool only_bp_beam) {
 
 	// Initialize environment.
 	std::cout << "\n=== " << dataset << " ===\n";
@@ -176,8 +176,14 @@ void test_on_dataset(const std::string & dataset, bool only_ipfp) {
 
 	// Collect all tested methods.
 	std::vector<ged::Options::GEDMethod> ged_methods;
-	if (only_ipfp) {
+	if (only_refine) {
+		ged_methods = {ged::Options::GEDMethod::REFINE};
+	}
+	else if (only_ipfp) {
 		ged_methods = {ged::Options::GEDMethod::IPFP};
+	}
+	else if (only_bp_beam) {
+		ged_methods = {ged::Options::GEDMethod::BP_BEAM};
 	}
 	else {
 		ged_methods = {ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BP_BEAM};
@@ -235,8 +241,14 @@ void test_on_dataset(const std::string & dataset, bool only_ipfp) {
 
 
 	std::string result_filename("../results/");
-	if (only_ipfp) {
+	if (only_refine) {
+		result_filename += dataset + "__ls_based_methods_REFINE.csv";
+	}
+	else if (only_ipfp) {
 		result_filename += dataset + "__ls_based_methods_IPFP.csv";
+	}
+	else if (only_bp_beam) {
+		result_filename += dataset + "__ls_based_methods_BP_BEAM.csv";
 	}
 	else {
 		result_filename += dataset + "__ls_based_methods.csv";
@@ -259,10 +271,20 @@ void test_on_dataset(const std::string & dataset, bool only_ipfp) {
 
 int main(int argc, char* argv[]) {
 	int i{1};
+	bool only_refine{false};
 	bool only_ipfp{false};
+	bool only_bp_beam{false};
 	if (argc > 1) {
-		if (std::string(argv[i]) == "--ipfp") {
+		if (std::string(argv[i]) == "--refine") {
+			only_refine = true;
+			i++;
+		}
+		else if (std::string(argv[i]) == "--ipfp") {
 			only_ipfp = true;
+			i++;
+		}
+		else if (std::string(argv[i]) == "--bp-beam") {
+			only_bp_beam = true;
 			i++;
 		}
 	}
@@ -276,7 +298,7 @@ int main(int argc, char* argv[]) {
 	}
 	for (auto dataset : datasets) {
 		try {
-			test_on_dataset(dataset, only_ipfp);
+			test_on_dataset(dataset, only_refine, only_ipfp, only_bp_beam);
 		}
 		catch (const std::exception & error) {
 			std::cerr << error.what() << ". " << "Error on " << dataset << ".\n";

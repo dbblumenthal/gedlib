@@ -174,6 +174,7 @@ public:
 			double avg_inter_class_ub{0.0};
 			avg_runtime = 0;
 			avg_ub = 0;
+			avg_lb = 0;
 			for (ged::GEDGraph::GraphID g_id = env.graph_ids().first; g_id != env.graph_ids().second; g_id++) {
 				for (ged::GEDGraph::GraphID h_id = env.graph_ids().first; h_id != env.graph_ids().second; h_id++) {
 					env.run_method(g_id, h_id);
@@ -224,7 +225,7 @@ public:
 };
 
 
-void test_on_dataset(const std::string & dataset) {
+void test_on_dataset(const std::string & dataset, bool only_lb) {
 
 	// Initialize environment.
 	std::cout << "\n=== " << dataset << " ===\n";
@@ -233,7 +234,13 @@ void test_on_dataset(const std::string & dataset) {
 	util::setup_environment(dataset, false, env);
 
 	// Collect all tested methods.
-	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::BIPARTITE, ged::Options::GEDMethod::STAR, ged::Options::GEDMethod::BRANCH_UNIFORM, ged::Options::GEDMethod::NODE, ged::Options::GEDMethod::WALKS, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::BRANCH, ged::Options::GEDMethod::SUBGRAPH, ged::Options::GEDMethod::BIPARTITE_ML, ged::Options::GEDMethod::RING, ged::Options::GEDMethod::RING_ML};
+	std::vector<ged::Options::GEDMethod> ged_methods;
+	if (only_lb) {
+		ged_methods = {ged::Options::GEDMethod::BRANCH_UNIFORM, ged::Options::GEDMethod::NODE, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::BRANCH};
+	}
+	else {
+		ged_methods = {ged::Options::GEDMethod::BIPARTITE, ged::Options::GEDMethod::STAR, ged::Options::GEDMethod::BRANCH_UNIFORM, ged::Options::GEDMethod::NODE, ged::Options::GEDMethod::WALKS, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::BRANCH, ged::Options::GEDMethod::SUBGRAPH, ged::Options::GEDMethod::BIPARTITE_ML, ged::Options::GEDMethod::RING, ged::Options::GEDMethod::RING_ML};
+	}
 	std::vector<std::string> set_distances{"GAMMA", "LSAPE_OPTIMAL"};
 	std::vector<std::string> centralities{"NONE", "PAGERANK"};
 	std::vector<std::string> ml_methods{"DNN", "ONE_CLASS_SVM"};
@@ -261,7 +268,12 @@ void test_on_dataset(const std::string & dataset) {
 
 	// Run the tests.
 	std::string result_filename("../results/");
-	result_filename += dataset + "__lsape_based_methods.csv";
+	if (only_lb) {
+		result_filename += dataset + "__lsape_based_methods_LB.csv";
+	}
+	else {
+		result_filename += dataset + "__lsape_based_methods.csv";
+	}
 	std::ofstream result_file(result_filename.c_str());
 	result_file << "method;avg_lb;avg_ub;avg_runtime;classification_coefficient_lb;classification_coefficient_ub\n";
 	result_file.close();
@@ -280,7 +292,15 @@ void test_on_dataset(const std::string & dataset) {
 
 int main(int argc, char* argv[]) {
 	std::vector<std::string> datasets;
-	for (int i{1}; i < argc; i++) {
+	bool only_lb{false};
+	int i{1};
+	if (argc > 1) {
+		if (std::string(argv[i]) == "--lb") {
+			only_lb = true;
+			i++;
+		}
+	}
+	for (; i < argc; i++) {
 		datasets.push_back(std::string(argv[i]));
 		util::check_dataset(datasets.back());
 	}
@@ -289,7 +309,7 @@ int main(int argc, char* argv[]) {
 	}
 	for (auto dataset : datasets) {
 		try {
-			test_on_dataset(dataset);
+			test_on_dataset(dataset, only_lb);
 		}
 		catch (const std::exception & error) {
 			std::cerr << error.what() << ". " << "Error on " << dataset << ".\n";

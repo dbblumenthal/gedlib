@@ -77,7 +77,9 @@ public:
 		void run_on_dataset(const std::string & dataset, ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> & env, double & avg_lb, double & avg_ub, double & avg_runtime,
 				double & classification_coefficient_lb, double & classification_coefficient_ub) const {
 			env.set_method(ged_method_, options_());
-			env.init_method();
+			if (dataset != "Protein" or ged_method_ != ged::Options::GEDMethod::PARTITION) {
+				env.init_method();
+			}
 			std::size_t num_runs{env.graph_ids().second * env.graph_ids().second};
 			ged::ProgressBar progress_bar(num_runs);
 			std::cout << "\r\t" << name() << ": " << progress_bar << std::flush;

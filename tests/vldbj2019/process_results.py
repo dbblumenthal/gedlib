@@ -164,7 +164,7 @@ class Method:
         if self.consider_lb:
             method_stats = method_stats + "\\num{" + str(self.lb) + "} & "
             method_stats = method_stats + "\\num{" + str(self.coeff_lb) + "} & "
-            method_stats = method_stats + "\\num{" + "{:.2f}".format(Decimal(str(self.score_ub))) + "}"
+            method_stats = method_stats + "\\num{" + "{:.2f}".format(Decimal(str(self.score_lb))) + "}"
         else:
             method_stats = method_stats + "\\num{" + str(self.ub) + "} &"
             method_stats = method_stats + "\\num{" + str(self.coeff_ub) + "} &"
@@ -734,7 +734,7 @@ def create_tikz_file(args, methods, consider_lb):
     for method_id in range(0, len(methods)):
         method = methods[method_id]
         if (not method.discard()) and (not method.is_maximum()):
-            tikz_file.write(str(method_id) + " [" + method.name + ", minimum width=1.6cm, as={" + method.tikz_descriptor() + "}];\n");
+            tikz_file.write(str(method_id) + " [" + method.name + ", as={" + method.tikz_descriptor() + "}];\n");
     for method_id in range(0, len(methods)):
         for edge in methods[method_id].get_adj_list():
             tikz_file.write(str(method_id) + " -> [" + edge[1] + "] " + str(edge[0]) + ";\n")

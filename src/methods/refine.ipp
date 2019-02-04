@@ -87,8 +87,8 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			}
 			// initialization of the swapping cycle inside the current subset
 			std::vector<std::size_t> cycle(swap_size-1);
-			for (std::size_t i=0; i<swap_size-1;i++) {
-				cycle[i]=i+1;
+			for (std::size_t i=0; i < swap_size-1;i++) {
+				cycle[i] = i+1;
 			}
 			// test all possible cycle within the swapping set
 			do {
@@ -112,6 +112,7 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 		if (best_swap_cost < -0.000000001) {
 			best_swap.do_swap(output_node_map, best_swap_cost);
 			best_swap_cost = 0.0;
+			swap_size = 2;
 		}
 		else {
 			best_swap_cost = 0.0;

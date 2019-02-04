@@ -27,8 +27,8 @@
 
 TEST_CASE("testing on Letter graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
-	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Letter/HIGH/", "../collections/Letter_test.xml"));
-	env.set_edit_costs(ged::Options::EditCosts::LETTER);
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_30.xml"));
+	env.set_edit_costs(ged::Options::EditCosts::CHEM_1);
 
 	ged::GEDGraph::GraphID g {graph_ids[0]};
 	ged::GEDGraph::GraphID h {graph_ids[1]};

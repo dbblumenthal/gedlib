@@ -31,7 +31,7 @@ namespace ged {
 
 /*!
  * @brief Computes an upper bound for general edit costs.
- * @details Implements the method Refine suggested in:
+ * @details Implements the methods Refine and K-Refine suggested in:
  * - Z. Zeng, A. K. H. Tung, J. Wang, J. Feng, and L. Zhou:
  *   &ldquo;Comparing stars: On approximating graph edit distance&rdquo;,
  *   http://dx.doi.org/10.14778/1687627.1687631
@@ -40,6 +40,8 @@ namespace ged {
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--max-swap-size @<convertible to int greater equal 2@> | maximum size of swap | @p 2 | If set to a value greater @p 2, K-Refine is used. |
+ * | <tt>\--naive @<TRUE\|FALSE> | naive computation of swap cost | @p FALSE | If set to @p TRUE, the swap cost is computed naively. |
+ * | <tt>\--add-dummy-assignment @<TRUE\|FALSE@> | add dummy assignment to initial node map | @p TRUE | If @p FALSE, the swapped node maps never contain more insertions and deletions than the original node map. |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class Refine : public LSBasedMethod<UserNodeLabel, UserEdgeLabel> {
@@ -54,11 +56,15 @@ private:
 
 	std::size_t max_swap_size_;
 
+	bool naive_;
+
+	bool add_dummy_assignment_;
+
 	struct Swap_{
 		std::vector<NodeMap::Assignment> original_assignments;
 		std::vector<NodeMap::Assignment> new_assignments;
 
-		double cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, NodeMap & node_map) const;
+		double cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, NodeMap & node_map, bool naive) const;
 
 		void do_swap(NodeMap & node_map, double delta_cost=0) const;
 

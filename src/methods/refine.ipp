@@ -38,7 +38,9 @@ template<class UserNodeLabel, class UserEdgeLabel>
 Refine<UserNodeLabel, UserEdgeLabel>::
 Refine(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
-max_swap_size_{2} {}
+max_swap_size_{2},
+naive_{false},
+add_dummy_assignment_{true} {}
 
 // === Definitions of member functions inherited from LSBasedMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -52,7 +54,9 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 	while ((output_node_map.induced_cost() > lower_bound) and ((best_swap_cost < 0) or (swap_size <= max_swap_size_))) {
 		std::vector<NodeMap::Assignment> assignments;
 		output_node_map.as_relation(assignments);
-		assignments.emplace_back(GEDGraph::dummy_node(), GEDGraph::dummy_node());
+		if (add_dummy_assignment_) {
+			assignments.emplace_back(GEDGraph::dummy_node(), GEDGraph::dummy_node());
+		}
 		// terminate if there are not enough assignments to carry out swaps of the current swap size
 		if (swap_size > assignments.size()) {
 			break;
@@ -89,21 +93,6 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			// test all possible cycle within the swapping set
 			do {
 				std::vector<NodeMap::Assignment> swapped_new_assignments;
-				/* I think this is incorrect:
-				 * Assume you have swapped_original_assignments = [(0,0), (1,1), (2,2)] and cycle = [2, 1].
-				 * Then we get swapped_new_assignments = [(0,2), (1,1), (2,0)], i.e., (1,1) is not involved in the swap.
-				 * With the new loop below we get swapped_new_assignments = [(2,0), (1,2), (0,1)] as expected.
-				for (std::size_t i=0; i < swap_size; i++) {
-					if (i != swap_size - 1) {
-						NodeMap::Assignment new_assignment{swapped_original_assignments[i].first,swapped_original_assignments[cycle[i]].second};
-						swapped_new_assignments.emplace_back(new_assignment);
-					}
-					else {
-						NodeMap::Assignment new_assignment{swapped_original_assignments[i].first,swapped_original_assignments[0].second};
-						swapped_new_assignments.emplace_back(new_assignment);
-					}
-				}
-				*/
 				NodeMap::Assignment original_assignment(swapped_original_assignments.at(0));
 				for (std::size_t i=0; i < swap_size - 1; i++) {
 					swapped_new_assignments.emplace_back(swapped_original_assignments.at(cycle.at(i)).first, original_assignment.second);
@@ -113,12 +102,12 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 				Swap_ current_swap;
 				current_swap.original_assignments = swapped_original_assignments;
 				current_swap.new_assignments = swapped_new_assignments;
-				double current_swap_cost = current_swap.cost(g,h,this->ged_data_,output_node_map);
+				double current_swap_cost = current_swap.cost(g, h, this->ged_data_, output_node_map, naive_);
 				if (current_swap_cost < best_swap_cost) {
 					best_swap_cost = current_swap_cost;
 					best_swap = current_swap;
 				}
-			} while (std::next_permutation(cycle.data(),cycle.data() + swap_size-1));
+			} while (std::next_permutation(cycle.data(), cycle.data() + swap_size-1));
 		} while (this->next_subset_(assignments.size(), swapped_original_indices));
 		if (best_swap_cost < -0.000000001) {
 			best_swap.do_swap(output_node_map, best_swap_cost);
@@ -129,15 +118,6 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 			swap_size++;
 		}
 	}
-	//Last Check that the cost is valid before exiting
-	/*
-	NodeMap copied_node_map(output_node_map);
-	this->ged_data_.compute_induced_cost(g,h,copied_node_map);
-	if(std::fabs(copied_node_map.induced_cost()-output_node_map.induced_cost()) > 0.000000001){
-		throw Error("actual_cost = " + std::to_string(output_node_map.induced_cost()) + " , real cost = " +  std::to_string(copied_node_map.induced_cost()) );
-	}
-	*/
-
 }
 
 
@@ -181,6 +161,24 @@ ls_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		return true;
 	}
+	else if (option == "naive") {
+		if (arg == "TRUE") {
+			naive_ = true;
+		}
+		else if (arg != "FALSE") {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option naive. Usage: options = \"[--naive <TRUE|FALSE>]\"");
+		}
+		return true;
+	}
+	else if (option == "add-dummy-assignment") {
+		if (arg == "FALSE") {
+			add_dummy_assignment_ = false;
+		}
+		else if (arg != "TRUE") {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option add-dummy-assignment. Usage: options = \"[--add-dummy-assignment <TRUE|FALSE>]\"");
+		}
+		return true;
+	}
 	return false;
 }
 
@@ -189,13 +187,15 @@ void
 Refine<UserNodeLabel, UserEdgeLabel>::
 ls_set_default_options_() {
 	max_swap_size_ = 2;
+	naive_ = false;
+	add_dummy_assignment_ = true;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
 std::string
 Refine<UserNodeLabel, UserEdgeLabel>::
 ls_valid_options_string_() const {
-	return "[--max-swap-size <arg>]";
+	return "[--max-swap-size <arg>] [--naive <arg>] [--add-dummy-assignment <arg>]";
 }
 
 
@@ -203,7 +203,16 @@ template<class UserNodeLabel, class UserEdgeLabel>
 double
 Refine<UserNodeLabel, UserEdgeLabel>::
 Swap_::
-cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, NodeMap & node_map ) const {
+cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, NodeMap & node_map, bool naive) const {
+	if (naive) {
+		double old_induced_cost{node_map.induced_cost()};
+		this->do_swap(node_map);
+		ged_data.compute_induced_cost(g, h, node_map);
+		double delta{node_map.induced_cost() - old_induced_cost};
+		this->undo_swap(node_map);
+		node_map.set_induced_cost(old_induced_cost);
+		return delta;
+	}
 	if (this->original_assignments.size()==2){
 		return ged_data.swap_cost(g,h,original_assignments[0],original_assignments[1], node_map);
 	}

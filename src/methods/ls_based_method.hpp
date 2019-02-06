@@ -45,6 +45,7 @@ namespace ged {
  * | <tt>\--max-randpost-retrials @<convertible to int greater equal 0@></tt> | number of times the RANDPOST algorithm flattens the probability distribution if it encounters already converged solutions | @p 10 | https://doi.org/10.1007/978-3-319-97785-0_44 |
  * | <tt>\--randpost-penalty @<convertible to double between 0 and 1@></tt> | if set value close to @p 1, expensive solutions count less for constructing the counts matrix | @p 0 | n.a. |
  * | <tt>\--log @<file name></tt> | name of log-file for RANDPOST | @p "" | if not empty, a log-file for RANDPOST is created |
+ * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | n.a. |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class LSBasedMethod : public GEDMethod<UserNodeLabel, UserEdgeLabel> {
@@ -93,6 +94,8 @@ private:
 	double randpost_penalty_;
 
 	std::string logfile_name_;
+
+	bool use_real_randomness_;
 
 	// Member functions inherited from GEDMethod.
 

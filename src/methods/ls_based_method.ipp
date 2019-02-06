@@ -52,7 +52,8 @@ ratio_runs_from_initial_solutions_{1.0},
 num_randpost_loops_{0},
 max_randpost_retrials_{10},
 randpost_penalty_{0.0},
-logfile_name_("") {}
+logfile_name_(""),
+use_real_randomness_{true} {}
 
 // === Definitions of member functions inherited from GEDMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -187,6 +188,15 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		else if (arg != "RANDOM") {
 			throw Error(std::string("Invalid argument \"") + arg  + "\" for option initialization-method. Usage: options = \"[--initialization-method BIPARTITE_ML|BIPARTITE|BRANCH_FAST|BRANCH_UNIFORM|BRANCH|NODE|RING_ML|RING|SUBGRAPH|WALKS|RANDOM] [...]\"");
+		}
+		is_valid_option = true;
+	}
+	else if (option == "randomness") {
+		if (arg == "PSEUDO") {
+			use_real_randomness_ = false;
+		}
+		else if (arg != "REAL") {
+			throw Error(std::string("Invalid argument \"") + arg  + "\" for option randomness. Usage: options = \"[--randomness REAL|PSEUDO] [...]\"");
 		}
 		is_valid_option = true;
 	}
@@ -348,9 +358,9 @@ std::string
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (ls_valid_options_string_() == "") {
-		return "[--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+		return "[--randomness <arg>] [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 	}
-	return ls_valid_options_string_() + " [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+	return ls_valid_options_string_() + "[--randomness <arg>] [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -371,6 +381,7 @@ ged_set_default_options_() {
 	max_randpost_retrials_ = 10;
 	randpost_penalty_ = 0;
 	logfile_name_ = std::string("");
+	use_real_randomness_ = true;
 	ls_set_default_options_();
 }
 
@@ -463,12 +474,16 @@ generate_random_initial_node_maps_(const GEDGraph & g, const GEDGraph & h, std::
 	}
 	std::size_t num_substituted_nodes{std::min(g.num_nodes(), h.num_nodes())};
 	num_substituted_nodes = std::lround(num_substituted_nodes * random_substitution_ratio_);
-	for (std::size_t counter{initial_node_maps.size()}; counter < num_initial_solutions_; counter++) {
+	std::mt19937 urng_g;
+	std::mt19937 urng_h;
+	if (use_real_randomness_) {
 		std::random_device rng_g;
-		std::mt19937 urng_g(rng_g());
-		std::shuffle(permutation_g.begin(), permutation_g.end(), urng_g);
+		urng_g.seed(rng_g());
 		std::random_device rng_h;
-		std::mt19937 urng_h(rng_h());
+		urng_h.seed(rng_h());
+	}
+	for (std::size_t counter{initial_node_maps.size()}; counter < num_initial_solutions_; counter++) {
+		std::shuffle(permutation_g.begin(), permutation_g.end(), urng_g);
 		std::shuffle(permutation_h.begin(), permutation_h.end(), urng_h);
 		initial_node_maps.emplace_back(g.num_nodes(), h.num_nodes());
 		for (auto node = g.nodes().first; node != g.nodes().second; node++) {
@@ -496,8 +511,11 @@ generate_node_maps_from_counts_matrix_(const GEDGraph & g, const GEDGraph & h,co
 			max_count = std::max(max_count, cell);
 		}
 	}
-	std::random_device rng;
-	std::mt19937 urng(rng());
+	std::mt19937 urng;
+	if (use_real_randomness_) {
+		std::random_device rng;
+		urng.seed(rng());
+	}
 	std::size_t node_map_id{0};
 	std::size_t num_unsuccessful_trials{0};
 	while (node_map_id < initial_node_maps.size()) {

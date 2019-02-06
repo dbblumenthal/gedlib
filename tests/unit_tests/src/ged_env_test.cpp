@@ -48,7 +48,7 @@ TEST_CASE("testing on Letter graphs") {
 	SECTION("RANDPOST") {
 
 		std::cout << "\n=== running REFINE 40, 0.5, 1 ===\n";
-		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions 40 --ratio-runs-from-initial-solutions 0.5 --num-randpost-loops 1");
+		env.set_method(ged::Options::GEDMethod::REFINE, "--threads 1 --initial-solutions 40 --ratio-runs-from-initial-solutions 0.5 --num-randpost-loops 1 --randomness PSEUDO");
 		env.run_method(g, h);
 		std::cout << "\nupper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
 

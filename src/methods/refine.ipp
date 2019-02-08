@@ -103,7 +103,7 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 				current_swap.original_assignments = swapped_original_assignments;
 				current_swap.new_assignments = swapped_new_assignments;
 				double current_swap_cost = current_swap.cost(g, h, this->ged_data_, output_node_map, naive_);
-				if (current_swap_cost < best_swap_cost) {
+				if (current_swap_cost - best_swap_cost < -0.000000001) {
 					best_swap_cost = current_swap_cost;
 					best_swap = current_swap;
 				}
@@ -205,19 +205,19 @@ double
 Refine<UserNodeLabel, UserEdgeLabel>::
 Swap_::
 cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data, NodeMap & node_map, bool naive) const {
+	double delta{0.0};
 	if (naive) {
 		double old_induced_cost{node_map.induced_cost()};
 		this->do_swap(node_map);
 		ged_data.compute_induced_cost(g, h, node_map);
-		double delta{node_map.induced_cost() - old_induced_cost};
+		delta = node_map.induced_cost() - old_induced_cost;
 		this->undo_swap(node_map);
 		node_map.set_induced_cost(old_induced_cost);
-		return delta;
 	}
-	if (this->original_assignments.size()==2){
-		return ged_data.swap_cost(g,h,original_assignments[0],original_assignments[1], node_map);
+	else if (this->original_assignments.size() == 2){
+		delta = ged_data.swap_cost(g, h, original_assignments[0], original_assignments[1], node_map);
 	}
-	else{
+	else {
 		//collecting swapped vertices in both graphs
 
 		std::vector<GEDGraph::NodeID> g_swapped_vertices;
@@ -269,8 +269,6 @@ cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEd
 				}
 			}
 		}
-		// Compute swap cost.
-		double delta{0.0};
 		// Compute node cost delta.
 		for(auto&& assignment: this->original_assignments){
 			delta -= ged_data.node_cost(g.get_node_label(assignment.first), h.get_node_label(assignment.second));
@@ -301,9 +299,8 @@ cost(const GEDGraph & g, const GEDGraph & h, const GEDData<UserNodeLabel, UserEd
 		// Undo the swap.
 		this->undo_swap(node_map);
 		// Return the overall swap cost.
-		return delta;
 	}
-
+	return delta;
 }
 
 

@@ -52,6 +52,7 @@ ratio_runs_from_initial_solutions_{1.0},
 num_randpost_loops_{0},
 max_randpost_retrials_{10},
 randpost_penalty_{0.0},
+randpost_decay_{1.0},
 logfile_name_(""),
 use_real_randomness_{true} {}
 
@@ -277,6 +278,18 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		is_valid_option = true;
 	}
+	else if (option == "randpost-decay") {
+		try {
+			randpost_decay_ = std::stod(arg);
+		}
+		catch (...) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option randpost-decay. Usage: options = \"[--randpost-decay <convertible to double between 0 and 1>]\"");
+		}
+		if (randpost_decay_ < 0 or randpost_decay_ > 1) {
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option randpost-decay. Usage: options = \"[--randpost-decay <convertible to double between 0 and 1>]\"");
+		}
+		is_valid_option = true;
+	}
 	else if (option == "initial-solutions") {
 		try {
 			num_initial_solutions_ = std::stoul(arg);
@@ -358,9 +371,9 @@ std::string
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (ls_valid_options_string_() == "") {
-		return "[--randomness <arg>] [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+		return "[--randomness <arg>] [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>] [--randpost-decay <arg>]";
 	}
-	return ls_valid_options_string_() + "[--randomness <arg>] [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>]";
+	return ls_valid_options_string_() + "[--randomness <arg>] [--log <arg>] [--initialization-method <arg>] [--initialization-options <arg>] [--random-substitution-ratio <arg>] [--initial-solutions <arg>] [--ratio-runs-from-initial-solutions <arg>] [--threads <arg>] [--num-randpost-loops <arg>] [--max-randpost-retrials <arg>] [--randpost-penalty <arg>] [--randpost-decay <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -380,6 +393,7 @@ ged_set_default_options_() {
 	num_randpost_loops_ = 0;
 	max_randpost_retrials_ = 10;
 	randpost_penalty_ = 0;
+	randpost_decay_ = 1;
 	logfile_name_ = std::string("");
 	use_real_randomness_ = true;
 	ls_set_default_options_();
@@ -420,6 +434,13 @@ double
 LSBasedMethod<UserNodeLabel, UserEdgeLabel>::
 update_counts_matrix_and_visited_node_maps_(const std::vector<NodeMap> & result_node_maps, const std::vector<bool> & is_converged_node_map, const double & upper_bound,
 		const double & lower_bound, std::vector<NodeMap> & visited_node_maps, std::size_t loop, std::vector<std::vector<double>> & counts_matrix) const {
+	if (randpost_decay_ < 1) {
+		for (auto & row : counts_matrix) {
+			for (auto & cell : row) {
+				cell *= randpost_decay_;
+			}
+		}
+	}
 	std::size_t num_nodes_g{counts_matrix.size()};
 	std::size_t num_nodes_h{counts_matrix[0].size() - 1};
 	GEDGraph::NodeID k{GEDGraph::dummy_node()};

@@ -63,8 +63,6 @@ def is_ls_based(method):
         return True
     elif method.name == "IPFP":
         return True
-    elif method.name == "SA":
-        return True
     else:
         return False
 
@@ -155,7 +153,7 @@ class Method:
         self.adj_list_ub = []
             
     def stats(self):
-        method_stats = "$\left(\\begin{smallmatrix}\\\\"
+        method_stats = "\\begin{tiny}$\left(\\begin{smallmatrix}\\\\"
         if self.consider_lb:
             method_stats = method_stats + "t\\text{ in \si{\second}} & d_{\LB} & c_{\LB} & s_{LB}\\\\"
         else:
@@ -169,7 +167,7 @@ class Method:
             method_stats = method_stats + "\\num{" + str(self.ub) + "} &"
             method_stats = method_stats + "\\num{" + str(self.coeff_ub) + "} &"
             method_stats = method_stats + "\\num{" + "{:.2f}".format(Decimal(str(self.score_ub))) + "}"
-        method_stats = method_stats + "\\end{smallmatrix}\\right)$"
+        method_stats = method_stats + "\\end{smallmatrix}\\right)$\end{tiny}"
         return method_stats
     
     def tikz_descriptor(self):
@@ -404,8 +402,6 @@ class Method:
         else:
             self.score_ub = ((best_dist / self.ub) + (best_t / self.t) + (self.coeff_ub / best_coeff)) / 3.0
             
-        
-
 def parse_method_name(method_name):
     method_name_list = method_name.split(",", 1)
     if (len(method_name_list) == 1):
@@ -420,10 +416,10 @@ def dfs(methods, is_discarded_edge, parent_id, child_id, seen):
         dfs(methods, is_discarded_edge, parent_id, edge[0], seen)
     seen[child_id] = True
     
-def read_results_from_csv_files(args):
+def read_results_from_csv_files(dataset, args):
     methods = []
     result_file_names = []
-    prefix = os.path.join("results", args.dataset) + "__"
+    prefix = os.path.join("results", dataset) + "__"
     if not args.no_lsape:
         result_file_names.append(prefix + "lsape_based_methods.csv")
     if not args.no_ls:
@@ -541,35 +537,35 @@ class AggregatedScores:
         self.has_best_coeff_ub = has_best_coeff_ub
     
     def chi_lb(self, method_name):
-        chi = "("
+        chi = "$("
         if self.has_tightest_lb[method_name]:
-            chi = chi + "1,"
+            chi = chi + "\mathbf{1},"
         else:
             chi = chi + "0,"
         if self.is_fastest_lb[method_name]:
-            chi = chi + "1,"
+            chi = chi + "\mathbf{1},"
         else:
             chi = chi + "0,"
         if self.has_best_coeff_lb[method_name]:
-            chi = chi + "1)"
+            chi = chi + "\mathbf{1})$"
         else:
-            chi = chi + "0)"
+            chi = chi + "0)$"
         return chi
     
     def chi_ub(self, method_name):
-        chi = "("
+        chi = "$("
         if self.has_tightest_ub[method_name]:
-            chi = chi + "1,"
+            chi = chi + "\mathbf{1},"
         else:
             chi = chi + "0,"
         if self.is_fastest_ub[method_name]:
-            chi = chi + "1,"
+            chi = chi + "\mathbf{1},"
         else:
             chi = chi + "0,"
         if self.has_best_coeff_ub[method_name]:
-            chi = chi + "1)"
+            chi = chi + "\mathbf{1})$"
         else:
-            chi = chi + "0)"
+            chi = chi + "0)$"
         return chi
     
     def write_to_csv_file(self, args):
@@ -591,17 +587,275 @@ class AggregatedScores:
             csv_file.write(ext_name + ";na;na;")
             csv_file.write(self.chi_ub(ext_name) + ";" + str(self.scores_ub[ext_name]) + "\n")
         csv_file.close()
-                
-def aggregate_scores(methods):
-    method_names = set()
-    method_ext_names = set()
+
+def create_latex_tables(args, datasets, aggregated_scores, lsape_based_method_names, lp_based_method_names, ls_based_method_names, misc_method_names, lsape_ext_names, ls_ext_names):
+    sum_best_coeff_lb = {}
+    table_ub_file_name = os.path.join(args.table_dir, "results_UB.tex")
+    table_ub = open(table_ub_file_name, "w")
+    table_ub.write("%!TEX root = ../root.tex\n")
+    table_ub.write("\\begin{tabular}{@{}lcS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]@{}}\n")
+    table_ub.write("\\toprule\n")
+    table_ub.write("heuristic & \multicolumn{2}{c}{\\letter} & \multicolumn{2}{c}{\\mutagenicity} & \multicolumn{2}{c}{\\aids} & \multicolumn{2}{c}{\\protein} & \multicolumn{2}{c}{\\fingerprint} & \multicolumn{2}{c}{\\grec} \\\\\n")
+    table_ub.write("\midrule\n")
+    table_ub.write("& {$\chi_\UB$} & {$\widehat{s_\UB}$} & {$\chi_\UB$} & {$\widehat{s_\UB}$} & {$\chi_\UB$} & {$\widehat{s_\UB}$} & {$\chi_\UB$} & {$\widehat{s_\UB}$} & {$\chi_\UB$} & {$\widehat{s_\UB}$} & {$\chi_\UB$} & {$\widehat{s_\UB}$} \\\\\n")
+    table_ub.write("\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11} \cmidrule(l){12-13}\n")
+    table_ub.write("\multicolumn{13}{@{}l}{\emph{instantiations of the paradigm \LSAPEGED}} \\\\\n")
+    for method_name in lsape_based_method_names:
+        table_ub.write("\\" + method_name)
+        for dataset in datasets:
+            if aggregated_scores[dataset].scores_ub[method_name] > 0:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+            else:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+        table_ub.write(" \\\\\n")
+    table_ub.write("\multicolumn{13}{@{}l}{\emph{extensions of the paradigm \LSAPEGED}} \\\\\n")
+    for ext_name in lsape_ext_names:
+        table_ub.write("\\" + ext_name)
+        for dataset in datasets:
+            if aggregated_scores[dataset].scores_ub[ext_name] > 0:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(ext_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[ext_name])))
+            else:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(ext_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[ext_name])))
+        table_ub.write(" \\\\\n")
+    table_ub.write("\midrule\n")
+    table_ub.write("\multicolumn{13}{@{}l}{\emph{instantiations of the paradigm \LPGED}} \\\\\n")
+    for method_name in lp_based_method_names:
+        table_ub.write("\\" + method_name)
+        for dataset in datasets:
+            if aggregated_scores[dataset].scores_ub[method_name] > 0:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+            else:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+        table_ub.write(" \\\\\n")
+    table_ub.write("\midrule\n")
+    table_ub.write("\multicolumn{13}{@{}l}{\emph{instantiations of the paradigm \LSGED}} \\\\\n")
+    for method_name in ls_based_method_names:
+        table_ub.write("\\" + method_name)
+        for dataset in datasets:
+            if aggregated_scores[dataset].scores_ub[method_name] > 0:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+            else:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+        table_ub.write(" \\\\\n")
+    table_ub.write("\multicolumn{13}{@{}l}{\emph{extensions of the paradigm \LSGED}} \\\\\n")
+    for ext_name in ls_ext_names:
+        table_ub.write("\\" + ext_name)
+        for dataset in datasets:
+            if aggregated_scores[dataset].scores_ub[ext_name] > 0:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(ext_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[ext_name])))
+            else:
+                table_ub.write(" & " + aggregated_scores[dataset].chi_ub(ext_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[ext_name])))
+        table_ub.write(" \\\\\n")
+    table_ub.write("\midrule\n")
+    table_ub.write("\multicolumn{13}{@{}l}{\emph{miscellaneous heuristics}} \\\\\n")
+    for method_name in misc_method_names:
+        if not computes_no_ub(method_name):
+            table_ub.write("\\" + method_name)
+            for dataset in datasets:
+                if aggregated_scores[dataset].scores_ub[method_name] > 0:
+                    table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+                else:
+                    table_ub.write(" & " + aggregated_scores[dataset].chi_ub(method_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_ub[method_name])))
+            table_ub.write(" \\\\\n")
+    table_ub.write("\\bottomrule\n")
+    table_ub.write("\end{tabular}\n")
+    table_ub.close()
+    table_lb_file_name = os.path.join(args.table_dir, "results_LB.tex")
+    table_lb = open(table_lb_file_name, "w")
+    table_lb.write("%!TEX root = ../root.tex\n")
+    table_lb.write("\\begin{tabular}{@{}lcS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]cS[table-format=1.2]@{}}\n")
+    table_lb.write("\\toprule\n")
+    table_lb.write("heuristic & \multicolumn{2}{c}{\\letter} & \multicolumn{2}{c}{\\mutagenicity} & \multicolumn{2}{c}{\\aids} & \multicolumn{2}{c}{\\protein} & \multicolumn{2}{c}{\\fingerprint} & \multicolumn{2}{c}{\\grec} \\\\\n")
+    table_lb.write("\midrule\n")
+    table_lb.write("& {$\chi_\LB$} & {$\widehat{s_\LB}$} & {$\chi_\LB$} & {$\widehat{s_\LB}$} & {$\chi_\LB$} & {$\widehat{s_\LB}$} & {$\chi_\LB$} & {$\widehat{s_\LB}$} & {$\chi_\LB$} & {$\widehat{s_\LB}$} & {$\chi_\LB$} & {$\widehat{s_\LB}$} \\\\\n")
+    table_lb.write("\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9} \cmidrule(lr){10-11} \cmidrule(l){12-13}\n")
+    table_lb.write("\multicolumn{13}{@{}l}{\emph{instantiations of the paradigm \LSAPEGED}} \\\\\n")
+    for method_name in lsape_based_method_names:
+        if not computes_no_lb(method_name):
+            table_lb.write("\\" + method_name)
+            for dataset in datasets:
+                if aggregated_scores[dataset].scores_lb[method_name]> 0:
+                    table_lb.write(" & " + aggregated_scores[dataset].chi_lb(method_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_lb[method_name])))
+                else:
+                    table_lb.write(" & " + aggregated_scores[dataset].chi_lb(method_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_lb[method_name])))
+            table_lb.write(" \\\\\n")
+    table_lb.write("\midrule\n")
+    table_lb.write("\multicolumn{13}{@{}l}{\emph{instantiations of the paradigm \LPGED}} \\\\\n")
+    for method_name in lp_based_method_names:
+        table_lb.write("\\" + method_name)
+        for dataset in datasets:
+            if aggregated_scores[dataset].scores_lb[method_name]> 0:
+                table_lb.write(" & " + aggregated_scores[dataset].chi_lb(method_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_lb[method_name])))
+            else:
+                table_lb.write(" & " + aggregated_scores[dataset].chi_lb(method_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_lb[method_name])))
+        table_lb.write(" \\\\\n")
+    table_lb.write("\midrule\n")
+    table_lb.write("\multicolumn{13}{@{}l}{\emph{miscellaneous heuristics}} \\\\\n")
+    for method_name in misc_method_names:
+        if not computes_no_lb(method_name):
+            table_lb.write("\\" + method_name)
+            for dataset in datasets:
+                if aggregated_scores[dataset].scores_lb[method_name]> 0:
+                    table_lb.write(" & " + aggregated_scores[dataset].chi_lb(method_name) + " & \\bfseries " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_lb[method_name])))
+                else:
+                    table_lb.write(" & " + aggregated_scores[dataset].chi_lb(method_name) + " & " + "{0:.2f}".format(Decimal(aggregated_scores[dataset].scores_lb[method_name])))
+            table_lb.write(" \\\\\n")
+    table_lb.write("\\bottomrule\n")
+    table_lb.write("\end{tabular}\n")
+    table_lb.close()
+    
+def create_pareto_data(args, dataset, methods, consider_lb, method_names):
+    selected_method_names = [method_name for method_name in method_names if not computes_no_ub(method_name)]
+    infix = "UB"
+    bound_column_name = "avg_ub"
+    runtime_column_name = "avg_runtime"
+    if consider_lb:
+        selected_method_names = [method_name for method_name in method_names if not computes_no_lb(method_name)]
+        infix = "LB"
+        bound_column_name = "avg_lb"
+    max_score_methods = {method_name : None for method_name in selected_method_names}
     for method in methods:
-        method_names.add(method.name)
-        method_ext_names.add(method.name)
-    method_ext_names.add("MULTISOL")
-    method_ext_names.add("CENTRALITIES")
-    method_ext_names.add("MULTISTART")
-    method_ext_names.add("RANDPOST")
+        if not method.discard():
+            if max_score_methods[method.name] is None:
+                max_score_methods[method.name] = method
+            elif method.score() > max_score_methods[method.name].score():
+                max_score_methods[method.name] = method
+    pareto_data_file_name = os.path.join(args.data_dir, dataset + "_Pareto_" + infix + ".csv")
+    pareto_data_file = open(pareto_data_file_name, "w")
+    for method_name in max_score_methods:
+        pareto_data_file.write(method_name + "_" + runtime_column_name + "," + method_name + "_" + bound_column_name + ",")
+    pareto_data_file.write("\n")
+    for method_name in max_score_methods:
+        pareto_data_file.write(str(max_score_methods[method_name].t) + "," + str(max_score_methods[method_name].dist()) + ",")
+    pareto_data_file.write("\n")
+    pareto_data_file.close()
+        
+
+def create_barplots(args, datasets, aggregated_scores, method_names, lsape_ext_names, ls_ext_names):
+    lb_method_names = [method_name for method_name in method_names if not computes_no_lb(method_name)]
+    ub_method_names = [method_name for method_name in method_names if not computes_no_ub(method_name)]
+    # sum scores and chi for lower bounds
+    scores_lb = {method_name : 0 for method_name in lb_method_names}
+    has_tightest_lb = {method_name : 0 for method_name in lb_method_names}
+    is_fastest_lb = {method_name : 0 for method_name in lb_method_names}
+    has_best_coeff_lb = {method_name : 0 for method_name in lb_method_names}
+    for method_name in lb_method_names:
+        for dataset in datasets:
+            scores_lb[method_name] = scores_lb[method_name] + aggregated_scores[dataset].scores_lb[method_name]
+            if aggregated_scores[dataset].has_tightest_lb[method_name]:
+                has_tightest_lb[method_name] = has_tightest_lb[method_name] + 1
+            if aggregated_scores[dataset].is_fastest_lb[method_name]:
+                is_fastest_lb[method_name] = is_fastest_lb[method_name] + 1 
+            if aggregated_scores[dataset].has_best_coeff_lb[method_name]:
+                has_best_coeff_lb[method_name] = has_best_coeff_lb[method_name] + 1
+    scores_lb = [(k, v / 6.0) for k, v in sorted(scores_lb.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_tightest_lb = [(k, v) for k, v in sorted(has_tightest_lb.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    is_fastest_lb = [(k, v) for k, v in sorted(is_fastest_lb.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_best_coeff_lb = [(k, v) for k, v in sorted(has_best_coeff_lb.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    # sum scores and chi for upper bounds of heuristics
+    scores_ub = {method_name : 0 for method_name in ub_method_names}
+    has_tightest_ub = {method_name : 0 for method_name in ub_method_names}
+    is_fastest_ub = {method_name : 0 for method_name in ub_method_names}
+    has_best_coeff_ub = {method_name : 0 for method_name in ub_method_names}
+    for method_name in ub_method_names:
+        for dataset in datasets:
+            scores_ub[method_name] = scores_ub[method_name] + aggregated_scores[dataset].scores_ub[method_name]
+            if aggregated_scores[dataset].has_tightest_ub[method_name]:
+                has_tightest_ub[method_name] = has_tightest_ub[method_name] + 1
+            if aggregated_scores[dataset].is_fastest_ub[method_name]:
+                is_fastest_ub[method_name] = is_fastest_ub[method_name] + 1 
+            if aggregated_scores[dataset].has_best_coeff_ub[method_name]:
+                has_best_coeff_ub[method_name] = has_best_coeff_ub[method_name] + 1
+    scores_ub = [(k, v / 6.0) for k, v in sorted(scores_ub.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_tightest_ub = [(k, v) for k, v in sorted(has_tightest_ub.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    is_fastest_ub = [(k, v) for k, v in sorted(is_fastest_ub.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_best_coeff_ub = [(k, v) for k, v in sorted(has_best_coeff_ub.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    # sum scores and chi for upper bounds of LSAPE extensions
+    scores_ub_lsape_ext = {method_name : 0 for method_name in lsape_ext_names}
+    has_tightest_ub_lsape_ext = {method_name : 0 for method_name in lsape_ext_names}
+    has_best_coeff_ub_lsape_ext = {method_name : 0 for method_name in lsape_ext_names}
+    for ext_name in lsape_ext_names:
+        for dataset in datasets:
+            scores_ub_lsape_ext[ext_name] = scores_ub_lsape_ext[ext_name] + aggregated_scores[dataset].scores_ub[ext_name]
+            if aggregated_scores[dataset].has_tightest_ub[ext_name]:
+                has_tightest_ub_lsape_ext[ext_name] = has_tightest_ub_lsape_ext[ext_name] + 1
+            if aggregated_scores[dataset].has_best_coeff_ub[ext_name]:
+                has_best_coeff_ub_lsape_ext[ext_name] = has_best_coeff_ub_lsape_ext[ext_name] + 1
+    scores_ub_lsape_ext = [(k, v / 6.0) for k, v in sorted(scores_ub_lsape_ext.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_tightest_ub_lsape_ext = [(k, v) for k, v in sorted(has_tightest_ub_lsape_ext.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_best_coeff_ub_lsape_ext = [(k, v) for k, v in sorted(has_best_coeff_ub_lsape_ext.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    # sum scores and chi for upper bounds of LS extensions
+    scores_ub_ls_ext = {method_name : 0 for method_name in ls_ext_names}
+    has_tightest_ub_ls_ext = {method_name : 0 for method_name in ls_ext_names}
+    has_best_coeff_ub_ls_ext = {method_name : 0 for method_name in ls_ext_names}
+    for ext_name in ls_ext_names:
+        for dataset in datasets:
+            scores_ub_ls_ext[ext_name] = scores_ub_ls_ext[ext_name] + aggregated_scores[dataset].scores_ub[ext_name]
+            if aggregated_scores[dataset].has_tightest_ub[ext_name]:
+                has_tightest_ub_ls_ext[ext_name] = has_tightest_ub_ls_ext[ext_name] + 1
+            if aggregated_scores[dataset].has_best_coeff_ub[ext_name]:
+                has_best_coeff_ub_ls_ext[ext_name] = has_best_coeff_ub_ls_ext[ext_name] + 1
+    scores_ub_ls_ext = [(k, v / 6.0) for k, v in sorted(scores_ub_ls_ext.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_tightest_ub_ls_ext = [(k, v) for k, v in sorted(has_tightest_ub_ls_ext.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    has_best_coeff_ub_ls_ext = [(k, v) for k, v in sorted(has_best_coeff_ub_ls_ext.items(), key=lambda kv: kv[1], reverse=True) if v > 0]
+    barplot_file_name = os.path.join(args.tikz_dir, "scores_LB.tex")
+    write_barplot(barplot_file_name, "$\myavg_\mathcal{D}\widehat{s_\LB}$", 1.1, 1, scores_lb)
+    barplot_file_name = os.path.join(args.tikz_dir, "has_tightest_LB.tex")
+    write_barplot(barplot_file_name, "$(\sum_\mathcal{D}{\chi_\LB})_1$", 6.6, 0.5, has_tightest_lb)
+    barplot_file_name = os.path.join(args.tikz_dir, "is_fastest_LB.tex")
+    write_barplot(barplot_file_name, "$(\sum_\mathcal{D}{\chi_\LB})_2$", 6.6, 0.5, is_fastest_lb)
+    barplot_file_name = os.path.join(args.tikz_dir, "has_best_coeff_LB.tex")
+    write_barplot(barplot_file_name, "$(\sum_\mathcal{D}{\chi_\LB})_3$", 6.6, 1, has_best_coeff_lb)
+    barplot_file_name = os.path.join(args.tikz_dir, "scores_UB.tex")
+    write_barplot(barplot_file_name, "$\myavg_\mathcal{D}\widehat{s_\UB}$", 1.1, 1, scores_ub, scores_ub_lsape_ext, scores_ub_ls_ext)
+    barplot_file_name = os.path.join(args.tikz_dir, "has_tightest_UB.tex")
+    write_barplot(barplot_file_name, "$(\sum_\mathcal{D}{\chi_\UB})_1$", 6.6, 0.5, has_tightest_ub, has_tightest_ub_lsape_ext, has_tightest_ub_ls_ext)
+    barplot_file_name = os.path.join(args.tikz_dir, "is_fastest_UB.tex")
+    write_barplot(barplot_file_name, "$(\sum_\mathcal{D}{\chi_\UB})_2$", 6.6, 0.5, is_fastest_ub)
+    barplot_file_name = os.path.join(args.tikz_dir, "has_best_coeff_UB.tex")
+    write_barplot(barplot_file_name, "$(\sum_\mathcal{D}{\chi_\UB})_3$", 6.6, 1, has_best_coeff_ub, has_best_coeff_ub_lsape_ext, has_best_coeff_ub_ls_ext)
+    
+
+def write_barplot(barplot_file_name, ylabel, ymax, width, method_bars, lsape_ext_bars = [], ls_ext_bars = []):
+    num_bars = len(method_bars + lsape_ext_bars + ls_ext_bars)
+    xtick = ",".join(str(i * 0.5) for i in range(1, num_bars + 1))
+    xticklabels = ",".join("\\" + kv[0] for kv in (method_bars + lsape_ext_bars + ls_ext_bars))
+    barplot_file = open(barplot_file_name, "w")
+    barplot_file.write("%!TEX root = ../root.tex\n")
+    barplot_file.write("\\begin{tikzpicture}\n")
+    barplot_file.write("\\begin{axis}[\n")
+    barplot_file.write("height = 0.4\linewidth,\n")
+    barplot_file.write("width = " + str(width) + "\linewidth,\n")
+    barplot_file.write("xmin = 0,\n")
+    barplot_file.write("xmax = " + str(0.5*(num_bars+1)) + ",\n")
+    barplot_file.write("ymin = 0,\n")
+    barplot_file.write("ymax = " + str(ymax) + ",\n")
+    barplot_file.write("xtick = {" + xtick + "},\n")
+    barplot_file.write("xticklabels = {" + xticklabels + "},\n")
+    barplot_file.write("xticklabel style={rotate=67.5, anchor=east},\n")
+    barplot_file.write("ylabel = " + ylabel + ",\n")
+    barplot_file.write("every axis plot/.append style={ybar,bar width=.2, bar shift=0pt}]\n")
+    xcoord = .5
+    for kv in method_bars:
+        barplot_file.write("\\addplot[" + kv[0] + "] coordinates {(" + str(xcoord) + "," + str(kv[1]) + ")};\n")
+        xcoord = xcoord + .5
+    if len(lsape_ext_bars) > 0:
+        barplot_file.write("\draw[densely dotted] ({axis cs:" + str(xcoord - .25) + ",0}|-{rel axis cs:0,1}) -- ({axis cs:" + str(xcoord - .25) + ",0}|-{rel axis cs:0,0});\n")
+    for kv in lsape_ext_bars:
+        barplot_file.write("\\addplot[" + kv[0] + "] coordinates {(" + str(xcoord) + "," + str(kv[1]) + ")};\n")
+        xcoord = xcoord + .5
+    if len(ls_ext_bars) > 0:
+        barplot_file.write("\draw[densely dotted] ({axis cs:" + str(xcoord - .25) + ",0}|-{rel axis cs:0,1}) -- ({axis cs:" + str(xcoord - .25) + ",0}|-{rel axis cs:0,0});\n")
+    for kv in ls_ext_bars:
+        barplot_file.write("\\addplot[" + kv[0] + "] coordinates {(" + str(xcoord) + "," + str(kv[1]) + ")};\n")
+        xcoord = xcoord + .5
+    barplot_file.write("\end{axis}\n")
+    barplot_file.write("\end{tikzpicture}")
+    barplot_file.close()
+    
+
+                
+def aggregate_scores(methods, method_names, method_ext_names):
     scores_lb = {method_name : 0.0 for method_name in method_names}
     scores_ub = {method_name : 0.0 for method_name in method_ext_names}
     has_tightest_lb = {method_name : False for method_name in method_names}
@@ -680,8 +934,8 @@ def aggregate_scores(methods):
     return AggregatedScores(method_names, scores_lb, scores_ub, has_tightest_lb, is_fastest_lb, has_best_coeff_lb, has_tightest_ub, is_fastest_ub, has_best_coeff_ub)
                 
 
-def create_table(args, methods, consider_lb):
-    table_file_name = os.path.join(args.table_dir, args.dataset) + infix(args)
+def create_coeff_vs_dist_table(args, dataset, methods, consider_lb):
+    table_file_name = os.path.join(args.data_dir, dataset) + infix(args)
     if consider_lb:
         table_file_name = table_file_name + "_LB.csv"
     else:
@@ -694,15 +948,15 @@ def create_table(args, methods, consider_lb):
     for method in methods:
         if consider_lb:
             if not computes_no_lb(method.name, method.config):
-                table_file.write(str(method.lb) + "," + str(method.precise_coeff_lb) + "\n")
+                table_file.write(str(method.lb) + "," + str(method.coeff_lb) + "\n")
         else:
             if not computes_no_ub(method.name):
-                table_file.write(str(method.ub) + "," + str(method.precise_coeff_ub) + "\n")
+                table_file.write(str(method.ub) + "," + str(method.coeff_ub) + "\n")
     table_file.close()
     
 
-def create_tikz_file(args, methods, consider_lb):
-    tikz_file_name = os.path.join(args.tikz_dir, args.dataset) + infix(args)
+def create_tikz_graph(args, dataset, methods, consider_lb):
+    tikz_file_name = os.path.join(args.tikz_dir, dataset) + infix(args)
     if consider_lb:
         tikz_file_name = tikz_file_name + "_LB.tex"
     else:
@@ -716,7 +970,7 @@ def create_tikz_file(args, methods, consider_lb):
     tikz_file.write("part distance=5pt,\n")
     tikz_file.write("component distance=5pt,\n")
     tikz_file.write("sibling sep=5pt,\n")
-    tikz_file.write("level sep=15pt,\n")
+    tikz_file.write("level sep=12pt,\n")
     tikz_file.write("part sep=5pt,\n")
     tikz_file.write("component sep=5pt,\n")
     tikz_file.write("component direction=up,\n")
@@ -744,19 +998,32 @@ def create_tikz_file(args, methods, consider_lb):
     
     
 parser = argparse.ArgumentParser(description="Generates TikZ dominance graph from CSV file.")
-parser.add_argument("dataset", help="name of dataset")
 parser.add_argument("tikz_dir", help="name of output directory for TikZ files")
-parser.add_argument("table_dir", help="name of output directory for table")
+parser.add_argument("table_dir", help="name of output directory for LaTeX tables")
+parser.add_argument("data_dir", help="name of output directory for csv tables")
 parser.add_argument("--no_lsape", help="do not consider LSAPE based methods", action="store_true")
 parser.add_argument("--no_ls", help="do not consider local search based methods", action="store_true")
 parser.add_argument("--no_lp", help="do not consider LP based methods", action="store_true")
 parser.add_argument("---no_misc", help="do not consider miscellaneous methods", action="store_true")
 
 args = parser.parse_args()
-methods = read_results_from_csv_files(args)
-for consider_lb in [True, False]:
-    methods = build_dependency_graph(methods, consider_lb)
-    create_tikz_file(args, methods, consider_lb)
-    create_table(args, methods, consider_lb)
-aggregated_scores = aggregate_scores(methods)
-aggregated_scores.write_to_csv_file(args)
+datasets = ["Letter_HIGH", "Mutagenicity", "AIDS", "Protein", "Fingerprint", "GREC"]
+aggregated_scores = {}
+lsape_based_method_names = ["NODE", "BP", "BRANCH", "BRANCHFAST", "BRANCHUNI", "STAR", "SUBGRAPH", "WALKS", "RINGOPT", "RINGMS", "RINGMLSVM", "RINGMLDNN", "PREDICTSVM", "PREDICTDNN"]
+lp_based_method_names = ["FONE", "FTWO", "COMPACTMIP", "JUSTICEIP"]
+ls_based_method_names = ["REFINE", "KREFINE", "BPBEAM", "IBPBEAM", "IPFP"]
+misc_method_names = ["HED", "BRANCHTIGHT", "SA", "BRANCHCOMPACT", "PARTITION", "HYBRID"]
+lsape_ext_names = ["MULTISOL", "CENTRALITIES"]
+ls_ext_names = ["MULTISTART", "RANDPOST"]
+method_names = lsape_based_method_names + lp_based_method_names + ls_based_method_names + misc_method_names
+method_ext_names = method_names + lsape_ext_names + ls_ext_names
+for dataset in datasets:
+    methods = read_results_from_csv_files(dataset, args)
+    for consider_lb in [True, False]:
+        methods = build_dependency_graph(methods, consider_lb)
+        create_pareto_data(args, dataset, methods, consider_lb, method_names)
+        create_tikz_graph(args, dataset, methods, consider_lb)
+        create_coeff_vs_dist_table(args, dataset, methods, consider_lb)
+    aggregated_scores[dataset] = aggregate_scores(methods, method_names, method_ext_names)
+create_latex_tables(args, datasets, aggregated_scores, lsape_based_method_names, lp_based_method_names, ls_based_method_names, misc_method_names, lsape_ext_names, ls_ext_names)
+create_barplots(args, datasets, aggregated_scores, method_names, lsape_ext_names, ls_ext_names)

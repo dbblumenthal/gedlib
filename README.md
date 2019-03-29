@@ -105,6 +105,18 @@ For building an application that uses GEDLIB as a header-only library, it suffic
 
 If you want to build an application that uses GEDLIB as a shared for graphs given as GXL files, make sure that you have installed GEDLIB with the option `--lib gxl`. Subsequently, carry out the folowing steps:
 
+- Add the following directories to your include directories:
+    - `<GEDLIB_ROOT>`
+    - `<BOOST_ROOT>`
+    - `<GEDLIB_ROOT>/ext/eigen.3.3.4/Eigen`
+    - `<GEDLIB_ROOT>/ext/nomad.3.8.1/src`
+    - `<GEDLIB_ROOT>/ext/nomad.3.8.1/ext/sgtelib/src`
+    - `<GEDLIB_ROOT>/ext/lsape.5/include`
+    - `<GEDLIB_ROOT>/ext/libsvm.3.22` 
+    - `<GEDLIB_ROOT>/ext/fann.2.2.0/include`
+    - If you want to install GEDLIB with Gurobi, additionally add the following include directory:
+        - Under MacOS: `<GUROBI_ROOT>/mac64/include`
+        - Under Linux: `<GUROBI_ROOT>/linux64/include`
 - Add the directory `<GEDLIB_ROOT>/lib` to your link directories.
 - Link your application against the shared library `libgxlgedlib.so`.
 

@@ -22,18 +22,22 @@
 #include "catch.hpp"
 
 #define GXL_GEDLIB_SHARED
+#define ENABLE_GRAPH_STREAMING
 #include "../../../src/env/ged_env.hpp"
 #include<string>
 
 TEST_CASE("testing on Letter graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
-	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/Mutagenicity_train.xml"));
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_10.xml"));
 	env.set_edit_costs(ged::Options::EditCosts::CHEM_2);
 
-	ged::GEDGraph::GraphID g {graph_ids[0]};
-	ged::GEDGraph::GraphID h {graph_ids[1]};
+	ged::GEDGraph::GraphID g {graph_ids[1]};
 	//env.init();
 	env.init(ged::Options::InitType::EAGER_WITH_SHUFFLED_COPIES);
+	std::vector<ged::GEDGraph::GraphID> graph_ids_2(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_20.xml"));
+	env.init(ged::Options::InitType::EAGER_WITH_SHUFFLED_COPIES);
+	ged::GEDGraph::GraphID h {graph_ids[0]};
+	std::cout << env.get_graph(g);
 	double lower_bound{0.0};
 	double exact{0.0};
 	double upper_bound;
@@ -64,8 +68,8 @@ TEST_CASE("testing on Letter graphs") {
 			upper_bound = 0;
 			runtime = 0;
 			progress.reset();
-			for (ged::GEDGraph::GraphID g : graph_ids) {
-				for (ged::GEDGraph::GraphID h : graph_ids) {
+			for (ged::GEDGraph::GraphID g : graph_ids_2) {
+				for (ged::GEDGraph::GraphID h : graph_ids_2) {
 					env.run_method(g, h);
 					upper_bound += env.get_upper_bound(g, h);
 					runtime += env.get_runtime(g, h);

@@ -34,19 +34,22 @@ GEDGraph ::
 GEDGraph():
 alist_{},
 amatrix_(1),
-id_(undefined()){}
+id_(undefined()),
+initialized_{false} {}
 
 GEDGraph ::
 GEDGraph(GEDGraph::GraphID id):
 alist_{},
 amatrix_(1),
-id_{id}{}
+id_{id},
+initialized_{false} {}
 
 GEDGraph ::
 GEDGraph(const GEDGraph & ged_graph):
 alist_(ged_graph.alist_),
 amatrix_(ged_graph.amatrix_),
-id_{ged_graph.id_} {}
+id_{ged_graph.id_},
+initialized_{ged_graph.initialized_} {}
 
 GEDGraph :: NodeID
 GEDGraph ::
@@ -69,50 +72,62 @@ dummy_edge() {
 GEDGraph :: NodeID
 GEDGraph ::
 add_node() {
+	if (initialized_) {
+		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
+	}
 	NodeID new_node{boost::add_vertex(alist_)};
 	if (new_node >= dummy_node()) {
 		throw Error("Cannot add node. Maximal number of nodes reached.");
 	}
+	alist_[new_node].label = invalid_label();
 	return new_node;
 }
 
 GEDGraph :: EdgeID
 GEDGraph ::
 add_edge(NodeID tail, NodeID head) {
+	if (initialized_) {
+		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
+	}
 	auto alist_ed = boost::add_edge(tail, head, alist_);
+	alist_[alist_ed.first].label = invalid_label();
 	return alist_ed.first;
 }
 
 void
 GEDGraph ::
 setup_adjacency_matrix() {
-	detail::GedGraphAM tmp( num_nodes() );
-
+	detail::GedGraphAM tmp(num_nodes());
 	for (auto eitr = boost::edges(alist_); eitr.first != eitr.second; ++eitr.first) {
-		EdgeID e{ *eitr.first };
-		NodeID source { boost::source(e, alist_)};
-		NodeID target { boost::target(e, alist_)};
+		EdgeID e{*eitr.first};
+		NodeID source {boost::source(e, alist_)};
+		NodeID target {boost::target(e, alist_)};
 
 		auto am_edge = boost::add_edge(source, target, tmp);
 		if (am_edge.second == false) {
 			throw Error("Parallel edge detected!");
 		}
-
 		tmp[am_edge.first].cref = e;
 	}
-
 	std::swap(tmp, amatrix_);
+	initialized_ = true;
 }
 
 void
 GEDGraph ::
 set_label(NodeID v, LabelID l_id) {
+	if (initialized_) {
+		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
+	}
 	alist_[v].label = l_id;
 }
 
 void
 GEDGraph ::
 set_label(EdgeID e, LabelID l_id) {
+	if (initialized_) {
+		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
+	}
 	alist_[e].label = l_id;
 }
 
@@ -180,6 +195,15 @@ id() const {
 	return id_;
 }
 
+void
+GEDGraph::
+clear() {
+	initialized_ = false;
+	alist_.clear();
+	detail::GedGraphAM tmp(1);
+	std::swap(tmp, amatrix_);
+}
+
 GEDGraph :: NodeID
 GEDGraph ::
 head(EdgeID e) const {
@@ -208,6 +232,12 @@ std::size_t
 GEDGraph ::
 num_edges() const {
 	return static_cast<std::size_t>(boost::num_edges(alist_));
+}
+
+bool
+GEDGraph ::
+initialized() const {
+	return initialized_;
 }
 
 GEDGraph::EdgeID
@@ -253,7 +283,7 @@ safe_is_edge(NodeID source, NodeID target) const {
 }
 
 std::ostream & operator<<(std::ostream & os, const GEDGraph & graph) {
-	os << "number of nodes = " << graph.num_nodes() << ", number of edges = " << graph.num_edges();
+	os << "ID = " << graph.id() <<  ", number of nodes = " << graph.num_nodes() << ", number of edges = " << graph.num_edges();
 	os << "\nadjacency matrix:\n    ";
 	for (auto head = graph.nodes().first; head != graph.nodes().second; head++) {
 		os << "\033[1m" << std::setw(3) << std::right << graph.get_node_label(*head) << "\033[0m" << " ";
@@ -262,11 +292,16 @@ std::ostream & operator<<(std::ostream & os, const GEDGraph & graph) {
 	for (auto tail = graph.nodes().first; tail != graph.nodes().second; tail++) {
 		os << "\033[1m" << std::setw(3) << std::right << graph.get_node_label(*tail) << "\033[0m" << " ";
 		for (auto head = graph.nodes().first; head != graph.nodes().second; head++) {
-			if (graph.safe_is_edge(*tail, *head)) {
-				os << "\033[1m" << std::setw(3) << std::right << graph.get_edge_label(graph.safe_get_edge(*tail, *head)) << "\033[0m" << " ";
+			if (graph.initialized()) {
+				os << "\033[1m" << std::setw(3) << std::right << graph.get_edge_label(*tail, *head) << "\033[0m" << " ";
 			}
 			else {
-				os << std::setw(3) << std::right << 0 << " ";
+				if (graph.safe_is_edge(*tail, *head)) {
+					os << "\033[1m" << std::setw(3) << std::right << graph.get_edge_label(graph.safe_get_edge(*tail, *head)) << "\033[0m" << " ";
+				}
+				else {
+					os << std::setw(3) << std::right << 0 << " ";
+				}
 			}
 		}
 		os << "\n";

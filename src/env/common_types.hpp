@@ -97,6 +97,22 @@ typedef std::chrono::duration<double> Seconds;
 typedef std::map<std::string, std::string> GXLLabel;
 
 /*!
+ * @brief Streams std::map.
+ * @param[in] os Output stream
+ * @param[in] map Map that should be streamed.
+ * @return Output stream.
+ */
+template<class Key, class Value>
+std::ostream & operator<<(std::ostream & os, const std::map<Key, Value> & map) {
+	os << "{ ";
+	for (const auto & key_val : map) {
+		os << "(" << key_val.first << "," << key_val.second << ") ";
+	}
+	os << "}";
+	return os;
+}
+
+/*!
  * @brief Type of node IDs of graphs given in the .gxl file format.
  */
 typedef std::string GXLNodeID;
@@ -153,7 +169,7 @@ struct Options {
 		F2,                  //!< Selects ged::F2.
 		COMPACT_MIP,         //!< Selects ged::CompactMIP.
 		BLP_NO_EDGE_LABELS,  //!< Selects ged::BLPNoEdgeLabels.
-#endif
+#endif /* GUROBI */
 		BRANCH,              //!< Selects ged::Branch.
 		BRANCH_FAST,         //!< Selects ged::BranchFast.
 		BRANCH_TIGHT,        //!< Selects ged::BranchTight.
@@ -218,6 +234,12 @@ struct Options {
 
 };
 
+/*!
+ * @brief Streams Options::GEDMethod object.
+ * @param[in] os Output stream.
+ * @param[in] ged_method Method selector.
+ * @return Output stream.
+ */
 std::ostream & operator<<(std::ostream & os, const Options::GEDMethod & ged_method) {
 	switch (ged_method) {
 	case Options::GEDMethod::BRANCH:
@@ -300,6 +322,66 @@ std::ostream & operator<<(std::ostream & os, const Options::GEDMethod & ged_meth
 	}
 	return os;
 }
+
+/*!
+ * @brief Simple graph class used for communication with user.
+ * @tparam UserNodeID Class of user-specific node IDs.
+ * @tparam UserNodeLabel Class of user-specific node labels. If nodes are unlabeled, use ged::NoLabel or define your own dummy label class.
+ * @tparam UserEdgeLabel Class of user-specific edge labels. If edges are unlabeled, use ged::NoLabel or define your own dummy label class.
+ */
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel> struct ExchangeGraph {
+
+	std::size_t id;                                                                   //!< Internal ID of the graph.
+
+	std::size_t num_nodes;                                                            //!< The number of nodes. Nodes have IDs between @p 0 and <tt>num_nodes - 1</tt>.
+
+	std::size_t num_edges;                                                            //!< The number of edges.
+
+	std::vector<UserNodeID> original_node_ids;                                        //!< The original IDs of all nodes.
+
+	std::vector<UserNodeLabel> node_labels;                                           //!< The labels of all nodes.
+
+	std::vector<std::pair<std::pair<std::size_t, std::size_t>, UserEdgeLabel>> edges; //!< List of all edges in the form <tt>((tail, head), label)</tt>.
+
+	std::vector<std::list<std::size_t>> adj_list;                                     //!< Adjacency lists that, for each node, contain the positions of its incident edges within the field @p edges.
+};
+
+#ifdef ENABLE_GRAPH_STREAMING
+/*!
+ * @brief Streams ged::ExchangeGraph object in GML format.
+ * @tparam UserNodeID Class of user-specific node IDs.
+ * @tparam UserNodeLabel Class of user-specific node labels. If nodes are unlabeled, use ged::NoLabel or define your own dummy label class.
+ * @tparam UserEdgeLabel Class of user-specific edge labels. If edges are unlabeled, use ged::NoLabel or define your own dummy label class.
+ * @param os Output stream.
+ * @param[in] graph The graph that should be streamed.
+ * @return Output stream.
+ * @note Define @p ENABLE_GRAPH_STREAMING to compile this function. Requires the <tt>operator\<\<<\tt> to be implemented for the classes UserNodeID, UserNodeLabel, and UserEdgeLabel.
+ */
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+std::ostream & operator<<(std::ostream & os, const ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & graph) {
+	os << "graph [\n";
+	os << "\tid = " << graph.id << "\n";
+	os << "\tdirected = 0\n";
+	os << "\tnum_nodes = " << graph.num_nodes << "\n";
+	os << "\tnum_edges = " << graph.num_edges << "\n";
+	for (std::size_t node_id{0}; node_id < graph.num_nodes; node_id++) {
+		os << "\tnode [\n";
+		os << "\t\tinternal_id = " << node_id << "\n";
+		os << "\t\toriginal_id = \"" << graph.original_node_ids.at(node_id) << "\"\n";
+		os << "\t\tlabel = \"" << graph.node_labels.at(node_id) << "\"\n";
+		os << "\t]\n";
+	}
+	for (const auto & edge : graph.edges) {
+		os << "\tedge [\n";
+		os << "\t\tinternal_id_tail = " << edge.first.first << "\n";
+		os << "\t\tinternal_id_head = " << edge.first.second << "\n";
+		os << "\t\tlabel = \"" << edge.second << "\"\n";
+		os << "\t]\n";
+	}
+	os << "]\n";
+	return os;
+}
+#endif /* ENABLE_GRAPH_STREAMING */
 
 }
 

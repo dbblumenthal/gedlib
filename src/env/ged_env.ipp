@@ -39,6 +39,7 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 GEDEnv():
 initialized_{false},
+new_graph_ids_(),
 ged_data_(),
 lower_bounds_(),
 upper_bounds_(),
@@ -66,18 +67,28 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 GEDGraph::GraphID
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 add_graph(const std::string & name, const std::string & graph_class) {
-	if (initialized_) {
-		throw Error("The environment is has already been initialized. Don't call add_graph() after calling init().");
-	}
-	GEDGraph::GraphID graph_id{ged_data_.num_graphs()};
-	ged_data_.graphs_.emplace_back(graph_id);
-	ged_data_.graph_names_.push_back(name);
-	ged_data_.graph_classes_.push_back(graph_class);
-	original_to_internal_node_ids_.push_back(std::map<UserNodeID, GEDGraph::NodeID>());
-	ged_data_.original_to_internal_node_ids_.push_back(std::map<std::string, GEDGraph::NodeID>());
-	internal_to_original_node_ids_.push_back(std::map<GEDGraph::NodeID, UserNodeID>());
-	ged_data_.internal_to_original_node_ids_.push_back(std::map<GEDGraph::NodeID, std::string>());
+	initialized_ = false;
+	GEDGraph::GraphID graph_id{ged_data_.num_graphs_without_shuffled_copies_++};
+	new_graph_ids_.push_back(graph_id);
+	ged_data_.graphs_.emplace(ged_data_.graphs_.begin() + graph_id, graph_id);
+	ged_data_.graph_names_.insert(ged_data_.graph_names_.begin() + graph_id, name);
+	ged_data_.graph_classes_.insert(ged_data_.graph_classes_.begin() + graph_id, graph_class);
+	original_to_internal_node_ids_.insert(original_to_internal_node_ids_.begin() + graph_id, std::map<UserNodeID, GEDGraph::NodeID>());
+	ged_data_.strings_to_internal_node_ids_.insert(ged_data_.strings_to_internal_node_ids_.begin() + graph_id, std::map<std::string, GEDGraph::NodeID>());
+	internal_to_original_node_ids_.insert(internal_to_original_node_ids_.begin() + graph_id, std::map<GEDGraph::NodeID, UserNodeID>());
+	ged_data_.internal_node_ids_to_strings_.insert(ged_data_.internal_node_ids_to_strings_.begin() + graph_id, std::map<GEDGraph::NodeID, std::string>());
 	return graph_id;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+clear_graph(GEDGraph::GraphID graph_id) {
+	if (graph_id >= ged_data_.num_graphs_without_shuffled_copies()) {
+		throw Error("The graph " + get_graph_name(graph_id) + " has not been added to the environment.");
+	}
+	ged_data_.graphs_[graph_id].clear();
+	initialized_ = false;
 }
 
 template<>
@@ -292,20 +303,17 @@ void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 add_node(GEDGraph::GraphID graph_id, const UserNodeID & node_id, const UserNodeLabel & node_label) {
 	if (graph_id >= ged_data_.num_graphs()) {
-		throw Error("The graph " + get_graph_name(graph_id) + " has not been added to the environment.");
-	}
-	if (initialized_) {
-		throw Error("The environment is has already been initialized. Don't call add_node() after calling init().");
+		throw Error("The graph " + get_graph_name(graph_id) + " with ID " + std::to_string(graph_id) + " has not been added to the environment. The environment contains " + std::to_string(ged_data_.num_graphs_without_shuffled_copies()) + " graphs.");
 	}
 	if (original_to_internal_node_ids_[graph_id].find(node_id) != original_to_internal_node_ids_[graph_id].end()) {
 		throw Error("The node " + to_string_(node_id) + " has already been added to the graph " + std::to_string(graph_id) + ": " + get_graph_name(graph_id) + ".");
 	}
-	LabelID label_id{ged_data_.node_label_to_id_(node_label)};
 	GEDGraph::NodeID internal_node_id{ged_data_.graphs_[graph_id].add_node()};
 	original_to_internal_node_ids_[graph_id][node_id] = internal_node_id;
 	internal_to_original_node_ids_[graph_id][internal_node_id] = node_id;
-	ged_data_.original_to_internal_node_ids_[graph_id][to_string_(node_id)] = internal_node_id;
-	ged_data_.internal_to_original_node_ids_[graph_id][internal_node_id] = to_string_(node_id);
+	ged_data_.strings_to_internal_node_ids_[graph_id][to_string_(node_id)] = internal_node_id;
+	ged_data_.internal_node_ids_to_strings_[graph_id][internal_node_id] = to_string_(node_id);
+	LabelID label_id{ged_data_.node_label_to_id_(node_label)};
 	ged_data_.graphs_[graph_id].set_label(original_to_internal_node_ids_[graph_id][node_id], label_id);
 }
 
@@ -314,10 +322,7 @@ void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 add_edge(GEDGraph::GraphID graph_id, const UserNodeID & from, const UserNodeID & to, const UserEdgeLabel & edge_label, bool ignore_duplicates) {
 	if (graph_id >= ged_data_.num_graphs()) {
-		throw Error("The graph " + get_graph_name(graph_id) + " has not been added to the environment.");
-	}
-	if (initialized_) {
-		throw Error("The environment is has already been initialized. Don't call add_edge() after calling init().");
+		throw Error("The graph " + get_graph_name(graph_id) + " with ID " + std::to_string(graph_id) + " has not been added to the environment. The environment contains " + std::to_string(ged_data_.num_graphs_without_shuffled_copies()) + " graphs.");
 	}
 	if (original_to_internal_node_ids_[graph_id].find(from) == original_to_internal_node_ids_[graph_id].end()) {
 		throw Error("The node " + to_string_(from) + " does not exist in the graph " + get_graph_name(graph_id) + ".");
@@ -331,8 +336,8 @@ add_edge(GEDGraph::GraphID graph_id, const UserNodeID & from, const UserNodeID &
 		}
 		throw Error("An edge between " + to_string_(from) + " and " + to_string_(to) + " has already been added to the graph " + get_graph_name(graph_id) + ".");
 	}
-	LabelID label_id{ged_data_.edge_label_to_id_(edge_label)};
 	GEDGraph::EdgeID edge_id{ged_data_.graphs_[graph_id].add_edge(original_to_internal_node_ids_[graph_id][from], original_to_internal_node_ids_[graph_id][to])};
+	LabelID label_id{ged_data_.edge_label_to_id_(edge_label)};
 	ged_data_.graphs_[graph_id].set_label(edge_id, label_id);
 }
 
@@ -439,7 +444,7 @@ run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id) {
 	if (not ged_method_) {
 		throw Error("No method has been set. Call set_method() before calling run().");
 	}
-	// call selected GEDApproximator and store results
+	// call selected GEDMethod and store results
 	if (ged_data_.shuffled_graph_copies_available() and (g_id == h_id)) {
 		ged_method_->run(g_id, ged_data_.id_shuffled_graph_copy(h_id));
 	}
@@ -538,6 +543,37 @@ get_graph_name(GEDGraph::GraphID graph_id) const {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_graph(GEDGraph::GraphID graph_id) const {
+	ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> exchange_graph;
+	const GEDGraph & graph{ged_data_.graphs_.at(graph_id)};
+	exchange_graph.id = graph.id();
+	exchange_graph.num_nodes = graph.num_nodes();
+	exchange_graph.num_edges = graph.num_edges();
+	std::size_t edge_id{0};
+	std::vector<std::vector<std::size_t>> edge_ref(exchange_graph.num_nodes, std::vector<std::size_t>(exchange_graph.num_nodes, 0));
+	for (auto eitr = graph.edges(); eitr.first != eitr.second; eitr.first++) {
+		GEDGraph::EdgeID edge(*eitr.first);
+		std::size_t tail(graph.tail(edge));
+		std::size_t head(graph.head(edge));
+		exchange_graph.edges.emplace_back(std::pair<std::size_t, std::size_t>(tail, head), ged_data_.edge_labels_.at(graph.get_edge_label(edge)));
+		edge_ref[tail][head] = edge_id;
+		edge_ref[head][tail] = edge_id;
+	}
+	for (GEDGraph::NodeID node_id{0}; node_id < exchange_graph.num_nodes; node_id++) {
+		exchange_graph.original_node_ids.emplace_back(internal_to_original_node_ids_.at(graph_id).at(node_id));
+		exchange_graph.node_labels.emplace_back(ged_data_.node_labels_.at(graph.get_node_label(node_id)));
+		exchange_graph.adj_list.emplace_back();
+		for (auto eitr = graph.incident_edges(node_id); eitr.first != eitr.second; eitr.first++) {
+			GEDGraph::EdgeID edge(*eitr.first);
+			exchange_graph.adj_list[node_id].emplace_back(edge_ref[node_id][graph.head(edge)]);
+		}
+	}
+	return exchange_graph;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_init_time() const {
@@ -555,30 +591,80 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 init(Options::InitType init_type) {
-	if (initialized_) {
-		throw Error("The environment is has already been initialized. Don't call init() twice.");
-	}
+
+	// Throw an exception if no edit costs have been selected.
 	if (not ged_data_.edit_costs_) {
 		throw Error("No edit costs have been selected. Call set_edit_costs() before calling init().");
 	}
+
+	// Return if the environment is initialized.
+	if (initialized_) {
+		return;
+	}
+
+	// Set initialization type.
 	ged_data_.init_type_ = init_type;
+
+	// Construct shuffled graph copies if necessary.
 	if (ged_data_.shuffled_graph_copies_available()) {
-		std::size_t num_graphs{ged_data_.num_graphs()};
-		for (std::size_t graph_id{0}; graph_id < num_graphs; graph_id++) {
+		for (auto graph_id : new_graph_ids_) {
 			construct_shuffled_graph_copy_(graph_id);
 		}
 	}
-	ged_data_.init_(init_type);
-	original_to_internal_node_ids_.clear();
-	internal_to_original_node_ids_.clear();
+
+	// Re-initialize adjacency matrices (also previously initialized graphs must be re-initialized because of possible re-allocation).
+	for (GEDGraph::GraphID graph_id{0}; graph_id < ged_data_.num_graphs(); graph_id++) {
+		ged_data_.graphs_[graph_id].setup_adjacency_matrix();
+	}
+
+	// Update maximal number of nodes and edges.
+	for (auto graph_id : new_graph_ids_) {
+		ged_data_.max_num_nodes_ = std::max(ged_data_.max_num_nodes_, ged_data_.graphs_.at(graph_id).num_nodes());
+		ged_data_.max_num_edges_ = std::max(ged_data_.max_num_edges_, ged_data_.graphs_.at(graph_id).num_edges());
+	}
+
+	// Initialize cost matrices if necessary.
+	if (ged_data_.eager_init_()) {
+		ged_data_.init_cost_matrices_();
+	}
+
+	// Mark environment as initialized.
 	initialized_ = true;
+	new_graph_ids_.clear();
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+GEDGraph::GraphID
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+add_or_clear_shuffled_graph_copy_(GEDGraph::GraphID graph_id) {
+	GEDGraph::GraphID copied_graph_id{ged_data_.id_shuffled_graph_copy(graph_id)};
+	if (copied_graph_id < ged_data_.num_graphs()) {
+		ged_data_.graphs_[copied_graph_id].clear();
+		original_to_internal_node_ids_[copied_graph_id].clear();
+		ged_data_.strings_to_internal_node_ids_[copied_graph_id].clear();
+		internal_to_original_node_ids_[copied_graph_id].clear();
+		ged_data_.internal_node_ids_to_strings_[copied_graph_id].clear();
+	}
+	else if (copied_graph_id == ged_data_.num_graphs()) {
+		ged_data_.graphs_.emplace_back(copied_graph_id);
+		ged_data_.graph_names_.push_back(get_graph_name(graph_id));
+		ged_data_.graph_classes_.push_back(get_graph_class(graph_id));
+		original_to_internal_node_ids_.push_back(std::map<UserNodeID, GEDGraph::NodeID>());
+		ged_data_.strings_to_internal_node_ids_.push_back(std::map<std::string, GEDGraph::NodeID>());
+		internal_to_original_node_ids_.push_back(std::map<GEDGraph::NodeID, UserNodeID>());
+		ged_data_.internal_node_ids_to_strings_.push_back(std::map<GEDGraph::NodeID, std::string>());
+	}
+	else {
+		throw Error("Unexpected copied graph ID " + std::to_string(copied_graph_id) + " for graph with ID " + std::to_string(graph_id) + ". Number of graphs in environment: " + std::to_string(ged_data_.num_graphs()) + ".");
+	}
+	return copied_graph_id;
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 construct_shuffled_graph_copy_(GEDGraph::GraphID graph_id) {
-	GEDGraph::GraphID copied_graph_id{add_graph(get_graph_name(graph_id), get_graph_class(graph_id))};
+	GEDGraph::GraphID copied_graph_id{add_or_clear_shuffled_graph_copy_(graph_id)};
 	const GEDGraph & graph{ged_data_.graph(graph_id)};
 	std::vector<std::pair<UserNodeID, UserNodeLabel>> nodes;
 	for (auto node = graph.nodes().first; node != graph.nodes().second; node++) {

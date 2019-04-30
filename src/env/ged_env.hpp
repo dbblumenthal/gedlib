@@ -73,12 +73,18 @@ public:
 	void set_edit_costs(EditCosts<UserNodeLabel, UserEdgeLabel> * edit_costs);
 
 	/*!
-	 * @brief Adds a new graph.
+	 * @brief Adds a new uninitialized graph to the environment. Call init() after calling this method.
 	 * @param[in] graph_name The name of the added graph. Empty if not specified.
 	 * @param[in] graph_class The class of the added graph. Empty if not specified.
 	 * @return The ID of the newly added graph.
 	 */
 	GEDGraph::GraphID add_graph(const std::string & graph_name = "", const std::string & graph_class = "");
+
+	/*!
+	 * @brief Clears and de-initializes a graph that has previously been added to the environment. Call init() after calling this method.
+	 * @param[in] graph_id ID of graph that has to be cleared.
+	 */
+	void clear_graph(GEDGraph::GraphID graph_id);
 
 	/*!
 	 * @brief Adds a labeled node.
@@ -185,6 +191,13 @@ public:
 	double get_init_time() const;
 
 	/*!
+	 * @brief Returns ged::ExchangeGraph representation.
+	 * @param graph_id ID of the selected graph.
+	 * @return ged::ExchangeGraph representation of the selected graph.
+	 */
+	ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> get_graph(GEDGraph::GraphID graph_id) const;
+
+	/*!
 	 * @brief Returns the graph class.
 	 * @param[in] graph_id ID of an input graph that has been added to the environment.
 	 * @return ID of the input graph.
@@ -207,6 +220,8 @@ public:
 private:
 
 	bool initialized_;
+
+	std::vector<GEDGraph::GraphID> new_graph_ids_;
 
 	GEDData<UserNodeLabel, UserEdgeLabel> ged_data_;
 
@@ -232,6 +247,8 @@ private:
 	void read_gxl_label_from_ptree_(const boost::property_tree::ptree::value_type & node_or_edge, const std::unordered_set<std::string> & irrelevant_attributes, const std::string & file, GXLLabel & label);
 
 	void construct_shuffled_graph_copy_(GEDGraph::GraphID graph_id);
+
+	GEDGraph::GraphID add_or_clear_shuffled_graph_copy_(GEDGraph::GraphID graph_id);
 
 	std::string to_string_(UserNodeID node_id);
 

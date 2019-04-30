@@ -147,6 +147,11 @@ public:
 	GraphID id() const;
 
 	/*!
+	 * @brief Clears the graph.
+	 */
+	void clear();
+
+	/*!
 	 * @brief Returns a dummy node.
 	 * @return ID of dummy node.
 	 */
@@ -298,6 +303,12 @@ public:
 	std::size_t num_edges() const;
 
 	/*!
+	 * @brief Check if graph has already been initialized.
+	 * @return Boolean @p true if the adjacency matrix is up to date, @p false otherwise.
+	 */
+	bool initialized() const;
+
+	/*!
 	 * \brief Returns the maximum degree of the graph.
 	 */
 	std::size_t maxdeg() const;
@@ -334,6 +345,8 @@ private:
 	detail::GedGraphAM amatrix_;
 
 	GraphID id_;
+
+	bool initialized_;
 };
 
 /*!

@@ -442,9 +442,11 @@ private:
 
 	std::vector<std::string> graph_classes_;
 
-	std::vector<std::map<std::string, GEDGraph::NodeID>> original_to_internal_node_ids_;
+	std::size_t num_graphs_without_shuffled_copies_;
 
-	std::vector<std::map<GEDGraph::NodeID, std::string>> internal_to_original_node_ids_;
+	std::vector<std::map<std::string, GEDGraph::NodeID>> strings_to_internal_node_ids_;
+
+	std::vector<std::map<GEDGraph::NodeID, std::string>> internal_node_ids_to_strings_;
 
 	EditCosts<UserNodeLabel, UserEdgeLabel> * edit_costs_;
 
@@ -469,8 +471,6 @@ private:
 	void set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_cost_constants);
 
 	void set_edit_costs_(EditCosts<UserNodeLabel, UserEdgeLabel> * edit_costs);
-
-	void init_(Options::InitType init_type);
 
 	void init_cost_matrices_();
 

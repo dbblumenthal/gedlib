@@ -35,8 +35,9 @@ GEDData() :
 graphs_(),
 graph_names_(),
 graph_classes_(),
-original_to_internal_node_ids_(),
-internal_to_original_node_ids_(),
+num_graphs_without_shuffled_copies_{0},
+strings_to_internal_node_ids_(),
+internal_node_ids_to_strings_(),
 edit_costs_{nullptr},
 node_costs_(),
 edge_costs_(),
@@ -200,24 +201,6 @@ set_edit_costs_(EditCosts<UserNodeLabel, UserEdgeLabel> * edit_costs) {
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
-void
-GEDData<UserNodeLabel, UserEdgeLabel>::
-init_(Options::InitType init_type) {
-
-	// Initialize adjacency matrices.
-	for (GEDGraph::GraphID graph_id{0}; graph_id < num_graphs(); graph_id++) {
-		graphs_[graph_id].setup_adjacency_matrix();
-		max_num_nodes_ = std::max(max_num_nodes_, graphs_.at(graph_id).num_nodes());
-		max_num_edges_ = std::max(max_num_edges_, graphs_.at(graph_id).num_edges());
-	}
-
-	// Set edit cost evaluation type and initialize cost matrices.
-	if (eager_init_()) {
-		init_cost_matrices_();
-	}
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
 LabelID
 GEDData<UserNodeLabel, UserEdgeLabel>::
 node_label_to_id_(const UserNodeLabel & node_label) {
@@ -274,40 +257,59 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 GEDData<UserNodeLabel, UserEdgeLabel>::
 init_cost_matrices_() {
-	node_costs_.resize(node_labels_.size() + 1, node_labels_.size() + 1);
-	node_costs_(dummy_label(), dummy_label()) = 0.0;
-	for (LabelID l_id = 1; l_id < node_labels_.size() + 1; l_id++) {
-		node_costs_(dummy_label(), l_id) = edit_costs_->node_ins_cost_fun(node_labels_.at(l_id - 1));
-		node_costs_(l_id, dummy_label()) = edit_costs_->node_del_cost_fun(node_labels_.at(l_id - 1));
-	}
-	for (LabelID l_id_lhs = 1; l_id_lhs < node_labels_.size() + 1; l_id_lhs++) {
-		for (LabelID l_id_rhs = 1; l_id_rhs < node_labels_.size() + 1; l_id_rhs++) {
-			if (l_id_lhs == l_id_rhs) {
-				node_costs_(l_id_lhs, l_id_rhs) = 0.0;
-			}
-			else {
-				node_costs_(l_id_lhs, l_id_rhs) = edit_costs_->node_rel_cost_fun(node_labels_.at(l_id_lhs - 1), node_labels_.at(l_id_rhs - 1));
+
+	// Update node cost matrix if new node labels have been added to the environment.
+	std::size_t size_old_node_costs = node_costs_.num_rows();
+	if (size_old_node_costs < node_labels_.size() + 1) {
+		DMatrix old_node_costs(node_costs_);
+		node_costs_.resize(node_labels_.size() + 1, node_labels_.size() + 1);
+		for (LabelID l_id_lhs = 0; l_id_lhs < node_labels_.size() + 1; l_id_lhs++) {
+			for (LabelID l_id_rhs = 0; l_id_rhs < node_labels_.size() + 1; l_id_rhs++) {
+				if (l_id_lhs < size_old_node_costs and l_id_rhs < size_old_node_costs) {
+					node_costs_(l_id_lhs, l_id_rhs) = old_node_costs(l_id_lhs, l_id_rhs);
+				}
+				else if (l_id_lhs == l_id_rhs) {
+					node_costs_(l_id_lhs, l_id_rhs) = 0.0;
+				}
+				else if (l_id_lhs == dummy_label()) {
+					node_costs_(l_id_lhs, l_id_rhs) = edit_costs_->node_ins_cost_fun(node_labels_.at(l_id_rhs - 1));
+				}
+				else if (l_id_rhs == dummy_label()) {
+					node_costs_(l_id_lhs, l_id_rhs) = edit_costs_->node_del_cost_fun(node_labels_.at(l_id_lhs - 1));
+				}
+				else {
+					node_costs_(l_id_lhs, l_id_rhs) = edit_costs_->node_rel_cost_fun(node_labels_.at(l_id_lhs - 1), node_labels_.at(l_id_rhs - 1));
+				}
 			}
 		}
 	}
 
-	// Initialize edge cost matrix
-	edge_costs_.resize(edge_labels_.size() + 1, edge_labels_.size() + 1);
-	edge_costs_(dummy_label(), dummy_label()) = 0.0;
-	for (LabelID l_id = 1; l_id < edge_labels_.size() + 1; l_id++) {
-		edge_costs_(dummy_label(), l_id) = edit_costs_->edge_ins_cost_fun(edge_labels_.at(l_id - 1));
-		edge_costs_(l_id, dummy_label()) = edit_costs_->edge_del_cost_fun(edge_labels_.at(l_id - 1));
-	}
-	for (LabelID l_id_lhs = 1; l_id_lhs < edge_labels_.size() + 1; l_id_lhs++) {
-		for (LabelID l_id_rhs = 1; l_id_rhs < edge_labels_.size() + 1; l_id_rhs++) {
-			if (l_id_lhs == l_id_rhs) {
-				edge_costs_(l_id_lhs, l_id_rhs) = 0.0;
-			}
-			else {
-				edge_costs_(l_id_lhs, l_id_rhs) = edit_costs_->edge_rel_cost_fun(edge_labels_.at(l_id_lhs - 1), edge_labels_.at(l_id_rhs - 1));
+	// Update edge cost matrix if new edge labels have been added to the environment.
+	std::size_t size_old_edge_costs = edge_costs_.num_rows();
+	if (size_old_edge_costs < edge_labels_.size() + 1) {
+		DMatrix old_edge_costs(edge_costs_);
+		edge_costs_.resize(edge_labels_.size() + 1, edge_labels_.size() + 1);
+		for (LabelID l_id_lhs = 0; l_id_lhs < edge_labels_.size() + 1; l_id_lhs++) {
+			for (LabelID l_id_rhs = 0; l_id_rhs < edge_labels_.size() + 1; l_id_rhs++) {
+				if (l_id_lhs < size_old_edge_costs and l_id_rhs < size_old_edge_costs) {
+					edge_costs_(l_id_lhs, l_id_rhs) = old_edge_costs(l_id_lhs, l_id_rhs);
+				}
+				else if (l_id_lhs == l_id_rhs) {
+					edge_costs_(l_id_lhs, l_id_rhs) = 0.0;
+				}
+				else if (l_id_lhs == dummy_label()) {
+					edge_costs_(l_id_lhs, l_id_rhs) = edit_costs_->edge_ins_cost_fun(edge_labels_.at(l_id_rhs - 1));
+				}
+				else if (l_id_rhs == dummy_label()) {
+					edge_costs_(l_id_lhs, l_id_rhs) = edit_costs_->edge_del_cost_fun(edge_labels_.at(l_id_lhs - 1));
+				}
+				else {
+					edge_costs_(l_id_lhs, l_id_rhs) = edit_costs_->edge_rel_cost_fun(edge_labels_.at(l_id_lhs - 1), edge_labels_.at(l_id_rhs - 1));
+				}
 			}
 		}
 	}
+
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -331,7 +333,7 @@ string_to_node_id_(GEDGraph::GraphID graph_id, const std::string & string) const
 	if (string == "DUMMY") {
 		return GEDGraph::dummy_node();
 	}
-	return original_to_internal_node_ids_.at(graph_id).at(string);
+	return strings_to_internal_node_ids_.at(graph_id).at(string);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -341,7 +343,7 @@ node_id_to_string_(GEDGraph::GraphID graph_id, GEDGraph::NodeID node_id) const {
 	if (node_id == GEDGraph::dummy_node()) {
 		return "DUMMY";
 	}
-	return internal_to_original_node_ids_.at(graph_id).at(node_id);
+	return internal_node_ids_to_strings_.at(graph_id).at(node_id);
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -355,10 +357,7 @@ template<class UserNodeLabel, class UserEdgeLabel>
 std::size_t
 GEDData<UserNodeLabel, UserEdgeLabel>::
 num_graphs_without_shuffled_copies() const {
-	if (shuffled_graph_copies_available()) {
-		return num_graphs() / 2;
-	}
-	return num_graphs();
+	return num_graphs_without_shuffled_copies_;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>

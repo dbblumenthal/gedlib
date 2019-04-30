@@ -552,14 +552,9 @@ get_graph(GEDGraph::GraphID graph_id) const {
 	exchange_graph.num_nodes = graph.num_nodes();
 	exchange_graph.num_edges = graph.num_edges();
 	std::size_t edge_id{0};
-	std::vector<std::vector<std::size_t>> edge_ref(exchange_graph.num_nodes, std::vector<std::size_t>(exchange_graph.num_nodes, 0));
 	for (auto eitr = graph.edges(); eitr.first != eitr.second; eitr.first++) {
 		GEDGraph::EdgeID edge(*eitr.first);
-		std::size_t tail(graph.tail(edge));
-		std::size_t head(graph.head(edge));
-		exchange_graph.edges.emplace_back(std::pair<std::size_t, std::size_t>(tail, head), ged_data_.edge_labels_.at(graph.get_edge_label(edge)));
-		edge_ref[tail][head] = edge_id;
-		edge_ref[head][tail] = edge_id;
+		exchange_graph.edges.emplace_back(std::pair<std::size_t, std::size_t>(graph.tail(edge), graph.head(edge)), ged_data_.edge_labels_.at(graph.get_edge_label(edge)));
 	}
 	for (GEDGraph::NodeID node_id{0}; node_id < exchange_graph.num_nodes; node_id++) {
 		exchange_graph.original_node_ids.emplace_back(internal_to_original_node_ids_.at(graph_id).at(node_id));
@@ -567,7 +562,7 @@ get_graph(GEDGraph::GraphID graph_id) const {
 		exchange_graph.adj_list.emplace_back();
 		for (auto eitr = graph.incident_edges(node_id); eitr.first != eitr.second; eitr.first++) {
 			GEDGraph::EdgeID edge(*eitr.first);
-			exchange_graph.adj_list[node_id].emplace_back(edge_ref[node_id][graph.head(edge)]);
+			exchange_graph.adj_list[node_id].emplace_back(graph.head(edge), graph.get_edge_label(edge));
 		}
 	}
 	return exchange_graph;

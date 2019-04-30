@@ -341,9 +341,9 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel> struct Exch
 
 	std::vector<UserNodeLabel> node_labels;                                           //!< The labels of all nodes.
 
-	std::vector<std::pair<std::pair<std::size_t, std::size_t>, UserEdgeLabel>> edges; //!< List of all edges in the form <tt>((tail, head), label)</tt>.
+	std::vector<std::pair<std::pair<std::size_t, std::size_t>, UserEdgeLabel>> edges; //!< List of all edges in the form <tt>((internal_tail_id, internal_head_id), label)</tt>.
 
-	std::vector<std::list<std::size_t>> adj_list;                                     //!< Adjacency lists that, for each node, contain the positions of its incident edges within the field @p edges.
+	std::vector<std::list<std::pair<std::size_t, UserEdgeLabel>>> adj_list;           //!< Adjacency lists for each node with elements of the form <tt>(internal_neighbor_id, label)</tt>.
 };
 
 #ifdef ENABLE_GRAPH_STREAMING

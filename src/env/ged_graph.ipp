@@ -72,9 +72,7 @@ dummy_edge() {
 GEDGraph :: NodeID
 GEDGraph ::
 add_node() {
-	if (initialized_) {
-		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
-	}
+	initialized_ = false;
 	NodeID new_node{boost::add_vertex(alist_)};
 	if (new_node >= dummy_node()) {
 		throw Error("Cannot add node. Maximal number of nodes reached.");
@@ -86,9 +84,7 @@ add_node() {
 GEDGraph :: EdgeID
 GEDGraph ::
 add_edge(NodeID tail, NodeID head) {
-	if (initialized_) {
-		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
-	}
+	initialized_ = false;
 	auto alist_ed = boost::add_edge(tail, head, alist_);
 	alist_[alist_ed.first].label = invalid_label();
 	return alist_ed.first;
@@ -116,18 +112,12 @@ setup_adjacency_matrix() {
 void
 GEDGraph ::
 set_label(NodeID v, LabelID l_id) {
-	if (initialized_) {
-		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
-	}
 	alist_[v].label = l_id;
 }
 
 void
 GEDGraph ::
 set_label(EdgeID e, LabelID l_id) {
-	if (initialized_) {
-		throw Error("The graph with ID " + std::to_string(id_) + " has already been initialized.");
-	}
 	alist_[e].label = l_id;
 }
 

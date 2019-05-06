@@ -303,7 +303,7 @@ public:
 	std::size_t num_edges() const;
 
 	/*!
-	 * @brief Check if graph has already been initialized.
+	 * @brief Checks if graph has already been initialized.
 	 * @return Boolean @p true if the adjacency matrix is up to date, @p false otherwise.
 	 */
 	bool initialized() const;

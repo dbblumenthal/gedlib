@@ -430,7 +430,7 @@ naive_regularize_(GEDGraph & g, GEDGraph & h) const {
 		fill_up_both_graphs_(g, h);
 	}
 
-	// Add mising edges to g.
+	// Add missing edges to g.
 	for (auto node_1 = g.nodes().first; node_1 != g.nodes().second; node_1++) {
 		for (auto node_2 = node_1 + 1; node_2 != g.nodes().second; node_2++) {
 			if (not g.is_edge(*node_1, *node_2)) {

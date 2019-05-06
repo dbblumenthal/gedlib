@@ -308,6 +308,7 @@ add_node(GEDGraph::GraphID graph_id, const UserNodeID & node_id, const UserNodeL
 	if (original_to_internal_node_ids_[graph_id].find(node_id) != original_to_internal_node_ids_[graph_id].end()) {
 		throw Error("The node " + to_string_(node_id) + " has already been added to the graph " + std::to_string(graph_id) + ": " + get_graph_name(graph_id) + ".");
 	}
+	initialized_ = false;
 	GEDGraph::NodeID internal_node_id{ged_data_.graphs_[graph_id].add_node()};
 	original_to_internal_node_ids_[graph_id][node_id] = internal_node_id;
 	internal_to_original_node_ids_[graph_id][internal_node_id] = node_id;
@@ -330,6 +331,7 @@ add_edge(GEDGraph::GraphID graph_id, const UserNodeID & from, const UserNodeID &
 	if (original_to_internal_node_ids_[graph_id].find(to) == original_to_internal_node_ids_[graph_id].end()) {
 		throw Error("The node " + to_string_(to) + " does not exist in the graph " + get_graph_name(graph_id) + ".");
 	}
+	initialized_ = false;
 	if (ged_data_.graphs_[graph_id].safe_is_edge(original_to_internal_node_ids_[graph_id][from], original_to_internal_node_ids_[graph_id][to])) {
 		if (ignore_duplicates) {
 			return;
@@ -609,10 +611,6 @@ init(Options::InitType init_type) {
 	// Re-initialize adjacency matrices (also previously initialized graphs must be re-initialized because of possible re-allocation).
 	for (GEDGraph::GraphID graph_id{0}; graph_id < ged_data_.num_graphs(); graph_id++) {
 		ged_data_.graphs_[graph_id].setup_adjacency_matrix();
-	}
-
-	// Update maximal number of nodes and edges.
-	for (auto graph_id : new_graph_ids_) {
 		ged_data_.max_num_nodes_ = std::max(ged_data_.max_num_nodes_, ged_data_.graphs_.at(graph_id).num_nodes());
 		ged_data_.max_num_edges_ = std::max(ged_data_.max_num_edges_, ged_data_.graphs_.at(graph_id).num_edges());
 	}

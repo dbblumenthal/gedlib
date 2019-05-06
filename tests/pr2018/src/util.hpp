@@ -25,7 +25,7 @@
  * @details This file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
  *   &ldquo;Upper Bounding GED via Transformations to LSAPE Based on Rings and Machine Learning&rdquo;,
- *   Submitted to PR.
+ *   Submitted to TKDE.
  */
 
 #ifndef SRC_TESTS_PR2018_UTIL_HPP_

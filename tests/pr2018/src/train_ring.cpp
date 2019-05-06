@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file train_ring.cpp
@@ -25,7 +25,7 @@
  * @details The binary built from this file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
  *   &ldquo;Upper Bounding GED via Transformations to LSAPE Based on Rings and Machine Learninge&rdquo;,
- *   Submitted to PR.
+ *   Submitted to TKDE.
  */
 
 #include "util.hpp"
@@ -49,7 +49,13 @@ void train_on_dataset(const std::string & dataset) {
 
 int main(int argc, char* argv[]) {
 	std::vector<std::string> datasets;
-	util::setup_datasets(datasets);
+	for (int i{1}; i < argc; i++) {
+		datasets.push_back(std::string(argv[i]));
+		util::check_dataset(datasets.back());
+	}
+	if (datasets.empty()) {
+		util::setup_datasets(datasets);
+	}
 	for (auto dataset : datasets) {
 		try {
 			train_on_dataset(dataset);

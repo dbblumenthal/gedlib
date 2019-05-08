@@ -36,8 +36,12 @@
 
 namespace util {
 
+bool is_synth_mol_dataset(const std::string & dataset) {
+	return ((dataset == "S-MOL_NL01") or (dataset == "S-MOL_NL04") or (dataset == "S-MOL_NL07") or (dataset == "S-MOL_NL10"));
+}
+
 bool is_chemical_dataset(const std::string & dataset) {
-	return ((dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah"));
+	return (is_synth_mol_dataset(dataset) or (dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah") );
 }
 
 bool is_letter_dataset(const std::string & dataset) {
@@ -64,6 +68,18 @@ std::string graph_dir(const std::string & dataset) {
 	else if ((dataset == "Letter_MED")) {
 		return (root_dir + "Letter/MED/");
 	}
+	else if (dataset == "S-MOL_NL01") {
+		return (root_dir + "S-MOL/NL01/");
+	}
+	else if (dataset == "S-MOL_NL04") {
+		return (root_dir + "S-MOL/NL04/");
+	}
+	else if (dataset == "S-MOL_NL07") {
+		return (root_dir + "S-MOL/NL07/");
+	}
+	else if (dataset == "S-MOL_NL10") {
+		return (root_dir + "S-MOL/NL10/");
+	}
 	else if (dataset == "CMU-GED") {
 		return (root_dir + dataset + "/CMU/");
 	}
@@ -82,6 +98,9 @@ std::string train_collection(const std::string & dataset) {
 	if (is_letter_dataset(dataset)) {
 		return (root_dir + "Letter_50.xml");
 	}
+	if (is_synth_mol_dataset(dataset)) {
+		return (root_dir + "S-MOL_50.xml");
+	}
 	return root_dir + dataset + "_50.xml";
 }
 
@@ -90,6 +109,9 @@ std::string test_collection(const std::string & dataset) {
 	check_dataset(dataset);
 	if (is_letter_dataset(dataset)) {
 		return (root_dir + "Letter_100.xml");
+	}
+	if (is_synth_mol_dataset(dataset)) {
+		return (root_dir + "S-MOL_100.xml");
 	}
 	return root_dir + dataset + "_100.xml";
 }

@@ -173,7 +173,7 @@ public:
 };
 
 
-void test_on_dataset(const std::string & dataset, const std::vector<string> & ml_methods) {
+void test_on_dataset(const std::string & dataset, const std::vector<string> & ml_methods, bool quick) {
 
 	// Initialize environment.
 	std::cout << "\n=== " << dataset << " ===\n";
@@ -187,6 +187,11 @@ void test_on_dataset(const std::string & dataset, const std::vector<string> & ml
 	std::vector<std::string> centralities{"NONE", "PAGERANK"};
 	std::vector<std::size_t> threads{1, 4, 7, 10};
 	std::vector<std::size_t> solutions{1, 4, 7, 10};
+	if (quick) {
+		centralities = {"NONE"};
+		threads = {10};
+		solutions = {10};
+	}
 	std::vector<Method> methods;
 	for (auto ged_method : ged_methods) {
 		for (auto num_threads : threads) {
@@ -229,11 +234,17 @@ void test_on_dataset(const std::string & dataset, const std::vector<string> & ml
 int main(int argc, char* argv[]) {
 	std::vector<std::string> datasets;
 	std::vector<std::string> ml_methods{"DNN", "SVM", "ONE_CLASS_SVM_LIKELIHOOD", "ONE_CLASS_SVM_SCALE"};
+	bool quick{false};
 	int i{1};
 	if (argc > 1) {
 		std::string first_option(argv[i]);
 		if (first_option == "--no-svm") {
 			ml_methods = {"DNN", "ONE_CLASS_SVM_LIKELIHOOD"};
+			i++;
+		}
+		else if (first_option == "--quick") {
+			ml_methods = {"DNN", "ONE_CLASS_SVM_LIKELIHOOD"};
+			quick = true;
 			i++;
 		}
 		else {
@@ -249,7 +260,7 @@ int main(int argc, char* argv[]) {
 	}
 	for (auto dataset : datasets) {
 		try {
-			test_on_dataset(dataset, ml_methods);
+			test_on_dataset(dataset, ml_methods, quick);
 		}
 		catch (const std::exception & error) {
 			std::cerr << error.what() << ". " << "Error on " << dataset << ".\n";

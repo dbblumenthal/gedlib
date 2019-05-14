@@ -94,6 +94,13 @@ std::string test_collection(const std::string & dataset) {
 	return root_dir + dataset + "_test.xml";
 }
 
+std::string size_constrained_collection(const std::string & dataset, std::size_t max_size_div_10) {
+	std::string suffix(std::to_string((max_size_div_10 * 10) - 9) + "-" + std::to_string(max_size_div_10 * 10));
+	std::string root_dir("../collections/");
+	check_dataset(dataset);
+	return root_dir + dataset + suffix + ".xml";
+}
+
 std::string config_prefix(const std::string & dataset) {
 	check_dataset(dataset);
 	return std::string("../ini/" + dataset + "_");
@@ -206,8 +213,19 @@ std::vector<ged::GEDGraph::GraphID> setup_environment(const std::string & datase
 	return graph_ids;
 }
 
+std::vector<ged::GEDGraph::GraphID> setup_environment(const std::string & dataset, std::size_t max_size_div_10, ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> & env) {
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs(graph_dir(dataset), size_constrained_collection(dataset, max_size_div_10), node_type(dataset), edge_type(dataset), irrelevant_node_attributes(dataset), irrelevant_edge_attributes(dataset)));
+	env.set_edit_costs(edit_costs(dataset));
+	env.init(init_type(dataset));
+	return graph_ids;
+}
+
 void setup_datasets(std::vector<std::string> & datasets) {
 	datasets = {"Letter_HIGH", "Mutagenicity", "AIDS", "Protein", "GREC", "Fingerprint"};
+}
+
+void setup_size_test_datasets(std::vector<std::string> & datasets) {
+	datasets = {"Mutagenicity", "AIDS", "Protein"};
 }
 
 }

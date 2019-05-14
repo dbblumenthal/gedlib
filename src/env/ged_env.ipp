@@ -538,6 +538,24 @@ get_graph_class(GEDGraph::GraphID graph_id) const {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+std::size_t
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_num_nodes(GEDGraph::GraphID graph_id) const {
+	return ged_data_.graph(graph_id).num_nodes();
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_avg_num_nodes() const {
+	std::size_t sum_num_nodes{0};
+	for (std::size_t graph_id{0}; graph_id < ged_data_.num_graphs_without_shuffled_copies(); graph_id++) {
+		sum_num_nodes += ged_data_.graph(graph_id).num_nodes();
+	}
+	return static_cast<double>(sum_num_nodes) / static_cast<double>(ged_data_.num_graphs_without_shuffled_copies());
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 const std::string &
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_graph_name(GEDGraph::GraphID graph_id) const {

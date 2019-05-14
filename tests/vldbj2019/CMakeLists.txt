@@ -25,7 +25,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/vldbj2019/bin)
 
 # Add targets.
 
-add_custom_target(vldbj2019 DEPENDS vldbj_train_ring vldbj_train_walks vldbj_train_subgraph vldbj_train_ml vldbj_test_lsape_based_methods)
+add_custom_target(vldbj2019 DEPENDS vldbj_train_ring vldbj_train_walks vldbj_train_subgraph vldbj_train_ml vldbj_test_lsape_based_methods vldbj_test_best_methods)
 
 add_executable(vldbj_train_ring src/train_ring.cpp)
 target_link_libraries(vldbj_train_ring gxlgedlib)
@@ -96,6 +96,18 @@ if(APPLE)
   if(GUROBI_HOME)
     add_custom_command(TARGET vldbj_test_lp_based_methods POST_BUILD COMMAND install_name_tool -change libgurobi_c++.a ${GUROBI_HOME}/lib/libgurobi_c++.a ${EXECUTABLE_OUTPUT_PATH}/vldbj_test_lp_based_methods)
     add_custom_command(TARGET vldbj_test_lp_based_methods POST_BUILD COMMAND install_name_tool -change lib${GUROBI_SHARED_LIB}.so ${GUROBI_HOME}/lib/lib${GUROBI_SHARED_LIB}.so ${EXECUTABLE_OUTPUT_PATH}/vldbj_test_lp_based_methods)
+  endif()
+endif()
+
+add_executable(vldbj_test_best_methods src/test_best_methods.cpp)
+target_link_libraries(vldbj_test_best_methods gxlgedlib)
+if(APPLE)
+  add_custom_command(TARGET vldbj_test_best_methods POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/vldbj_test_best_methods)
+  add_custom_command(TARGET vldbj_test_best_methods POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/vldbj_test_best_methods)
+  add_custom_command(TARGET vldbj_test_best_methods POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/vldbj_test_best_methods)
+  if(GUROBI_HOME)
+    add_custom_command(TARGET vldbj_test_best_methods POST_BUILD COMMAND install_name_tool -change libgurobi_c++.a ${GUROBI_HOME}/lib/libgurobi_c++.a ${EXECUTABLE_OUTPUT_PATH}/vldbj_test_best_methods)
+    add_custom_command(TARGET vldbj_test_best_methods POST_BUILD COMMAND install_name_tool -change lib${GUROBI_SHARED_LIB}.so ${GUROBI_HOME}/lib/lib${GUROBI_SHARED_LIB}.so ${EXECUTABLE_OUTPUT_PATH}/vldbj_test_best_methods)
   endif()
 endif()
 

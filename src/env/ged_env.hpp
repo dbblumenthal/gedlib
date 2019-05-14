@@ -200,7 +200,7 @@ public:
 	/*!
 	 * @brief Returns the graph class.
 	 * @param[in] graph_id ID of an input graph that has been added to the environment.
-	 * @return ID of the input graph.
+	 * @return Class of the input graph.
 	 */
 	const std::string & get_graph_class(GEDGraph::GraphID graph_id) const;
 
@@ -216,6 +216,19 @@ public:
 	 * @return Boolean @p true if the edit costs are quasimetric and @p false, otherwise.
 	 */
 	bool quasimetric_costs() const;
+
+	/*!
+	 * @brief Returns the number of nodes.
+	 * @param[in] graph_id ID of an input graph that has been added to the environment.
+	 * @return Number of nodes in the graph.
+	 */
+	std::size_t get_num_nodes(GEDGraph::GraphID graph_id) const;
+
+	/*!
+	 * @brief Returns average number of nodes.
+	 * @return Average number of nodes of the graphs contained in the environment.
+	 */
+	double get_avg_num_nodes() const;
 
 private:
 

@@ -815,12 +815,17 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/README.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/install.py \
                          @CMAKE_CURRENT_SOURCE_DIR@/data/collections/ \
                          @CMAKE_CURRENT_SOURCE_DIR@/data/collections/GraphCollection.dtd \
+                         @CMAKE_CURRENT_SOURCE_DIR@/data/collections/analyze_datasets.py \
+                         @CMAKE_CURRENT_SOURCE_DIR@/data/collections/graphs_of_given_size.py \
+                         @CMAKE_CURRENT_SOURCE_DIR@/data/collections/sample.py \
+                         @CMAKE_CURRENT_SOURCE_DIR@/data/datasets/S-MOL/generate_molecules.py \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/methods/ \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/env/ \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/util/ \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/edit_costs/ \
                          @CMAKE_CURRENT_SOURCE_DIR@/tests/sspr2018/src/ \
-                         @CMAKE_CURRENT_SOURCE_DIR@/tests/pr2018/src/
+                         @CMAKE_CURRENT_SOURCE_DIR@/tests/tkde2019/src/
+                         @CMAKE_CURRENT_SOURCE_DIR@/tests/vldbj2019/src/
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

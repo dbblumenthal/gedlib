@@ -1,3 +1,50 @@
+#//////////////////////////////////////////////////////////////////////////#
+#                                                                          #
+#   Copyright (C) 2018 by David B. Blumenthal                              #
+#                                                                          #
+#   This file is part of GEDLIB.                                           #
+#                                                                          #
+#   GEDLIB is free software: you can redistribute it and/or modify it      #
+#   under the terms of the GNU Lesser General Public License as published  #
+#   by the Free Software Foundation, either version 3 of the License, or   #
+#   (at your option) any later version.                                    #
+#                                                                          #
+#   GEDLIB is distributed in the hope that it will be useful,              #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           #
+#   GNU Lesser General Public License for more details.                    #
+#                                                                          #
+#   You should have received a copy of the GNU Lesser General Public       #
+#   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. #
+#                                                                          #
+#//////////////////////////////////////////////////////////////////////////#
+
+##
+# @file analyze_datasets.py
+# @brief Python script that computes statistics of a given dataset.
+#
+# @details 
+# Usage: 
+# ```sh
+# $ python sample.py \<dataset\> \<dir\> [-h] [--help] [--topology] [--max_size \<maximal number of nodes\>] [--distr \<data file to store node and edge distribution\>]
+# ```
+# 
+# Arguments:
+#
+# <table>
+# <tr><th colspan="2"> positional arguments
+# <tr><td> <tt>\<dataset\></tt> <td> path to existing graph collection XML file representing the dataset that should be analyzed; must respect GraphCollection.dtd
+# <tr><td> <tt>\<dir\></tt> <td> path to directory containing GXL files
+# <tr><th colspan="2"> optional arguments
+# <tr><td> <tt>-h</tt> <td> show help
+# <tr><td> <tt>--topology</tt> <td> also compute mean number of connected components and ratios of acyclic and planar graphs 
+# <tr><td> <tt>--max_size \<maximal number of nodes\></tt> <td> only consider graphs with at most <tt>\<maximal number of nodes\></tt> many nodes
+# <tr><td> <tt>--distr \<data file to store node and edge distribution\></tt> <td> store distributions of number of nodes and edges as 2-dimensional histogram, i.e., as a data file whose rows are of the form \"<tt>\<number of nodes>\> \<number of edges\> \<count\>\</tt>"
+# </table>
+'''
+Python script that computes statistics of a given dataset.
+'''
+
 import xml.etree.ElementTree as ET
 import argparse
 import os.path

@@ -22,10 +22,10 @@
 /*!
  * @file test_lp_based_methods.cpp
  * @brief Runs tests for VLDB J. submission.
- * @details The binary built from this file was used for the experiments in the following submission:
+ * @details The binary built from this file was used for the experiments in the following paper:
  * - D. B. Blumenthal, S. Bougleux, N. Boria, J. Gamper, L. Brun:
  *   &ldquo;Comparing heuristics for graph edit distance computation&rdquo;,
- *   Submitted to VLDB J.
+ *   Accepted for publication in VLDB J.
  */
 
 #include "util.hpp"

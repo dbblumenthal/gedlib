@@ -9,6 +9,7 @@ var searchData=
   ['init',['init',['../classged_1_1GEDMethod.html#a3e64b48ad85a7355cca7b4568dbfa770',1,'ged::GEDMethod::init()'],['../classged_1_1GEDEnv.html#a4a212c3c5605951c3015860cbfa78bd8',1,'ged::GEDEnv::init()']]],
   ['init_5fadj_5fmatrix',['init_adj_matrix',['../namespaceged_1_1util.html#ac04c4685c4f193f188459aa00027b75c',1,'ged::util']]],
   ['init_5fmethod',['init_method',['../classged_1_1GEDEnv.html#abdd4de5442749e8ed45f0b33a163b3ac',1,'ged::GEDEnv']]],
+  ['initialized',['initialized',['../classged_1_1GEDGraph.html#a67e44f4abcf3bae8b00a6074f027875e',1,'ged::GEDGraph']]],
   ['invalid_5flabel',['invalid_label',['../namespaceged.html#a7a8f28e869a2bccaaa0afecbe06593d5',1,'ged']]],
   ['is_5fedge',['is_edge',['../classged_1_1GEDGraph.html#a61969da174fb024e7aebe207b5abfae0',1,'ged::GEDGraph']]],
   ['is_5fnon_5fredundant_5fnode_5fmap',['is_non_redundant_node_map',['../classged_1_1Result.html#a73bf3253b6fd502f90848b324aadacff',1,'ged::Result']]],

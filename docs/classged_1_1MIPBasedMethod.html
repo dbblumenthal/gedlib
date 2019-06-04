@@ -202,7 +202,7 @@ class ged::MIPBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</h3>
 <tr>
 <th><code>--&lt;option&gt; &lt;arg&gt;</code> </th><th>modified parameter </th><th>default </th><th>more information  </th></tr>
 <tr>
-<td><code>--threads &lt;convertible to int greater 0&gt;</code> </td><td>number of threads </td><td><code>1</code> </td><td>used for initializing the initialization method and for parallelly running local searches from several initial solutions </td></tr>
+<td><code>--threads &lt;convertible to int greater 0&gt;</code> </td><td>number of threads </td><td><code>1</code> </td><td>number of threads to be used by MIP/LP solver </td></tr>
 <tr>
 <td><code>--time-limit &lt;convertible to double&gt;</code> </td><td>time limit in seconds </td><td><code>0</code> </td><td>if less or equal <code>0</code>, no time limit is enforced </td></tr>
 <tr>
@@ -367,7 +367,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a7b1a1450e1d30d1302b328fc15b02fc7">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00133">133</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00136">136</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -460,7 +460,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a7f544e924c2fdb5d13e1e299f88a7e6d">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00242">242</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00245">245</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -495,7 +495,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a55d5c23b37c19e87afa9677287be831e">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00232">232</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00235">235</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -527,7 +527,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <p>Initializes the method. </p>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a> that require initialization. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00276">276</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00279">279</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -594,7 +594,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1F1.html#ad43efcce003d31ddcfdb3928ebba8164">ged::F1&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BLPNoEdgeLabels.html#a2a8282f2f426eb217062c507a6c21a43">ged::BLPNoEdgeLabels&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1CompactMIP.html#a44dd4761d7ede153a88113f6be9d099c">ged::CompactMIP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1F2.html#a62b33b663317aae36c9062d71265552e">ged::F2&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00269">269</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00272">272</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -660,7 +660,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1F1.html#af332250aef9729fc4fddc625dddc4634">ged::F1&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BLPNoEdgeLabels.html#a61b4f88cc2edc4d7bd1e5118506dc167">ged::BLPNoEdgeLabels&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1CompactMIP.html#aafe46882541014df5f93c9327b8c02ae">ged::CompactMIP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1F2.html#a05f3f6803fbf8aaedf034810c9f83e1c">ged::F2&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00264">264</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00267">267</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -711,7 +711,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if <code>option</code> is a valid option name for the method and false otherwise. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00281">281</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00284">284</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -770,7 +770,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1F1.html#a3d993ac1faa0875d17940a347dec56d7">ged::F1&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BLPNoEdgeLabels.html#a14e67d61fcd164e64de6f71065d4d680">ged::BLPNoEdgeLabels&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1CompactMIP.html#a9dc9dd2566fd4aff8b9c72d1e43109f2">ged::CompactMIP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1F2.html#aaea88d28802275024a39c80bf0ee09a9">ged::F2&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00259">259</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00262">262</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -802,7 +802,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <p>Sets all options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a> to default values. </p>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00295">295</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00298">298</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -835,7 +835,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>String of the form "[--&lt;option&gt; &lt;arg&gt;] [...]". </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1MIPBasedMethod.html" title="Abstract class for methods that use mixed integer linear programming for exactly or approximatively c...">ged::MIPBasedMethod</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00288">288</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mip__based__method_8ipp_source.html#l00291">291</a> of file <a class="el" href="mip__based__method_8ipp_source.html">mip_based_method.ipp</a>.</p>
 
 </div>
 </div>

@@ -90,6 +90,15 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a35ad2c7581952d28f74bbdcba716c65d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1Refine.html#a35ad2c7581952d28f74bbdcba716c65d">ls_run_from_initial_solution_</a> (const <a class="el" href="classged_1_1GEDGraph.html">GEDGraph</a> &amp;g, const <a class="el" href="classged_1_1GEDGraph.html">GEDGraph</a> &amp;h, double lower_bound, const <a class="el" href="classged_1_1NodeMap.html">NodeMap</a> &amp;initial_node_map, <a class="el" href="classged_1_1NodeMap.html">NodeMap</a> &amp;output_node_map) final</td></tr>
 <tr class="memdesc:a35ad2c7581952d28f74bbdcba716c65d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the local search from an initial node map.  <a href="#a35ad2c7581952d28f74bbdcba716c65d">More...</a><br /></td></tr>
 <tr class="separator:a35ad2c7581952d28f74bbdcba716c65d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8a7e1bcd7cdc33896f0b234281102f3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1Refine.html#ab8a7e1bcd7cdc33896f0b234281102f3">ls_parse_option_</a> (const std::string &amp;option, const std::string &amp;arg)</td></tr>
+<tr class="memdesc:ab8a7e1bcd7cdc33896f0b234281102f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses one option that is not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>.  <a href="#ab8a7e1bcd7cdc33896f0b234281102f3">More...</a><br /></td></tr>
+<tr class="separator:ab8a7e1bcd7cdc33896f0b234281102f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20414ecc5d16fb8fb0768b2299f7da87"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1Refine.html#a20414ecc5d16fb8fb0768b2299f7da87">ls_valid_options_string_</a> () const</td></tr>
+<tr class="memdesc:a20414ecc5d16fb8fb0768b2299f7da87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns string of all valid options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>.  <a href="#a20414ecc5d16fb8fb0768b2299f7da87">More...</a><br /></td></tr>
+<tr class="separator:a20414ecc5d16fb8fb0768b2299f7da87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e38bb700054f19d25d7263054b2c84f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1Refine.html#a9e38bb700054f19d25d7263054b2c84f">ls_set_default_options_</a> ()</td></tr>
+<tr class="memdesc:a9e38bb700054f19d25d7263054b2c84f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets all options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> to default values.  <a href="#a9e38bb700054f19d25d7263054b2c84f">More...</a><br /></td></tr>
+<tr class="separator:a9e38bb700054f19d25d7263054b2c84f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -155,13 +164,75 @@ const <a class="el" href="classged_1_1GEDData.html">GEDData</a>&lt; UserNodeLabe
 class ged::Refine&lt; UserNodeLabel, UserEdgeLabel &gt;</h3>
 
 <p>Computes an upper bound for general edit costs. </p>
-<p>Implements the method <a class="el" href="classged_1_1Refine.html" title="Computes an upper bound for general edit costs. ">Refine</a> suggested in:</p><ul>
+<p>Implements the methods <a class="el" href="classged_1_1Refine.html" title="Computes an upper bound for general edit costs. ">Refine</a> and K-Refine suggested in:</p><ul>
 <li>Z. Zeng, A. K. H. Tung, J. Wang, J. Feng, and L. Zhou: &ldquo;Comparing stars: On approximating graph edit distance&rdquo;, <a href="http://dx.doi.org/10.14778/1687627.1687631">http://dx.doi.org/10.14778/1687627.1687631</a></li>
 </ul>
-<p>Does not support any options except for the ones supported by <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </p>
+<p>Supports the following options in addition tothe ones supported by <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </p><table class="doxtable">
+<tr>
+<th><code>--&lt;option&gt; &lt;arg&gt;</code> </th><th>modified parameter </th><th>default </th><th>more information  </th></tr>
+<tr>
+<td><code>--max-swap-size &lt;convertible to int greater equal 2&gt;</code> </td><td>maximum size of swap </td><td><code>2</code> </td><td>If set to a value greater <code>2</code>, K-Refine is used. </td></tr>
+<tr>
+<td><code>--naive TRUE|FALSE</code> </td><td>naive computation of swap cost </td><td><code>FALSE</code> </td><td>If set to <code>TRUE</code>, the swap cost is computed naively. </td></tr>
+<tr>
+<td><code>--add-dummy-assignment TRUE|FALSE</code> </td><td>add dummy assignment to initial node map </td><td><code>TRUE</code> </td><td>If <code>FALSE</code>, the swapped node maps never contain more insertions and deletions than the original node map. </td></tr>
+</table>
 
-<p class="definition">Definition at line <a class="el" href="refine_8hpp_source.html#l00042">42</a> of file <a class="el" href="refine_8hpp_source.html">refine.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="refine_8hpp_source.html#l00047">47</a> of file <a class="el" href="refine_8hpp_source.html">refine.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab8a7e1bcd7cdc33896f0b234281102f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8a7e1bcd7cdc33896f0b234281102f3">&#9670;&nbsp;</a></span>ls_parse_option_()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classged_1_1Refine.html">ged::Refine</a>&lt; UserNodeLabel, UserEdgeLabel &gt;::ls_parse_option_ </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>option</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>arg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parses one option that is not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">option</td><td>The name of the option. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg</td><td>The argument of the option. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if <code>option</code> is a valid option name for the method and false otherwise. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#a0565b79fcc3c01d8b25e05f6598ad749">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="refine_8ipp_source.html#l00152">152</a> of file <a class="el" href="refine_8ipp_source.html">refine.ipp</a>.</p>
+
+</div>
+</div>
 <a id="a35ad2c7581952d28f74bbdcba716c65d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a35ad2c7581952d28f74bbdcba716c65d">&#9670;&nbsp;</a></span>ls_run_from_initial_solution_()</h2>
 
@@ -231,7 +302,76 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#a2a230bf7d1753acf78103d9d6581a583">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="refine_8ipp_source.html#l00046">46</a> of file <a class="el" href="refine_8ipp_source.html">refine.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="refine_8ipp_source.html#l00049">49</a> of file <a class="el" href="refine_8ipp_source.html">refine.ipp</a>.</p>
+
+</div>
+</div>
+<a id="a9e38bb700054f19d25d7263054b2c84f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e38bb700054f19d25d7263054b2c84f">&#9670;&nbsp;</a></span>ls_set_default_options_()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classged_1_1Refine.html">ged::Refine</a>&lt; UserNodeLabel, UserEdgeLabel &gt;::ls_set_default_options_ </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets all options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> to default values. </p>
+<dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#aa4ecf0df6a9249f349a1510cbe6ccad4">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="refine_8ipp_source.html#l00189">189</a> of file <a class="el" href="refine_8ipp_source.html">refine.ipp</a>.</p>
+
+</div>
+</div>
+<a id="a20414ecc5d16fb8fb0768b2299f7da87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20414ecc5d16fb8fb0768b2299f7da87">&#9670;&nbsp;</a></span>ls_valid_options_string_()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string <a class="el" href="classged_1_1Refine.html">ged::Refine</a>&lt; UserNodeLabel, UserEdgeLabel &gt;::ls_valid_options_string_ </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns string of all valid options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd>String of the form "[--&lt;option&gt; &lt;arg&gt;] [...]". </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#ad9c5ae757dc34cbd81122aa1f3eb5036">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="refine_8ipp_source.html#l00198">198</a> of file <a class="el" href="refine_8ipp_source.html">refine.ipp</a>.</p>
 
 </div>
 </div>

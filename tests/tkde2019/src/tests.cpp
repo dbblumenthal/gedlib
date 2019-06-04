@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 /*!
- * @file tests.cpp
+ * @file tests/tkde2019/src/tests.cpp
  * @brief Carries out the tests for PR submission.
  * @details The binary built from this file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:

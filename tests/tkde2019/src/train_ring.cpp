@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 /*!
- * @file train_ring.cpp
+ * @file tests/tkde2019/src/train_ring.cpp
  * @brief Trains the method ged::Ring for different datasets.
  * @details The binary built from this file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:

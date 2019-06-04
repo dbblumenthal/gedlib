@@ -25,9 +25,11 @@
 
 GEDLIB is a C++ library for (suboptimally) computing edit distances between graphs using various state-of-the-art methods. GEDLIB allows you to build your graphs via the C++ API or load them from [GXL files](http://www.gupro.de/GXL/index.html). Several benchmark datasets are distributed with GEDLIB. For these datasets, GEDLIB provides predefined edit cost functions. You can easily extend GEDLIB by implementing new edit cost functions or new methods for computing the graph edit distance. An extensive Doxygen documentation is availabe [here](https://dbblumenthal.github.io/gedlib/).
 
-## 2. License
+## 2. License and Citing
 
-The source code of GEDLIB is distributed under the [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-3.0.en.html).
+The source code of GEDLIB is distributed under the [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-3.0.en.html). If you want to use GEDLIB in a publication, please refer to the following papers:
+- D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun. &ldquo;GEDLIB: A C++ library for graph edit distance computation&rdquo;, GbRPR 2019, https://doi.org/10.1007/978-3-030-20081-7_2
+- D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, and L. Brun. &ldquo;Comparing heuristics for graph edit distance computation&rdquo;, VLDB J. 2019
 
 ## 3. Installation under Unix
 
@@ -178,10 +180,10 @@ For exacmples of how to use GEDLIB, have a look at the `.cpp` files contained in
 
 GEDLIB has been used for several research papers. For reproducing the experiments reported in these papers, follow the instructions below.
 
-##### D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun (2018): &ldquo;Ring based approximation of graph edit distance&rdquo;, S+SSPR 2018, vol. 11004 of LNCS, pp. 293-303, [https://doi.org/10.1007/978-3-319-97785-0_28](https://doi.org/10.1007/978-3-319-97785-0_28)
+##### D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun. &ldquo;Ring based approximation of graph edit distance&rdquo;, S+SSPR 2018, vol. 11004 of LNCS, pp. 293-303, [https://doi.org/10.1007/978-3-319-97785-0_28](https://doi.org/10.1007/978-3-319-97785-0_28)
 
 
-In order to reproduce the experiments reported in this paper, install GEDLIB with the option `--tests sspr2918`. After installation, open a shell and execute the following commands:
+In order to reproduce the experiments reported in this paper, install GEDLIB with the option `--tests sspr2018`. After installation, open a shell and execute the following commands:
 
 ```sh
 $ cd <GEDLIB_ROOT>/tests/sspr2018/bin
@@ -191,6 +193,25 @@ $ ./learn_walks_depth
 $ ./test_lsape_based_methods
 ```
 After having executed these commands, the results of the experiments are contained in the folder `tests/sspr2018/output/`.
+
+##### D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, and L. Brun. &ldquo;Comparing heuristics for graph edit distance computation&rdquo;, VLDB J. 2019
+
+
+In order to reproduce the experiments reported in this paper, install GEDLIB with the option `--tests vldbj2019`. After installation, open a shell and execute the following commands:
+
+```sh
+$ cd <GEDLIB_ROOT>/tests/vldbj2019/bin
+$ ./vldbj_train_subgraph
+$ ./vldbj_train_walks
+$ ./vldbj_train_ring
+$ ./vldbj_train_ml
+$ ./vldbj_test_lsape_based_methods
+$ ./vldbj_test_lp_based_methods
+$ ./vldbj_test_ls_based_methods
+$ ./vldbj_test_misc_methods
+$ ./vldbj_test_best_methods
+```
+After having executed these commands, the results of the experiments are contained in the folder `tests/vldbj2019/results/`. For creating TikZ figures and tables that visualiue the results, run the script `process_results.py`.
 
 # 7. Datasets
 
@@ -207,6 +228,7 @@ GEDLIB comes with several datassets which contain graphs given in the [GXL file 
       &ldquo;A graph database repository and performance evaluation metrics for graph edit distance&rdquo;,
       [https://doi.org/10.1007/978-3-319-18224-7\_14](https://doi.org/10.1007/978-3-319-18224-7_14)
 - <b>`acyclic`, `alkane`, `mao`, `pah`:</b> These datasets are taken from [GREYC's Chemistry Dataset](https://brunl01.users.greyc.fr/CHEMISTRY/).
+- <b> `S-MOL`:</b> Synthetically generated graphs with varying number of node labels whose structure is similar to the structure of `pah` graphs. 
 
 For each dataset, the directory `data/collections/` contains an XML file which lists the contained graphs' GXL files along with their classes. These files match the document type definition `data/collections/GraphCollection.dtd` and can hence be used as input for `ged::GEDEnv::load_gxl_graphs()`. The Python script `data/collections/sample.py` can be used to generate samples of the datasets.
 

@@ -20,12 +20,12 @@
 ***************************************************************************/
 
 /*!
- * @file learn_ring_params.cpp
+ * @file tests/sspr2018/src/learn_ring_params.cpp
  * @brief Learn the parameters of the method ged::Ring for different datasets.
- * @details The binary built from this file was used for the experiments in the following submission:
+ * @details The binary built from this file was used for the experiments in the following paper:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
  *   &ldquo;Ring based approximation of graph edit distance&rdquo;,
- *   accepted at S+SSPR 2018
+ *   S+SSPR 2018
  * To reproduce the experiments, install GEDLIB, go to the folder `<GEDLIB_ROOT>/tests/sspr2018/bin/` and execute the following commands:
  * @code{.sh}
  * $ cd bin

@@ -34,7 +34,7 @@ namespace ged {
  * @details Implements the method %Hybrid suggested in:
  * - W. Zheng, L. Zou, X. Lian, D. Wang, and D. Zhao:
  *   &ldquo;Efficient graph similarity search over large graph databases&rdquo;,
- *   https:://doi.org/10.1109/TKDE.2014.2349924
+ *   https://doi.org/10.1109/TKDE.2014.2349924
  *
  * Supports the following options:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |

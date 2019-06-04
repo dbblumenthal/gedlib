@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 /*!
- * @file train_walks.cpp
+ * @file tests/tkde2019/src/train_walks.cpp
  * @brief Trains the method ged::Walks for different datasets.
  * @details The binary built from this file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:

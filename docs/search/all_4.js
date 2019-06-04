@@ -10,7 +10,7 @@ var searchData=
   ['edge_5fiterator',['edge_iterator',['../classged_1_1GEDGraph.html#a5263e2630275357744fb2f910bcefb24',1,'ged::GEDGraph']]],
   ['edge_5frel_5fcost_5ffun',['edge_rel_cost_fun',['../classged_1_1CHEM1.html#aa0d32fb17665b877bb6ca46a37b381df',1,'ged::CHEM1::edge_rel_cost_fun()'],['../classged_1_1CHEM2.html#adb142647dcef649db79322cbbb54d626',1,'ged::CHEM2::edge_rel_cost_fun()'],['../classged_1_1CMU.html#a7e5e53d9caa21e9f3caa376be2269b40',1,'ged::CMU::edge_rel_cost_fun()'],['../classged_1_1Constant.html#ab321a4210fc9c87116c6f774876a180b',1,'ged::Constant::edge_rel_cost_fun()'],['../classged_1_1EditCosts.html#a8c5c3101fc658bd4844c71b81f959caf',1,'ged::EditCosts::edge_rel_cost_fun()'],['../classged_1_1Fingerprint.html#af20db33617d13fe81098825d3fca069e',1,'ged::Fingerprint::edge_rel_cost_fun()'],['../classged_1_1GREC1.html#a71200a659750513a4d56817027135110',1,'ged::GREC1::edge_rel_cost_fun()'],['../classged_1_1GREC2.html#a03c20f08976de88b0fb632d2c622f31b',1,'ged::GREC2::edge_rel_cost_fun()'],['../classged_1_1Letter.html#a5b3ed2dfbe4126a31184b03ebd0e18c2',1,'ged::Letter::edge_rel_cost_fun()'],['../classged_1_1Protein.html#a9e5dafd9ca0286c17b0a9bba6b84f7a5',1,'ged::Protein::edge_rel_cost_fun()']]],
   ['edgeid',['EdgeID',['../classged_1_1GEDGraph.html#aa8ec279177b07f586e4e0bb293091486',1,'ged::GEDGraph']]],
-  ['edges',['edges',['../classged_1_1GEDGraph.html#ab06e473993f0481348c15a4e98821bec',1,'ged::GEDGraph']]],
+  ['edges',['edges',['../structged_1_1ExchangeGraph.html#a0b5f3bcac1dea9b11217622ecaa350c5',1,'ged::ExchangeGraph::edges()'],['../classged_1_1GEDGraph.html#ab06e473993f0481348c15a4e98821bec',1,'ged::GEDGraph::edges()']]],
   ['edit_5fcosts_2ehpp',['edit_costs.hpp',['../edit__costs_8hpp.html',1,'']]],
   ['edit_5fcosts_2eipp',['edit_costs.ipp',['../edit__costs_8ipp.html',1,'']]],
   ['editcosts',['EditCosts',['../classged_1_1EditCosts.html',1,'ged::EditCosts&lt; UserNodeLabel, UserEdgeLabel &gt;'],['../structged_1_1Options.html#a6cfa00eb5e4a5d33b81d4545243fdc7b',1,'ged::Options::EditCosts()'],['../classged_1_1EditCosts.html#a909f137c35bebaa00e1861bb1adf6579',1,'ged::EditCosts::EditCosts()']]],
@@ -21,5 +21,6 @@ var searchData=
   ['error',['Error',['../classged_1_1Error.html',1,'ged::Error'],['../classged_1_1Error.html#aa8449aa35be3386378543115fa3c53cd',1,'ged::Error::Error()']]],
   ['error_2ehpp',['error.hpp',['../error_8hpp.html',1,'']]],
   ['error_2eipp',['error.ipp',['../error_8ipp.html',1,'']]],
+  ['exchangegraph',['ExchangeGraph',['../structged_1_1ExchangeGraph.html',1,'ged']]],
   ['expired',['expired',['../classged_1_1Timer.html#a210739562568475fe6d21374bec351c2',1,'ged::Timer']]]
 ];

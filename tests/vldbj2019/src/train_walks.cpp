@@ -20,12 +20,12 @@
 ***************************************************************************/
 
 /*!
- * @file train_walks.cpp
+ * @file tests/vldbj2019/src/train_walks.cpp
  * @brief Trains the method ged::Walks for different datasets.
  * @details The binary built from this file was used for the experiments in the following paper:
- * - D. B. Blumenthal, S. Bougleux, N. Boria, J. Gamper, L. Brun:
+ * - D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux L. Brun:
  *   &ldquo;Comparing heuristics for graph edit distance computation&rdquo;,
- *   Accepted for publication in VLDB J.
+ *   VLDB J. 2019
  */
 
 #include "util.hpp"

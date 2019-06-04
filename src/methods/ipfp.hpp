@@ -39,12 +39,12 @@ namespace ged {
  * the reduction QAPE suggested in:
  * - S. Bougleux, B. Ga&uuml;z&egrave;re, and L. Brun:
  *   &ldquo;Graph edit distance as a quadratic program&rdquo;
- *   https:://doi.org/10.1109/ICPR.2016.7899881,
+ *   https://doi.org/10.1109/ICPR.2016.7899881,
  *
  * the extension m-IPFP suggested in:
  * - &Eacute;. Daller, S. Bougleux, B. Ga&uuml;z&egrave;re, and L. Brun:
  *   &ldquo;Approximate graph edit distance by several local searches in parallel&rdquo;,
- *   https:://doi.org/10.5220/0006599901490158,
+ *   https://doi.org/10.5220/0006599901490158,
  *
  * and the extension C-QAP suggested in:
  * - D. B. Blumenthal, &Eacute;. Daller, S. Bougleux, and L. Brun:

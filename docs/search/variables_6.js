@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['relax_5f',['relax_',['../classged_1_1MIPBasedMethod.html#a63940fc9c8945f48300264efec0ec60b',1,'ged::MIPBasedMethod']]]
+  ['map_5froot_5fto_5froot_5f',['map_root_to_root_',['../classged_1_1MIPBasedMethod.html#ac3e013b35f8f99803f0d4e03805e838c',1,'ged::MIPBasedMethod']]]
 ];

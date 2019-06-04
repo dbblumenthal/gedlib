@@ -171,10 +171,10 @@ class ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</h3>
 <li>S. Bougleux, L. Brun, V. Carletti, P. Foggia, B. Ga&uuml;z&egrave;re, and M. Vento: &ldquo;Graph edit distance as a quadratic assignment problem&rdquo; <a href="https://doi.org/10.1016/j.patrec.2016.10.001,">https://doi.org/10.1016/j.patrec.2016.10.001,</a></li>
 </ul>
 <p>the reduction QAPE suggested in:</p><ul>
-<li>S. Bougleux, B. Ga&uuml;z&egrave;re, and L. Brun: &ldquo;Graph edit distance as a quadratic program&rdquo; <a href="https:://doi.org/10.1109/ICPR.2016.7899881,">https:://doi.org/10.1109/ICPR.2016.7899881,</a></li>
+<li>S. Bougleux, B. Ga&uuml;z&egrave;re, and L. Brun: &ldquo;Graph edit distance as a quadratic program&rdquo; <a href="https://doi.org/10.1109/ICPR.2016.7899881,">https://doi.org/10.1109/ICPR.2016.7899881,</a></li>
 </ul>
 <p>the extension m-IPFP suggested in:</p><ul>
-<li>&Eacute;. Daller, S. Bougleux, B. Ga&uuml;z&egrave;re, and L. Brun: &ldquo;Approximate graph edit distance by several local searches in parallel&rdquo;, <a href="https:://doi.org/10.5220/0006599901490158,">https:://doi.org/10.5220/0006599901490158,</a></li>
+<li>&Eacute;. Daller, S. Bougleux, B. Ga&uuml;z&egrave;re, and L. Brun: &ldquo;Approximate graph edit distance by several local searches in parallel&rdquo;, <a href="https://doi.org/10.5220/0006599901490158,">https://doi.org/10.5220/0006599901490158,</a></li>
 </ul>
 <p>and the extension C-QAP suggested in:</p><ul>
 <li>D. B. Blumenthal, &Eacute;. Daller, S. Bougleux, and L. Brun: &ldquo;Quasimetric graph edit distance as a compact quadratic assignment problem&rdquo;, accepted for publication at ICPR 2018</li>
@@ -187,7 +187,7 @@ class ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</h3>
 <tr>
 <td><code>--time-limit &lt;convertible to double&gt;</code> </td><td>time limit in seconds </td><td><code>0</code> </td><td>if less or equal <code>0</code>, no time limit is enforced </td></tr>
 <tr>
-<td><code>--epsilon &lt;convertible to double&gt;</code> </td><td>range </td><td><code>0.000001</code> </td><td>if less or equal <code>0</code>, no convergence based termination criterion is used </td></tr>
+<td><code>--epsilon &lt;convertible to double&gt;</code> </td><td>convergence threshold </td><td><code>0.001</code> </td><td>if less or equal <code>0</code>, no convergence based termination criterion is used </td></tr>
 <tr>
 <td><code>--lsape-model ECBP|EBP|FLWC|FLCC|FBP|SFBP|FBP0</code> </td><td>model for optimally solving LSAPE </td><td><code>ECBP</code> </td><td><a class="el" href="classged_1_1LSAPESolver.html#a99f2415233aad49a3bf49dfef002ec8b" title="Selects a model for solving LSAPE with the Hungarian algorithm. ">ged::LSAPESolver::Model</a> </td></tr>
 <tr>
@@ -245,7 +245,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#a0565b79fcc3c01d8b25e05f6598ad749">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00191">191</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00196">196</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
 
 </div>
 </div>
@@ -370,7 +370,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#a45c09107a0169dbdc4c24aa91267ef1e">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00165">165</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00170">170</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
 
 </div>
 </div>
@@ -404,7 +404,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#aa4ecf0df6a9249f349a1510cbe6ccad4">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00173">173</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00178">178</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
 
 </div>
 </div>
@@ -439,7 +439,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#ad9c5ae757dc34cbd81122aa1f3eb5036">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00184">184</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ipfp_8ipp_source.html#l00189">189</a> of file <a class="el" href="ipfp_8ipp_source.html">ipfp.ipp</a>.</p>
 
 </div>
 </div>

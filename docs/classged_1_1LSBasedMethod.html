@@ -204,12 +204,24 @@ class ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</h3>
 <tr>
 <td><code>--initial-solutions &lt;convertible to int greater 0&gt;</code> </td><td>number of initial solutions </td><td><code>1</code> </td><td>if greater <code>1</code> and if a non-random initialization method is chosen, those initial solution that cannot be computed non-randomly because the initialization method does not yield enough solutions are computed randomly </td></tr>
 <tr>
-<td><code>--runs-from-initial-solutions ALL|&lt;convertible to int greater 0&gt;</code> </td><td>number of runs from initial solutions </td><td><code>ALL</code> </td><td>if not <code>ALL</code> and less than the number of initial solutions, all remaining initial solutions are discarded as soon as the desired number of runs has been reached </td></tr>
+<td><code>--ratio-runs-from-initial-solutions &lt;convertible to double greater 0 and smaller equal 1&gt;</code> </td><td>determines number of runs from initial solutions </td><td><code>1</code> </td><td>if set to <code>r</code> and <code>--initial-solutions</code> is set to <code>k</code>, all remaining initial solutions are discarded as soon as <code>r</code> * <code>k</code> runs have been completed </td></tr>
 <tr>
 <td><code>--threads &lt;convertible to int greater 0&gt;</code> </td><td>number of threads </td><td><code>1</code> </td><td>used for initializing the initialization method and for parallelly running local searches from several initial solutions </td></tr>
+<tr>
+<td><code>--num-randpost-loops &lt;convertible to int greater equal 0&gt;</code> </td><td>number of loops of RANDPOST algorithm </td><td><code>0</code> </td><td><a href="https://doi.org/10.1007/978-3-319-97785-0_44">https://doi.org/10.1007/978-3-319-97785-0_44</a> </td></tr>
+<tr>
+<td><code>--max-randpost-retrials &lt;convertible to int greater equal 0&gt;</code> </td><td>number of times the RANDPOST algorithm flattens the probability distribution if it encounters already converged solutions </td><td><code>10</code> </td><td><a href="https://doi.org/10.1007/978-3-319-97785-0_44">https://doi.org/10.1007/978-3-319-97785-0_44</a> </td></tr>
+<tr>
+<td><code>--randpost-penalty &lt;convertible to double between 0 and 1&gt;</code> </td><td>if set value close to <code>1</code>, expensive solutions count less for constructing the counts matrix </td><td><code>0</code> </td><td>n.a. </td></tr>
+<tr>
+<td><code>--randpost-decay &lt;convertible to double between 0 and 1&gt;</code> </td><td>if set value close to <code>0</code>, previous iterations contribute less when constructing the counts matrix </td><td><code>1</code> </td><td>n.a. </td></tr>
+<tr>
+<td><code>--log &lt;file name&gt;</code> </td><td>name of log-file for RANDPOST </td><td><code>""</code> </td><td>if not empty, a log-file for RANDPOST is created </td></tr>
+<tr>
+<td><code>--randomness REAL|PSEUDO</code> </td><td>use real randomness or pseudo randomness </td><td><code>REAL</code> </td><td>n.a. </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8hpp_source.html#l00046">46</a> of file <a class="el" href="ls__based__method_8hpp_source.html">ls_based_method.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8hpp_source.html#l00052">52</a> of file <a class="el" href="ls__based__method_8hpp_source.html">ls_based_method.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a30eee89bc5e4b3cd9b870cb78382fae9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a30eee89bc5e4b3cd9b870cb78382fae9">&#9670;&nbsp;</a></span>~LSBasedMethod()</h2>
@@ -304,7 +316,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a35699eba03f261fc1493e9bd7495f1c4">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00057">57</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00063">63</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -357,7 +369,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a7b1a1450e1d30d1302b328fc15b02fc7">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00115">115</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00157">157</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -416,7 +428,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a6364dc1f30a8de622a4fcd4f87cb0d9a">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00070">70</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00076">76</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -450,7 +462,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a7f544e924c2fdb5d13e1e299f88a7e6d">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00290">290</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00382">382</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -485,7 +497,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a55d5c23b37c19e87afa9677287be831e">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00280">280</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00372">372</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -517,9 +529,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <p>Initializes the method. </p>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that require initialization. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1BPBeam.html#ada72b497ecede23b16d50969a05f7f90">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00370">370</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00619">619</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -570,9 +580,9 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if <code>option</code> is a valid option name for the method and false otherwise. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#aef9f477d82d3eb4080d7520df81d81a3">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1BPBeam.html#a8544a03a63b77c925697f25e1e1b5ed3">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#aef9f477d82d3eb4080d7520df81d81a3">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BPBeam.html#a8544a03a63b77c925697f25e1e1b5ed3">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Refine.html#ab8a7e1bcd7cdc33896f0b234281102f3">ged::Refine&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00380">380</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00629">629</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -645,7 +655,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#a0122be5f77549cc07037b2111d9df953">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BPBeam.html#a3a1ddc044313b33e5e33aad5d515bc3c">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Refine.html#a35ad2c7581952d28f74bbdcba716c65d">ged::Refine&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00365">365</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00614">614</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -697,7 +707,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#acc92226324e4d3c1ae29324948f91582">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00375">375</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00624">624</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -729,9 +739,9 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <p>Sets all options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> to default values. </p>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#a1e816a106e6ef5cd685421872f1984b2">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1BPBeam.html#ae9c1b8432e081478ad01d62feca7c583">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#a1e816a106e6ef5cd685421872f1984b2">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BPBeam.html#ae9c1b8432e081478ad01d62feca7c583">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Refine.html#a9e38bb700054f19d25d7263054b2c84f">ged::Refine&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00394">394</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00643">643</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -764,9 +774,9 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>String of the form "[--&lt;option&gt; &lt;arg&gt;] [...]". </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#aae889fe6c11a64c7fc65f0f65edb9bb5">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1BPBeam.html#acda4a62ff4619ebad8fb1e51965ae702">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1IPFP.html#aae889fe6c11a64c7fc65f0f65edb9bb5">ged::IPFP&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BPBeam.html#acda4a62ff4619ebad8fb1e51965ae702">ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Refine.html#a20414ecc5d16fb8fb0768b2299f7da87">ged::Refine&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00387">387</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ls__based__method_8ipp_source.html#l00636">636</a> of file <a class="el" href="ls__based__method_8ipp_source.html">ls_based_method.ipp</a>.</p>
 
 </div>
 </div>

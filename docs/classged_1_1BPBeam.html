@@ -99,9 +99,6 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:acda4a62ff4619ebad8fb1e51965ae702"><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1BPBeam.html#acda4a62ff4619ebad8fb1e51965ae702">ls_valid_options_string_</a> () const final</td></tr>
 <tr class="memdesc:acda4a62ff4619ebad8fb1e51965ae702"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns string of all valid options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a>.  <a href="#acda4a62ff4619ebad8fb1e51965ae702">More...</a><br /></td></tr>
 <tr class="separator:acda4a62ff4619ebad8fb1e51965ae702"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada72b497ecede23b16d50969a05f7f90"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1BPBeam.html#ada72b497ecede23b16d50969a05f7f90">ls_init_</a> () final</td></tr>
-<tr class="memdesc:ada72b497ecede23b16d50969a05f7f90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the method.  <a href="#ada72b497ecede23b16d50969a05f7f90">More...</a><br /></td></tr>
-<tr class="separator:ada72b497ecede23b16d50969a05f7f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -179,51 +176,12 @@ class ged::BPBeam&lt; UserNodeLabel, UserEdgeLabel &gt;</h3>
 <tr>
 <td><code>--beam-size &lt;convertible to int greater 0&gt;</code> </td><td>the size of the priority queue used by the beam search </td><td><code>5</code> </td><td><a href="https://doi.org/10.1007/978-3-319-11656-3_11">https://doi.org/10.1007/978-3-319-11656-3_11</a> </td></tr>
 <tr>
-<td><code>--ordering-method BIPARTITE_ML|RING_ML|RANDOM</code> </td><td>the machine learning method used for ordering the assignments </td><td><code>RANDOM</code> </td><td>if <code>BIPARTITE_ML</code> or <code>RING_ML</code>, MLBP-BEAM is used and the option <code>--num-random-orderings</code> has no effect <br />
- if <code>RANDOM</code>, the option <code>--ordering-options</code> has no effect </td></tr>
-<tr>
-<td><code>--ordering-options '[&ndash;&lt;option&gt; &lt;arg&gt;] [...]'</code> </td><td>the options string passed to the machine learning method </td><td><code>''</code> </td><td><a class="el" href="classged_1_1BipartiteML.html" title="Uses characteristics of an LSAPE instance for defining feature vectors for node edit operations...">ged::BipartiteML</a> and <a class="el" href="classged_1_1RingML.html" title="Uses ring structures for defining feature vectors for node edit operations. ">ged::RingML</a> </td></tr>
-<tr>
-<td><code>--num-random-orderings &lt;convertible to int greater equal 0&gt;</code> </td><td>the number of random orderings </td><td><code>0</code> </td><td><a href="https://doi.org/10.1007/978-3-319-18224-7_8">https://doi.org/10.1007/978-3-319-18224-7_8</a> <br />
- if greater 0 and not overruled by options <code>--ordering-method</code>, IBP-Beam is used </td></tr>
+<td><code>--num-orderings &lt;convertible to int greater 0&gt;</code> </td><td>the number of orderings </td><td><code>1</code> </td><td><a href="https://doi.org/10.1007/978-3-319-18224-7_8">https://doi.org/10.1007/978-3-319-18224-7_8</a> <br />
+ if greater 1, IBP-Beam is used </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="bp__beam_8hpp_source.html#l00054">54</a> of file <a class="el" href="bp__beam_8hpp_source.html">bp_beam.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bp__beam_8hpp_source.html#l00052">52</a> of file <a class="el" href="bp__beam_8hpp_source.html">bp_beam.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ada72b497ecede23b16d50969a05f7f90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada72b497ecede23b16d50969a05f7f90">&#9670;&nbsp;</a></span>ls_init_()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classged_1_1BPBeam.html">ged::BPBeam</a>&lt; UserNodeLabel, UserEdgeLabel &gt;::ls_init_ </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">final</span><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Initializes the method. </p>
-<dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSBasedMethod.html" title="Abstract class for methods that use variants of local search for upper bounding the graph edit distan...">ged::LSBasedMethod</a> that require initialization. </dd></dl>
-
-<p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#abe448d2e79c4b50df30e42db44d2e769">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
-
-<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00193">193</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
-
-</div>
-</div>
 <a id="a8544a03a63b77c925697f25e1e1b5ed3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8544a03a63b77c925697f25e1e1b5ed3">&#9670;&nbsp;</a></span>ls_parse_option_()</h2>
 
@@ -273,7 +231,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#a0565b79fcc3c01d8b25e05f6598ad749">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00110">110</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00105">105</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
 
 </div>
 </div>
@@ -346,7 +304,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#a2a230bf7d1753acf78103d9d6581a583">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00051">51</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00048">48</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
 
 </div>
 </div>
@@ -380,7 +338,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#aa4ecf0df6a9249f349a1510cbe6ccad4">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00100">100</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00097">97</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
 
 </div>
 </div>
@@ -415,7 +373,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1LSBasedMethod.html#ad9c5ae757dc34cbd81122aa1f3eb5036">ged::LSBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00186">186</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="bp__beam_8ipp_source.html#l00138">138</a> of file <a class="el" href="bp__beam_8ipp_source.html">bp_beam.ipp</a>.</p>
 
 </div>
 </div>

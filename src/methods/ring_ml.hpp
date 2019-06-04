@@ -33,8 +33,8 @@ namespace ged {
  * @brief Uses ring structures for defining feature vectors for node edit operations.
  * @details Implements the ring based feature vectors suggested in:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun.
- *   &ldquo;Designing heuristics for graph edit distance&rdquo;,
- *   to be submitted to PR
+ *   &ldquo;Upper bounding GED via transformations to LSAPE based on rings and machine learning.&rdquo;,
+ *   to be submitted to TKDE
  *
  * Supports the following option in addition to the ones supported by ged::MLBasedMethod:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |

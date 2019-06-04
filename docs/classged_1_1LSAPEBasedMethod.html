@@ -89,9 +89,10 @@ Inheritance diagram for ged::LSAPEBasedMethod&lt; UserNodeLabel, UserEdgeLabel &
 <area shape="rect" id="node7" href="classged_1_1MLBasedMethod.html" title="Abstract class for methods that transform GED to LSAPE by using a SVM or a DNN to predict the cost of..." alt="" coords="437,267,620,308"/>
 <area shape="rect" id="node10" href="classged_1_1Node.html" title="Computes lower and upper bounds for general edit costs. " alt="" coords="454,332,603,373"/>
 <area shape="rect" id="node11" href="classged_1_1Ring.html" title="Computes an upper bound for general edit costs. " alt="" coords="456,397,601,439"/>
-<area shape="rect" id="node12" href="classged_1_1Subgraph.html" title="Computes upper bounds for general edit costs. " alt="" coords="445,463,613,504"/>
-<area shape="rect" id="node13" href="classged_1_1Walks.html" title="Computes an upper bound for general edit costs. " alt="" coords="453,528,605,569"/>
-<area shape="rect" id="node2" href="classged_1_1GEDMethod.html" title="Abstract class for the (suboptimal) computation of the graph edit distance. " alt="" coords="5,267,159,308"/>
+<area shape="rect" id="node12" href="classged_1_1Star.html" title="Computes lower and upper bounds for uniform edit costs. " alt="" coords="457,463,601,504"/>
+<area shape="rect" id="node13" href="classged_1_1Subgraph.html" title="Computes upper bounds for general edit costs. " alt="" coords="445,528,613,569"/>
+<area shape="rect" id="node14" href="classged_1_1Walks.html" title="Computes an upper bound for general edit costs. " alt="" coords="453,593,605,635"/>
+<area shape="rect" id="node2" href="classged_1_1GEDMethod.html" title="Abstract class for the (suboptimal) computation of the graph edit distance. " alt="" coords="5,300,159,341"/>
 <area shape="rect" id="node8" href="classged_1_1BipartiteML.html" title="Uses characteristics of an LSAPE instance for defining feature vectors for node edit operations..." alt="" coords="674,235,822,276"/>
 <area shape="rect" id="node9" href="classged_1_1RingML.html" title="Uses ring structures for defining feature vectors for node edit operations. " alt="" coords="668,300,828,341"/>
 </map>
@@ -220,6 +221,9 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a0cd1f91cbad006ec3da1cfd7170ef740"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1LSAPEBasedMethod.html#a0cd1f91cbad006ec3da1cfd7170ef740">lsape_default_post_graph_init_</a> ()</td></tr>
 <tr class="memdesc:a0cd1f91cbad006ec3da1cfd7170ef740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default initializes the method at runtime after initializing the global variables for the graphs.  <a href="#a0cd1f91cbad006ec3da1cfd7170ef740">More...</a><br /></td></tr>
 <tr class="separator:a0cd1f91cbad006ec3da1cfd7170ef740"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5428339cb6e22b6fb331417482cc2f2e"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1LSAPEBasedMethod.html#a5428339cb6e22b6fb331417482cc2f2e">lsape_lower_bound_scaling_factor_</a> (const <a class="el" href="classged_1_1GEDGraph.html">GEDGraph</a> &amp;g, const <a class="el" href="classged_1_1GEDGraph.html">GEDGraph</a> &amp;h)</td></tr>
+<tr class="memdesc:a5428339cb6e22b6fb331417482cc2f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns scaling factor for lower bound.  <a href="#a5428339cb6e22b6fb331417482cc2f2e">More...</a><br /></td></tr>
+<tr class="separator:a5428339cb6e22b6fb331417482cc2f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class UserNodeLabel, class UserEdgeLabel&gt;<br />
@@ -227,7 +231,7 @@ class ged::LSAPEBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</h3>
 
 <p>Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit distance. </p>
 <p>Implements the paradigm LSAPE-GED described in:</p><ul>
-<li>D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun: &ldquo;Ring based approximation of graph edit distance&rdquo;, accepted for publication in S+SSPR 2018,</li>
+<li>D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun: &ldquo;Ring based approximation of graph edit distance&rdquo;, S+SSPR 2018,</li>
 </ul>
 <p>and the extension of LSAPE-GED which uses node centrality measures:</p><ul>
 <li>K. Riesen, H. Bunke, and A. Fischer: &ldquo;Improving graph edit distance approximation by centrality measures&rdquo;, <a href="https:://doi.org/10.1016/j.patcog.2014.11.002">https:://doi.org/10.1016/j.patcog.2014.11.002</a></li>
@@ -348,7 +352,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a35699eba03f261fc1493e9bd7495f1c4">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00117">117</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00116">116</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -401,7 +405,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a7b1a1450e1d30d1302b328fc15b02fc7">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00136">136</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00135">135</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -460,7 +464,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a6364dc1f30a8de622a4fcd4f87cb0d9a">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00128">128</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00127">127</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -494,7 +498,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a7f544e924c2fdb5d13e1e299f88a7e6d">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00274">274</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00273">273</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -529,7 +533,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented from <a class="el" href="classged_1_1GEDMethod.html#a55d5c23b37c19e87afa9677287be831e">ged::GEDMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00264">264</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00263">263</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -563,7 +567,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#ae75bbb32463169aac5dd8be5326a51b1">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Ring.html#a67617d425af3635d6b89ba53ed1260ed">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00416">416</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00415">415</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -597,7 +601,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#a0b2b11a6864414e572630ac67d09055f">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#aa4e25dd886fcb41f456b5b6f187cb7c3">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#a2b23f13bcd4558f7af233e08e954e25d">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Subgraph.html#ac6c572e2d489075b4012464ebbc14d88">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00377">377</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00376">376</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -636,9 +640,62 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a> that require to initialize custom global variables. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#aa707e96b74e72327181b9a9fed726037">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a6205ffc2168d59ce5f86dedb1c2c54a2">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#ae5165bcdb9088feea68f0cd44f5425e0">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a2ae0fcd9baf1d6460aec2954dbd2b0d7">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchFast.html#a412ddbd11c3eae2301bd57ecbc88ace1">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Subgraph.html#a86adf4ea596b9a2b88c3bab664f5194c">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#aa707e96b74e72327181b9a9fed726037">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a6205ffc2168d59ce5f86dedb1c2c54a2">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#ae5165bcdb9088feea68f0cd44f5425e0">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a2ae0fcd9baf1d6460aec2954dbd2b0d7">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Star.html#a38646a6ac62773c554588f939935519b">ged::Star&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchFast.html#a412ddbd11c3eae2301bd57ecbc88ace1">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Subgraph.html#a86adf4ea596b9a2b88c3bab664f5194c">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00406">406</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00405">405</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+
+</div>
+</div>
+<a id="a5428339cb6e22b6fb331417482cc2f2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5428339cb6e22b6fb331417482cc2f2e">&#9670;&nbsp;</a></span>lsape_lower_bound_scaling_factor_()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classged_1_1LSAPEBasedMethod.html">ged::LSAPEBasedMethod</a>&lt; UserNodeLabel, UserEdgeLabel &gt;::lsape_lower_bound_scaling_factor_ </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classged_1_1GEDGraph.html">GEDGraph</a> &amp;&#160;</td>
+          <td class="paramname"><em>g</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classged_1_1GEDGraph.html">GEDGraph</a> &amp;&#160;</td>
+          <td class="paramname"><em>h</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns scaling factor for lower bound. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">g</td><td>g Input graph. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>h Input graph. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The factor by which the optimal LSAPE solution has to be scaled in order to arrive at a valid lower bound. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a> that require scaling of the optimal LSAPE solution for computing their lower bounds. </dd></dl>
+
+<p>Reimplemented in <a class="el" href="classged_1_1Star.html#af03f3cdb169ff2fa64adc6226150c6a3">ged::Star&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00420">420</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -689,9 +746,9 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if <code>option</code> is a valid option name for the method and false otherwise. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a>. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#af55a2eda5edae90f1d82d537d1941094">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a306afaae5ef6bdd728522e3aa28a35f4">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#af31f1050adc9f800562269f95c444ea8">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Subgraph.html#abe6e5093100eb39a8efa028f5266ce72">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a521c38b249d8d61185e6f6ebeb85288f">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1BranchFast.html#ad2b43398cf4c56a291cae869649fce27">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#af55a2eda5edae90f1d82d537d1941094">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a306afaae5ef6bdd728522e3aa28a35f4">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#af31f1050adc9f800562269f95c444ea8">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Subgraph.html#abe6e5093100eb39a8efa028f5266ce72">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a521c38b249d8d61185e6f6ebeb85288f">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Star.html#ae3faac88d5e87a9081a326990d67aca8">ged::Star&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1BranchFast.html#ad2b43398cf4c56a291cae869649fce27">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00382">382</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00381">381</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -748,9 +805,9 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a>. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#a5e5749b366264495bc5fb9a84b9ebd62">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a45294aaa7f1b29ff1681a5324f97fdfe">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#ad51c32a8f85a932e8ba6f7134c5f8f68">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Subgraph.html#ace02101fa23842f44f0fb4bbc4be01f7">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#ac121c2e483e98ce540b6b4f24563e2c5">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchFast.html#a8d4b328432f178e027ca25f40811d0e6">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Bipartite.html#ae9be8790abb2ca340f71c68eeaeba4d2">ged::Bipartite&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Branch.html#a84afe65d32eede85e5a44695b5a76795">ged::Branch&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Node.html#ab802c211ad2b242d05458e0cccfcd4f1">ged::Node&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#a5e5749b366264495bc5fb9a84b9ebd62">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a45294aaa7f1b29ff1681a5324f97fdfe">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#ad51c32a8f85a932e8ba6f7134c5f8f68">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Subgraph.html#ace02101fa23842f44f0fb4bbc4be01f7">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#ac121c2e483e98ce540b6b4f24563e2c5">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchFast.html#a8d4b328432f178e027ca25f40811d0e6">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Star.html#a00707ca90fcec7f8455d10625ae02341">ged::Star&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Bipartite.html#ae9be8790abb2ca340f71c68eeaeba4d2">ged::Bipartite&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Branch.html#a84afe65d32eede85e5a44695b5a76795">ged::Branch&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Node.html#ab802c211ad2b242d05458e0cccfcd4f1">ged::Node&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00401">401</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00400">400</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -790,7 +847,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#a205e964ad392657b704973c27a402683">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#afb974a0fdf6b4b075226e6236825ff8f">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#aac7aac8458caee41763bd2480a1161d7">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Subgraph.html#a1c526b2fe542ac1fce1bd435bf08e08b">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00411">411</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00410">410</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -822,9 +879,9 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <p>Sets all options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a> to default values. </p>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a>. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#af0dc544da5351055c836f97e2f89e872">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#aa07a69a9afb3d33625257e463782d9b2">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#abf25ccb0fa39bdb60a3951a2cbab68d4">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a8bebe18264526df56cf79a19555e6fd0">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchFast.html#a496902da19f9e580daa805b5fa264722">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Subgraph.html#ae0eeeee45712a3c85d6be0bb6f353518">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#af0dc544da5351055c836f97e2f89e872">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#aa07a69a9afb3d33625257e463782d9b2">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#abf25ccb0fa39bdb60a3951a2cbab68d4">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a8bebe18264526df56cf79a19555e6fd0">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Star.html#a4ea1a3576c84160af7a9647d628521df">ged::Star&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchFast.html#a496902da19f9e580daa805b5fa264722">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1Subgraph.html#ae0eeeee45712a3c85d6be0bb6f353518">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00396">396</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00395">395</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -857,9 +914,9 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>String of the form "[--&lt;option&gt; &lt;arg&gt;] [...]". </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Must be overridden by derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a> that have options that are not among the ones shared by all derived classes of <a class="el" href="classged_1_1LSAPEBasedMethod.html" title="Abstract class for methods that use lossy transformations to LSAPE for approximating the graph edit d...">ged::LSAPEBasedMethod</a>. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#aab1fd61270a4b257f3d9bc92b1d67bab">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a9e593e92bc388efe3d37e20a711341ab">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#a636ddf237c2bfb1c2a60da2a3ac93e77">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a5d312e6e816fd837e7cf35bb5934ea87">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Subgraph.html#abcb888c7afd2df615b3dc2b36bc00d37">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1BranchFast.html#a8d88b52d9b76e713af7a17f98ed9d792">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classged_1_1MLBasedMethod.html#aab1fd61270a4b257f3d9bc92b1d67bab">ged::MLBasedMethod&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Walks.html#a9e593e92bc388efe3d37e20a711341ab">ged::Walks&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Ring.html#a636ddf237c2bfb1c2a60da2a3ac93e77">ged::Ring&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1BranchUniform.html#a5d312e6e816fd837e7cf35bb5934ea87">ged::BranchUniform&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Star.html#a174c8449e347fad320bde0445903214d">ged::Star&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, <a class="el" href="classged_1_1Subgraph.html#abcb888c7afd2df615b3dc2b36bc00d37">ged::Subgraph&lt; UserNodeLabel, UserEdgeLabel &gt;</a>, and <a class="el" href="classged_1_1BranchFast.html#a8d88b52d9b76e713af7a17f98ed9d792">ged::BranchFast&lt; UserNodeLabel, UserEdgeLabel &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00389">389</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00388">388</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>
@@ -962,7 +1019,7 @@ template&lt;class UserNodeLabel , class UserEdgeLabel &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00070">70</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lsape__based__method_8ipp_source.html#l00071">71</a> of file <a class="el" href="lsape__based__method_8ipp_source.html">lsape_based_method.ipp</a>.</p>
 
 </div>
 </div>

@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 /*!
- * @file train_ml.cpp
+ * @file tests/tkde2019/src/train_ml.cpp
  * @brief Trains the methods ged::RingML and ged::BipartiteML for different datasets.
  * @details The binary built from this file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:

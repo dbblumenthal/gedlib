@@ -39,9 +39,9 @@ namespace ged {
  * Supports the following options in addition tothe ones supported by ged::LSBasedMethod.
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
- * | <tt>\--max-swap-size @<convertible to int greater equal 2@> | maximum size of swap | @p 2 | If set to a value greater @p 2, K-Refine is used. |
- * | <tt>\--naive TRUE\|FALSE | naive computation of swap cost | @p FALSE | If set to @p TRUE, the swap cost is computed naively. |
- * | <tt>\--add-dummy-assignment TRUE\|FALSE | add dummy assignment to initial node map | @p TRUE | If @p FALSE, the swapped node maps never contain more insertions and deletions than the original node map. |
+ * | <tt>\--max-swap-size @<convertible to int greater equal 2@></tt> | maximum size of swap | @p 2 | If set to a value greater @p 2, K-Refine is used. |
+ * | <tt>\--naive TRUE\|FALSE</tt> | naive computation of swap cost | @p FALSE | If set to @p TRUE, the swap cost is computed naively. |
+ * | <tt>\--add-dummy-assignment TRUE\|FALSE</tt> | add dummy assignment to initial node map | @p TRUE | If @p FALSE, the swapped node maps never contain more insertions and deletions than the original node map. |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class Refine : public LSBasedMethod<UserNodeLabel, UserEdgeLabel> {

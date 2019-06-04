@@ -38,8 +38,8 @@ namespace ged {
  *
  * and their extension to general instantiations of LSAPE-GED suggested in:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
- *   &ldquo;Designing heuristics for graph edit distance.&rdquo;,
- *   To be submitted to PR.
+ *   &ldquo;Upper bounding GED via transformations to LSAPE based on rings and machine learning.&rdquo;,
+ *   To be submitted to TKDE.
  *
  * Supports the following options in addition to the ones supported by ged::MLBasedMethod.
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |

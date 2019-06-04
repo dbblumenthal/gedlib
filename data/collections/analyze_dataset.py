@@ -20,7 +20,7 @@
 #//////////////////////////////////////////////////////////////////////////#
 
 ##
-# @file analyze_datasets.py
+# @file analyze_dataset.py
 # @brief Python script that computes statistics of a given dataset.
 #
 # @details 
@@ -37,9 +37,10 @@
 # <tr><td> <tt>\<dir\></tt> <td> path to directory containing GXL files
 # <tr><th colspan="2"> optional arguments
 # <tr><td> <tt>-h</tt> <td> show help
+# <tr><td> <tt>--help</tt> <td> show help
 # <tr><td> <tt>--topology</tt> <td> also compute mean number of connected components and ratios of acyclic and planar graphs 
 # <tr><td> <tt>--max_size \<maximal number of nodes\></tt> <td> only consider graphs with at most <tt>\<maximal number of nodes\></tt> many nodes
-# <tr><td> <tt>--distr \<data file to store node and edge distribution\></tt> <td> store distributions of number of nodes and edges as 2-dimensional histogram, i.e., as a data file whose rows are of the form \"<tt>\<number of nodes>\> \<number of edges\> \<count\>\</tt>"
+# <tr><td> <tt>--distr \<data file to store node and edge distribution\></tt> <td> store distributions of number of nodes and edges as 2-dimensional histogram, i.e., as a data file whose rows are of the form &ldquo;<tt>\<number of nodes\> \<number of edges\> \<count\></tt>&rdquo;
 # </table>
 '''
 Python script that computes statistics of a given dataset.

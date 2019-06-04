@@ -34,7 +34,7 @@ namespace ged {
  * @details Implements the method %Ring suggested in:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun.
  *   &ldquo;Ring-based approximation of graph edit distance&rdquo;,
- *   accepted paper at S+SSPR
+ *   https://doi.org/10.1007/978-3-319-97785-0_28
  *
  * Supports the following option in addition to the ones supported by ged::LSAPEBasedMethod:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |

@@ -34,7 +34,7 @@ namespace ged {
  * @details Implements the paradigm LSAPE-GED described in:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun:
  *   &ldquo;%Ring based approximation of graph edit distance&rdquo;,
- *   accepted for publication in S+SSPR 2018,
+ *   S+SSPR 2018,
  *
  * and the extension of LSAPE-GED which uses node centrality measures:
  * - K. Riesen, H. Bunke, and A. Fischer:
@@ -212,8 +212,8 @@ private:
 
 	/*!
 	 * @brief Returns scaling factor for lower bound.
-	 * @param g[in] g Input graph.
-	 * @param h[in] h Input graph.
+	 * @param[in] g g Input graph.
+	 * @param[in] h h Input graph.
 	 * @return The factor by which the optimal LSAPE solution has to be scaled in order to arrive at a valid lower bound.
 	 * @note Must be overridden by derived classes of ged::LSAPEBasedMethod that require scaling of the optimal LSAPE solution for computing their lower bounds.
 	 */

@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 /*!
- * @file util.hpp
+ * @file tests/tkde2019/src/util.hpp
  * @brief Provides utility functions for tests of PR submission.
  * @details This file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:

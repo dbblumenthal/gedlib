@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['lsape_5fmodel_5f',['lsape_model_',['../classged_1_1LSAPEBasedMethod.html#a34724d7ed5dcecbd83a1c5f46e9ab4fc',1,'ged::LSAPEBasedMethod']]]
+  ['ged_5fdata_5f',['ged_data_',['../classged_1_1GEDMethod.html#a9786ab21ffba74ff5c5ff9b6241bb744',1,'ged::GEDMethod']]],
+  ['greedy_5fmethod_5f',['greedy_method_',['../classged_1_1LSAPEBasedMethod.html#abdc1331856695b727197e2929e130a5b',1,'ged::LSAPEBasedMethod']]]
 ];

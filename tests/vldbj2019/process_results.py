@@ -1,3 +1,42 @@
+#//////////////////////////////////////////////////////////////////////////#
+#                                                                          #
+#   Copyright (C) 2018 by David B. Blumenthal                              #
+#                                                                          #
+#   This file is part of GEDLIB.                                           #
+#                                                                          #
+#   GEDLIB is free software: you can redistribute it and/or modify it      #
+#   under the terms of the GNU Lesser General Public License as published  #
+#   by the Free Software Foundation, either version 3 of the License, or   #
+#   (at your option) any later version.                                    #
+#                                                                          #
+#   GEDLIB is distributed in the hope that it will be useful,              #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of         #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           #
+#   GNU Lesser General Public License for more details.                    #
+#                                                                          #
+#   You should have received a copy of the GNU Lesser General Public       #
+#   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. #
+#                                                                          #
+#//////////////////////////////////////////////////////////////////////////#
+
+##
+# @file process_results.py
+# @brief Processes results of experiments for VLDB Journal paper.
+#
+# @details This file was used for visualizing the experiments in the following paper:
+# - D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, L. Brun:
+#   &ldquo;Comparing heuristics for graph edit distance computation&rdquo;,
+#   VLDB J. 2019
+#
+# Usage: 
+# ```sh
+# $ python install.py [--help] [-h] \<tikz_dir\> \<table_dir\> \<data-dir\> [--no_lsape] [--no_ls] [--no_lp] [--no_misc]
+# ```
+#
+# For more information, execute `$ python process_results.py --help`.
+
+'''Processes results of experiments for VLDB Journal paper.'''
+
 import csv
 from pickle import NONE
 import argparse
@@ -730,7 +769,6 @@ def create_pareto_data(args, dataset, methods, consider_lb, method_names):
     pareto_data_file.write("\n")
     pareto_data_file.close()
         
-
 def create_barplots(args, datasets, aggregated_scores, method_names, lsape_ext_names, ls_ext_names):
     lb_method_names = [method_name for method_name in method_names if not computes_no_lb(method_name)]
     ub_method_names = [method_name for method_name in method_names if not computes_no_ub(method_name)]
@@ -815,7 +853,6 @@ def create_barplots(args, datasets, aggregated_scores, method_names, lsape_ext_n
     barplot_file_name = os.path.join(args.tikz_dir, "has_best_coeff_UB.tex")
     write_barplot(barplot_file_name, "$(\sum_\mathcal{D}{\chi_\UB})_3$", 6.6, 1, has_best_coeff_ub, has_best_coeff_ub_lsape_ext, has_best_coeff_ub_ls_ext)
     
-
 def write_barplot(barplot_file_name, ylabel, ymax, width, method_bars, lsape_ext_bars = [], ls_ext_bars = []):
     num_bars = len(method_bars + lsape_ext_bars + ls_ext_bars)
     xtick = ",".join(str(i * 0.5) for i in range(1, num_bars + 1))
@@ -852,9 +889,7 @@ def write_barplot(barplot_file_name, ylabel, ymax, width, method_bars, lsape_ext
     barplot_file.write("\end{axis}\n")
     barplot_file.write("\end{tikzpicture}")
     barplot_file.close()
-    
-
-                
+                  
 def aggregate_scores(methods, method_names, method_ext_names):
     scores_lb = {method_name : 0.0 for method_name in method_names}
     scores_ub = {method_name : 0.0 for method_name in method_ext_names}
@@ -933,7 +968,6 @@ def aggregate_scores(methods, method_names, method_ext_names):
         scores_ub["RANDPOST"] = sum_scores_ub_randpost / sum_scores_ub_ls
     return AggregatedScores(method_names, scores_lb, scores_ub, has_tightest_lb, is_fastest_lb, has_best_coeff_lb, has_tightest_ub, is_fastest_ub, has_best_coeff_ub)
                 
-
 def create_coeff_vs_dist_table(args, dataset, methods, consider_lb):
     table_file_name = os.path.join(args.data_dir, dataset) + infix(args)
     if consider_lb:
@@ -954,7 +988,6 @@ def create_coeff_vs_dist_table(args, dataset, methods, consider_lb):
                 table_file.write(str(method.ub) + "," + str(method.coeff_ub) + "\n")
     table_file.close()
     
-
 def create_tikz_graph(args, dataset, methods, consider_lb):
     tikz_file_name = os.path.join(args.tikz_dir, dataset) + infix(args)
     if consider_lb:
@@ -995,8 +1028,7 @@ def create_tikz_graph(args, dataset, methods, consider_lb):
     tikz_file.write("};\n")
     tikz_file.write("\end{tikzpicture}")
     tikz_file.close()
-    
-    
+       
 parser = argparse.ArgumentParser(description="Generates TikZ dominance graph from CSV file.")
 parser.add_argument("tikz_dir", help="name of output directory for TikZ files")
 parser.add_argument("table_dir", help="name of output directory for LaTeX tables")

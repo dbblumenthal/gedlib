@@ -2,7 +2,8 @@ var searchData=
 [
   ['chem1',['CHEM1',['../classged_1_1CHEM1.html#a74d5702a8da57ea145ed9d63ba9c7d05',1,'ged::CHEM1']]],
   ['chem2',['CHEM2',['../classged_1_1CHEM2.html#a53c9274194dbdd48cda98d835a5ba45a',1,'ged::CHEM2']]],
-  ['clear',['clear',['../classged_1_1NodeMap.html#a6726ed9803b364fd0ace352b62d0ebc2',1,'ged::NodeMap']]],
+  ['clear',['clear',['../classged_1_1GEDGraph.html#a38ad1c59ce0d5d324a3d033924801ff6',1,'ged::GEDGraph::clear()'],['../classged_1_1NodeMap.html#a6726ed9803b364fd0ace352b62d0ebc2',1,'ged::NodeMap::clear()']]],
+  ['clear_5fgraph',['clear_graph',['../classged_1_1GEDEnv.html#a585c78335e244bcdee00411c3a301348',1,'ged::GEDEnv']]],
   ['clear_5fsolution',['clear_solution',['../classged_1_1LSAPSolver.html#a3c82dde4dff555cb79b0a7200bf66518',1,'ged::LSAPSolver::clear_solution()'],['../classged_1_1LSAPESolver.html#a54001bb8f872906f6a24bd72a3038a64',1,'ged::LSAPESolver::clear_solution()']]],
   ['cmu',['CMU',['../classged_1_1CMU.html#a6b74ca35cf9f8979c4e65c7fe3e52618',1,'ged::CMU']]],
   ['col_5fto_5frow_5fassignment',['col_to_row_assignment',['../classged_1_1LSAPSolver.html#ace827afa3682a89b0ecae815b22c0f62',1,'ged::LSAPSolver::col_to_row_assignment()'],['../classged_1_1LSAPESolver.html#ad5a40e70ff66ec80e425a8bd7178415e',1,'ged::LSAPESolver::col_to_row_assignment()']]],

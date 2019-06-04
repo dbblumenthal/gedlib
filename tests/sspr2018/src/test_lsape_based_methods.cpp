@@ -20,12 +20,12 @@
 ***************************************************************************/
 
 /*!
- * @file test_lsape_based_methods.cpp
+ * @file tests/sspr2018/src/test_lsape_based_methods.cpp
  * @brief Tests performance of derived classes of ged::LSAPEBasedMethod.
- * @details The binary built from this file was used for the experiments in the following submission:
+ * @details The binary built from this file was used for the experiments in the following paper:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
  *   &ldquo;Ring based approximation of graph edit distance&rdquo;,
- *   accepted at S+SSPR 2018
+ *   S+SSPR 2018
  * To reproduce the experiments, install GEDLIB, go to the folder `<GEDLIB_ROOT>/tests/sspr2018/bin/` and execute the following commands:
  * @code{.sh}
  * $ cd bin

@@ -182,7 +182,6 @@ GEDLIB has been used for several research papers. For reproducing the experiment
 
 ##### D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun. &ldquo;Ring based approximation of graph edit distance&rdquo;, S+SSPR 2018, vol. 11004 of LNCS, pp. 293-303, [https://doi.org/10.1007/978-3-319-97785-0_28](https://doi.org/10.1007/978-3-319-97785-0_28)
 
-
 In order to reproduce the experiments reported in this paper, install GEDLIB with the option `--tests sspr2018`. After installation, open a shell and execute the following commands:
 
 ```sh
@@ -196,8 +195,7 @@ After having executed these commands, the results of the experiments are contain
 
 ##### D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, and L. Brun. &ldquo;Comparing heuristics for graph edit distance computation&rdquo;, VLDB J. 2019
 
-
-In order to reproduce the experiments reported in this paper, install GEDLIB with the option `--tests vldbj2019`. After installation, open a shell and execute the following commands:
+In order to reproduce the experiments reported in this paper, install GEDLIB with the options `--tests vldbj2019` and `--gurobi <GUROBI_ROOT>`. After installation, open a shell and execute the following commands:
 
 ```sh
 $ cd <GEDLIB_ROOT>/tests/vldbj2019/bin
@@ -211,7 +209,8 @@ $ ./vldbj_test_ls_based_methods
 $ ./vldbj_test_misc_methods
 $ ./vldbj_test_best_methods
 ```
-After having executed these commands, the results of the experiments are contained in the folder `tests/vldbj2019/results/`. For creating TikZ figures and tables that visualiue the results, run the script `process_results.py`.
+
+After having executed these commands, the results of the experiments are contained in the folder `tests/vldbj2019/results/`. For creating TikZ figures and tables that visualize the results, run the script `process_results.py`.
 
 # 7. Datasets
 

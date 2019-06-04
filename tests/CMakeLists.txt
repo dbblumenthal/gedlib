@@ -19,8 +19,8 @@
 #                                                                          #
 ############################################################################
 
-add_custom_target(tests DEPENDS unit_tests pr2018 sspr2018 vldbj2019)
+add_custom_target(tests DEPENDS unit_tests tkde2019 sspr2018 vldbj2019)
 add_subdirectory(unit_tests)
 add_subdirectory(sspr2018)
-add_subdirectory(pr2018)
+add_subdirectory(tkde2019)
 add_subdirectory(vldbj2019)

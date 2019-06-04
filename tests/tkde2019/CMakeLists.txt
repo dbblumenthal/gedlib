@@ -25,7 +25,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/pr2018/bin)
 
 # Add targets.
 
-add_custom_target(pr2018 DEPENDS train_ring train_walks train_subgraph train_ml run_tests)
+add_custom_target(tkde2019 DEPENDS train_ring train_walks train_subgraph train_ml run_tests)
 
 add_executable(train_ring src/train_ring.cpp)
 target_link_libraries(train_ring gxlgedlib)

@@ -53,10 +53,10 @@ GEDLIB uses the following external libraries:
 After having installed CMake, Doxygen, and OpenMP and having downloaded Boost, execute the script `install.py` for installing GEDLIB and the external libraries distributed with GEDLIB:
 
 ```sh
-python install.py [--help] [-h] [--doc] [--tests all|sspr2018|vldbj2019|tkde2019|unit_tests|ged_env_tests|lsap_solver_tests] [--boost <BOOST_ROOT>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
+python install.py [--help] [-h] [--doc] [--tests all|sspr2018|vldbj2019|tkde2019|unit_tests|ged_env_tests|lsap_solver_tests] [--median] [--boost <BOOST_ROOT>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
 ```
 
-Use the option `--doc` to build the [Doxygen documentation](https://dbblumenthal.github.io/gedlib/), the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), and the option `--tests all|sspr2018|vldbj2019|tkde2019|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables. These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
+Use the option `--doc` to build the [Doxygen documentation](https://dbblumenthal.github.io/gedlib/), the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), the option `--tests all|sspr2018|vldbj2019|tkde2019|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables, and the option `--median` to build a GEDLIB implementation of median graph computation for graphs from the `Letter` dataset (see Section 7 below). These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
 
 Use the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>` to build GEDLIB as a shared for graphs with custom node ID, node label, and edge label types:
 
@@ -174,7 +174,7 @@ If you want to use GEDLIB as a shared library for graphs with custom node ID, no
 
 ### 5.4 Examples
 
-For exacmples of how to use GEDLIB, have a look at the `.cpp` files contained in the subdirectories of `tests/`. 
+For exacmples of how to use GEDLIB, have a look at `median/src/median_letter.cpp` and at the `.cpp` files contained in the subdirectories of `tests/`. 
 
 ## 6. Reproducability Packages
 
@@ -266,6 +266,16 @@ After executing `install.py`, the directoy `<GEDLIB_ROOT>` has the following int
 |   |   └── ... 
 |   └── _util -------------------- contains utility classes and functions used by the GED methods
 |       └── ... 
+├── _median ---------------------- contains GEDLIB implementation of median graph computation
+|   ├── CMakeLists.txt ------- used for building the executables
+|   ├── _bin ----------------- contains the executables if GEDLIB has been built with option --median
+|   |   └── ...
+|   ├── _collections --------- contains graph collections used by the median graph computation
+|   |   └── ...
+|   ├── _output -------------- contains the median graphs once the executables have been run
+|   |   └── ...
+|   └── _src ----------------- contains the sources
+|       └── ...
 └── _tests ----------------------- contains tests
     ├── CMakeLists.txt
     ├── _pr2018 ------------------ tests for PR paper "Designing Heuristics for Graph Edit Distance"

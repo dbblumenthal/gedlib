@@ -23,7 +23,7 @@ var searchData=
   ['num_5fedge_5flabels',['num_edge_labels',['../classged_1_1GEDData.html#abbead2a89477d4225db9f8e36166a7e6',1,'ged::GEDData']]],
   ['num_5fedges',['num_edges',['../structged_1_1ExchangeGraph.html#ae20ae9c2619eee4dc1fc24ba5fb3d40d',1,'ged::ExchangeGraph::num_edges()'],['../classged_1_1GEDGraph.html#ac5b6c69cc86e8a7c2347f3e188991fbc',1,'ged::GEDGraph::num_edges()']]],
   ['num_5ffeatures_5f',['num_features_',['../classged_1_1MLBasedMethod.html#af1aa2507352d43625f363df659297116',1,'ged::MLBasedMethod']]],
-  ['num_5fgraphs',['num_graphs',['../classged_1_1GEDData.html#ad3de50f0c2d59e7bc50bc4659b2ecb21',1,'ged::GEDData']]],
+  ['num_5fgraphs',['num_graphs',['../classged_1_1GEDData.html#ad3de50f0c2d59e7bc50bc4659b2ecb21',1,'ged::GEDData::num_graphs()'],['../classged_1_1GEDEnv.html#a937bac6ea2cfc17779d31428b2e3b7a5',1,'ged::GEDEnv::num_graphs()']]],
   ['num_5fgraphs_5fwithout_5fshuffled_5fcopies',['num_graphs_without_shuffled_copies',['../classged_1_1GEDData.html#a94184775a7f641c985135d7eb899ce12',1,'ged::GEDData']]],
   ['num_5fnode_5flabels',['num_node_labels',['../classged_1_1GEDData.html#a337d396c8f0da253aa7c07ab52645aee',1,'ged::GEDData']]],
   ['num_5fnode_5fmaps',['num_node_maps',['../classged_1_1Result.html#a12de3a90a88328368209f5ad81f7e879',1,'ged::Result']]],

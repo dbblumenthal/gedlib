@@ -341,9 +341,13 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel> struct Exch
 
 	std::vector<UserNodeLabel> node_labels;                                           //!< The labels of all nodes.
 
-	std::vector<std::pair<std::pair<std::size_t, std::size_t>, UserEdgeLabel>> edges; //!< List of all edges in the form <tt>((internal_tail_id, internal_head_id), label)</tt>.
+	std::vector<std::vector<std::size_t>> adj_matrix;                                 //!< Adjacency matrix.
 
-	std::vector<std::list<std::pair<std::size_t, UserEdgeLabel>>> adj_list;           //!< Adjacency lists for each node with elements of the form <tt>(internal_neighbor_id, label)</tt>.
+	std::map<std::pair<std::size_t, std::size_t>, UserEdgeLabel> edge_labels;         //!< A hash map with a key-value pair <tt>((internal_tail_id, internal_head_id), label)</tt> for each edge.
+
+	bool operator==(const ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & rhs) const {
+		return ((original_node_ids == rhs.original_node_ids) and (node_labels == rhs.node_labels) and (adj_matrix == rhs.adj_matrix) and (edge_labels == rhs.edge_labels));
+	};
 };
 
 #ifdef ENABLE_GRAPH_STREAMING
@@ -371,12 +375,16 @@ std::ostream & operator<<(std::ostream & os, const ExchangeGraph<UserNodeID, Use
 		os << "\t\tlabel = \"" << graph.node_labels.at(node_id) << "\"\n";
 		os << "\t]\n";
 	}
-	for (const auto & edge : graph.edges) {
-		os << "\tedge [\n";
-		os << "\t\tinternal_id_tail = " << edge.first.first << "\n";
-		os << "\t\tinternal_id_head = " << edge.first.second << "\n";
-		os << "\t\tlabel = \"" << edge.second << "\"\n";
-		os << "\t]\n";
+	for (std::size_t tail_id{0}; tail_id < graph.num_nodes; tail_id++) {
+		for (std::size_t head_id{tail_id + 1}; head_id < graph.num_nodes; head_id++) {
+			if (graph.adj_matrix[node_id][head_id] == 1) {
+				os << "\tedge [\n";
+				os << "\t\tinternal_id_tail = " << tail_id << "\n";
+				os << "\t\tinternal_id_head = " << head_id << "\n";
+				os << "\t\tlabel = \"" << graph.edge_labels[std::make_pair(tail_id, head_id)] << "\"\n";
+				os << "\t]\n";
+			}
+		}
 	}
 	os << "]\n";
 	return os;

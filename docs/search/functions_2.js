@@ -8,7 +8,7 @@ var searchData=
   ['cmu',['CMU',['../classged_1_1CMU.html#a6b74ca35cf9f8979c4e65c7fe3e52618',1,'ged::CMU']]],
   ['col_5fto_5frow_5fassignment',['col_to_row_assignment',['../classged_1_1LSAPSolver.html#ace827afa3682a89b0ecae815b22c0f62',1,'ged::LSAPSolver::col_to_row_assignment()'],['../classged_1_1LSAPESolver.html#ad5a40e70ff66ec80e425a8bd7178415e',1,'ged::LSAPESolver::col_to_row_assignment()']]],
   ['complete',['complete',['../classged_1_1NodeMap.html#a61c8edf281de0425d876c869f41efa0a',1,'ged::NodeMap']]],
-  ['compute_5finduced_5fcost',['compute_induced_cost',['../classged_1_1GEDData.html#a5f5241bdfd36e9cd440afe32ef308332',1,'ged::GEDData']]],
+  ['compute_5finduced_5fcost',['compute_induced_cost',['../classged_1_1GEDData.html#a5f5241bdfd36e9cd440afe32ef308332',1,'ged::GEDData::compute_induced_cost()'],['../classged_1_1GEDEnv.html#ac584e7afe0ac725f1823d6879327b6db',1,'ged::GEDEnv::compute_induced_cost()']]],
   ['constant',['Constant',['../classged_1_1Constant.html#aa35c479a20cd6899da9b399ad37d1bbc',1,'ged::Constant']]],
   ['construct_5fnode_5fmap_5ffrom_5fsolver',['construct_node_map_from_solver',['../namespaceged_1_1util.html#a3f6f03ba4377ee7c8dab639afc6f913f',1,'ged::util']]],
   ['cost_5fmatrix',['cost_matrix',['../classged_1_1LSAPSolver.html#abd354d29863a38da87e0618d7f74d628',1,'ged::LSAPSolver::cost_matrix()'],['../classged_1_1LSAPESolver.html#a7694caae8e178a129768f0368fe52508',1,'ged::LSAPESolver::cost_matrix()']]],

@@ -1,6 +1,7 @@
 var searchData=
 [
   ['letter',['Letter',['../classged_1_1Letter.html#ad07463ee018e1184c21e21011c0da366',1,'ged::Letter']]],
+  ['load_5fexchange_5fgraph',['load_exchange_graph',['../classged_1_1GEDEnv.html#a84188eac1e1b01c32563bb4285842a10',1,'ged::GEDEnv']]],
   ['load_5fgxl_5fgraphs',['load_gxl_graphs',['../classged_1_1GEDEnv.html#ad637db72ef9c5c8951e2b5a7f3dfbbd3',1,'ged::GEDEnv']]],
   ['load_5fnode_5fmap',['load_node_map',['../classged_1_1GEDData.html#ab001596dab4cc536a48157cb622cc5cb',1,'ged::GEDData']]],
   ['lower_5fbound',['lower_bound',['../classged_1_1Result.html#ab16dbad364c6e63fd677be2bd51f29b7',1,'ged::Result']]],

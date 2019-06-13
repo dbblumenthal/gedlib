@@ -20,7 +20,7 @@ var searchData=
   ['compact_5fmip_2eipp',['compact_mip.ipp',['../compact__mip_8ipp.html',1,'']]],
   ['compactmip',['CompactMIP',['../classged_1_1CompactMIP.html',1,'ged']]],
   ['complete',['complete',['../classged_1_1NodeMap.html#a61c8edf281de0425d876c869f41efa0a',1,'ged::NodeMap']]],
-  ['compute_5finduced_5fcost',['compute_induced_cost',['../classged_1_1GEDData.html#a5f5241bdfd36e9cd440afe32ef308332',1,'ged::GEDData']]],
+  ['compute_5finduced_5fcost',['compute_induced_cost',['../classged_1_1GEDData.html#a5f5241bdfd36e9cd440afe32ef308332',1,'ged::GEDData::compute_induced_cost()'],['../classged_1_1GEDEnv.html#ac584e7afe0ac725f1823d6879327b6db',1,'ged::GEDEnv::compute_induced_cost()']]],
   ['compute_5flower_5fbound_5f',['compute_lower_bound_',['../classged_1_1LSAPEBasedMethod.html#abc3e6f23023a2688b6551a61e93e4d38',1,'ged::LSAPEBasedMethod']]],
   ['constant',['Constant',['../classged_1_1Constant.html',1,'ged::Constant&lt; UserNodeLabel, UserEdgeLabel &gt;'],['../classged_1_1Constant.html#aa35c479a20cd6899da9b399ad37d1bbc',1,'ged::Constant::Constant()'],['../structged_1_1Options.html#a6cfa00eb5e4a5d33b81d4545243fdc7ba8d6b5cada83510220f59e00ce86d4d92',1,'ged::Options::CONSTANT()']]],
   ['constant_2ehpp',['constant.hpp',['../constant_8hpp.html',1,'']]],

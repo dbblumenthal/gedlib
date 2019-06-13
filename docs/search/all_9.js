@@ -10,6 +10,7 @@ var searchData=
   ['letter',['Letter',['../classged_1_1Letter.html',1,'ged::Letter&lt; UserNodeLabel, UserEdgeLabel &gt;'],['../structged_1_1Options.html#a6cfa00eb5e4a5d33b81d4545243fdc7ba293c501027368f9a83d91179af6a4316',1,'ged::Options::LETTER()'],['../classged_1_1Letter.html#ad07463ee018e1184c21e21011c0da366',1,'ged::Letter::Letter()']]],
   ['letter_2ehpp',['letter.hpp',['../letter_8hpp.html',1,'']]],
   ['letter_2eipp',['letter.ipp',['../letter_8ipp.html',1,'']]],
+  ['load_5fexchange_5fgraph',['load_exchange_graph',['../classged_1_1GEDEnv.html#a84188eac1e1b01c32563bb4285842a10',1,'ged::GEDEnv']]],
   ['load_5fgxl_5fgraphs',['load_gxl_graphs',['../classged_1_1GEDEnv.html#ad637db72ef9c5c8951e2b5a7f3dfbbd3',1,'ged::GEDEnv']]],
   ['load_5fnode_5fmap',['load_node_map',['../classged_1_1GEDData.html#ab001596dab4cc536a48157cb622cc5cb',1,'ged::GEDData']]],
   ['loss',['LOSS',['../classged_1_1LSAPSolver.html#a4eed323159f55ec3eeb580173d2383c1aafcadae3f63ceeb53541ec7ece8ff140',1,'ged::LSAPSolver::LOSS()'],['../classged_1_1LSAPESolver.html#aa7965b51347f0a934d99330f62fe1878a3d53c6ba92324130776bd362c3233dca',1,'ged::LSAPESolver::LOSS()']]],

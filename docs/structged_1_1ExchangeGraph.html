@@ -98,14 +98,14 @@ std::vector&lt; UserNodeID &gt;&#160;</td><td class="memItemRight" valign="botto
 std::vector&lt; UserNodeLabel &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structged_1_1ExchangeGraph.html#a77b82ea27c7c1a11e43291c0be332a8c">node_labels</a></td></tr>
 <tr class="memdesc:a77b82ea27c7c1a11e43291c0be332a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The labels of all nodes. <br /></td></tr>
 <tr class="separator:a77b82ea27c7c1a11e43291c0be332a8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b5f3bcac1dea9b11217622ecaa350c5"><td class="memItemLeft" align="right" valign="top"><a id="a0b5f3bcac1dea9b11217622ecaa350c5"></a>
-std::vector&lt; std::pair&lt; std::pair&lt; std::size_t, std::size_t &gt;, UserEdgeLabel &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structged_1_1ExchangeGraph.html#a0b5f3bcac1dea9b11217622ecaa350c5">edges</a></td></tr>
-<tr class="memdesc:a0b5f3bcac1dea9b11217622ecaa350c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of all edges in the form <code>((internal_tail_id, internal_head_id), label)</code>. <br /></td></tr>
-<tr class="separator:a0b5f3bcac1dea9b11217622ecaa350c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53282a4ae388b17e30c2e7ce241f51d5"><td class="memItemLeft" align="right" valign="top"><a id="a53282a4ae388b17e30c2e7ce241f51d5"></a>
-std::vector&lt; std::list&lt; std::pair&lt; std::size_t, UserEdgeLabel &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structged_1_1ExchangeGraph.html#a53282a4ae388b17e30c2e7ce241f51d5">adj_list</a></td></tr>
-<tr class="memdesc:a53282a4ae388b17e30c2e7ce241f51d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adjacency lists for each node with elements of the form <code>(internal_neighbor_id, label)</code>. <br /></td></tr>
-<tr class="separator:a53282a4ae388b17e30c2e7ce241f51d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74dcef00422a7a35d26d791bf11bafd8"><td class="memItemLeft" align="right" valign="top"><a id="a74dcef00422a7a35d26d791bf11bafd8"></a>
+std::vector&lt; std::vector&lt; std::size_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structged_1_1ExchangeGraph.html#a74dcef00422a7a35d26d791bf11bafd8">adj_matrix</a></td></tr>
+<tr class="memdesc:a74dcef00422a7a35d26d791bf11bafd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adjacency matrix. <br /></td></tr>
+<tr class="separator:a74dcef00422a7a35d26d791bf11bafd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cab2f1c23c92e2df7e38661c1f92710"><td class="memItemLeft" align="right" valign="top"><a id="a2cab2f1c23c92e2df7e38661c1f92710"></a>
+std::map&lt; std::pair&lt; std::size_t, std::size_t &gt;, UserEdgeLabel &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structged_1_1ExchangeGraph.html#a2cab2f1c23c92e2df7e38661c1f92710">edge_labels</a></td></tr>
+<tr class="memdesc:a2cab2f1c23c92e2df7e38661c1f92710"><td class="mdescLeft">&#160;</td><td class="mdescRight">A hash map with a key-value pair <code>((internal_tail_id, internal_head_id), label)</code> for each edge. <br /></td></tr>
+<tr class="separator:a2cab2f1c23c92e2df7e38661c1f92710"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class UserNodeID, class UserNodeLabel, class UserEdgeLabel&gt;<br />

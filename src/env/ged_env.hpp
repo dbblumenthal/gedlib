@@ -1,23 +1,23 @@
 /***************************************************************************
-*                                                                          *
-*   Copyright (C) 2018 by David B. Blumenthal                              *
-*                                                                          *
-*   This file is part of GEDLIB.                                           *
-*                                                                          *
-*   GEDLIB is free software: you can redistribute it and/or modify it      *
-*   under the terms of the GNU Lesser General Public License as published  *
-*   by the Free Software Foundation, either version 3 of the License, or   *
-*   (at your option) any later version.                                    *
-*                                                                          *
-*   GEDLIB is distributed in the hope that it will be useful,              *
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
-*   GNU Lesser General Public License for more details.                    *
-*                                                                          *
-*   You should have received a copy of the GNU Lesser General Public       *
-*   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
-*                                                                          *
-***************************************************************************/
+ *                                                                          *
+ *   Copyright (C) 2018 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 /*!
  * @file  ged_env.hpp
@@ -87,6 +87,13 @@ public:
 	void clear_graph(GEDGraph::GraphID graph_id);
 
 	/*!
+	 * @brief Loads ged::ExchangeGraph into the environment.
+	 * @param[in] graph_id ID of the ged::ExchangeGraph within the environment.
+	 * @param[in] exchange_graph The ged::ExchangeGraph graph that should be loaded.
+	 */
+	void load_exchange_graph(GEDGraph::GraphID graph_id, const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & exchange_graph);
+
+	/*!
 	 * @brief Adds a labeled node.
 	 * @param[in] graph_id ID of graph that has been added to the environment.
 	 * @param[in] node_id The user-specific ID of the vertex that has to be added.
@@ -153,6 +160,12 @@ public:
 	std::pair<GEDGraph::GraphID, GEDGraph::GraphID> graph_ids() const;
 
 	/*!
+	 * @brief The number of graphs contained in the environment.
+	 * @return The number of graphs (without shuffled copies).
+	 */
+	std::size_t num_graphs() const;
+
+	/*!
 	 * @brief Returns lower bound for edit distance between the input graphs.
 	 * @param[in] g_id ID of an input graph that has been added to the environment.
 	 * @param[in] h_id ID of an input graph that has been added to the environment.
@@ -189,6 +202,14 @@ public:
 	 * @return Runtime of the last call to init_method().
 	 */
 	double get_init_time() const;
+
+	/*!
+	 * @brief Computes the edit cost between two graphs induced by a node map.
+	 * @param[in] g_id ID of input graph.
+	 * @param[in] h_id ID of input graph.
+	 * @param[in,out] node_map Node map whose induced edit cost is to be computed.
+	 */
+	void compute_induced_cost(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id, NodeMap & node_map) const;
 
 	/*!
 	 * @brief Returns ged::ExchangeGraph representation.

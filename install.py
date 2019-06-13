@@ -26,7 +26,7 @@
 # @details 
 # Usage: 
 # ```sh
-# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests] [--boost \<BOOST_ROOT\>] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
+# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests] [--median] [--boost \<BOOST_ROOT\>] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
 # ```
 #
 # For more information, execute `$ python install.py --help`.
@@ -189,6 +189,11 @@ def build_gedlib(args):
 			commands = "cd build; make " + args.tests
 			call(commands, shell=True)
 			
+	if args.median:
+		print("\n***** Build executable for median graph computation on LETTER graphs. *****")
+		commands = "cd build; make median_letter"
+		call(commands, shell=True)
+			
 
 print("**************************************************")
 print("                    GEDLIB 1.0                    ")
@@ -199,6 +204,7 @@ parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependenci
 parser.add_argument("--doc", help="build documentation; requires --boost <BOOST_ROOT>", action="store_true")
 parser.add_argument("--lib", help="build shared library; requires --boost <BOOST_ROOT>", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
 parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "vldbj2019", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods"])
+parser.add_argument("--median", help="build binary for median graph computation on letter graphs", action="store_true")
 parser.add_argument("--boost", metavar="<BOOST_ROOT>", help="specify path to directory containing Boost sources")
 parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
@@ -208,6 +214,6 @@ if not args.boost and (args.lib or args.tests or args.doc):
 	raise Exception("The argument --boost BOOST is required if the script is called with one of the options --lib, --tests or --doc.")
 build_external_libraries()
 create_directories()
-if args.lib or args.tests or args.doc:
+if args.lib or args.tests or args.doc or args.median:
 	build_gedlib(args)
 print("\n***** Successfully installed GEDLIB. *****")

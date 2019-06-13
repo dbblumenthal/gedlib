@@ -113,7 +113,7 @@ def parse_custom_types(custom_types):
 
 def create_directories():
 	print("\n***** Create directories for shared libraries, executables and output. *****")
-	commands = "mkdir -p lib; mkdir -p tests/pr2018/bin; mkdir -p tests/pr2018/output; mkdir -p tests/sspr2018/bin; mkdir -p tests/sspr2018/output; mkdir -p tests/unit_tests/bin; mkdir -p tests/unit_tests/output"
+	commands = "mkdir -p lib; mkdir -p tests/tkde2019/bin; mkdir -p tests/tkde2019/output; mkdir -p tests/vldbj2019/bin; mkdir -p tests/vldbj2019/ini; mkdir -p tests/vldbj2019/results; median/bin; mkdir -p median/output; mkdir -p tests/sspr2018/bin; mkdir -p tests/sspr2018/output; mkdir -p tests/unit_tests/bin; mkdir -p tests/unit_tests/output"
 	call(commands, shell=True)
 
 def build_external_libraries():

@@ -191,6 +191,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a67e44f4abcf3bae8b00a6074f027875e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDGraph.html#a67e44f4abcf3bae8b00a6074f027875e">initialized</a> () const</td></tr>
 <tr class="memdesc:a67e44f4abcf3bae8b00a6074f027875e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if graph has already been initialized.  <a href="#a67e44f4abcf3bae8b00a6074f027875e">More...</a><br /></td></tr>
 <tr class="separator:a67e44f4abcf3bae8b00a6074f027875e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad13cb4b300a6de2ea596eee2e8e55f45"><td class="memItemLeft" align="right" valign="top"><a id="ad13cb4b300a6de2ea596eee2e8e55f45"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDGraph.html#ad13cb4b300a6de2ea596eee2e8e55f45">un_init</a> ()</td></tr>
+<tr class="memdesc:ad13cb4b300a6de2ea596eee2e8e55f45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declare graph as un-initialized. <br /></td></tr>
+<tr class="separator:ad13cb4b300a6de2ea596eee2e8e55f45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6426c593ccd3e09400832f5e0fcc9f74"><td class="memItemLeft" align="right" valign="top"><a id="a6426c593ccd3e09400832f5e0fcc9f74"></a>
 std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDGraph.html#a6426c593ccd3e09400832f5e0fcc9f74">maxdeg</a> () const</td></tr>
 <tr class="memdesc:a6426c593ccd3e09400832f5e0fcc9f74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum degree of the graph. <br /></td></tr>
@@ -522,7 +526,7 @@ Related Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The ID of the edge that connects <code>tail</code> with <code>head</code>, if the edge exists. Otherwise, <a class="el" href="classged_1_1GEDGraph.html#aad2dffd395dd7087dcb60474b96a7f1d" title="Returns a dummy edge. ">dummy_edge()</a> is returned. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This function uses the adjacency matrix. Ensure you called <a class="el" href="classged_1_1GEDGraph.html#abe32fd54ba880a90a438188599653800" title="Prepares the adjacency matrix to allow quick retrieval of edges. ">setup_adjacency_matrix()</a> before calling. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00235">235</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00241">241</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
 
 </div>
 </div>
@@ -764,7 +768,7 @@ Related Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Boolean <code>true</code> if there is an edge that connects <code>tail</code> with <code>head</code>, and <code>false</code> otherwise. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>This function uses the adjacency matrix. Ensure you called <a class="el" href="classged_1_1GEDGraph.html#abe32fd54ba880a90a438188599653800" title="Prepares the adjacency matrix to allow quick retrieval of edges. ">setup_adjacency_matrix()</a> before calling. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00256">256</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00262">262</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
 
 </div>
 </div>
@@ -871,7 +875,7 @@ Related Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The ID of the edge that connects <code>tail</code> with <code>head</code>, if the edge exists. Otherwise, <a class="el" href="classged_1_1GEDGraph.html#aad2dffd395dd7087dcb60474b96a7f1d" title="Returns a dummy edge. ">dummy_edge()</a> is returned. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This function uses the adjacency list. It is hence slower than <a class="el" href="classged_1_1GEDGraph.html#a3c568b41c1cf24e86be5732a320624a2" title="Retrieves an edge from its incident nodes. ">get_edge()</a> but does not expect that <a class="el" href="classged_1_1GEDGraph.html#abe32fd54ba880a90a438188599653800" title="Prepares the adjacency matrix to allow quick retrieval of edges. ">setup_adjacency_matrix()</a> has been called. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00245">245</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00251">251</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
 
 </div>
 </div>
@@ -912,7 +916,7 @@ Related Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Boolean <code>true</code> if there is an edge that connects <code>tail</code> with <code>head</code>, and <code>false</code> otherwise. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This function uses the adjacency list. It is hence slower than <a class="el" href="classged_1_1GEDGraph.html#a61969da174fb024e7aebe207b5abfae0" title="Checks if an edge exists. ">is_edge()</a> but does not expect that <a class="el" href="classged_1_1GEDGraph.html#abe32fd54ba880a90a438188599653800" title="Prepares the adjacency matrix to allow quick retrieval of edges. ">setup_adjacency_matrix()</a> has been called. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00266">266</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00272">272</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
 
 </div>
 </div>
@@ -1121,7 +1125,7 @@ Related Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The output stream <code>os</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00275">275</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__graph_8ipp_source.html#l00281">281</a> of file <a class="el" href="ged__graph_8ipp_source.html">ged_graph.ipp</a>.</p>
 
 </div>
 </div>

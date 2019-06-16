@@ -98,15 +98,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a585c78335e244bcdee00411c3a301348"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDEnv.html#a585c78335e244bcdee00411c3a301348">clear_graph</a> (<a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> graph_id)</td></tr>
 <tr class="memdesc:a585c78335e244bcdee00411c3a301348"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears and de-initializes a graph that has previously been added to the environment. Call <a class="el" href="classged_1_1GEDEnv.html#a4a212c3c5605951c3015860cbfa78bd8" title="Initializes the environment. ">init()</a> after calling this method.  <a href="#a585c78335e244bcdee00411c3a301348">More...</a><br /></td></tr>
 <tr class="separator:a585c78335e244bcdee00411c3a301348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84188eac1e1b01c32563bb4285842a10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDEnv.html#a84188eac1e1b01c32563bb4285842a10">load_exchange_graph</a> (<a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> graph_id, const <a class="el" href="structged_1_1ExchangeGraph.html">ged::ExchangeGraph</a>&lt; UserNodeID, UserNodeLabel, UserEdgeLabel &gt; &amp;exchange_graph)</td></tr>
-<tr class="memdesc:a84188eac1e1b01c32563bb4285842a10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads <a class="el" href="structged_1_1ExchangeGraph.html" title="Simple graph class used for communication with user. ">ged::ExchangeGraph</a> into the environment.  <a href="#a84188eac1e1b01c32563bb4285842a10">More...</a><br /></td></tr>
-<tr class="separator:a84188eac1e1b01c32563bb4285842a10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a860a8a9c5bb9c8478b954783e3832754"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDEnv.html#a860a8a9c5bb9c8478b954783e3832754">add_node</a> (<a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> graph_id, const UserNodeID &amp;node_id, const UserNodeLabel &amp;node_label)</td></tr>
 <tr class="memdesc:a860a8a9c5bb9c8478b954783e3832754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a labeled node.  <a href="#a860a8a9c5bb9c8478b954783e3832754">More...</a><br /></td></tr>
 <tr class="separator:a860a8a9c5bb9c8478b954783e3832754"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a555cac16beb4bdcfa6da03c563d473c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDEnv.html#a555cac16beb4bdcfa6da03c563d473c7">add_edge</a> (<a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> graph_id, const UserNodeID &amp;tail, const UserNodeID &amp;head, const UserEdgeLabel &amp;edge_label, bool ignore_duplicates=true)</td></tr>
 <tr class="memdesc:a555cac16beb4bdcfa6da03c563d473c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a labeled edge.  <a href="#a555cac16beb4bdcfa6da03c563d473c7">More...</a><br /></td></tr>
 <tr class="separator:a555cac16beb4bdcfa6da03c563d473c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9968296ae16451ef71986551df97160"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDEnv.html#ae9968296ae16451ef71986551df97160">load_exchange_graph</a> (const <a class="el" href="structged_1_1ExchangeGraph.html">ged::ExchangeGraph</a>&lt; UserNodeID, UserNodeLabel, UserEdgeLabel &gt; &amp;exchange_graph, <a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> graph_id=<a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c">ged::undefined</a>(), const std::string &amp;graph_name=&quot;&quot;, const std::string &amp;graph_class=&quot;&quot;)</td></tr>
+<tr class="memdesc:ae9968296ae16451ef71986551df97160"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads <a class="el" href="structged_1_1ExchangeGraph.html" title="Simple graph class used for communication with user. ">ged::ExchangeGraph</a> into the environment.  <a href="#ae9968296ae16451ef71986551df97160">More...</a><br /></td></tr>
+<tr class="separator:ae9968296ae16451ef71986551df97160"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6cedad1c760f6a77c3a71b1ba858a70"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDEnv.html#aa6cedad1c760f6a77c3a71b1ba858a70">load_gxl_graph</a> (const std::string &amp;file_name, <a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89c">Options::GXLNodeEdgeType</a> node_type, <a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89c">Options::GXLNodeEdgeType</a> edge_type, const std::unordered_set&lt; std::string &gt; &amp;irrelevant_node_attributes, const std::unordered_set&lt; std::string &gt; &amp;irrelevant_edge_attributes, <a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> graph_id=<a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c">ged::undefined</a>(), const std::string &amp;graph_class=&quot;&quot;)</td></tr>
+<tr class="memdesc:aa6cedad1c760f6a77c3a71b1ba858a70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load graph given in the <a href="http://www.gupro.de/GXL/">GXL file format</a>.  <a href="#aa6cedad1c760f6a77c3a71b1ba858a70">More...</a><br /></td></tr>
+<tr class="separator:aa6cedad1c760f6a77c3a71b1ba858a70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad637db72ef9c5c8951e2b5a7f3dfbbd3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classged_1_1GEDEnv.html#ad637db72ef9c5c8951e2b5a7f3dfbbd3">load_gxl_graphs</a> (const std::string &amp;graph_dir, const std::string &amp;collection_file, <a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89c">Options::GXLNodeEdgeType</a> node_type=<a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89ca1c2d70e0ceafa9931cbe5ff7841a1771">Options::GXLNodeEdgeType::LABELED</a>, <a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89c">Options::GXLNodeEdgeType</a> edge_type=<a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89ca1c2d70e0ceafa9931cbe5ff7841a1771">Options::GXLNodeEdgeType::LABELED</a>, const std::unordered_set&lt; std::string &gt; &amp;irrelevant_node_attributes=std::unordered_set&lt; std::string &gt;(), const std::unordered_set&lt; std::string &gt; &amp;irrelevant_edge_attributes=std::unordered_set&lt; std::string &gt;())</td></tr>
 <tr class="memdesc:ad637db72ef9c5c8951e2b5a7f3dfbbd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads graphs given in the <a href="http://www.gupro.de/GXL/">GXL file format</a>.  <a href="#ad637db72ef9c5c8951e2b5a7f3dfbbd3">More...</a><br /></td></tr>
 <tr class="separator:ad637db72ef9c5c8951e2b5a7f3dfbbd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -240,7 +243,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00344">344</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00359">359</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -330,7 +333,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00324">324</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00339">339</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -360,7 +363,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00086">86</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00089">89</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -408,7 +411,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00626">626</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00641">641</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -432,7 +435,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 <p>Returns average number of nodes. </p>
 <dl class="section return"><dt>Returns</dt><dd>Average number of nodes of the graphs contained in the environment. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00577">577</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00592">592</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -463,7 +466,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structged_1_1ExchangeGraph.html" title="Simple graph class used for communication with user. ">ged::ExchangeGraph</a> representation of the selected graph. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00595">595</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00610">610</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -494,7 +497,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Class of the input graph. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00563">563</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00578">578</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -525,7 +528,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Name of the input graph. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00588">588</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00603">603</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -549,7 +552,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 <p>Returns initialization time. </p>
 <dl class="section return"><dt>Returns</dt><dd>Runtime of the last call to <a class="el" href="classged_1_1GEDEnv.html#abdd4de5442749e8ed45f0b33a163b3ac" title="Initializes the method specified by call to set_method(). ">init_method()</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00619">619</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00634">634</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -591,7 +594,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Lower bound computed by the last call to <a class="el" href="classged_1_1GEDEnv.html#a238fe3ed7479f76fbc7e4d6da8d424dd" title="Runs the GED method specified by call to set_method() between the graphs with IDs g_id and h_id...">run_method()</a> with arguments <code>g_id</code> and <code>h_id</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00519">519</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00534">534</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -633,7 +636,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classged_1_1Node.html" title="Computes lower and upper bounds for general edit costs. ">Node</a> map computed by the last call to <a class="el" href="classged_1_1GEDEnv.html#a238fe3ed7479f76fbc7e4d6da8d424dd" title="Runs the GED method specified by call to set_method() between the graphs with IDs g_id and h_id...">run_method()</a> with arguments <code>g_id</code> and <code>h_id</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00541">541</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00556">556</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -664,7 +667,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of nodes in the graph. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00570">570</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00585">585</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -706,7 +709,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Runtime of last call to <a class="el" href="classged_1_1GEDEnv.html#a238fe3ed7479f76fbc7e4d6da8d424dd" title="Runs the GED method specified by call to set_method() between the graphs with IDs g_id and h_id...">run_method()</a> with arguments <code>g_id</code> and <code>h_id</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00552">552</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00567">567</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -748,7 +751,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Upper bound computed by the last call to <a class="el" href="classged_1_1GEDEnv.html#a238fe3ed7479f76fbc7e4d6da8d424dd" title="Runs the GED method specified by call to set_method() between the graphs with IDs g_id and h_id...">run_method()</a> with arguments <code>g_id</code> and <code>h_id</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00530">530</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00545">545</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -772,7 +775,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 <p>Provides access to the IDs of the graphs contained in the environment. </p>
 <dl class="section return"><dt>Returns</dt><dd>Pair <code>(ID of first graphs, ID of last graph + 1)</code> of graph IDs. If both entries equal 0, the environment does not contain any graphs. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00492">492</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00507">507</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -802,12 +805,12 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00640">640</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00655">655</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
-<a id="a84188eac1e1b01c32563bb4285842a10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a84188eac1e1b01c32563bb4285842a10">&#9670;&nbsp;</a></span>load_exchange_graph()</h2>
+<a id="ae9968296ae16451ef71986551df97160"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9968296ae16451ef71986551df97160">&#9670;&nbsp;</a></span>load_exchange_graph()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -815,16 +818,28 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classged_1_1GEDEnv.html">ged::GEDEnv</a>&lt; UserNodeID, UserNodeLabel, UserEdgeLabel &gt;::load_exchange_graph </td>
+          <td class="memname"><a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> <a class="el" href="classged_1_1GEDEnv.html">ged::GEDEnv</a>&lt; UserNodeID, UserNodeLabel, UserEdgeLabel &gt;::load_exchange_graph </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a>&#160;</td>
-          <td class="paramname"><em>graph_id</em>, </td>
+          <td class="paramtype">const <a class="el" href="structged_1_1ExchangeGraph.html">ged::ExchangeGraph</a>&lt; UserNodeID, UserNodeLabel, UserEdgeLabel &gt; &amp;&#160;</td>
+          <td class="paramname"><em>exchange_graph</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structged_1_1ExchangeGraph.html">ged::ExchangeGraph</a>&lt; UserNodeID, UserNodeLabel, UserEdgeLabel &gt; &amp;&#160;</td>
-          <td class="paramname"><em>exchange_graph</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a>&#160;</td>
+          <td class="paramname"><em>graph_id</em> = <code><a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c">ged::undefined</a>()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>graph_name</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>graph_class</em> = <code>&quot;&quot;</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -837,13 +852,94 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 <p>Loads <a class="el" href="structged_1_1ExchangeGraph.html" title="Simple graph class used for communication with user. ">ged::ExchangeGraph</a> into the environment. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">graph_id</td><td>ID of the <a class="el" href="structged_1_1ExchangeGraph.html" title="Simple graph class used for communication with user. ">ged::ExchangeGraph</a> within the environment. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">exchange_graph</td><td>The <a class="el" href="structged_1_1ExchangeGraph.html" title="Simple graph class used for communication with user. ">ged::ExchangeGraph</a> graph that should be loaded. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">graph_id</td><td>The ID of a graph contained the environment (overwrite existing graph) or <a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c" title="Returns undefined size. ">ged::undefined()</a> (add new graph). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">graph_name</td><td>The name of newly added graph. Empty if not specified. Has no effect unless <code>graph_id</code> equals <a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c" title="Returns undefined size. ">ged::undefined()</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">graph_class</td><td>The class of newly added graph. Empty if not specified. Has no effect unless <code>graph_id</code> equals <a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c" title="Returns undefined size. ">ged::undefined()</a>. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The ID of the newly loaded graph. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If <code>graph_id</code> is set to <a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c" title="Returns undefined size. ">ged::undefined()</a>, all graphs contained in the environment have to be re-initialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00101">101</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00104">104</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+
+</div>
+</div>
+<a id="aa6cedad1c760f6a77c3a71b1ba858a70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6cedad1c760f6a77c3a71b1ba858a70">&#9670;&nbsp;</a></span>load_gxl_graph()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class UserNodeID, class UserNodeLabel, class UserEdgeLabel&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a> <a class="el" href="classged_1_1GEDEnv.html">ged::GEDEnv</a>&lt; UserNodeID, UserNodeLabel, UserEdgeLabel &gt;::load_gxl_graph </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>file_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89c">Options::GXLNodeEdgeType</a>&#160;</td>
+          <td class="paramname"><em>node_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structged_1_1Options.html#a2883345a5a22521c95f03059782de89c">Options::GXLNodeEdgeType</a>&#160;</td>
+          <td class="paramname"><em>edge_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::unordered_set&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>irrelevant_node_attributes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::unordered_set&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>irrelevant_edge_attributes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classged_1_1GEDGraph.html#a2783010b2bb1501aa0e60a654daf35db">GEDGraph::GraphID</a>&#160;</td>
+          <td class="paramname"><em>graph_id</em> = <code><a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c">ged::undefined</a>()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>graph_class</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Load graph given in the <a href="http://www.gupro.de/GXL/">GXL file format</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">file_name</td><td>Complete path to GXL file. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_type</td><td>Select if nodes are labeled or unlabeled. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">edge_type</td><td>Select if edges are labeled or unlabeled. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">irrelevant_node_attributes</td><td>Set of node attributes that are irrelevant for the selected edit costs. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">irrelevant_edge_attributes</td><td>Set of edge attributes that are irrelevant for the selected edit costs. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">graph_id</td><td>The ID of a graph contained the environment (overwrite existing graph) or <a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c" title="Returns undefined size. ">ged::undefined()</a> (add new graph). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">graph_class</td><td>The class of the added graph. Empty if not specified. Has no effect unless <code>graph_id</code> equals <a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c" title="Returns undefined size. ">ged::undefined()</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The ID of the newly loaded graph. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If <code>graph_id</code> is set to <a class="el" href="namespaceged.html#a68938addb78a295e286ae67b64c5043c" title="Returns undefined size. ">ged::undefined()</a>, all graphs contained in the environment have to be re-initialized. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>Calls to this method create a compiler error unless the template parameters <code>UserNodeID</code> is set to ged::GXLUserNodeID and the template parameters <code>UserNodeLabel</code> and <code>UserEdgeLabel</code> are set to <a class="el" href="namespaceged.html#a67c8f7b16abf050f72faa907cc61da7e" title="Type of node and edge labels of graphs given in the .gxl file format. ">ged::GXLLabel</a>. </dd></dl>
 
 </div>
 </div>
@@ -936,7 +1032,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 <p>The number of graphs contained in the environment. </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of graphs (without shuffled copies). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00499">499</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00514">514</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -960,7 +1056,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
 <p>Checks if the edit costs are quasimetric. </p>
 <dl class="section return"><dt>Returns</dt><dd>Boolean <code>true</code> if the edit costs are quasimetric and <code>false</code>, otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00633">633</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00648">648</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -1001,7 +1097,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00456">456</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00471">471</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>
@@ -1113,7 +1209,7 @@ template&lt;class UserNodeID , class UserNodeLabel , class UserEdgeLabel &gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00369">369</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ged__env_8ipp_source.html#l00384">384</a> of file <a class="el" href="ged__env_8ipp_source.html">ged_env.ipp</a>.</p>
 
 </div>
 </div>

@@ -87,13 +87,6 @@ public:
 	void clear_graph(GEDGraph::GraphID graph_id);
 
 	/*!
-	 * @brief Loads ged::ExchangeGraph into the environment.
-	 * @param[in] graph_id ID of the ged::ExchangeGraph within the environment.
-	 * @param[in] exchange_graph The ged::ExchangeGraph graph that should be loaded.
-	 */
-	void load_exchange_graph(GEDGraph::GraphID graph_id, const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & exchange_graph);
-
-	/*!
 	 * @brief Adds a labeled node.
 	 * @param[in] graph_id ID of graph that has been added to the environment.
 	 * @param[in] node_id The user-specific ID of the vertex that has to be added.
@@ -110,6 +103,34 @@ public:
 	 * @param[in] ignore_duplicates If @p true, duplicate edges are ignores. Otherwise, an exception is thrown if an existing edge is added to the graph.
 	 */
 	void add_edge(GEDGraph::GraphID graph_id, const UserNodeID & tail, const UserNodeID & head, const UserEdgeLabel & edge_label, bool ignore_duplicates = true);
+
+	/*!
+	 * @brief Loads ged::ExchangeGraph into the environment.
+	 * @param[in] exchange_graph The ged::ExchangeGraph graph that should be loaded.
+	 * @param[in] graph_id The ID of a graph contained the environment (overwrite existing graph) or ged::undefined() (add new graph).
+	 * @param[in] graph_name The name of newly added graph. Empty if not specified. Has no effect unless @p graph_id equals ged::undefined().
+	 * @param[in] graph_class The class of newly added graph. Empty if not specified. Has no effect unless @p graph_id equals ged::undefined().
+	 * @return The ID of the newly loaded graph.
+	 * @note If @p graph_id is set to ged::undefined(), all graphs contained in the environment have to be re-initialized.
+	 */
+	GEDGraph::GraphID load_exchange_graph(const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & exchange_graph, GEDGraph::GraphID graph_id = ged::undefined(), const std::string & graph_name = "", const std::string & graph_class = "");
+
+	/*!
+	 * @brief Load graph given in the [GXL file format](http://www.gupro.de/GXL/).
+	 * @param[in] file_name Complete path to GXL file.
+	 * @param[in] node_type Select if nodes are labeled or unlabeled.
+	 * @param[in] edge_type Select if edges are labeled or unlabeled.
+	 * @param[in] irrelevant_node_attributes Set of node attributes that are irrelevant for the selected edit costs.
+	 * @param[in] irrelevant_edge_attributes Set of edge attributes that are irrelevant for the selected edit costs.
+	 * @param[in] graph_id The ID of a graph contained the environment (overwrite existing graph) or ged::undefined() (add new graph).
+	 * @param[in] graph_class The class of the added graph. Empty if not specified. Has no effect unless @p graph_id equals ged::undefined().
+	 * @return The ID of the newly loaded graph.
+	 * @note If @p graph_id is set to ged::undefined(), all graphs contained in the environment have to be re-initialized.
+	 * @warning Calls to this method create a compiler error unless the template parameters @p UserNodeID is set to ged::GXLUserNodeID
+	 * and the template parameters @p UserNodeLabel and @p UserEdgeLabel are set to ged::GXLLabel.
+	 */
+	GEDGraph::GraphID load_gxl_graph(const std::string & file_name, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
+			const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes, GEDGraph::GraphID graph_id = ged::undefined(), const std::string & graph_class = "");
 
 	/*!
 	 * @brief Loads graphs given in the [GXL file format](http://www.gupro.de/GXL/).
@@ -274,9 +295,6 @@ private:
 	std::vector<std::map<GEDGraph::NodeID, UserNodeID>> internal_to_original_node_ids_;
 
 	GEDMethod<UserNodeLabel, UserEdgeLabel> * ged_method_;
-
-	GEDGraph::GraphID read_graph_from_gxl_(const std::string & dir, const std::string & filename, const std::string & graph_class, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
-			const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes);
 
 	void read_gxl_label_from_ptree_(const boost::property_tree::ptree::value_type & node_or_edge, const std::unordered_set<std::string> & irrelevant_attributes, const std::string & file, GXLLabel & label);
 

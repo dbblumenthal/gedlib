@@ -265,6 +265,14 @@ int main(int argc, char* argv[]) {
 	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs(graph_dir, collection_file,
 			ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED));
 
+	/* Add empty graph to be used later for median.
+	 *
+	 * It is recommendable to allocate space for all graphs that have to be added later on.
+	 * The reason is that whenever a new graph is added after initialization, all graphs contained
+	 * in the environment have to be re-initialized.
+	 */
+	ged::GEDGraph::GraphID median_id{env.add_graph("median_Letter_HIGH_" + letter_class, letter_class)};
+
 	/* Use edit costs for Letter graphs defined in ged::Letter<GXLLabel, GXLLabel>.
 	 *
 	 * Like most predefined edit costs, the edit cost functions for the Letter graphs
@@ -325,7 +333,7 @@ int main(int argc, char* argv[]) {
 
 	/* Compute the set median.
 	 */
-	ged::GEDGraph::GraphID median_id{0};
+	ged::GEDGraph::GraphID set_median_id{0};
 	std::vector<double> sums_of_distances({std::numeric_limits<double>::infinity()});
 	ged::ProgressBar progress(graph_ids.size());
 	std::cout << "\rComputing set median: " << progress << std::flush;
@@ -337,7 +345,7 @@ int main(int argc, char* argv[]) {
 		}
 		if (sum_dists < sums_of_distances.at(0)) {
 			sums_of_distances[0] = sum_dists;
-			median_id = g_id;
+			set_median_id = g_id;
 		}
 		progress.increment();
 		std::cout << "\rComputing set median: " << progress << std::flush;
@@ -348,7 +356,7 @@ int main(int argc, char* argv[]) {
 	 */
 	std::vector<ged::NodeMap> node_maps;
 	for (auto graph_id : graph_ids) {
-		node_maps.emplace_back(env.get_node_map(median_id, graph_id));
+		node_maps.emplace_back(env.get_node_map(set_median_id, graph_id));
 	}
 
 	/* Get the ExchangeGraph representation of the set median and set the median ID to the ID of a newly added graph.
@@ -356,8 +364,7 @@ int main(int argc, char* argv[]) {
 	 * Since we have called env.add_graph(), the environment is again uninitialized. So we have to keep in mind that
 	 * we must call env.init() again before calling env.run_method().
 	 */
-	ged::ExchangeGraph<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median(graphs.at(median_id));
-	median_id = env.add_graph("median_Letter_HIGH_" + letter_class);
+	ged::ExchangeGraph<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median(graphs.at(set_median_id));
 	median.id = median_id;
 
 
@@ -385,8 +392,7 @@ int main(int argc, char* argv[]) {
 		 *
 		 * We have to re-initialize the environment after calling env.clear_graph() or env.load_exchange_graph().
 		 */
-		env.clear_graph(median_id);
-		env.load_exchange_graph(median_id, median);
+		env.load_exchange_graph(median, median_id);
 		env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 
 		/* Compute induced costs of old node maps w.r.t. the updated median.

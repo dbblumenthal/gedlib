@@ -225,9 +225,15 @@ num_edges() const {
 }
 
 bool
-GEDGraph ::
+GEDGraph::
 initialized() const {
 	return initialized_;
+}
+
+void
+GEDGraph::
+un_init() {
+	initialized_ = false;
 }
 
 GEDGraph::EdgeID

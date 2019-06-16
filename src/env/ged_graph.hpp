@@ -309,6 +309,11 @@ public:
 	bool initialized() const;
 
 	/*!
+	 * @brief Declare graph as un-initialized.
+	 */
+	void un_init();
+
+	/*!
 	 * \brief Returns the maximum degree of the graph.
 	 */
 	std::size_t maxdeg() const;

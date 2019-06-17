@@ -232,6 +232,29 @@ int main(int argc, char* argv[]) {
 	 */
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 
+	/* Use edit costs for Letter graphs defined in ged::Letter<GXLLabel, GXLLabel>.
+	 *
+	 * Like most predefined edit costs, the edit cost functions for the Letter graphs
+	 * are parameterized via constants. In the case of Letter, there are three of them:
+	 * the cost of inserting or deleting a node (node_ins_del_cost, default = 0.9),
+	 * the cost of inserting or deleting an edge (edge_ins_del_cost, default = 1.7),
+	 * and the importance of node edit operations w.r.t. edge edit operations (alpha, default = 0.75).
+	 * You can put the constants to non-default values (e.g. node_ins_del_cost = 0.7,
+	 * edge_ins_del_cost = 1.5, and alpha = 0.25) by using initializer lists like so:
+	 *
+	 * env.set_edit_costs(ged::Options::EditCosts::Letter, {0.7, 1.5, 0.25});
+	 *
+	 * You can also define your own edit costs. For this, define your own implementation
+	 * CustomEditCosts<ged::UserNodeLabel, ged::UserEdgeLabel> of the abstract class
+	 * ged::EditCosts<ged::UserNodeLabel, ged::UserEdgeLabel>. Assume that your custom
+	 * edit costs class has a constructor without arguments. Then you can employ your
+	 * edit costs like so:
+	 *
+	 * CustomEditCosts<ged::GXLLabel, ged::GXLLabel> custom_edit_costs;
+	 * env.set_edit_costs(&custom_edit_costs);
+	 */
+	env.set_edit_costs(ged::Options::EditCosts::LETTER);
+
 	/* Paths to an XML file that specifies which graphs should be loaded and to the directory that contains them.
 	 *
 	 * The graphs must be given as GXL files, and the collection file must respect
@@ -273,28 +296,6 @@ int main(int argc, char* argv[]) {
 	 */
 	ged::GEDGraph::GraphID median_id{env.add_graph("median_Letter_HIGH_" + letter_class, letter_class)};
 
-	/* Use edit costs for Letter graphs defined in ged::Letter<GXLLabel, GXLLabel>.
-	 *
-	 * Like most predefined edit costs, the edit cost functions for the Letter graphs
-	 * are parameterized via constants. In the case of Letter, there are three of them:
-	 * the cost of inserting or deleting a node (node_ins_del_cost, default = 0.9),
-	 * the cost of inserting or deleting an edge (edge_ins_del_cost, default = 1.7),
-	 * and the importance of node edit operations w.r.t. edge edit operations (alpha, default = 0.75).
-	 * You can put the constants to non-default values (e.g. node_ins_del_cost = 0.7,
-	 * edge_ins_del_cost = 1.5, and alpha = 0.25) by using initializer lists like so:
-	 *
-	 * env.set_edit_costs(ged::Options::EditCosts::Letter, {0.7, 1.5, 0.25});
-	 *
-	 * You can also define your own edit costs. For this, define your own implementation
-	 * CustomEditCosts<ged::UserNodeLabel, ged::UserEdgeLabel) of the abstract class
-	 * ged::EditCosts<ged::UserNodeLabel, ged::UserEdgeLabel). Assume that your custom
-	 * edit costs class has a constructor without arguments. Then you can employ your
-	 * edit costs like so:
-	 *
-	 * CustomEditCosts<GXLLabel, GXLLabel> custom_edit_costs;
-	 * env.set_edit_costs(&custom_edit_costs);
-	 */
-	env.set_edit_costs(ged::Options::EditCosts::LETTER);
 
 	/* Initialize the environment.
 	 *

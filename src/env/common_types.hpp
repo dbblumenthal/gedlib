@@ -226,10 +226,19 @@ struct Options {
 	 * are created and calling ged::GEDEnv::run_method() with two identical graph IDs amounts to comparing a graph to itself.
 	 */
 	enum class InitType {
-		LAZY_WITHOUT_SHUFFLED_COPIES, //!< Lazy initialization, no shuffled graph copies are constructed.
+		LAZY_WITHOUT_SHUFFLED_COPIES,  //!< Lazy initialization, no shuffled graph copies are constructed.
 		EAGER_WITHOUT_SHUFFLED_COPIES, //!< Eager initialization, no shuffled graph copies are constructed.
-		LAZY_WITH_SHUFFLED_COPIES, //!< Lazy initialization, shuffled graph copies are constructed.
-		EAGER_WITH_SHUFFLED_COPIES //!< Eager initialization, shuffled graph copies are constructed.
+		LAZY_WITH_SHUFFLED_COPIES,     //!< Lazy initialization, shuffled graph copies are constructed.
+		EAGER_WITH_SHUFFLED_COPIES     //!< Eager initialization, shuffled graph copies are constructed.
+	};
+
+	/*!
+	 * @brief Specifies type of exchange graph.
+	 */
+	enum class ExchangeGraphType {
+		ADJ_MATRIX,//!< Exchange graph is given as adjacency matrix.
+		ADJ_LISTS, //!< Exchange graph is given as adjacency lists.
+		EDGE_LIST  //!< Exchange graph is given as list of edges.
 	};
 
 };
@@ -331,22 +340,26 @@ std::ostream & operator<<(std::ostream & os, const Options::GEDMethod & ged_meth
  */
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel> struct ExchangeGraph {
 
-	std::size_t id;                                                                   //!< Internal ID of the graph.
+	std::size_t id;                                                                     //!< Internal ID of the graph.
 
-	std::size_t num_nodes;                                                            //!< The number of nodes. Nodes have IDs between @p 0 and <tt>num_nodes - 1</tt>.
+	std::size_t num_nodes;                                                              //!< The number of nodes. Nodes have IDs between @p 0 and <tt>num_nodes - 1</tt>.
 
-	std::size_t num_edges;                                                            //!< The number of edges.
+	std::size_t num_edges;                                                              //!< The number of edges.
 
-	std::vector<UserNodeID> original_node_ids;                                        //!< The original IDs of all nodes.
+	std::vector<UserNodeID> original_node_ids;                                          //!< The original IDs of all nodes.
 
-	std::vector<UserNodeLabel> node_labels;                                           //!< The labels of all nodes.
+	std::vector<UserNodeLabel> node_labels;                                             //!< The labels of all nodes.
 
-	std::vector<std::vector<std::size_t>> adj_matrix;                                 //!< Adjacency matrix.
+	std::vector<std::vector<std::size_t>> adj_matrix;                                   //!< Adjacency matrix.
 
-	std::map<std::pair<std::size_t, std::size_t>, UserEdgeLabel> edge_labels;         //!< A hash map with a key-value pair <tt>((internal_tail_id, internal_head_id), label)</tt> for each edge.
+	std::map<std::pair<std::size_t, std::size_t>, UserEdgeLabel> edge_labels;           //!< A hash map with a key-value pair <tt>((internal_tail_id, internal_head_id), label)</tt> for each edge.
+
+	std::vector<std::list<std::pair<std::size_t, UserEdgeLabel>>> adj_lists;            //!< Adjacency lists for all nodes.
+
+	std::list<std::pair<std::pair<std::size_t, std::size_t>, UserEdgeLabel>> edge_list; //!< A list of all edges.
 
 	bool operator==(const ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & rhs) const {
-		return ((original_node_ids == rhs.original_node_ids) and (node_labels == rhs.node_labels) and (adj_matrix == rhs.adj_matrix) and (edge_labels == rhs.edge_labels));
+		return ((original_node_ids == rhs.original_node_ids) and (node_labels == rhs.node_labels) and (adj_matrix == rhs.adj_matrix) and (edge_labels == rhs.edge_labels) and (adj_lists == rhs.adj_lists) and (edge_list == rhs.edge_list));
 	};
 };
 
@@ -377,7 +390,7 @@ std::ostream & operator<<(std::ostream & os, const ExchangeGraph<UserNodeID, Use
 	}
 	for (std::size_t tail_id{0}; tail_id < graph.num_nodes; tail_id++) {
 		for (std::size_t head_id{tail_id + 1}; head_id < graph.num_nodes; head_id++) {
-			if (graph.adj_matrix[node_id][head_id] == 1) {
+			if (graph.adj_matrix[tail_id][head_id] == 1) {
 				os << "\tedge [\n";
 				os << "\t\tinternal_id_tail = " << tail_id << "\n";
 				os << "\t\tinternal_id_head = " << head_id << "\n";

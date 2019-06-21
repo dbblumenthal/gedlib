@@ -113,7 +113,9 @@ public:
 	 * @return The ID of the newly loaded graph.
 	 * @note If @p graph_id is set to ged::undefined(), all graphs contained in the environment have to be re-initialized.
 	 */
-	GEDGraph::GraphID load_exchange_graph(const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & exchange_graph, GEDGraph::GraphID graph_id = ged::undefined(), const std::string & graph_name = "", const std::string & graph_class = "");
+	GEDGraph::GraphID load_exchange_graph(const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & exchange_graph,
+			GEDGraph::GraphID graph_id = ged::undefined(), Options::ExchangeGraphType exchange_graph_type = Options::ExchangeGraphType::ADJ_MATRIX,
+			const std::string & graph_name = "", const std::string & graph_class = "");
 
 	/*!
 	 * @brief Load graph given in the [GXL file format](http://www.gupro.de/GXL/).
@@ -130,7 +132,8 @@ public:
 	 * and the template parameters @p UserNodeLabel and @p UserEdgeLabel are set to ged::GXLLabel.
 	 */
 	GEDGraph::GraphID load_gxl_graph(const std::string & file_name, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
-			const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes, GEDGraph::GraphID graph_id = ged::undefined(), const std::string & graph_class = "");
+			const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes,
+			GEDGraph::GraphID graph_id = ged::undefined(), const std::string & graph_class = "");
 
 	/*!
 	 * @brief Loads graphs given in the [GXL file format](http://www.gupro.de/GXL/).
@@ -234,10 +237,16 @@ public:
 
 	/*!
 	 * @brief Returns ged::ExchangeGraph representation.
-	 * @param graph_id ID of the selected graph.
+	 * @param[in] graph_id ID of the selected graph.
+	 * @param[in] adj_matrix Set to @p true to construct and adjacency matrix @p adj_matrix and a hash-map
+	 * @p edge_labels, which has a key for each pair @p (i,j) such that @p adj_matrix[i][j] equals 1.
+	 * @param[in] adj_lists Construct adjacency lists for all nodes, i.e., a vector @p adj_lists that, for each node
+	 * @p i and each edge @p (i,j), contains a vector with entries of the form @p (j,edge_label).
+	 * @param[in] edge_list Construct a list of all edges that contains entries of the form @p ((i,j),edge_label).
 	 * @return ged::ExchangeGraph representation of the selected graph.
 	 */
-	ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> get_graph(GEDGraph::GraphID graph_id) const;
+	ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> get_graph(GEDGraph::GraphID graph_id, bool adj_matrix = true,
+			bool adj_lists = false, bool edge_list = false) const;
 
 	/*!
 	 * @brief Returns the graph class.

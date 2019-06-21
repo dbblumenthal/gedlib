@@ -40,7 +40,8 @@ namespace ged {
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--threads @<convertible to int greater 0@></tt> | number of threads | 1 | can be used by derived classes |
- * | <tt>\--lsape-model ECBP\|EBP\|FLWC\|FLCC\|FBP\|SFBP\|FBP0</tt> | model for optimally solving LSAPE | @p ECBP | ged::LSAPESolver::Model |
+ * | <tt>\--lsape-model ECBP\|EBP\|FLWC\|FLCC\|FBP\|SFBP\|FBP0</tt> | model for optimally solving LSAPE | @p ECBP | ged::LSAPESolver::Model, has no effect unless @p edge-set-distances is set to @p OPTIMAL |
+ * | <tt>\--edge-set-distances OPTIMAL\|HED</tt> | method used for computing edge set distances | @p HED | n.a. |
  */
 template<class UserNodeLabel, class UserEdgeLabel>
 class HED : public GEDMethod<UserNodeLabel, UserEdgeLabel> {
@@ -56,6 +57,8 @@ private:
 	LSAPESolver::Model lsape_model_;
 
 	std::size_t num_threads_;
+
+	bool use_hed_for_edge_set_distances_;
 
 	// Inherited member functions from GEDMethod.
 

@@ -22,7 +22,6 @@
 #include "catch.hpp"
 
 #define GXL_GEDLIB_SHARED
-#define ENABLE_GRAPH_STREAMING
 #include "../../../src/env/ged_env.hpp"
 #include<string>
 
@@ -37,7 +36,7 @@ TEST_CASE("testing on Letter graphs") {
 	std::vector<ged::GEDGraph::GraphID> graph_ids_2(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_20.xml"));
 	env.init(ged::Options::InitType::EAGER_WITH_SHUFFLED_COPIES);
 	ged::GEDGraph::GraphID h {graph_ids[0]};
-	std::cout << env.get_graph(g);
+	//std::cout << env.get_graph(g);
 	double lower_bound{0.0};
 	double exact{0.0};
 	double upper_bound;
@@ -47,6 +46,13 @@ TEST_CASE("testing on Letter graphs") {
 	ged::ProgressBar progress(num_runs);
 	std::vector<std::string> exp_numsols{"20","10"};
 	std::vector<std::string> exp_numloops{"0","1"};
+
+	SECTION("HED") {
+		std::cout << "\n=== running HED ===\n";
+		env.set_method(ged::Options::GEDMethod::HED);
+		env.run_method(g, h);
+		std::cout << "\nupper bound = " << env.get_upper_bound(g, h) << ", runtime = " << env.get_runtime(g, h) << "\n";
+	}
 
 
 	SECTION("RANDPOST") {

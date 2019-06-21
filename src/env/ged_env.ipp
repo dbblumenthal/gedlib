@@ -101,7 +101,7 @@ clear_graph(GEDGraph::GraphID graph_id) {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 GEDGraph::GraphID
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-load_exchange_graph(const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & exchange_graph, GEDGraph::GraphID graph_id, const std::string & graph_name, const std::string & graph_class) {
+load_exchange_graph(const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & exchange_graph, GEDGraph::GraphID graph_id, Options::ExchangeGraphType exchange_graph_type, const std::string & graph_name, const std::string & graph_class) {
 	if (graph_id == ged::undefined()) {
 		graph_id = add_graph(graph_name, graph_class);
 	}
@@ -111,11 +111,25 @@ load_exchange_graph(const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdge
 	for (GEDGraph::NodeID node_id{0}; node_id < exchange_graph.num_nodes; node_id++) {
 		add_node(graph_id, exchange_graph.original_node_ids.at(node_id), exchange_graph.node_labels.at(node_id));
 	}
-	for (GEDGraph::NodeID i{0}; i < exchange_graph.num_nodes; i++) {
-		for (GEDGraph::NodeID j{i + 1}; j < exchange_graph.num_nodes; j++) {
-			if (exchange_graph.adj_matrix.at(i).at(j) == 1) {
-				add_edge(graph_id, exchange_graph.original_node_ids.at(i), exchange_graph.original_node_ids.at(j), exchange_graph.edge_labels.at(std::make_pair(i, j)));
+	if (exchange_graph_type == Options::ExchangeGraphType::ADJ_MATRIX) {
+		for (GEDGraph::NodeID i{0}; i < exchange_graph.num_nodes; i++) {
+			for (GEDGraph::NodeID j{i + 1}; j < exchange_graph.num_nodes; j++) {
+				if (exchange_graph.adj_matrix.at(i).at(j) == 1) {
+					add_edge(graph_id, exchange_graph.original_node_ids.at(i), exchange_graph.original_node_ids.at(j), exchange_graph.edge_labels.at(std::make_pair(i, j)));
+				}
 			}
+		}
+	}
+	else if (exchange_graph_type == Options::ExchangeGraphType::ADJ_LISTS) {
+		for (GEDGraph::NodeID i{0}; i < exchange_graph.num_nodes; i++) {
+			for (const auto & adj : exchange_graph.adj_lists.at(i)) {
+				add_edge(graph_id, exchange_graph.original_node_ids.at(i), exchange_graph.original_node_ids.at(adj.first), adj.second);
+			}
+		}
+	}
+	else {
+		for (const auto & edge : exchange_graph.edge_list) {
+			add_edge(graph_id, exchange_graph.original_node_ids.at(edge.first.first), exchange_graph.original_node_ids.at(edge.first.second), edge.second);
 		}
 	}
 	return graph_id;
@@ -607,23 +621,42 @@ get_graph_name(GEDGraph::GraphID graph_id) const {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-get_graph(GEDGraph::GraphID graph_id) const {
+get_graph(GEDGraph::GraphID graph_id, bool adj_matrix, bool adj_lists, bool edge_list) const {
 	ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> exchange_graph;
 	const GEDGraph & graph{ged_data_.graphs_.at(graph_id)};
 	exchange_graph.id = graph.id();
 	exchange_graph.num_nodes = graph.num_nodes();
 	exchange_graph.num_edges = graph.num_edges();
-	exchange_graph.adj_matrix = std::vector<std::vector<std::size_t>>(exchange_graph.num_nodes, std::vector<std::size_t>(exchange_graph.num_nodes, 0));
+	if (adj_matrix) {
+		exchange_graph.adj_matrix = std::vector<std::vector<std::size_t>>(exchange_graph.num_nodes, std::vector<std::size_t>(exchange_graph.num_nodes, 0));
+	}
 	for (GEDGraph::NodeID node_id{0}; node_id < exchange_graph.num_nodes; node_id++) {
 		exchange_graph.original_node_ids.emplace_back(internal_to_original_node_ids_.at(graph_id).at(node_id));
 		exchange_graph.node_labels.emplace_back(ged_data_.node_labels_.at(graph.get_node_label(node_id) - 1));
+		if (adj_lists) {
+			exchange_graph.adj_lists.emplace_back();
+		}
 	}
 	for (auto eitr = graph.edges(); eitr.first != eitr.second; eitr.first++) {
 		GEDGraph::EdgeID edge(*eitr.first);
-		exchange_graph.adj_matrix[graph.tail(edge)][graph.head(edge)] = 1;
-		exchange_graph.adj_matrix[graph.head(edge)][graph.tail(edge)] = 1;
-		exchange_graph.edge_labels[std::make_pair(graph.tail(edge),graph.head(edge))] = ged_data_.edge_labels_.at(graph.get_edge_label(edge) - 1);
-		exchange_graph.edge_labels[std::make_pair(graph.head(edge),graph.tail(edge))] = ged_data_.edge_labels_.at(graph.get_edge_label(edge) - 1);
+		UserEdgeLabel edge_label(ged_data_.edge_labels_.at(graph.get_edge_label(edge) - 1));
+		std::size_t i(graph.tail(edge));
+		std::size_t j(graph.head(edge));
+		std::pair<std::size_t, std::size_t> edge_as_pair(i,j);
+		std::pair<std::size_t, std::size_t> inversed_edge_as_pair(i,j);
+		if (adj_matrix) {
+			exchange_graph.adj_matrix[i][j] = 1;
+			exchange_graph.adj_matrix[j][i] = 1;
+			exchange_graph.edge_labels[edge_as_pair] = edge_label;
+			exchange_graph.edge_labels[inversed_edge_as_pair] = edge_label;
+		}
+		if (adj_lists) {
+			exchange_graph.adj_lists.at(i).emplace_back(j, edge_label);
+			exchange_graph.adj_lists.at(j).emplace_back(i, edge_label);
+		}
+		if (edge_list) {
+			exchange_graph.edge_list.emplace_back(edge_as_pair, edge_label);
+		}
 	}
 	return exchange_graph;
 }

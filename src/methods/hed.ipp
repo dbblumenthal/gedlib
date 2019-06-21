@@ -39,7 +39,8 @@ HED<UserNodeLabel, UserEdgeLabel>::
 HED(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 GEDMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
 lsape_model_{LSAPESolver::Model::ECBP},
-num_threads_{1} {}
+num_threads_{1},
+use_hed_for_edge_set_distances_{true} {}
 
 // === Definitions of member functions inherited from GEDMethod. ===
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -49,8 +50,8 @@ ged_run_(const GEDGraph & g, const GEDGraph & h, Result & result) {
 	DMatrix lsape_instance(g.num_nodes() + 1, h.num_nodes() + 1);
 	populate_instance_(g, h, lsape_instance);
 	double hed{0};
-	hed += lsape_instance.matrix().rowwise().minCoeff().sum();
-	hed += lsape_instance.matrix().colwise().minCoeff().sum();
+	hed += lsape_instance.matrix().block(0, 0, g.num_nodes(), h.num_nodes() + 1).rowwise().minCoeff().sum();
+	hed += lsape_instance.matrix().block(0, 0, g.num_nodes() + 1, h.num_nodes()).colwise().minCoeff().sum();
 	result.set_lower_bound(hed);
 }
 
@@ -94,6 +95,15 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		return true;
 	}
+	else if (option == "edge-set-distances") {
+		if (arg == "OPTIMAL") {
+			use_hed_for_edge_set_distances_ = false;
+		}
+		else if (arg  != "HED") {
+			throw ged::Error(std::string("Invalid argument ") + arg  + " for option edge-set-distances. Usage: options = \"[--edge-set-distances OPTIMAL|HED] [...]\"");
+		}
+		return true;
+	}
 	return false;
 }
 
@@ -101,7 +111,7 @@ template<class UserNodeLabel, class UserEdgeLabel>
 std::string
 HED<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
-	return "[--lsape-model <arg>] [--threads <arg>]";
+	return "[--lsape-model <arg>] [--threads <arg>] [--edge-set-distances <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -110,6 +120,7 @@ HED<UserNodeLabel, UserEdgeLabel>::
 ged_set_default_options_() {
 	lsape_model_ = LSAPESolver::ECBP;
 	num_threads_ = 1;
+	use_hed_for_edge_set_distances_ = true;
 }
 
 // === Definitions of private helper member functions. ===
@@ -166,16 +177,25 @@ compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::Nod
 		for (auto kl = h.incident_edges(k).first; kl != h.incident_edges(k).second; kl++, l++) {
 			subproblem(j, l) = this->ged_data_.edge_cost(g.get_edge_label(*ij), h.get_edge_label(*kl)) / 2.0;
 		}
+		if (use_hed_for_edge_set_distances_) {
+			subproblem(j, l) /= 2.0;
+		}
 	}
 
-	// Solve subproblem.
-	LSAPESolver subproblem_solver(&subproblem);
-	subproblem_solver.set_model(this->lsape_model_);
-	subproblem_solver.solve();
+	// Solve subproblem and update overall substitution costs.
+	if (use_hed_for_edge_set_distances_) {
+		cost += subproblem.matrix().block(0, 0, g.degree(i), h.degree(k) + 1).rowwise().minCoeff().sum();
+		cost += subproblem.matrix().block(0, 0, g.degree(i) + 1, h.degree(k)).colwise().minCoeff().sum();
+	}
+	else {
+		LSAPESolver subproblem_solver(&subproblem);
+		subproblem_solver.set_model(this->lsape_model_);
+		subproblem_solver.solve();
+		cost += subproblem_solver.minimal_cost();
+	}
 
-	// Update and return overall substitution cost.
-	cost += subproblem_solver.minimal_cost();
-	return cost / 2;
+	// Return the substitution costs divided by 2.
+	return cost / 2.0;
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>

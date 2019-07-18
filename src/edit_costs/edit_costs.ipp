@@ -66,6 +66,13 @@ vectorize_node_label(const UserNodeLabel & node_label, std::vector<double> & vec
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
+UserNodeLabel
+EditCosts<UserNodeLabel, UserEdgeLabel>::
+median_node_label(const std::vector<UserNodeLabel> & node_labels) const {
+	return node_labels.at(0);
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
 double
 EditCosts<UserNodeLabel, UserEdgeLabel>::
 edge_rel_cost_fun(const UserEdgeLabel & node_label_1, const UserEdgeLabel & node_label_2) const {
@@ -91,6 +98,13 @@ void
 EditCosts<UserNodeLabel, UserEdgeLabel>::
 vectorize_edge_label(const UserEdgeLabel & edge_label, std::vector<double> & vector_representation) const {
 	vector_representation.clear();
+}
+
+template<class UserNodeLabel, class UserEdgeLabel>
+UserEdgeLabel
+EditCosts<UserNodeLabel, UserEdgeLabel>::
+median_edge_label(const std::vector<UserEdgeLabel> & edge_labels) const {
+	return edge_labels.at(0);
 }
 
 }

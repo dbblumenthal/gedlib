@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 /*!
- * @file median_letter.cpp
+ * @file median_letter_demo.cpp
  * @brief GEDLIB implementation of median graph computation for Letter (HIGH) graphs.
  * @details Illustrates jow to use GEDLIB for implementing the algorithm suggested in:
  * - N. Boria, S. Bougleux, B. Ga&uuml;z&egrave;re, L. Brun:

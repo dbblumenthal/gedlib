@@ -295,10 +295,10 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 			num_initial_solutions_ = std::stoul(arg);
 		}
 		catch (...) {
-			throw Error(std::string("Invalid argument \"") + arg + "\" for option num-initial-solutions. Usage: options = \"[--initial-solutions <convertible to int greater 0>]\"");
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option initial-solutions. Usage: options = \"[--initial-solutions <convertible to int greater 0>]\"");
 		}
 		if (num_initial_solutions_ <= 0) {
-			throw Error(std::string("Invalid argument \"") + arg + "\" for option num-initial-solutions. Usage: options = \"[--initial-solutions <convertible to int greater 0>]\"");
+			throw Error(std::string("Invalid argument \"") + arg + "\" for option initial-solutions. Usage: options = \"[--initial-solutions <convertible to int greater 0>]\"");
 		}
 		if (initialization_options_ != "") {
 			initialization_options_ += " ";

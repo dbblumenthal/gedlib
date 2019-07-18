@@ -66,6 +66,33 @@ node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) 
 }
 
 template<>
+GXLLabel
+CHEM1<GXLLabel, GXLLabel>::
+median_node_label(const std::vector<GXLLabel> & node_labels) const {
+	// Construct histogram.
+	std::map<GXLLabel, std::size_t> hist;
+	for (const auto & label : node_labels) {
+		if (hist.find(label) == hist.end()) {
+			hist[label] = 1;
+		}
+		else {
+			hist[label]++;
+		}
+	}
+
+	// Return the label that appears most frequently.
+	std::size_t best_count{0};
+	GXLLabel median_label;
+	for (const auto & label_count : hist) {
+		if (label_count.second > best_count) {
+			best_count = label_count.second;
+			median_label = label_count.first;
+		}
+	}
+	return median_label;
+}
+
+template<>
 double
 CHEM1<GXLLabel, GXLLabel>::
 edge_ins_cost_fun(const GXLLabel & edge_label) const {
@@ -87,6 +114,33 @@ edge_rel_cost_fun(const GXLLabel & edge_label_1, const GXLLabel & edge_label_2) 
 		return edge_rel_cost_;
 	}
 	return 0.0;
+}
+
+template<>
+GXLLabel
+CHEM1<GXLLabel, GXLLabel>::
+median_edge_label(const std::vector<GXLLabel> & edge_labels) const {
+	// Construct histogram.
+	std::map<GXLLabel, std::size_t> hist;
+	for (const auto & label : edge_labels) {
+		if (hist.find(label) == hist.end()) {
+			hist[label] = 1;
+		}
+		else {
+			hist[label]++;
+		}
+	}
+
+	// Return the label that appears most frequently.
+	std::size_t best_count{0};
+	GXLLabel median_label;
+	for (const auto & label_count : hist) {
+		if (label_count.second > best_count) {
+			best_count = label_count.second;
+			median_label = label_count.first;
+		}
+	}
+	return median_label;
 }
 
 }

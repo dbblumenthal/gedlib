@@ -191,7 +191,7 @@ def build_gedlib(args):
 			
 	if args.median:
 		print("\n***** Build executable for median graph computation on LETTER graphs. *****")
-		commands = "cd build; make median_letter"
+		commands = "cd build; make median"
 		call(commands, shell=True)
 			
 

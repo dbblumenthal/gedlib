@@ -69,11 +69,15 @@ public:
 
 	virtual double node_rel_cost_fun(const UserNodeLabel & node_label_1, const UserNodeLabel & node_label_2) const final;
 
+	virtual UserNodeLabel median_node_label(const std::vector<UserNodeLabel> & node_labels) const final;
+
 	virtual double edge_ins_cost_fun(const UserEdgeLabel & edge_label) const final;
 
 	virtual double edge_del_cost_fun(const UserEdgeLabel & edge_label) const final;
 
 	virtual double edge_rel_cost_fun(const UserEdgeLabel & edge_label_1, const UserEdgeLabel & edge_label_2) const final;
+
+	virtual UserEdgeLabel median_edge_label(const std::vector<UserEdgeLabel> & edge_labels) const final;
 
 private:
 

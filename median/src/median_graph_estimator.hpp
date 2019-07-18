@@ -1,0 +1,249 @@
+/***************************************************************************
+ *                                                                          *
+ *   Copyright (C) 2019 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
+
+/*!
+ * @file median_graph_estimator.hpp
+ * @brief ged::MedianGraphEstimator class declaration.
+ */
+
+#ifndef MEDIAN_SRC_MEDIAN_GRAPH_ESTIMATOR_HPP_
+#define MEDIAN_SRC_MEDIAN_GRAPH_ESTIMATOR_HPP_
+
+#include "../../src/env/ged_env.hpp"
+
+namespace ged {
+
+/*!
+ * @brief Class for estimating generalized median graphs.
+ *
+ * @details Implements the algorithm suggested in:
+ * - N. Boria, S. Bougleux, B. Ga&uuml;z&egrave;re, D. B. Blumenthal, and L. Brun:
+ *   &ldquo;Scalable generalized graph median estimation and applications in clustering, classification, and indexing&rdquo;
+ *   submitted to VLDB J.,
+ *
+ * Supports the following options:
+ * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
+ * | ------------------------------ | ------------------ | -------- | ---------------- |
+ * | <tt>\--init-type RANDOM\|MEDOID</tt> | method for computing the initial medians | @p RANDOM | if @p MEDOID, the option @p \--random-inits has no effect |
+ * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial medians | @p 50 | n.a. |
+ * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
+ * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
+ * | <tt>\--max-itrs @<convertible to int greater equal 0@></tt> | maximal number of iterations in main block gradient descent | @p 100 | if @p 0, no maximal number of iterations is enforced |
+ * | <tt>\--max-itrs-without-update @<convertible to int greater equal 0@></tt> | maximal number of consecutive iterations in main block gradient descent where the median is not updated | @p 100 | if @p 0, no maximal number of iterations without update is enforced |
+ * | <tt>\--time-limit @<convertible to double@></tt> | time limit in seconds for main block gradient descent | @p 0 | if less or equal @p 0, no time limit is enforced |
+ * | <tt>\--epsilon @<convertible to double greater 0@></tt> | convergence threshold used everywhere | @p 0.0001 | n.a. |
+ * | <tt>\--inits-increase-order @<convertible to int greater 0@></tt> | number of initial solutions for generic heuristic to increase the order of the median | @p 10 | used as starting points for (parallel) block gradient descents to determine node label of inserted node |
+ * | <tt>\--init-type-increase-order CLUSTERS\|KMEANS++</tt> | initialization type for generic heuristic to increase the order of the median | @p KMEANS++ | if @p KMEANS++, well distributed node labels are used as starting points |
+ * | <tt>\--max-itrs-increase-order @<convertible to int greater equal 0@></tt> | maximal number of iterations used in generic heuristic to increase the order of the median | @p 10 |  if @p 0, no iteration based termination criterion is used |
+ * | <tt>\--stdout TRUE\|FALSE</tt> | print runtime information to standard output stream | @p TRUE | set to @p FALSE if runtime is critical |
+ */
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+class MedianGraphEstimator {
+
+public:
+
+	/*!
+	 * @brief Constructor.
+	 * @param[in,out] ged_env Pointer to initialized environment. The edit costs and the GED method have to be set by the user.
+	 * @param[in] constant_node_costs Set to @p true if the node relabeling costs are constant.
+	 */
+	MedianGraphEstimator(GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env, bool constant_node_costs);
+
+	/*!
+	 * @brief Sets the options of the estimator.
+	 * @param[in] options String that specifies with which options to run the estimator.
+	 */
+	void set_options(const std::string & options);
+
+	/*!
+	 * @brief Computes a generalized median graph.
+	 * @param[in] graph_ids The IDs of the graphs for which the median should be computed.
+	 * Must have been added to the environment passed to the constructor.
+	 * @param[in] median_id The ID of the computed median.
+	 * A dummy graph with this ID must have been added to the environment passed to the constructor.
+	 * Upon termination, the computed median can be obtained via ged::GEDEnv::get_graph().
+	 */
+	void run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_id);
+
+	/*!
+	 * @brief Use this method after calling run() to improve sum of distances of converged median.
+	 * @return Runtime required for computing the improved sum of distances.
+	 * @note In order for this method to be effective, re-call ged::GEDEnv::set_method() before running it
+	 * and select a method that provides a tighter upper bound for GED than the one selected while run() was being executed.
+	 */
+	double improve_sum_of_distances();
+
+	/*!
+	 * @brief Returns sum of distances.
+	 * @return Returns the sum of distances of the median computed by the last call to run().
+	 */
+	double get_sum_of_distances() const;
+
+	/*!
+	 * @brief Returns distance from the median.
+	 * @param[in] graph_id ID of the graph whose distance from the median should be returned.
+	 * Must have been contained in the collection of IDs passed to run().
+	 * @return Distance of the graph with ID @p graph_id from the median.
+	 */
+	double get_distance_from_median(GEDGraph::GraphID graph_id) const;
+
+	/*!
+	 * @brief Returns node map from the median.
+	 * @param[in] graph_id ID of the graph whose node map from the median should be returned.
+	 * Must have been contained in the collection of IDs passed to run().
+	 * @return Node map from the median to the graph with ID @p graph_id.
+	 */
+	const NodeMap & get_node_map_from_median(GEDGraph::GraphID graph_id) const;
+
+	/*!
+	 * @brief Returns the runtime.
+	 * @return Runtime of the last call to run().
+	 */
+	double get_runtime() const;
+
+	/*!
+	 * @brief Returns number of iterations.
+	 * @return A vector that contains the number of iterations for each initial median for the last call to run().
+	 */
+	const vector<std::size_t> & get_num_itrs() const;
+
+	/*!
+	 * @brief Returns the number of times the order of the median decreased.
+	 * @return Overall number of times the order of the median decreased during the last call to run().
+	 */
+	std::size_t get_num_times_order_decreased() const;
+
+	/*!
+	 * @brief Returns the number of times the order of the median increased.
+	 * @return Overall number of times the order of the median increased during the last call to run().
+	 */
+	std::size_t get_num_times_order_increased() const;
+
+private:
+
+	GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env_;
+
+	bool constant_node_costs_;
+
+	bool labeled_nodes_;
+
+	double node_del_cost_;
+
+	double node_ins_cost_;
+
+	bool labeled_edges_;
+
+	double edge_del_cost_;
+
+	double edge_ins_cost_;
+
+	std::string init_type_;
+
+	std::size_t num_random_inits_;
+
+	bool use_real_randomness_;
+
+	std::size_t seed_;
+
+	double time_limit_in_sec_;
+
+	double epsilon_;
+
+	std::size_t max_itrs_;
+
+	std::size_t max_itrs_without_update_;
+
+	std::size_t num_inits_increase_order_;
+
+	std::string init_type_increase_order_;
+
+	std::size_t max_itrs_increase_order_;
+
+	bool print_to_stdout_;
+
+	GEDGraph::GraphID median_id_;
+
+	std::map<GEDGraph::GraphID, NodeMap> node_maps_from_median_;
+
+	double sum_of_distances_;
+
+	Seconds runtime_;
+
+	std::vector<std::size_t> itrs_;
+
+	std::size_t num_decrease_order_;
+
+	std::size_t num_increase_order_;
+
+	void options_string_to_options_map_(const std::string & options_string, std::map<std::string, std::string> & options_map) const;
+
+	void tokenize_(const std::string & options, std::vector<std::string> & words) const;
+
+	bool is_option_name_(std::string & option_name) const;
+
+	void construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
+
+	bool termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr, std::size_t itrs_without_update) const;
+
+	bool update_median_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median) const;
+
+	void update_node_labels_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median) const;
+
+	void update_edges_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median) const;
+
+	bool update_node_maps_();
+
+	bool decrease_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
+
+	double compute_best_deletion_delta_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, const ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median, std::size_t & id_deleted_node) const;
+
+	void delete_node_from_median_(std::size_t id_deleted_node, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
+
+	bool increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
+
+	double compute_insertion_delta_unlabeled_(const std::map<GEDGraph::GraphID, std::vector<std::pair<std::size_t, UserNodeLabel>>> & inserted_nodes,
+			std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const;
+
+	double compute_insertion_delta_constant_(const std::map<GEDGraph::GraphID, std::vector<std::pair<std::size_t, UserNodeLabel>>> & inserted_nodes,
+			std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const;
+
+	double compute_insertion_delta_generic_(const std::map<GEDGraph::GraphID, std::vector<std::pair<std::size_t, UserNodeLabel>>> & inserted_nodes,
+			std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const;
+
+	void compute_initial_node_labels_(const std::vector<UserNodeLabel> & node_labels, std::vector<UserNodeLabel> & median_labels_) const;
+
+	bool insertion_termination_criterion_met_(bool converged, std::size_t itr) const;
+
+	bool update_config_(const UserNodeLabel & node_label, const std::map<GEDGraph::GraphID, std::vector<std::pair<std::size_t, UserNodeLabel>>> & inserted_nodes, std::map<GEDGraph::GraphID, std::pair<std::size_t, UserNodeLabel>> & config, std::vector<UserNodeLabel> & node_labels) const;
+
+	bool update_node_label_(const std::vector<UserNodeLabel> & node_labels, UserNodeLabel & node_label) const;
+
+	bool update_clusters_(const std::vector<UserNodeLabel> & node_labels, const std::vector<UserNodeLabel> & median_labels, std::vector<std::size_t> & closest_median_ids) const;
+
+	void add_node_to_median_(const std::map<GEDGraph::GraphID, std::size_t> & best_config, const UserNodeLabel & best_label, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
+
+};
+
+}
+
+#include "median_graph_estimator.ipp"
+
+#endif /* MEDIAN_SRC_MEDIAN_GRAPH_ESTIMATOR_HPP_ */

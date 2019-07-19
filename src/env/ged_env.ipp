@@ -307,7 +307,7 @@ save_as_gxl_graph(GEDGraph::GraphID graph_id, const std::string & gxl_file_name)
 	}
 	for (auto eitr = graph.edges(); eitr.first != eitr.second; eitr.first++) {
 		GEDGraph::EdgeID edge(*eitr.first);
-		gxl_file << "<edge from=\"_" << graph.tail(edge) << "\" to=\"_" << graph.head(edge) << "\">\n";
+		gxl_file << "<edge from=\"_" << graph.tail(edge) << "\" to=\"_" << graph.head(edge) << "\">";
 		gxl_file << gxl_label_to_string_(ged_data_.edge_labels_.at(graph.get_edge_label(edge) - 1));
 		gxl_file << "</edge>\n";
 	}
@@ -379,7 +379,7 @@ GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 gxl_label_to_string_(GXLLabel gxl_label) const {
 	std::stringstream ss;
 	for (auto const & attr : gxl_label) {
-		ss << "<attr name=\"" << attr.first << "\"><typename>" << attr.second << "</typename></attr>";
+		ss << "<attr name=\"" << attr.first << "\"><TYPENAME>" << attr.second << "</TYPENAME></attr>";
 	}
 	return ss.str();
 }

@@ -59,6 +59,9 @@ namespace ged {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 class MedianGraphEstimator {
 
+	template<class ClusterUserNodeID, class ClusterUserNodeLabel, class ClusterUserEdgeLabel>
+	friend class GraphClusteringHeuristic;
+
 public:
 
 	/*!
@@ -233,6 +236,8 @@ private:
 	std::size_t num_decrease_order_;
 
 	std::size_t num_increase_order_;
+
+	void set_default_options_();
 
 	void options_string_to_options_map_(const std::string & options_string, std::map<std::string, std::string> & options_map) const;
 

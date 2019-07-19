@@ -30,7 +30,7 @@
 std::unordered_set<std::string> irrelevant_node_attributes(const std::string & dataset) {
 	std::unordered_set<std::string> irrelevant_attributes;
 	if ((dataset == "AIDS")) {
-		irrelevant_attributes.insert({"x", "y", "symbol"});
+		irrelevant_attributes.insert({"x", "y", "symbol", "charge"});
 	}
 	return irrelevant_attributes;
 }
@@ -75,9 +75,9 @@ int main(int argc, char* argv[]) {
 	ged::GEDGraph::GraphID median_id{env.add_graph("median_" + dataset)};
 	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, true);
-	//median_estimator.set_options("--init-type MEDOID --refine TRUE");
-	median_estimator.set_options("--init-type RANDOM --randomness PSEUDO --seed " + seed + " --random-inits " + num_inits);
-	median_estimator.set_descent_method(ged::Options::GEDMethod::REFINE, "--initial-solutions 5 --threads 6");
+	//median_estimator.set_options("--init-type MEDOID");
+	median_estimator.set_options("--init-type RANDOM --refine TRUE --randomness PSEUDO --seed " + seed + " --random-inits " + num_inits);
+	//median_estimator.set_descent_method(ged::Options::GEDMethod::REFINE, "--initial-solutions 5 --threads 6");
 	median_estimator.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 40 --initialization-method RANDOM --num-randpost-loops 3");
 	median_estimator.run(graph_ids, median_id);
 	std::string gxl_file_name("../output/gen_median_" + dataset + ".gxl");

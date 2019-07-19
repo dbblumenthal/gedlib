@@ -79,6 +79,7 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_options(const std::string & options) {
+	set_default_options_();
 	std::map<std::string, std::string> options_map;
 	options_string_to_options_map_(options, options_map);
 	for (const auto & option : options_map) {
@@ -242,6 +243,10 @@ void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_id) {
 
+	if (graph_ids.empty()) {
+		throw Error("Empty vector of graph IDs, unable to compute median.");
+	}
+
 	// Start timer and record start time.
 	auto start = std::chrono::high_resolution_clock::now();
 	Timer timer(time_limit_in_sec_);
@@ -323,7 +328,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 			// Print information about current iteration.
 			if (print_to_stdout_ == 2) {
 				std::cout << "\n===========================================================\n";
-				std::cout << "Iteration " << itrs_.at(median_pos) << " for initial median " << median_pos + 1 << " of " << medians.size() << ".\n";
+				std::cout << "Iteration " << itrs_.at(median_pos) + 1 << " for initial median " << median_pos + 1 << " of " << medians.size() << ".\n";
 				std::cout << "-----------------------------------------------------------\n";
 			}
 
@@ -472,7 +477,7 @@ improve_sum_of_distances_() {
 	ged::ProgressBar progress(node_maps_from_median_.size());
 	if (print_to_stdout_ == 2) {
 		std::cout << "\n===========================================================\n";
-		std::cout << "\rImproving node maps and SOD for fixed median.\n";
+		std::cout << "\rImproving node maps and SOD for converged median.\n";
 		std::cout << "-----------------------------------------------------------\n";
 		std::cout << "\rImproving node maps: " << progress << std::flush;
 	}
@@ -565,6 +570,31 @@ std::size_t
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_num_times_order_increased() const {
 	return num_increase_order_;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+set_default_options_() {
+	init_method_ = Options::GEDMethod::BRANCH_UNIFORM;
+	init_options_ = "";
+	descent_method_ = Options::GEDMethod::REFINE;
+	descent_options_ = "";
+	refine_method_ = Options::GEDMethod::IPFP;
+	refine_options_ = "";
+	init_type_ = "RANDOM";
+	num_random_inits_ = 10;
+	use_real_randomness_ = true;
+	seed_ = 0;
+	refine_ = false;
+	time_limit_in_sec_ = 0;
+	epsilon_ = 0.0001;
+	max_itrs_ = 100;
+	max_itrs_without_update_ = 3;
+	num_inits_increase_order_ = 10;
+	init_type_increase_order_ = "KMEANS++";
+	max_itrs_increase_order_ = 10;
+	print_to_stdout_ = 2;
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

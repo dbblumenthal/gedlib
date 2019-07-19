@@ -167,6 +167,12 @@ public:
 	void init(Options::InitType init_type = Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 
 	/*!
+	 * @brief Check if the environment is initialized.
+	 * @return True if the environment is initialized.
+	 */
+	bool initialized() const;
+
+	/*!
 	 * @brief Returns the initialization type of the last initialization.
 	 * @return Initialization type.
 	 */

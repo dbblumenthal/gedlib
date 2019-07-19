@@ -854,6 +854,13 @@ init(Options::InitType init_type) {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+bool
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+initialized() const {
+	return initialized_;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 Options::InitType
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_init_type() const {

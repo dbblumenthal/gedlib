@@ -74,13 +74,12 @@ int main(int argc, char* argv[]) {
 			ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::LABELED, irrelevant_node_attributes(dataset)));
 	ged::GEDGraph::GraphID median_id{env.add_graph("median_" + dataset)};
 	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
-	env.set_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 5 --initialization-method RANDOM");
-	//env.set_method(ged::Options::GEDMethod::BRANCH_UNIFORM, "--threads 6");
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, true);
+	//median_estimator.set_options("--init-type MEDOID --refine TRUE");
 	median_estimator.set_options("--init-type RANDOM --randomness PSEUDO --seed " + seed + " --random-inits " + num_inits);
+	median_estimator.set_descent_method(ged::Options::GEDMethod::REFINE, "--initial-solutions 5 --threads 6");
+	median_estimator.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 40 --initialization-method RANDOM --num-randpost-loops 3");
 	median_estimator.run(graph_ids, median_id);
-	env.set_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 40 --initialization-method RANDOM --num-randpost-loops 3");
-	median_estimator.improve_sum_of_distances();
 	std::string gxl_file_name("../output/gen_median_" + dataset + ".gxl");
 	env.save_as_gxl_graph(median_id, gxl_file_name);
 }

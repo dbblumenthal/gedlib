@@ -241,6 +241,15 @@ struct Options {
 		EDGE_LIST  //!< Exchange graph is given as list of edges.
 	};
 
+	/*!
+	 * @brief Specifies state of ged::MedianGraphEstimator.
+	 */
+	enum class MedianGraphEstimatorState {
+		INITIALIZED,//!< Initial medians have been generated but no descent has been run.
+		CONVERGED,  //!< The block gradient descent has converged.
+		TERMINATED  //!< The algorithm has terminated, i.e., the node maps for the converged median have been refined if this option has been selected.
+	};
+
 };
 
 /*!

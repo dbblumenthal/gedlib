@@ -141,6 +141,89 @@ counting_sort(std::vector<LabelID>::iterator first, std::vector<LabelID>::iterat
 	}
 }
 
+void
+options_string_to_options_map(const std::string & options_string, std::map<std::string, std::string> & options_map) {
+	if (options_string == "") return;
+	options_map.clear();
+	std::vector<std::string> words;
+	tokenize(options_string, ' ', words);
+	std::string option_name;
+	bool expect_option_name{true};
+	for (auto word : words) {
+		if (expect_option_name) {
+			if (is_option_name(word)) {
+				option_name = word;
+				if (options_map.find(option_name) != options_map.end()) {
+					throw Error("Multiple specification of option \"" + option_name + "\".");
+				}
+				options_map[option_name] = "";
+			}
+			else {
+				throw Error("Invalid options \"" + options_string + "\". Usage: options = \"[--<option> <arg>] [...]\"");
+			}
+		}
+		else {
+			if (is_option_name(word)) {
+				throw Error("Invalid options \"" + options_string + "\". Usage: options = \"[--<option> <arg>] [...]\"");
+			}
+			else {
+				options_map[option_name] = word;
+			}
+		}
+		expect_option_name = not expect_option_name;
+	}
+}
+
+void
+tokenize(const std::string & sentence, char sep, std::vector<std::string> & words) {
+	bool outside_quotes{true};
+	std::size_t word_length{0};
+	std::size_t pos_word_start{0};
+	for (std::size_t pos{0}; pos < sentence.size(); pos++) {
+		if (sentence.at(pos) == '\'') {
+			if (not outside_quotes and pos < sentence.size() - 1) {
+				if (sentence.at(pos + 1) != sep) {
+					throw Error("Sentence contains closing single quote which is followed by a char different from " + std::to_string(sep) + ".");
+				}
+			}
+			word_length++;
+			outside_quotes = not outside_quotes;
+		}
+		else if (outside_quotes and sentence.at(pos) == sep) {
+			if (word_length > 0) {
+				words.push_back(sentence.substr(pos_word_start, word_length));
+			}
+			pos_word_start = pos + 1;
+			word_length = 0;
+		}
+		else {
+			word_length++;
+		}
+	}
+	if (not outside_quotes) {
+		throw Error("Sentence contains unbalanced single quotes.");
+	}
+	if (word_length > 0) {
+		words.push_back(sentence.substr(pos_word_start, word_length));
+	}
+}
+
+bool
+is_option_name(std::string & word) {
+	if (word.at(0) == '\'') {
+		word = word.substr(1, word.size() - 2);
+		return false;
+	}
+	if (word.size() < 3) {
+		return false;
+	}
+	if ((word.at(0) == '-') and (word.at(1) == '-') and (word.at(2) != '-')) {
+		word = word.substr(2);
+		return true;
+	}
+	return false;
+}
+
 }
 
 }

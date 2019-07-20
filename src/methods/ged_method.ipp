@@ -97,7 +97,7 @@ template<class UserNodeLabel, class UserEdgeLabel>
 void
 GEDMethod<UserNodeLabel, UserEdgeLabel>::
 set_options(const std::string & options) {
-	read_options_from_string_(options);
+	util::options_string_to_options_map(options, options_);
 	ged_set_default_options_();
 	for (auto option_arg : options_) {
 		if (not ged_parse_option_(option_arg.first, option_arg.second)) {
@@ -144,96 +144,6 @@ run_as_util(const GEDGraph & g, const GEDGraph & h, Result & result) {
 
 	// Run the method.
 	ged_run_(g, h, result);
-}
-
-// === Definitions of private helper member functions. ===
-template<class UserNodeLabel, class UserEdgeLabel>
-void
-GEDMethod<UserNodeLabel, UserEdgeLabel>::
-read_options_from_string_(const std::string & options) {
-	if (options == "") return;
-	options_.clear();
-	std::vector<std::string> words;
-	tokenize_(options, words);
-	std::string option_name;
-	bool expect_option_name{true};
-	for (auto word : words) {
-		if (expect_option_name) {
-			if (is_option_name_(word)) {
-				option_name = word;
-				if (options_.find(option_name) != options_.end()) {
-					throw Error("Multiple specification of option \"" + option_name + "\".");
-				}
-				options_[option_name] = "";
-			}
-			else {
-				throw Error("Invalid options \"" + options + "\". Usage: options = \"[--<option> <arg>] [...]\"");
-			}
-		}
-		else {
-			if (is_option_name_(word)) {
-				throw Error("Invalid options \"" + options + "\". Usage: options = \"[--<option> <arg>] [...]\"");
-			}
-			else {
-				options_[option_name] = word;
-			}
-		}
-		expect_option_name = not expect_option_name;
-	}
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-void
-GEDMethod<UserNodeLabel, UserEdgeLabel>::
-tokenize_(const std::string & options, std::vector<std::string> & words) const {
-	bool outside_quotes{true};
-	std::size_t word_length{0};
-	std::size_t pos_word_start{0};
-	for (std::size_t pos{0}; pos < options.size(); pos++) {
-		if (options.at(pos) == '\'') {
-			if (not outside_quotes and pos < options.size() - 1) {
-				if (options.at(pos + 1) != ' ') {
-					throw Error("Options string contains closing single quote which is followed by a char different from ' '.");
-				}
-			}
-			word_length++;
-			outside_quotes = not outside_quotes;
-		}
-		else if (outside_quotes and options.at(pos) == ' ') {
-			if (word_length > 0) {
-				words.push_back(options.substr(pos_word_start, word_length));
-			}
-			pos_word_start = pos + 1;
-			word_length = 0;
-		}
-		else {
-			word_length++;
-		}
-	}
-	if (not outside_quotes) {
-		throw Error("Options string contains unbalanced single quotes.");
-	}
-	if (word_length > 0) {
-		words.push_back(options.substr(pos_word_start, word_length));
-	}
-}
-
-template<class UserNodeLabel, class UserEdgeLabel>
-bool
-GEDMethod<UserNodeLabel, UserEdgeLabel>::
-is_option_name_(std::string & word) const {
-	if (word.at(0) == '\'') {
-		word = word.substr(1, word.size() - 2);
-		return false;
-	}
-	if (word.size() < 3) {
-		return false;
-	}
-	if ((word.at(0) == '-') and (word.at(1) == '-') and (word.at(2) != '-')) {
-		word = word.substr(2);
-		return true;
-	}
-	return false;
 }
 
 // === Default definitions of private virtual member functions to be overridden by derived classes. ===

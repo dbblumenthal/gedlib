@@ -42,25 +42,22 @@ namespace ged {
  * Supports the following options:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
- * | <tt>\--init-type RANDOM\|MEDOID</tt> | method for computing the initial medians | @p RANDOM | if @p MEDOID, the option @p \--random-inits has no effect |
+ * | <tt>\--init-type RANDOM\|MEDOID</tt> | method for computing the initial medians | @p MEDOID | if @p MEDOID, the option @p \--random-inits has no effect |
  * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial medians | @p 50 | n.a. |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
  * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
- * | <tt>\--refine TRUE\|FALSE</tt> | improve node maps and sum of distances for converged median | @p FALSE | n.a. |
+ * | <tt>\--refine TRUE\|FALSE</tt> | improve node maps and sum of distances for converged median | @p TRUE | n.a. |
  * | <tt>\--max-itrs @<convertible to int@></tt> | maximal number of iterations in main block gradient descent | @p 100 | if negative, no maximal number of iterations is enforced |
  * | <tt>\--max-itrs-without-update @<convertible to int@></tt> | maximal number of consecutive iterations in main block gradient descent where the median is not updated | @p 3 | if negative, no maximal number of iterations without update is enforced |
  * | <tt>\--time-limit @<convertible to double@></tt> | time limit in seconds for main block gradient descent | @p 0 | if less or equal @p 0, no time limit is enforced |
  * | <tt>\--epsilon @<convertible to double greater 0@></tt> | convergence threshold used everywhere | @p 0.0001 | n.a. |
  * | <tt>\--inits-increase-order @<convertible to int greater 0@></tt> | number of initial solutions for generic heuristic to increase the order of the median | @p 10 | used as starting points for (parallel) block gradient descents to determine node label of inserted node |
- * | <tt>\--init-type-increase-order CLUSTERS\|KMEANS++</tt> | initialization type for generic heuristic to increase the order of the median | @p KMEANS++ | if @p KMEANS++, well distributed node labels are used as starting points |
+ * | <tt>\--init-type-increase-order CLUSTERS\|K-MEANS++</tt> | initialization type for generic heuristic to increase the order of the median | @p K-MEANS++ | if @p K-MEANS++, well distributed node labels are used as starting points |
  * | <tt>\--max-itrs-increase-order @<convertible to int@></tt> | maximal number of iterations used in generic heuristic to increase the order of the median | @p 10 |  if negative, no iteration based termination criterion is used |
  * | <tt>\--stdout 0\|1\|2</tt> | print runtime information to standard output stream | @p 2 | @p 0: no output; @p 1: output only before termination; @p 2: output also during optimization |
  */
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 class MedianGraphEstimator {
-
-	template<class ClusterUserNodeID, class ClusterUserNodeLabel, class ClusterUserEdgeLabel>
-	friend class GraphClusteringHeuristic;
 
 public:
 
@@ -159,6 +156,12 @@ public:
 	 */
 	std::size_t get_num_times_order_increased() const;
 
+	/*!
+	 * @brief Returns pointer to the environment employed by the estimator.
+	 * @return Pointer to the environment employed by the estimator.
+	 */
+	GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * get_ged_env();
+
 private:
 
 	GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env_;
@@ -238,12 +241,6 @@ private:
 	std::size_t num_increase_order_;
 
 	void set_default_options_();
-
-	void options_string_to_options_map_(const std::string & options_string, std::map<std::string, std::string> & options_map) const;
-
-	void tokenize_(const std::string & options, std::vector<std::string> & words) const;
-
-	bool is_option_name_(std::string & option_name) const;
 
 	void construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 

@@ -79,6 +79,28 @@ void parse_config_file(const std::string & filename, std::map<std::string, std::
  */
 void save_as_config_file(const std::string & filename, const std::map<std::string, std::string> & options);
 
+/*!
+ * @brief Transforms an options string into an options map.
+ * @param[in] options_string Options string of the form "[--<option> <arg>] [...]".
+ * @param[out] options_map Map with one key-value pair (<option>,<arg>) for each option contained in the string.
+ */
+void options_string_to_options_map(const std::string & options_string, std::map<std::string, std::string> & options_map);
+
+/*!
+ * @brief Separates a sentence into words separated by @p sep (unless contained in single quotes).
+ * @param[in] sentence The sentence that should be tokenized.
+ * @param[in] sep The separator. Must be different from "'".
+ * @param[out] words The obtained words.
+ */
+void tokenize(const std::string & sentence, char sep, std::vector<std::string> & words);
+
+/*!
+ * @brief Checks whether a word is an option name and, if so, removes the leading dashes.
+ * @param[in,out] word
+ * @return True if @p word is of the form "--<option>".
+ */
+bool is_option_name(std::string & word);
+
 }
 
 }

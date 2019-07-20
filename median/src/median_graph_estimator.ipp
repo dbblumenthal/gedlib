@@ -46,17 +46,17 @@ node_ins_cost_{ged_env_->node_ins_cost(ged_env_->get_node_label(1))},
 labeled_edges_{ged_env_->num_edge_labels() > 1},
 edge_del_cost_{ged_env_->edge_del_cost(ged_env_->get_edge_label(1))},
 edge_ins_cost_{ged_env_->edge_ins_cost(ged_env_->get_edge_label(1))},
-init_type_("RANDOM"),
+init_type_("MEDOID"),
 num_random_inits_{10},
 use_real_randomness_{true},
 seed_{0},
-refine_{false},
+refine_{true},
 time_limit_in_sec_{0},
 epsilon_{0.0001},
 max_itrs_{100},
 max_itrs_without_update_{3},
 num_inits_increase_order_{10},
-init_type_increase_order_("KMEANS++"),
+init_type_increase_order_("K-MEANS++"),
 max_itrs_increase_order_{10},
 print_to_stdout_{2},
 median_id_{undefined()},
@@ -70,7 +70,10 @@ runtime_converged_(),
 itrs_(),
 num_decrease_order_{0},
 num_increase_order_{0} {
-	if (not ged_env_->initialized()) {
+	if (ged_env_ == nullptr) {
+		throw Error("The environment pointer passed to the constructor of ged::MedianGraphEstimator is null.");
+	}
+	else if (not ged_env_->initialized()) {
 		throw Error("The environment is uninitialized. Call ged::GEDEnv::init() before passing it to the constructor of ged::MedianGraphEstimator.");
 	}
  }
@@ -81,7 +84,7 @@ MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_options(const std::string & options) {
 	set_default_options_();
 	std::map<std::string, std::string> options_map;
-	options_string_to_options_map_(options, options_map);
+	util::options_string_to_options_map(options, options_map);
 	for (const auto & option : options_map) {
 		if (option.first == "init-type") {
 			init_type_ = option.second;
@@ -192,8 +195,8 @@ set_options(const std::string & options) {
 		}
 		else if (option.first == "init-type-increase-order") {
 			init_type_increase_order_ = option.second;
-			if (option.second != "CLUSTERS" and option.second != "KMEANS++") {
-				throw ged::Error(std::string("Invalid argument ") + option.second + " for option init-type-increase-order. Usage: options = \"[--init-type-increase-order CLUSTERS|KMEANS++] [...]\"");
+			if (option.second != "CLUSTERS" and option.second != "K-MEANS++") {
+				throw ged::Error(std::string("Invalid argument ") + option.second + " for option init-type-increase-order. Usage: options = \"[--init-type-increase-order CLUSTERS|K-MEANS++] [...]\"");
 			}
 		}
 		else if (option.first == "max-itrs-increase-order") {
@@ -206,8 +209,8 @@ set_options(const std::string & options) {
 		}
 		else {
 			std::string valid_options("[--init-type <arg>] [--random-inits <arg>] [--randomness <arg>] [--seed <arg>] [--stdout <arg>] ");
-			valid_options = valid_options + "[--time-limit <arg>] [--max-itrs <arg>] [--epsilon <arg>] ";
-			valid_options = valid_options + "[--inits-increase-order <arg>] [--init-type-increase-order <arg>] [--max-itrs-increase-order <arg>]";
+			valid_options += "[--time-limit <arg>] [--max-itrs <arg>] [--epsilon <arg>] ";
+			valid_options += "[--inits-increase-order <arg>] [--init-type-increase-order <arg>] [--max-itrs-increase-order <arg>]";
 			throw Error(std::string("Invalid option \"") + option.first + "\". Usage: options = \"" + valid_options + "\"");
 		}
 	}
@@ -573,117 +576,29 @@ get_num_times_order_increased() const {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> *
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_ged_env() {
+	return ged_env_;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_default_options_() {
-	init_method_ = Options::GEDMethod::BRANCH_UNIFORM;
-	init_options_ = "";
-	descent_method_ = Options::GEDMethod::REFINE;
-	descent_options_ = "";
-	refine_method_ = Options::GEDMethod::IPFP;
-	refine_options_ = "";
-	init_type_ = "RANDOM";
+	init_type_ = "MEDOID";
 	num_random_inits_ = 10;
 	use_real_randomness_ = true;
 	seed_ = 0;
-	refine_ = false;
+	refine_ = true;
 	time_limit_in_sec_ = 0;
 	epsilon_ = 0.0001;
 	max_itrs_ = 100;
 	max_itrs_without_update_ = 3;
 	num_inits_increase_order_ = 10;
-	init_type_increase_order_ = "KMEANS++";
+	init_type_increase_order_ = "K-MEANS++";
 	max_itrs_increase_order_ = 10;
 	print_to_stdout_ = 2;
-}
-
-template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
-void
-MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-options_string_to_options_map_(const std::string & options_string, std::map<std::string, std::string> & options_map) const {
-	if (options_string == "") return;
-	options_map.clear();
-	std::vector<std::string> words;
-	tokenize_(options_string, words);
-	std::string option_name;
-	bool expect_option_name{true};
-	for (auto word : words) {
-		if (expect_option_name) {
-			if (is_option_name_(word)) {
-				option_name = word;
-				if (options_map.find(option_name) != options_map.end()) {
-					throw Error("Multiple specification of option \"" + option_name + "\".");
-				}
-				options_map[option_name] = "";
-			}
-			else {
-				throw Error("Invalid options \"" + options_string + "\". Usage: options = \"[--<option> <arg>] [...]\"");
-			}
-		}
-		else {
-			if (is_option_name_(word)) {
-				throw Error("Invalid options \"" + options_string + "\". Usage: options = \"[--<option> <arg>] [...]\"");
-			}
-			else {
-				options_map[option_name] = word;
-			}
-		}
-		expect_option_name = not expect_option_name;
-	}
-}
-
-template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
-void
-MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-tokenize_(const std::string & options, std::vector<std::string> & words) const {
-	bool outside_quotes{true};
-	std::size_t word_length{0};
-	std::size_t pos_word_start{0};
-	for (std::size_t pos{0}; pos < options.size(); pos++) {
-		if (options.at(pos) == '\'') {
-			if (not outside_quotes and pos < options.size() - 1) {
-				if (options.at(pos + 1) != ' ') {
-					throw Error("Options string contains closing single quote which is followed by a char different from ' '.");
-				}
-			}
-			word_length++;
-			outside_quotes = not outside_quotes;
-		}
-		else if (outside_quotes and options.at(pos) == ' ') {
-			if (word_length > 0) {
-				words.push_back(options.substr(pos_word_start, word_length));
-			}
-			pos_word_start = pos + 1;
-			word_length = 0;
-		}
-		else {
-			word_length++;
-		}
-	}
-	if (not outside_quotes) {
-		throw Error("Options string contains unbalanced single quotes.");
-	}
-	if (word_length > 0) {
-		words.push_back(options.substr(pos_word_start, word_length));
-	}
-}
-
-template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
-bool
-MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-is_option_name_(std::string & word) const {
-	if (word.at(0) == '\'') {
-		word = word.substr(1, word.size() - 2);
-		return false;
-	}
-	if (word.size() < 3) {
-		return false;
-	}
-	if ((word.at(0) == '-') and (word.at(1) == '-') and (word.at(2) != '-')) {
-		word = word.substr(2);
-		return true;
-	}
-	return false;
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -1361,7 +1276,7 @@ compute_initial_node_labels_(const std::vector<UserNodeLabel> & node_labels, std
 	}
 
 	// Generate the initial node label medians.
-	if (init_type_increase_order_ == "KMEANS++") {
+	if (init_type_increase_order_ == "K-MEANS++") {
 
 		// Use k-means++ heuristic to generate the initial node label medians.
 		std::vector<bool> already_selected(node_labels.size(), false);

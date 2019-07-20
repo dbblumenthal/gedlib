@@ -137,14 +137,6 @@ private:
 
 	Seconds init_time_;
 
-	// Private helper member functions.
-
-	void read_options_from_string_(const std::string & options);
-
-	void tokenize_(const std::string & options, std::vector<std::string> & words) const;
-
-	bool is_option_name_(std::string & option_name) const;
-
 	// Virtual member functions to be overridden by derived classes.
 
 	/*!

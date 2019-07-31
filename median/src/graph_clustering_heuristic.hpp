@@ -79,27 +79,91 @@ public:
 	 */
 	void set_ged_method(Options::GEDMethod ged_method, const std::string ged_options);
 
+	/*!
+	 * @brief Runs the graph clustering algorithm.
+	 * @param[in] graph_ids Vector that contains the IDs of the graphs that should be clustered.
+	 * @param[in] focal_graph_ids Vector that contains the IDs of the cluster's focal graph.
+	 * @note The number of clusters equals the lenght of @p focal_graph_ids.
+	 */
 	void run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids);
 
-	void get_runtime() const;
+	/*!
+	 * @brief Returns the runtime.
+	 * @return Runtime in seconds.
+	 */
+	double get_runtime() const;
 
-	void get_clustering(std::vector<std::vector<GEDGraph::GraphID>> & clustering) const;
+	/*!
+	 * @brief Get the clustering.
+	 * @param[out] clustering A map that contains pairs of the form <tt>(focal_graph_id, cluster)</tt>,
+	 * where @p cluster contains the IDs of the graphs that are contained in the cluster associated to the focal graph with ID @p focal_graph_id.
+	 */
+	void get_clustering(std::map<GEDGraph::GraphID, std::vector<GEDGraph::GraphID>> & clustering) const;
 
+	/*!
+	 * @brief Return overall sum of distances.
+	 * @return Overall sum of distances.
+	 */
 	double get_sum_of_distances() const;
 
-	double get_cluster_radius(GEDGraph::GraphID median_id) const;
+	/*!
+	 * @brief Returns cluster radius.
+	 * @param[in] focal_graph_id ID of the focal graph whose cluster radius should be returned.
+	 * @return Radius of the cluster associated to the focal graph with ID @p focal_graph_id.
+	 */
+	double get_cluster_radius(GEDGraph::GraphID focal_graph_id) const;
 
-	double get_cluster_sum_of_distances(GEDGraph::GraphID median_id) const;
+	/*!
+	 * @brief Returns sum of distances within cluster.
+	 * @param[in] focal_graph_id ID of the focal graph for which the sum of distances of the cluster should be returned.
+	 * @return Sum of distances of the cluster associated to the focal graph with ID @p focal_graph_id.
+	 */
+	double get_cluster_sum_of_distances(GEDGraph::GraphID focal_graph_id) const;
 
+	/*!
+	 * @brief Returns the ID of the assigned focal graph (a.k.a. cluster ID).
+	 * @param[in] graph_id ID of the graph for which the ID of the assigned focal graph should be returned.
+	 * @return ID of the assigned focal graph.
+	 */
 	GEDGraph::GraphID get_assigned_focal_graph_id(GEDGraph::GraphID graph_id) const;
 
+	/*!
+	 * @brief Returns the distance from the assigned focal graph.
+	 * @param[in] graph_id ID of the graph whose distance from its assigned focal graph should be returned.
+	 * @return Distance from the assigned focal graph to the graph with ID @p graph_id.
+	 */
 	double get_distance_from_assigned_focal_graph(GEDGraph::GraphID graph_id) const;
 
+	/*!
+	 * @brief Returns the node map from the assigned focal graph.
+	 * @param[in] graph_id ID of the graph whose node map from its assigned focal graph should be returned.
+	 * @return Node map from the assigned focal graph to the graph with ID @p graph_id.
+	 */
 	const NodeMap & get_node_map_from_assigned_focal_graph(GEDGraph::GraphID graph_id) const;
 
-	double get_clustering_distance(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
+	/*!
+	 * @brief Saves the computed focal graphs as GXL graphs and creates a GraphCollection file that lists all of them.
+	 * @param[in] collection_file_name The name of the collection file.
+	 * @param[in] focal_graph_file_names A map that contains the names of the GXL files for the focal graphs.
+	 * Must contain a pair <tt>(focal_graph_id, focal_graph_file_name)</tt> for each @p focal_graph_id passed to run().
+	 * @param[in] focal_graph_classes A vector that contains the classes of the focal graphs. If left empty, no classes are specified in the collection file.
+	 * Otherwise, it must have the same length as the argument @p focal_graph_ids passed to run().
+	 */
+	void save_focal_graphs(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes = {}) const;
 
-	void save_focal_graphs(const std::string & collection_file_name, const std::vector<std::string> & focal_graph_file_names, const std::vector<std::string> & focal_graph_classes = {}) const;
+	/*!
+	 * @brief Computes the normalized mutual information between the computed clustering and a ground truth clustering.
+	 * @param[in] ground_truth_clustering The ground truth clustering.
+	 * @return Normalized mutual information between the two clusterings, i.e., a score between 0 and 1 that equals 1 just in case the two clusterings are identical.
+	 */
+	double get_normalized_mutual_information(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
+
+	/*!
+	 * @brief Computes the adjusted Rand index between the computed clustering and a ground truth clustering.
+	 * @param[in] ground_truth_clustering The ground truth clustering.
+	 * @return Adjusted Rand index between the two clusterings, i.e., a score between 0 and 1 that equals 1 just in case the two clusterings are identical.
+	 */
+	double get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
 
 private:
 

@@ -226,7 +226,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 
 		// Run Lloyd's algorithm.
 		bool converged{false};
-		for (; not termination_criterion_met_(converged, timer, itrs_.at(random_init)); itrs_[random_init]) {
+		for (; not termination_criterion_met_(converged, timer, itrs_.at(random_init)); itrs_[random_init]++) {
 			converged = update_clusters_(graph_ids, focal_graph_ids);
 			if (not converged) {
 				update_focal_graphs_(focal_graph_ids, focal_graphs);
@@ -260,6 +260,229 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 	auto end = std::chrono::high_resolution_clock::now();
 	runtime_ = start - end;
 }
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_runtime() const {
+	return runtime_.count();
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_clustering(std::map<GEDGraph::GraphID, std::vector<GEDGraph::GraphID>> & clustering) const {
+	clustering.clear();
+	for (const auto & key_val : cluster_radii_) {
+		clustering.emplace(key_val.first, std::vector<GEDGraph::GraphID>());
+	}
+	for (const auto & key_val : assigned_focal_graph_ids_) {
+		clustering.at(key_val.second).emplace_back(key_val.first);
+	}
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_sum_of_distances() const {
+	return sum_of_distances_;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_cluster_radius(GEDGraph::GraphID focal_graph_id) const {
+	return cluster_radii_.at(focal_graph_id);
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_cluster_sum_of_distances(GEDGraph::GraphID focal_graph_id) const {
+	return cluster_sums_of_distances_.at(focal_graph_id);
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+GEDGraph::GraphID
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_assigned_focal_graph_id(GEDGraph::GraphID graph_id) const {
+	return assigned_focal_graph_ids_.at(graph_id);
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_distance_from_assigned_focal_graph(GEDGraph::GraphID graph_id) const {
+	return node_maps_from_assigned_focal_graphs_.at(graph_id).induced_cost();
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+const NodeMap &
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_node_map_from_assigned_focal_graph(GEDGraph::GraphID graph_id) const {
+	return node_maps_from_assigned_focal_graphs_.at(graph_id);
+}
+
+template<>
+void
+GraphClusteringHeuristic<GXLNodeID, GXLLabel, GXLLabel>::
+save_focal_graphs(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes = {}) const {
+	std::vector<GEDGraph::GraphID> focal_graph_ids;
+	for (const auto & key_val : cluster_radii_) {
+		GEDGraph::GraphID focal_graph_id{key_val.first};
+		ged_env_->save_as_gxl_graph(focal_graph_id, focal_graph_file_names.at(focal_graph_id));
+	}
+
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_normalized_mutual_information(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const {
+
+	// Get internal clustering in the right format.
+	std::map<GEDGraph::GraphID, std::vector<GEDGraph::GraphID>> clustering_as_map;
+	get_clustering(clustering_as_map);
+	std::vector<std::vector<GEDGraph::GraphID>> clustering;
+	for (const auto & key_val : clustering_as_map) {
+		clustering.emplace_back(key_val.second);
+	}
+
+	// Ensure that the same graph IDs are contained in both clusters.
+	std::map<GEDGraph::GraphID, bool> contained_in_ground_truth_clustering;
+	for (const auto & cluster : clustering) {
+		for (GEDGraph::GraphID graph_id : cluster) {
+			contained_in_ground_truth_clustering.emplace(graph_id, false);
+		}
+	}
+	for (const auto & ground_truth_cluster : ground_truth_clustering) {
+		for (GEDGraph::GraphID graph_id : ground_truth_cluster) {
+			if (contained_in_ground_truth_clustering.find(graph_id) == contained_in_ground_truth_clustering.end()) {
+				throw Error("The graph with ID " + std::to_string(graph_id) + " is contained in the ground truth clustering but not in the clustered graph collection.");
+			}
+			ground_truth_clustering[graph_id] = true;
+		}
+	}
+	for (const auto & key_val : contained_in_ground_truth_clustering) {
+		if (not key_val.second) {
+			throw Error("The graph with ID " + std::to_string(key_val.first) + " is contained in the clustered graph collection but not in the ground truth clustering.");
+		}
+	}
+
+	// Get the size of the clustered graph collection.
+	double collection_size{static_cast<double>(assigned_focal_graph_ids_.size())};
+
+	// Compute entropies.
+	double entropy{0};
+	for (auto & cluster : clustering) {
+		std::sort(cluster.begin(), cluster.end());
+		double cluster_size{static_cast<double>(cluster.size())};
+		entropy -= (cluster_size / collection_size) * std::log(cluster_size / collection_size);
+	}
+	double ground_truth_entropy{0};
+	std::vector<std::vector<GEDGraph::GraphID>> sorted_ground_truth_clustering(ground_truth_clustering);
+	for (auto & ground_truth_cluster : sorted_ground_truth_clustering) {
+		std::sort(ground_truth_cluster.begin(), ground_truth_cluster.end());
+		double cluster_size{static_cast<double>(ground_truth_cluster.size())};
+		ground_truth_entropy -= (cluster_size / collection_size) * std::log(cluster_size / collection_size);
+	}
+
+	// Compute mutual information.
+	double mutual_information{0};
+	for (auto & cluster : clustering) {
+		double cluster_size{static_cast<double>(cluster.size())};
+		for (auto & ground_truth_cluster : sorted_ground_truth_clustering) {
+			double ground_truth_cluster_size{static_cast<double>(ground_truth_cluster.size())};
+			double intersection_size{0};
+			auto g_id= cluster.begin();
+			auto h_id = ground_truth_cluster.begin();
+			while ((g_id != cluster.end()) and (h_id != ground_truth_cluster.end())) {
+				if (*g_id == *h_id) {
+					intersection_size += 1;
+					g_id++;
+					h_id++;
+				}
+				else if (*g_id < *h_id) {
+					g_id++;
+				}
+				else {
+					h_id++;
+				}
+			}
+			mutual_information += (intersection_size / collection_size) * std::log((intersection_size * collection_size) / (cluster_size * ground_truth_cluster_size));
+		}
+	}
+
+	// Return normalized mutual information.
+	return mutual_information / std::max(entropy, ground_truth_entropy);
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const {
+
+	// Ensure that the same graph IDs are contained in both clusters and transform ground truth clustering to the right format.
+	std::vector<GEDGraph::GraphID> graph_ids;
+	std::map<GEDGraph::GraphID, bool> contained_in_ground_truth_clustering;
+	for (const auto & key_val : assigned_focal_graph_ids_) {
+		contained_in_ground_truth_clustering.emplace(key_val.first, false);
+		graph_ids.emplace_back(key_val.first);
+	}
+	std::map<GEDGraph::GraphID, std::size_t> ground_truth_cluster_ids;
+	std::size_t ground_truth_cluster_id{0};
+	for (const auto & ground_truth_cluster : ground_truth_clustering) {
+		for (GEDGraph::GraphID graph_id : ground_truth_cluster) {
+			if (contained_in_ground_truth_clustering.find(graph_id) == contained_in_ground_truth_clustering.end()) {
+				throw Error("The graph with ID " + std::to_string(graph_id) + " is contained in the ground truth clustering but not in the clustered graph collection.");
+			}
+			ground_truth_clustering[graph_id] = true;
+			ground_truth_cluster_ids.emplace(graph_id, ground_truth_cluster_id);
+		}
+		ground_truth_cluster_id++;
+	}
+	for (const auto & key_val : contained_in_ground_truth_clustering) {
+		if (not key_val.second) {
+			throw Error("The graph with ID " + std::to_string(key_val.first) + " is contained in the clustered graph collection but not in the ground truth clustering.");
+		}
+	}
+
+	// Compute counts of matched and un-matched pairs.
+	double n_0_0{0};
+	double n_0_1{0};
+	double n_1_0{0};
+	double n_1_1{0};
+	for (const auto & g_id = graph_ids.begin(); g_id != graph_ids.end(); g_id++) {
+		GEDGraph::GraphID cluster_id_g{assigned_focal_graph_ids_.at(*g_id)};
+		std::size_t ground_truth_cluster_id_g{ground_truth_cluster_ids.at(*g_id)};
+		for (const auto & h_id = g_id + 1; h_id != graph_ids.end(); h_id++) {
+			GEDGraph::GraphID cluster_id_h{assigned_focal_graph_ids_.at(*h_id)};
+			std::size_t ground_truth_cluster_id_h{ground_truth_cluster_ids.at(*h_id)};
+			if (cluster_id_g != cluster_id_h) {
+				if (ground_truth_cluster_id_g != ground_truth_cluster_id_h) {
+					n_0_0 += 1;
+				}
+				else {
+					n_0_1 += 1;
+				}
+			}
+			else {
+				if (ground_truth_cluster_id_g != ground_truth_cluster_id_h) {
+					n_1_0 += 1;
+				}
+				else {
+					n_1_1 += 1;
+				}
+			}
+		}
+	}
+
+	// Return the adjusted Rand index.
+	return (2 * (n_0_0 * n_1_1 - n_0_1 * n_1_0)) / ((n_0_0 + n_0_1) * (n_0_1 + n_1_1) + (n_0_0 + n_1_0) * (n_1_0 + n_1_1));
+
+}
+
+
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void

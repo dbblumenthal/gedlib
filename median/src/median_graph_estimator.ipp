@@ -525,7 +525,7 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_distance_from_median(GEDGraph::GraphID graph_id) const {
-	if (node_maps_from_median_.at(graph_id) == node_maps_from_median_.end()) {
+	if (node_maps_from_median_.find(graph_id) == node_maps_from_median_.end()) {
 		throw Error("No distance available for graph with ID " + std::to_string(graph_id) + ".");
 	}
 	return node_maps_from_median_.at(graph_id).induced_cost();
@@ -535,7 +535,7 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 const NodeMap &
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_node_map_from_median(GEDGraph::GraphID graph_id) const {
-	if (node_maps_from_median_.at(graph_id) == node_maps_from_median_.end()) {
+	if (node_maps_from_median_.find(graph_id) == node_maps_from_median_.end()) {
 		throw Error("No node map available for graph with ID " + std::to_string(graph_id) + ".");
 	}
 	return node_maps_from_median_.at(graph_id);

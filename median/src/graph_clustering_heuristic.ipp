@@ -330,6 +330,7 @@ save_focal_graphs(const std::string & collection_file_name, const std::map<GEDGr
 	std::vector<GEDGraph::GraphID> focal_graph_ids;
 	for (const auto & key_val : cluster_radii_) {
 		GEDGraph::GraphID focal_graph_id{key_val.first};
+		focal_graph_ids.emplace_back(focal_graph_id);
 		ged_env_->save_as_gxl_graph(focal_graph_id, focal_graph_file_names.at(focal_graph_id));
 	}
 

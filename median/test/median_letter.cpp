@@ -65,8 +65,6 @@ int main(int argc, char* argv[]) {
 			ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED));
 	ged::GEDGraph::GraphID median_id{env.add_graph("median_Letter_HIGH_" + letter_class, letter_class)};
 	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
-	std::string ipfp_options("--threads 6 --initial-solutions 5 --initialization-method RANDOM");
-	env.set_method(ged::Options::GEDMethod::IPFP, ipfp_options);
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, false);
 	median_estimator.set_options("--init-type RANDOM --randomness PSEUDO --seed " + seed);
 	median_estimator.run(graph_ids, median_id);

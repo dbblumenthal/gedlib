@@ -111,6 +111,18 @@ public:
 	GEDGraph::NodeID pre_image(GEDGraph::NodeID node) const;
 
 	/*!
+	 * @brief Returns the forward map.
+	 * @return Forward map.
+	 */
+	std::vector<GEDGraph::NodeID> get_forward_map() const;
+
+	/*!
+	 * @brief Returns the backward map.
+	 * @return Backward map.
+	 */
+	std::vector<GEDGraph::NodeID> get_backward_map() const;
+
+	/*!
 	 * @brief Constructs the representation as relation.
 	 * @param[out] relation Contains the pairs of nodes in the relation.
 	 * The first member of a pair contained in the relation is a node in the first graph or the dummy node,

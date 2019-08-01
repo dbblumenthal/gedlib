@@ -64,7 +64,7 @@ public:
 	 * @param[in] edit_costs Select one of the predefined edit costs.
 	 * @param[in] edit_cost_constants Constants passed to the constructor of the edit cost class selected by @p edit_costs.
 	 */
-	void set_edit_costs(Options::EditCosts edit_costs, std::initializer_list<double> edit_cost_constants = {});
+	void set_edit_costs(Options::EditCosts edit_costs, std::vector<double> edit_cost_constants = {});
 
 	/*!
 	 * @brief Sets the edit costs to user defined edit costs.
@@ -159,6 +159,15 @@ public:
 	 * and the template parameters @p UserNodeLabel and @p UserEdgeLabel are set to ged::GXLLabel.
 	 */
 	void save_as_gxl_graph(GEDGraph::GraphID graph_id, const std::string & gxl_file_name) const;
+
+	/*!
+	 * @brief Creates an XML GraphCollection file.
+	 * @param[in] xml_file_name Name of the created XML file.
+	 * @param[in] gxl_file_names Vector that contains the names of the GXL files that contain the graphs listed in the collection.
+	 * @param[in] graph_classes Vector that contains the classes of the graphs listed in the collection.
+	 * If left empty, all graphs are assigned the class "no_class". Otherwise, it must have the same size as @p gxl_file_names.
+	 */
+	void save_graph_collection(const std::string & xml_file_name, const std::vector<std::string> & gxl_file_names, const std::vector<std::string> & graph_classes = {}) const;
 
 	/*!
 	 * @brief Initializes the environment.

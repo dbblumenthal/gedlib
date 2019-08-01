@@ -240,7 +240,6 @@ set_refine_method(Options::GEDMethod refine_method, const std::string & refine_o
 	refine_options_ = refine_options;
 }
 
-
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::

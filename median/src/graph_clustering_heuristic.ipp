@@ -38,8 +38,8 @@ ged_method_{Options::GEDMethod::BRANCH_UNIFORM},
 ged_options_(""),
 clustering_method_("K-MEDIANS"),
 init_type_("K-MEANS++"),
-num_random_inits_{10},
 use_real_randomness_{true},
+num_random_inits_{1},
 seed_{0},
 time_limit_in_sec_{0},
 epsilon_{0.0001},
@@ -178,6 +178,12 @@ void
 GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids) {
 
+	// Print information.
+	if (print_to_stdout_ == 2) {
+		std::cout << "\n===========================================================\n";
+		std::cout << "Initializing graph clustering heuristic: ... " << std::flush;
+	}
+
 	// Sanity checks.
 	if (graph_ids.empty()) {
 		throw Error("Empty vector of graph IDs, unable to compute clusters.");
@@ -217,8 +223,21 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 	std::map<GEDGraph::GraphID, double> best_distances_from_assigned_focal_graphs;
 	std::map<GEDGraph::GraphID, double> best_cluster_sums_of_distances;
 
+	// Print information.
+	if (print_to_stdout_ == 2) {
+		std::cout << "done.\n";
+		std::cout << "-----------------------------------------------------------\n";
+	}
+
 	// Cluster the graphs.
 	for (std::size_t random_init{0}; random_init < num_random_inits_; random_init++) {
+
+		// Print information about current iteration.
+		if (print_to_stdout_ == 2) {
+			std::cout << "\n===========================================================\n";
+			std::cout << "Running Lloyd's algorithm from initial solution " << random_init + 1 << " of " << num_random_inits_ << ".\n";
+			std::cout << "-----------------------------------------------------------\n";
+		}
 
 		// Generate the initial focal graphs and the initial clusters.
 		std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> focal_graphs;
@@ -227,10 +246,48 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 		// Run Lloyd's algorithm.
 		bool converged{false};
 		for (; not termination_criterion_met_(converged, timer, itrs_.at(random_init)); itrs_[random_init]++) {
-			converged = update_clusters_(graph_ids, focal_graph_ids);
-			if (not converged) {
-				update_focal_graphs_(focal_graph_ids, focal_graphs);
+
+			double old_sum_of_distances{sum_of_distances_};
+
+			// Print information about current iteration.
+			if (print_to_stdout_ == 2) {
+				std::cout << "\n===========================================================\n";
+				std::cout << "Iteration " << itrs_.at(random_init) + 1 << " for initial solution " << random_init + 1 << " of " << num_random_inits_ << ".\n";
+				std::cout << "-----------------------------------------------------------\n";
+				std::cout << "Updating the cluster: ... " << std::flush;
 			}
+
+			converged = update_clusters_(graph_ids, focal_graph_ids);
+
+			// Print information about current iteration.
+			if (print_to_stdout_ == 2) {
+				std::cout << "done.\n";
+			}
+
+			if (not converged) {
+				// Print information about current iteration.
+				if (print_to_stdout_ == 2) {
+					std::cout << "Updating the focal graphs: ... " << std::flush;
+				}
+
+				update_focal_graphs_(focal_graph_ids, focal_graphs);
+
+				// Print information about current iteration.
+				if (print_to_stdout_ == 2) {
+					std::cout << "done.\n";
+				}
+			}
+
+			// Print information about current iteration.
+			if (print_to_stdout_ == 2) {
+				std::cout << "Old local SOD: " << old_sum_of_distances << "\n";
+				std::cout << "New local SOD: " << sum_of_distances_ << "\n";
+				std::cout << "Best converged SOD: " << best_sum_of_distances << "\n";
+				std::cout << "Modified clusters: " << converged << "\n";
+				std::cout << "===========================================================\n";
+			}
+
+
 		}
 
 		// Update the best clustering.
@@ -243,6 +300,11 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 		}
 	}
 
+	// Print information.
+	if (print_to_stdout_ == 2) {
+		std::cout << "Saving the results: ... " << std::flush;
+	}
+
 	// Store the best encountered clustering.
 	for (const auto & key_val : best_focal_graphs) {
 		ged_env_->load_exchange_graph(key_val.second, key_val.first);
@@ -253,12 +315,41 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 	node_maps_from_assigned_focal_graphs_ = best_node_maps_from_assigned_focal_graphs;
 	cluster_sums_of_distances_ = best_cluster_sums_of_distances;
 
+	// Print information.
+	if (print_to_stdout_ == 2) {
+		std::cout << "done.\n";
+		std::cout << "Computing the radii: ... " << std::flush;
+	}
+
 	// Compute the cluster radii.
 	compute_cluster_radii_(focal_graph_ids);
+
+	// Print information.
+	if (print_to_stdout_ == 2) {
+		std::cout << "done.\n";
+	}
 
 	// Record the runtime.
 	auto end = std::chrono::high_resolution_clock::now();
 	runtime_ = start - end;
+
+	// Print global information.
+	if (print_to_stdout_ != 0) {
+		std::cout << "\n===========================================================\n";
+		std::cout << "Finished graph clustering.\n";
+		std::cout << "-----------------------------------------------------------\n";
+		std::cout << "SOD: " << sum_of_distances_ << "\n";
+		std::cout << "Overall runtime: " << runtime_.count() << "\n";
+		std::cout << "Number of initial solutions: " << num_random_inits_ << "\n";
+		std::size_t total_itr{0};
+		for (auto itr : itrs_) {
+			total_itr += itr;
+		}
+		std::cout << "Size of graph collection: " << graph_ids.size() << "\n";
+		std::cout << "Number of clusters: " << focal_graph_ids.size() << "\n";
+		std::cout << "Mean number of iterations: " << static_cast<double>(total_itr) / static_cast<double>(num_random_inits_) << "\n";
+		std::cout << "===========================================================\n";
+	}
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -326,7 +417,7 @@ get_node_map_from_assigned_focal_graph(GEDGraph::GraphID graph_id) const {
 template<>
 void
 GraphClusteringHeuristic<GXLNodeID, GXLLabel, GXLLabel>::
-save_focal_graphs(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes = {}) const {
+save_focal_graphs(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes) const {
 	std::vector<GEDGraph::GraphID> focal_graph_ids;
 	for (const auto & key_val : cluster_radii_) {
 		GEDGraph::GraphID focal_graph_id{key_val.first};
@@ -334,6 +425,15 @@ save_focal_graphs(const std::string & collection_file_name, const std::map<GEDGr
 		ged_env_->save_as_gxl_graph(focal_graph_id, focal_graph_file_names.at(focal_graph_id));
 	}
 
+	std::vector<std::string> gxl_file_names;
+	std::vector<std::string> graph_classes;
+	for (const auto & key_val : focal_graph_file_names) {
+		gxl_file_names.emplace_back(key_val.second);
+		if (not focal_graph_classes.empty()) {
+			graph_classes.emplace_back(focal_graph_classes.at(key_val.first));
+		}
+	}
+	ged_env_->save_graph_collection(collection_file_name, gxl_file_names, graph_classes);
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -361,7 +461,7 @@ get_normalized_mutual_information(const std::vector<std::vector<GEDGraph::GraphI
 			if (contained_in_ground_truth_clustering.find(graph_id) == contained_in_ground_truth_clustering.end()) {
 				throw Error("The graph with ID " + std::to_string(graph_id) + " is contained in the ground truth clustering but not in the clustered graph collection.");
 			}
-			ground_truth_clustering[graph_id] = true;
+			contained_in_ground_truth_clustering[graph_id] = true;
 		}
 	}
 	for (const auto & key_val : contained_in_ground_truth_clustering) {
@@ -437,7 +537,7 @@ get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & grou
 			if (contained_in_ground_truth_clustering.find(graph_id) == contained_in_ground_truth_clustering.end()) {
 				throw Error("The graph with ID " + std::to_string(graph_id) + " is contained in the ground truth clustering but not in the clustered graph collection.");
 			}
-			ground_truth_clustering[graph_id] = true;
+			contained_in_ground_truth_clustering[graph_id] = true;
 			ground_truth_cluster_ids.emplace(graph_id, ground_truth_cluster_id);
 		}
 		ground_truth_cluster_id++;
@@ -453,10 +553,10 @@ get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & grou
 	double n_0_1{0};
 	double n_1_0{0};
 	double n_1_1{0};
-	for (const auto & g_id = graph_ids.begin(); g_id != graph_ids.end(); g_id++) {
+	for (auto g_id = graph_ids.begin(); g_id != graph_ids.end(); g_id++) {
 		GEDGraph::GraphID cluster_id_g{assigned_focal_graph_ids_.at(*g_id)};
 		std::size_t ground_truth_cluster_id_g{ground_truth_cluster_ids.at(*g_id)};
-		for (const auto & h_id = g_id + 1; h_id != graph_ids.end(); h_id++) {
+		for (auto h_id = g_id + 1; h_id != graph_ids.end(); h_id++) {
 			GEDGraph::GraphID cluster_id_h{assigned_focal_graph_ids_.at(*h_id)};
 			std::size_t ground_truth_cluster_id_h{ground_truth_cluster_ids.at(*h_id)};
 			if (cluster_id_g != cluster_id_h) {
@@ -491,7 +591,7 @@ GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_default_options_() {
 	clustering_method_ = "K-MEDIANS";
 	init_type_ = "K-MEANS++";
-	num_random_inits_ = 10;
+	num_random_inits_ = 1;
 	use_real_randomness_ = true;
 	seed_ = 0;
 	time_limit_in_sec_ = 0;
@@ -521,7 +621,7 @@ compute_initial_clusters_(const std::vector<GEDGraph::GraphID> & graph_ids, cons
 	cluster_sums_of_distances_.clear();
 	NodeMap empty_node_map(0, 0);
 	for (GEDGraph::GraphID graph_id : graph_ids) {
-		assigned_focal_graph_ids_.emplace(graph_ids, undefined());
+		assigned_focal_graph_ids_.emplace(graph_id, undefined());
 		node_maps_from_assigned_focal_graphs_.emplace(graph_id, empty_node_map);
 	}
 	for (GEDGraph::GraphID focal_graph_id : focal_graph_ids) {
@@ -537,6 +637,12 @@ GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 compute_initial_focal_graphs_k_means_plus_plus_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids,
 		std::mt19937 & urng, std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & focal_graphs) {
 
+	// Print information about current iteration.
+	ged::ProgressBar progress(focal_graph_ids.size());
+	if (print_to_stdout_ == 2) {
+		std::cout << "\rk-means++ initialization: " << progress << std::flush;
+	}
+
 	// IDs of the graphs that will be selected as focal graphs.
 	std::vector<GEDGraph::GraphID> original_focal_graph_ids;
 
@@ -549,6 +655,12 @@ compute_initial_focal_graphs_k_means_plus_plus_(const std::vector<GEDGraph::Grap
 	original_focal_graph_ids.emplace_back(graph_ids.at(selected_graph_id_pos));
 	focal_graphs.emplace(focal_graph_ids.at(focal_graphs.size()), ged_env_->get_graph(original_focal_graph_ids.back()));
 	already_selected[selected_graph_id_pos] = true;
+
+	// Print information about current iteration.
+	if (print_to_stdout_ == 2) {
+		progress.increment();
+		std::cout << "\rk-means++ initialization: " << progress << std::flush;
+	}
 
 	// Select all remaining focal graphs.
 	while (focal_graphs.size()  < focal_graph_ids.size()) {
@@ -572,6 +684,12 @@ compute_initial_focal_graphs_k_means_plus_plus_(const std::vector<GEDGraph::Grap
 		original_focal_graph_ids.emplace_back(graph_ids.at(selected_graph_id_pos));
 		focal_graphs.emplace(focal_graph_ids.at(focal_graphs.size()), ged_env_->get_graph(original_focal_graph_ids.back()));
 		already_selected[selected_graph_id_pos] = true;
+
+		// Print information about current iteration.
+		if (print_to_stdout_ == 2) {
+			progress.increment();
+			std::cout << "\rk-means++ initialization: " << progress << std::flush;
+		}
 	}
 
 	// Load the focal graphs into the environment.
@@ -579,6 +697,12 @@ compute_initial_focal_graphs_k_means_plus_plus_(const std::vector<GEDGraph::Grap
 		ged_env_->load_exchange_graph(focal_graphs.at(cluster_id), focal_graph_ids.at(cluster_id));
 	}
 	ged_env_->init(ged_env_->get_init_type());
+
+	// Print information about current iteration.
+	if (print_to_stdout_ == 2) {
+		std::cout << "\n";
+	}
+
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -586,6 +710,12 @@ void
 GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 compute_initial_focal_graphs_cluster_sampling_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids,
 		std::mt19937 & urng, std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & focal_graphs) {
+
+	// Print information about current iteration.
+	ged::ProgressBar progress(focal_graph_ids.size());
+	if (print_to_stdout_ == 2) {
+		std::cout << "\rcluster initialization: " << progress << std::flush;
+	}
 
 	// Determine the cluster size.
 	std::size_t cluster_size{graph_ids.size() / focal_graph_ids.size()};
@@ -621,6 +751,16 @@ compute_initial_focal_graphs_cluster_sampling_(const std::vector<GEDGraph::Graph
 			compute_medoid_(clustering.at(cluster_id), focal_graph_ids.at(cluster_id), focal_graph, new_node_maps_from_focal_graph);
 		}
 		focal_graphs.emplace(focal_graph_ids.at(cluster_id), focal_graph);
+
+		// Print information about current iteration.
+		if (print_to_stdout_ == 2) {
+			progress.increment();
+			std::cout << "\rcluster initialization: " << progress << std::flush;
+		}
+	}
+	// Print information about current iteration.
+	if (print_to_stdout_ == 2) {
+		std::cout << "\n";
 	}
 }
 
@@ -649,7 +789,7 @@ update_clusters_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::ve
 			ged_env_->run_method(focal_graph_id, graph_id);
 			if (ged_env_->get_upper_bound(focal_graph_id, graph_id) < node_maps_from_assigned_focal_graphs_.at(graph_id).induced_cost() - epsilon_) {
 				assigned_focal_graph_ids_[graph_id] = focal_graph_id;
-				node_maps_from_assigned_focal_graphs_[graph_id] = ged_env_->get_node_map(focal_graph_id, graph_id);
+				node_maps_from_assigned_focal_graphs_.at(graph_id) = ged_env_->get_node_map(focal_graph_id, graph_id);
 			}
 		}
 		if (assigned_focal_graph_ids_.at(graph_id) != old_assigned_focal_graph_id) {

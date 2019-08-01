@@ -52,8 +52,8 @@ ged_method_{nullptr} {}
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-set_edit_costs(Options::EditCosts edit_costs, std::initializer_list<double> edit_cost_constants) {
-	ged_data_.set_edit_costs_(edit_costs, std::vector<double>(edit_cost_constants));
+set_edit_costs(Options::EditCosts edit_costs, std::vector<double> edit_cost_constants) {
+	ged_data_.set_edit_costs_(edit_costs, edit_cost_constants);
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -313,6 +313,24 @@ save_as_gxl_graph(GEDGraph::GraphID graph_id, const std::string & gxl_file_name)
 	}
 	gxl_file << "</graph>\n</gxl>\n";
 	gxl_file.close();
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+save_graph_collection(const std::string & xml_file_name, const std::vector<std::string> & gxl_file_names, const std::vector<std::string> & graph_classes) const {
+	if ((not graph_classes.empty()) and (graph_classes.size() != gxl_file_names.size())) {
+		throw Error("The number of GXL files does not match the number of graph classes.");
+	}
+	std::ofstream xml_file(xml_file_name.c_str());
+	xml_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+	xml_file << "<!DOCTYPE GraphCollection SYSTEM \"http://www.inf.unibz.it/~blumenthal/dtd/GraphCollection.dtd\">\n";
+	xml_file << "<GraphCollection>\n";
+	for (std::size_t graph_id{0}; graph_id < gxl_file_names.size(); graph_id++) {
+		xml_file << "\t<graph file=\"" << gxl_file_names.at(graph_id) << "\" class=\"" << (graph_classes.empty() ? "no_class" : graph_classes.at(graph_id)) << "\"/>\n";
+	}
+	xml_file << "</GraphCollection>\n";
+	xml_file.close();
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

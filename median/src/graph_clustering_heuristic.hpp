@@ -181,9 +181,9 @@ private:
 
 	bool use_real_randomness_;
 
-	std::size_t seed_;
-
 	std::size_t num_random_inits_;
+
+	std::size_t seed_;
 
 	double time_limit_in_sec_;
 
@@ -203,9 +203,9 @@ private:
 
 	double sum_of_distances_;
 
-	std::vector<std::size_t> itrs_;
-
 	Seconds runtime_;
+
+	std::vector<std::size_t> itrs_;
 
 	void set_default_options_();
 

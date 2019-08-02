@@ -37,8 +37,7 @@ GEDLIB uses the following external libraries:
 
 - [CMake](https://cmake.org/), for compilation. For installation instructions, see [https://cmake.org/install/](https://cmake.org/install/). 
 - [Doxygen](http://www.stack.nl/~dimitri/doxygen/), for creating the documentation. For installation instructions, see [https://www.stack.nl/~dimitri/doxygen/manual/install.html](https://www.stack.nl/~dimitri/doxygen/manual/install.html).
-- [OpenMP](http://www.openmp.org/) compatible C++ compiler. Under Linux, OpenMP is supported by default. Under macOS, you can install clang-omp++ using [Homebrew](https://brew.sh/).  After installing Homebrew, open a shell and execute `$ brew install clang-omp`.
-- [Boost (version 1.59.0 or higher)](https://www.boost.org/). Does not require compilation. Just download the sources into a directory `<BOOST_ROOT>`.
+- [OpenMP](http://www.openmp.org/) compatible C++ compiler. Under Linux, OpenMP is supported by default. Under Max OS, you can install clang-omp++ using [Homebrew](https://brew.sh/).  After installing Homebrew, open a shell and execute `$ brew install clang-omp`.
 - [Gurobi (version 8.01 or higher)](http://www.gurobi.com/), for solving mixed integer and linear programming problems. Gurobi is commercial software, but has a free academic licence. Download the binaries and header files into a directory `<GUROBI_ROOT>` and activate your Gurobi licence as described in the Gurobi documentation. If you cannot obtain a licence for Gurobi, you can install GEDLIB without it. In this case, the methods which use mixed integer or linear programming are not available.
 - The following external libraries are distributed with GEDLIB:
     - [Eigen (version 3.3.4)](http://eigen.tuxfamily.org/index.php?title=Main_Page)
@@ -46,26 +45,29 @@ GEDLIB uses the following external libraries:
     - [LSAPE (version 5)](https://bougleux.users.greyc.fr/lsape/)
     - [LIBSVM (version 3.22)](https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
     - [FANN (version 2.2.0)](http://leenissen.dk/fann/wp/)
-   
-  For installing them, follow the instructions given in the next paragraph.
+    - [Boost (version 1.69.0)](https://www.boost.org/). Does not require compilation.
 
 
-After having installed CMake, Doxygen, and OpenMP and having downloaded Boost, execute the script `install.py` for installing GEDLIB and the external libraries distributed with GEDLIB:
+After having installed CMake, Doxygen, OpenMP (under Mac OS), and, possibly, Gurobi, execute the script `install.py` for installing GEDLIB and the external libraries distributed with GEDLIB:
 
 ```sh
-python install.py [--help] [-h] [--doc] [--tests all|sspr2018|vldbj2019|tkde2019|unit_tests|ged_env_tests|lsap_solver_tests] [--median] [--boost <BOOST_ROOT>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
+python install.py [--help] [-h] [--doc] [--tests <arg>] [--gurobi <GUROBI_ROOT>] [--debug] [--clean] [--lib gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>]
 ```
 
-Use the option `--doc` to build the [Doxygen documentation](https://dbblumenthal.github.io/gedlib/), the option `--clean` to delete the build directoy and update the makefile before the build, the option `--lib gxl` to build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html), the option `--tests all|sspr2018|vldbj2019|tkde2019|unit_tests|ged_env_tests|lsap_solver_tests` to build test executables, and the option `--median` to build a GEDLIB implementation of median graph computation for graphs from the `Letter` dataset (see Section 7 below). These options require that you also specify the option `--boost <BOOST_ROOT>`, where `<BOOST_ROOT>` is the path to the directory which contains the Boost sources. Use `--debug` if you want to build shared libraries or test executables in debug mode. Specify `--gurobi <GUROBI_ROOT>` if you want to install GEDLIB with Gurobi.
-
-Use the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>` to build GEDLIB as a shared for graphs with custom node ID, node label, and edge label types:
-
-- `<indentifier>` is a string of lower case letters different from `gxl` used for naming the the shared library.
-- `<UserNodeID>` is the type of your graphs' node IDs.
-- `<UserNodeLabel>` is the type of your graphs' node labels.
-- `<UserEdgeLabel>` is the type of your graphs' edge labels. 
-
-Doing so builds the shared library `lib/lib<indentifier>gedlib.so`, which can be used for graphs with node IDs of type `<UserNodeID>`, node labels of type `<UserNodeLabel>`, and edge labels of type `<UserEdgeLabel>`. For example, executing `$ python install.py --lib mytypes,int,double,double` builds the shared library `lib/libmytypesgedlib.so` for usage with graphs whose node IDs are of type `int` and whose node and edge labels are of type `double`.
+If you execute `install.py` without any arguments, only the external libraries distributed with GEDLIB are installed.
+- `--help`, `-h`: Show help.  
+- `--doc`: Build the [Doxygen documentation](https://dbblumenthal.github.io/gedlib/).
+- `--tests <arg>`: Build test executables. Use the option  `--help` to display possible values of `<arg>`.
+- `--gurobi <GUROBI_ROOT>`: Tell GEDLIB where to find your Gurobi installation.
+- `--debug`: Build in debug mode. 
+- `--clean`: Delete the build directoy and update the makefile before the build.
+- `--lib gxl`: Build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html).
+- `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>`: Build the shared library `lib/lib<indentifier>gedlib.so` for graphs with custom node ID, node label, and edge label types:
+    - `<indentifier>` is a string of lower case letters different from `gxl` used for naming the the shared library.
+    - `<UserNodeID>` is the type of your graphs' node IDs.
+    - `<UserNodeLabel>` is the type of your graphs' node labels.
+    - `<UserEdgeLabel>` is the type of your graphs' edge labels.
+  For example, executing `$ python install.py --lib mytypes,int,double,double` builds the shared library `lib/libmytypesgedlib.so` for usage with graphs whose node IDs are of type `int` and whose node and edge labels are of type `double`. 
 
 ## 4. Building an Application that Uses GEDLIB
 
@@ -75,7 +77,7 @@ For building an application that uses GEDLIB as a header-only library, it suffic
 
 - Add the following directories to your include directories:
     - `<GEDLIB_ROOT>`
-    - `<BOOST_ROOT>`
+    - `<GEDLIB_ROOT>/ext/boost.1.69.0`
     - `<GEDLIB_ROOT>/ext/eigen.3.3.4/Eigen`
     - `<GEDLIB_ROOT>/ext/nomad.3.8.1/src`
     - `<GEDLIB_ROOT>/ext/nomad.3.8.1/ext/sgtelib/src`
@@ -109,7 +111,7 @@ If you want to build an application that uses GEDLIB as a shared for graphs give
 
 - Add the following directories to your include directories:
     - `<GEDLIB_ROOT>`
-    - `<BOOST_ROOT>`
+    - `<GEDLIB_ROOT>/ext/boost.1.69.0`
     - `<GEDLIB_ROOT>/ext/eigen.3.3.4/Eigen`
     - `<GEDLIB_ROOT>/ext/nomad.3.8.1/src`
     - `<GEDLIB_ROOT>/ext/nomad.3.8.1/ext/sgtelib/src`

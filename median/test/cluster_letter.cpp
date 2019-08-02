@@ -57,9 +57,10 @@ int main(int argc, char* argv[]) {
 	}
 	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, false);
-	median_estimator.set_options("--stdout 0 --seed " + seed);
+	median_estimator.set_options("--stdout 0 --refine FALSE --seed " + seed);
+	median_estimator.set_descent_method(ged::Options::GEDMethod::BRANCH_UNIFORM);
 	ged::GraphClusteringHeuristic<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> clustering_heuristic(&env, &median_estimator);
-	clustering_heuristic.set_options("--init-type CLUSTERS --seed " + seed);
+	clustering_heuristic.set_options("--focal-graphs MEDIANS --init-type K-MEANS++ --random-inits 3 --seed " + seed);
 	clustering_heuristic.run(graph_ids, focal_graph_ids);
 	std::cout << "Adjusted Rand index: " << clustering_heuristic.get_adjusted_rand_index(ground_truth_clustering) << "\n";
 }

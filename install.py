@@ -26,7 +26,7 @@
 # @details 
 # Usage: 
 # ```sh
-# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests|median|cluster] [--boost \<BOOST_ROOT\>] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
+# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests|median|cluster] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
 # ```
 #
 # For more information, execute `$ python install.py --help`.
@@ -138,8 +138,6 @@ def determine_gurobi_version(gurobi_root):
 	
 
 def build_gedlib(args):
-	if not os.path.isdir(args.boost):
-		raise Exception("Invalid argument \"" + args.boost + "\" for option boost: not a directory. Usage: python install.py [--boost <path-to-directory-containing-Boost-sources>] [...]")
 	identifier = "gxl"
 	if args.lib and args.lib != "gxl":
 		identifier, node_id_type, node_label_type, edge_label_type = parse_custom_types(args.lib)
@@ -161,7 +159,7 @@ def build_gedlib(args):
 	
 	if (not os.path.isfile("build/Makefile")):
 		print("\n***** Run CMake. *****")
-		commands = "cd build; rm -rf *; cmake .. -DBOOST_ROOT=" + args.boost + " -DCMAKE_BUILD_TYPE="
+		commands = "cd build; rm -rf *; cmake .. -DCMAKE_BUILD_TYPE="
 		if args.debug:
 			commands = commands + "Debug"
 		else:
@@ -196,17 +194,13 @@ print("                Installation Script               ")
 print("**************************************************")
 
 parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependencies unless they have already been installed.", epilog="If called without arguments, only the dependencies are installed.")
-parser.add_argument("--doc", help="build documentation; requires --boost <BOOST_ROOT>", action="store_true")
-parser.add_argument("--lib", help="build shared library; requires --boost <BOOST_ROOT>", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
-parser.add_argument("--tests", help="build test executables; requires --boost <BOOST_ROOT>", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "vldbj2019", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster"])
-parser.add_argument("--median", help="build binary for median graph computation on letter graphs", action="store_true")
-parser.add_argument("--boost", metavar="<BOOST_ROOT>", help="specify path to directory containing Boost sources")
+parser.add_argument("--doc", help="build documentation", action="store_true")
+parser.add_argument("--lib", help="build shared library", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
+parser.add_argument("--tests", help="build test executables", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "vldbj2019", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster"])
 parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
 parser.add_argument("--clean", help="clean build directory and update makefile before build", action="store_true")
 args = parser.parse_args()
-if not args.boost and (args.lib or args.tests or args.doc):
-	raise Exception("The argument --boost BOOST is required if the script is called with one of the options --lib, --tests or --doc.")
 build_external_libraries()
 create_directories()
 if args.lib or args.tests or args.doc or args.median:

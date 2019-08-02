@@ -42,7 +42,7 @@ namespace ged {
  * Supports the following options:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
- * | <tt>\--clustering-method K-MEDIANS\|K-MEDOIDS</tt> | method for computing the focal graphs of the clusters | @p MEDIAN | n.a. |
+ * | <tt>\--focal-graphs MEDIANS\|MEDOIDS</tt> | use medians or medoids as the focal graphs of the clusters | @p MEDIANS | n.a. |
  * | <tt>\--init-type CLUSTERS\|K-MEANS++</tt> | approach used for generating initial clusters | @p K-MEANS++ | if @p K-MEANS++, well distributed graphs are used as the first focal graphs |
  * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 50 | if @p 1, the option @p \--minimize has no effect |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
@@ -209,7 +209,7 @@ private:
 
 	void set_default_options_();
 
-	void compute_initial_clusters_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids,
+	void initialize_focal_graphs_and_clusters_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids,
 			std::mt19937 & urng, std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & focal_graphs);
 
 	void compute_initial_focal_graphs_k_means_plus_plus_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids,

@@ -80,7 +80,7 @@ public:
 	 * @param[in] init_options The options for the selected method. Default: "".
 	 * @note Has no effect unless "--init-type MEDOID" is passed to set_options().
 	 */
-	void set_init_method(Options::GEDMethod init_method, const std::string & init_options);
+	void set_init_method(Options::GEDMethod init_method, const std::string & init_options = "");
 
 	/*!
 	 * @brief Selects method to be used for block gradient descent..
@@ -88,15 +88,15 @@ public:
 	 * @param[in] descent_options The options for the selected method. Default: "".
 	 * @note Has no effect unless "--init-type MEDOID" is passed to set_options().
 	 */
-	void set_descent_method(Options::GEDMethod descent_method, const std::string & descent_options);
+	void set_descent_method(Options::GEDMethod descent_method, const std::string & descent_options = "");
 
 	/*!
 	 * @brief Selects method to be used for improving the sum of distances and the node maps for the converged median.
 	 * @param[in] refine_method The selected method. Default: ged::Options::GEDMethod::IPFP.
 	 * @param[in] refine_options The options for the selected method. Default: "".
-	 * @note Has no effect unless "--refine TRUE" is passed to set_options().
+	 * @note Has no effect if "--refine FALSE" is passed to set_options().
 	 */
-	void set_refine_method(Options::GEDMethod refine_method, const std::string & refine_options);
+	void set_refine_method(Options::GEDMethod refine_method, const std::string & refine_options = "");
 
 	/*!
 	 * @brief Computes a generalized median graph.

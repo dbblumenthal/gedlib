@@ -28,8 +28,9 @@ GEDLIB is a C++ library for (suboptimally) computing edit distances between grap
 ## 2. License and Citing
 
 The source code of GEDLIB is distributed under the [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-3.0.en.html). If you want to use GEDLIB in a publication, please refer to the following papers:
-- D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun. &ldquo;GEDLIB: A C++ library for graph edit distance computation&rdquo;, GbRPR 2019, https://doi.org/10.1007/978-3-030-20081-7_2
-- D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, and L. Brun. &ldquo;Comparing heuristics for graph edit distance computation&rdquo;, VLDB J. 2019
+
+- D. B. Blumenthal, S. Bougleux, J. Gamper, and L. Brun. &ldquo;GEDLIB: A C++ library for graph edit distance computation&rdquo;, GbRPR 2019, [https://doi.org/10.1007/978-3-030-20081-7_2](https://doi.org/10.1007/978-3-030-20081-7_2)
+- D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, and L. Brun. &ldquo;Comparing heuristics for graph edit distance computation&rdquo;, VLDB J. 2019, [https://doi.org/10.1007/s00778-019-00544-1](https://doi.org/10.1007/s00778-019-00544-1)
 
 ## 3. Installation under Unix
 
@@ -55,6 +56,7 @@ python install.py [--help] [-h] [--doc] [--tests <arg>] [--gurobi <GUROBI_ROOT>]
 ```
 
 If you execute `install.py` without any arguments, only the external libraries distributed with GEDLIB are installed.
+
 - `--help`, `-h`: Show help.  
 - `--doc`: Build the [Doxygen documentation](https://dbblumenthal.github.io/gedlib/).
 - `--tests <arg>`: Build test executables. Use the option  `--help` to display possible values of `<arg>`.
@@ -62,12 +64,7 @@ If you execute `install.py` without any arguments, only the external libraries d
 - `--debug`: Build in debug mode. 
 - `--clean`: Delete the build directoy and update the makefile before the build.
 - `--lib gxl`: Build the shared library `lib/libgxlgedlib.so` for usage with graphs given in the [GXL file format](http://www.gupro.de/GXL/index.html).
-- `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>`: Build the shared library `lib/lib<indentifier>gedlib.so` for graphs with custom node ID, node label, and edge label types:
-    - `<indentifier>` is a string of lower case letters different from `gxl` used for naming the the shared library.
-    - `<UserNodeID>` is the type of your graphs' node IDs.
-    - `<UserNodeLabel>` is the type of your graphs' node labels.
-    - `<UserEdgeLabel>` is the type of your graphs' edge labels.
-  For example, executing `$ python install.py --lib mytypes,int,double,double` builds the shared library `lib/libmytypesgedlib.so` for usage with graphs whose node IDs are of type `int` and whose node and edge labels are of type `double`. 
+- `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>`: Build the shared library `lib/lib<indentifier>gedlib.so` for graphs with custom node ID, node label, and edge label types. For example, executing `$ python install.py --lib mytypes,int,double,double` builds the shared library `lib/libmytypesgedlib.so` for usage with graphs whose node IDs are of type `int` and whose node and edge labels are of type `double`.
 
 ## 4. Building an Application that Uses GEDLIB
 

@@ -84,7 +84,7 @@ public:
 
 	/*!
 	 * @brief Selects method to be used for block gradient descent..
-	 * @param[in] descent_method The selected method. Default: ged::Options::GEDMethod::REFINE.
+	 * @param[in] descent_method The selected method. Default: ged::Options::GEDMethod::BRANCH_FAST.
 	 * @param[in] descent_options The options for the selected method. Default: "".
 	 * @note Has no effect unless "--init-type MEDOID" is passed to set_options().
 	 */
@@ -113,7 +113,7 @@ public:
 	 * @param[in] state The state of the estimator.
 	 * @return The sum of distances of the median when the estimator was in the state @p state during the last call to run().
 	 */
-	double get_sum_of_distances(Options::MedianGraphEstimatorState state = Options::MedianGraphEstimatorState::TERMINATED) const;
+	double get_sum_of_distances(Options::AlgorithmState state = Options::AlgorithmState::TERMINATED) const;
 
 	/*!
 	 * @brief Returns distance from the median.
@@ -136,7 +136,7 @@ public:
 	 * @param[in] state The state of the estimator.
 	 * @return The runtime up to the point where the estimator entered the state @p state during the last call to run().
 	 */
-	double get_runtime(Options::MedianGraphEstimatorState state = Options::MedianGraphEstimatorState::TERMINATED) const;
+	double get_runtime(Options::AlgorithmState state = Options::AlgorithmState::TERMINATED) const;
 
 	/*!
 	 * @brief Returns number of iterations.

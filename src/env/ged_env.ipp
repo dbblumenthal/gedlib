@@ -830,7 +830,7 @@ quasimetric_costs() const {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-init(Options::InitType init_type) {
+init(Options::InitType init_type, bool print_to_stdout) {
 
 	// Throw an exception if no edit costs have been selected.
 	if (not ged_data_.edit_costs_) {
@@ -853,17 +853,34 @@ init(Options::InitType init_type) {
 	}
 
 	// Re-initialize adjacency matrices (also previously initialized graphs must be re-initialized because of possible re-allocation).
+	ProgressBar progress(ged_data_.graphs_.size());
+	if (print_to_stdout) {
+		std::cout << "Initializing graphs: " << progress << std::flush;
+	}
 	for (auto & graph : ged_data_.graphs_) {
 		if (not graph.initialized()) {
 			graph.setup_adjacency_matrix();
 			ged_data_.max_num_nodes_ = std::max(ged_data_.max_num_nodes_, graph.num_nodes());
 			ged_data_.max_num_edges_ = std::max(ged_data_.max_num_edges_, graph.num_edges());
 		}
+		if (print_to_stdout) {
+			progress.increment();
+			std::cout << "Initializing graphs: " << progress << std::flush;
+		}
+	}
+	if (print_to_stdout) {
+		std::cout << "\n";
 	}
 
 	// Initialize cost matrices if necessary.
 	if (ged_data_.eager_init_()) {
+		if (print_to_stdout) {
+			std::cout << "Initializing cost matrices: ... " << std::flush;
+		}
 		ged_data_.init_cost_matrices_();
+		if (print_to_stdout) {
+			std::cout << "done.\n";
+		}
 	}
 
 	// Mark environment as initialized.

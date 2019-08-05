@@ -34,17 +34,22 @@ int main(int argc, char* argv[]) {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 	env.set_edit_costs(ged::Options::EditCosts::LETTER);
 	std::string graph_dir("../../data/datasets/Letter/HIGH/");
-	std::vector<std::string> letter_classes = {"A", "E"};
-	//std::vector<std::string> letter_classes = {"A", "E", "F", "H", "I", "K", "L", "M", "N", "T", "V", "W", "X", "Y", "Z"};
+	// std::vector<std::string> letter_classes = {"A", "E", "F", "H", "I", "K", "L", "M", "N", "T", "V", "W", "X", "Y", "Z"};
+	std::vector<std::string> letter_classes = {"A"};
 	std::string seed("0");
 	if (argc > 1) {
 		seed = std::string(argv[1]);
 	}
 	std::vector<std::vector<ged::GEDGraph::GraphID>> ground_truth_clustering;
+	ged::ProgressBar progress(letter_classes.size());
+	std::cout << "\rLoading GXL graphs: " << progress << std::flush;
 	for (const auto & letter_class : letter_classes) {
 		std::string collection_file("../collections/Letter_" + letter_class + ".xml");
 		ground_truth_clustering.emplace_back(env.load_gxl_graphs(graph_dir, collection_file, ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED));
+		progress.increment();
+		std::cout << "\rLoading GXL graphs: " << progress << std::flush;
 	}
+	std::cout << "\n";
 	std::vector<ged::GEDGraph::GraphID> graph_ids;
 	for (const auto & cluster : ground_truth_clustering) {
 		for (ged::GEDGraph::GraphID graph_id : cluster) {
@@ -58,10 +63,9 @@ int main(int argc, char* argv[]) {
 	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, false);
 	median_estimator.set_options("--stdout 0 --refine FALSE --seed " + seed);
-	median_estimator.set_descent_method(ged::Options::GEDMethod::BRANCH_UNIFORM);
 	ged::GraphClusteringHeuristic<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> clustering_heuristic(&env, &median_estimator);
-	clustering_heuristic.set_options("--focal-graphs MEDIANS --init-type K-MEANS++ --random-inits 3 --seed " + seed);
+	clustering_heuristic.set_options("--focal-graphs MEDIANS --init-type CLUSTERS --random-inits 3 --seed " + seed);
 	clustering_heuristic.run(graph_ids, focal_graph_ids);
-	std::cout << "Adjusted Rand index: " << clustering_heuristic.get_adjusted_rand_index(ground_truth_clustering) << "\n";
+	std::cout << "ARI: " << clustering_heuristic.get_adjusted_rand_index(ground_truth_clustering) << "\n";
 }
 

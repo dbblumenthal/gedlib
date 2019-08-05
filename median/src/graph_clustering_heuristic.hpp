@@ -47,6 +47,7 @@ namespace ged {
  * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 50 | if @p 1, the option @p \--minimize has no effect |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
  * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
+ * | <tt>\--refine TRUE\|FALSE</tt> | improve node maps and sums of distances for converged clusters | @p TRUE | n.a. |
  * | <tt>\--max-itrs @<convertible to int@></tt> | maximal number of iterations in Lloyd's algorithm | @p 100 | if negative, no maximal number of iterations is enforced |
  * | <tt>\--time-limit @<convertible to double@></tt> | time limit in seconds for main block gradient descent | @p 0 | if less or equal @p 0, no time limit is enforced |
  * | <tt>\--epsilon @<convertible to double greater 0@></tt> | convergence threshold used everywhere | @p 0.0001 | n.a. |
@@ -73,11 +74,19 @@ public:
 	void set_options(const std::string & options);
 
 	/*!
-	 * @brief Selects method to be used for computing (upper bounds for) GED.
-	 * @param[in] ged_method The selected method. Default: ged::Options::GEDMethod::BRANCH_UNIFORM.
-	 * @param[in] ged_options The options for the selected method. Default: "".
+	 * @brief Selects the method used during the computation of the final clusters.
+	 * @param[in] main_method The selected method. Default: ged::Options::GEDMethod::BRANCH_FAST.
+	 * @param[in] main_options The options for the selected main method. Default: "".
 	 */
-	void set_ged_method(Options::GEDMethod ged_method, const std::string ged_options);
+	void set_main_method(Options::GEDMethod main_method, const std::string & main_options = "");
+
+	/*!
+	 * @brief Selects method to be used for improving the sums of distances of the converged clusters.
+	 * @param[in] refine_method The selected method. Default: ged::Options::GEDMethod::IPFP.
+	 * @param[in] refine_options The options for the selected method. Default: "".
+	 * @note Has no effect if "--refine FALSE" is passed to set_options().
+	 */
+	void set_refine_method(Options::GEDMethod refine_method, const std::string & refine_options = "");
 
 	/*!
 	 * @brief Runs the graph clustering algorithm.
@@ -142,6 +151,12 @@ public:
 	const NodeMap & get_node_map_from_assigned_focal_graph(GEDGraph::GraphID graph_id) const;
 
 	/*!
+	 * @brief Returns number of iterations.
+	 * @return A vector that contains the number of iterations for each initial median for the last call to run().
+	 */
+	const vector<std::size_t> & get_num_itrs() const;
+
+	/*!
 	 * @brief Saves the computed focal graphs as GXL graphs and creates a GraphCollection file that lists all of them.
 	 * @param[in] collection_file_name The name of the collection file.
 	 * @param[in] focal_graph_file_names A map that contains the names of the GXL files for the focal graphs.
@@ -149,14 +164,7 @@ public:
 	 * @param[in] focal_graph_classes A vector that contains the classes of the focal graphs. If left empty, no classes are specified in the collection file.
 	 * Otherwise, it must have the same length as the argument @p focal_graph_ids passed to run().
 	 */
-	void save_focal_graphs(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes = {}) const;
-
-	/*!
-	 * @brief Computes the normalized mutual information between the computed clustering and a ground truth clustering.
-	 * @param[in] ground_truth_clustering The ground truth clustering.
-	 * @return Normalized mutual information between the two clusterings, i.e., a score between 0 and 1 that equals 1 just in case the two clusterings are identical.
-	 */
-	double get_normalized_mutual_information(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
+	void save(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes = {}) const;
 
 	/*!
 	 * @brief Computes the adjusted Rand index between the computed clustering and a ground truth clustering.
@@ -165,15 +173,25 @@ public:
 	 */
 	double get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
 
+	/*!
+	 * @brief Returns pointer to the environment employed by the clustering heuristic.
+	 * @return Pointer to the environment employed by the clustering heuristic.
+	 */
+	GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * get_ged_env();
+
 private:
 
 	GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env_;
 
 	MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel> * mge_;
 
-	Options::GEDMethod ged_method_;
+	Options::GEDMethod main_method_;
 
-	std::string ged_options_;
+	std::string main_options_;
+
+	Options::GEDMethod refine_method_;
+
+	std::string refine_options_;
 
 	std::string clustering_method_;
 
@@ -184,6 +202,8 @@ private:
 	std::size_t num_random_inits_;
 
 	std::size_t seed_;
+
+	bool refine_;
 
 	double time_limit_in_sec_;
 
@@ -220,7 +240,7 @@ private:
 
 	bool termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr) const;
 
-	bool update_clusters_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids);
+	bool update_clusters_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids, bool refine);
 
 	void update_focal_graphs_(const std::vector<GEDGraph::GraphID> & focal_graph_ids, std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & focal_graphs);
 

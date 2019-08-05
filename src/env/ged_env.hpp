@@ -172,8 +172,9 @@ public:
 	/*!
 	 * @brief Initializes the environment.
 	 * @param[in] init_type Select initialization type.
+	 * @param[in] print_to_stdout If set to @p true, the progress of the initialization is printed to std::out.
 	 */
-	void init(Options::InitType init_type = Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
+	void init(Options::InitType init_type = Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES, bool print_to_stdout = false);
 
 	/*!
 	 * @brief Check if the environment is initialized.

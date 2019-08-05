@@ -35,7 +35,7 @@ MedianGraphEstimator(GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env,
 ged_env_{ged_env},
 init_method_{Options::GEDMethod::BRANCH_UNIFORM},
 init_options_(""),
-descent_method_{Options::GEDMethod::REFINE},
+descent_method_{Options::GEDMethod::BRANCH_FAST},
 descent_options_(""),
 refine_method_{Options::GEDMethod::IPFP},
 refine_options_(""),
@@ -447,7 +447,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 		std::cout << "Best SOD after initialization: " << best_init_sum_of_distances_ << "\n";
 		std::cout << "Converged SOD: " << converged_sum_of_distances_ << "\n";
 		if (refine_) {
-			std::cout << "Refined converged SOD: " << sum_of_distances_ << "\n";
+			std::cout << "Refined SOD: " << sum_of_distances_ << "\n";
 		}
 		std::cout << "Overall runtime: " << runtime_.count() << "\n";
 		std::cout << "Runtime of initialization: " << runtime_initialized_.count() << "\n";
@@ -510,11 +510,11 @@ improve_sum_of_distances_() {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-get_sum_of_distances(Options::MedianGraphEstimatorState state) const {
-	if (state == Options::MedianGraphEstimatorState::INITIALIZED) {
+get_sum_of_distances(Options::AlgorithmState state) const {
+	if (state == Options::AlgorithmState::INITIALIZED) {
 		return best_init_sum_of_distances_;
 	}
-	if (state == Options::MedianGraphEstimatorState::CONVERGED) {
+	if (state == Options::AlgorithmState::CONVERGED) {
 		return converged_sum_of_distances_;
 	}
 	return sum_of_distances_;
@@ -543,11 +543,11 @@ get_node_map_from_median(GEDGraph::GraphID graph_id) const {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-get_runtime(Options::MedianGraphEstimatorState state) const {
-	if (state == Options::MedianGraphEstimatorState::INITIALIZED) {
+get_runtime(Options::AlgorithmState state) const {
+	if (state == Options::AlgorithmState::INITIALIZED) {
 		return runtime_initialized_.count();
 	}
-	if (state == Options::MedianGraphEstimatorState::CONVERGED) {
+	if (state == Options::AlgorithmState::CONVERGED) {
 		return runtime_converged_.count();
 	}
 	return runtime_.count();
@@ -691,7 +691,7 @@ sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::v
 		urng.seed(seed_);
 	}
 
-	// Sample intial medians.
+	// Sample initial medians.
 	std::vector<GEDGraph::GraphID> shuffled_graph_ids(graph_ids);
 	for (std::size_t pos{0}; pos < num_random_inits_; pos++) {
 		std::shuffle(shuffled_graph_ids.begin(), shuffled_graph_ids.end(), urng);

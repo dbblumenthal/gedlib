@@ -241,12 +241,12 @@ struct Options {
 	};
 
 	/*!
-	 * @brief Specifies state of ged::MedianGraphEstimator.
+	 * @brief can be used to specify the state of an algorithm.
 	 */
-	enum class MedianGraphEstimatorState {
-		INITIALIZED,//!< Initial medians have been generated but no descent has been run.
-		CONVERGED,  //!< The block gradient descent has converged.
-		TERMINATED  //!< The algorithm has terminated, i.e., the node maps for the converged median have been refined if this option has been selected.
+	enum class AlgorithmState {
+		INITIALIZED,//!< The algorithm has been initialized.
+		CONVERGED,  //!< The algorithm has converged.
+		TERMINATED  //!< The algorithm has terminated.
 	};
 
 };

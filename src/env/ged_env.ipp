@@ -138,10 +138,18 @@ load_exchange_graph(const ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdge
 template<>
 GEDGraph::GraphID
 GEDEnv<GXLNodeID, GXLLabel, GXLLabel>::
-load_gxl_graph(const std::string & filename, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
+load_gxl_graph(const std::string & graph_dir, const std::string & gxl_file_name, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
 		const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes, GEDGraph::GraphID graph_id, const std::string & graph_class) {
 
 	// read the file into a property tree
+	std::string filename("");
+	if (graph_dir.back() == '/') {
+		filename = graph_dir + gxl_file_name;
+	}
+	else {
+		filename = graph_dir + "/" + gxl_file_name;
+	}
+
 	boost::property_tree::ptree root;
 	try {
 		read_xml(filename, root);
@@ -152,23 +160,23 @@ load_gxl_graph(const std::string & filename, Options::GXLNodeEdgeType node_type,
 
 	// first sanity checks
 	if (root.count("gxl") == 0) {
-		throw Error("The file " + filename + " has the wrong format: no xml-element <gxl>.");
+		throw Error("The file " + gxl_file_name + " has the wrong format: no xml-element <gxl>.");
 	}
 	if (root.count("gxl") >= 2) {
-		throw Error("The file " + filename + " has the wrong format: more than one xml-element <gxl>.");
+		throw Error("The file " + gxl_file_name + " has the wrong format: more than one xml-element <gxl>.");
 	}
 	root = root.get_child("gxl");
 	if (root.count("graph") == 0) {
-		throw Error("The file " + filename + " has the wrong format: no xml-element <gxl>.<graph>");
+		throw Error("The file " + gxl_file_name + " has the wrong format: no xml-element <gxl>.<graph>");
 	}
 	if (root.count("graph") >= 2) {
-		throw Error("The file " + filename + " has the wrong format: more than one xml-element <gxl>.<graph>");
+		throw Error("The file " + gxl_file_name + " has the wrong format: more than one xml-element <gxl>.<graph>");
 	}
 	root = root.get_child("graph");
 
 	// add new graph to the environment
 	if (graph_id == ged::undefined()) {
-		graph_id = add_graph(filename, graph_class);
+		graph_id = add_graph(gxl_file_name, graph_class);
 	}
 	else {
 		clear_graph(graph_id);
@@ -280,7 +288,7 @@ load_gxl_graphs(const std::string & graph_dir, const std::string & file, Options
 			catch (const boost::property_tree::ptree_bad_data & error) {
 				throw Error("The file " + file + " has the wrong format: corrupted content in xml-attribute \"class\" of element <GraphCollection>.<graph>");
 			}
-			graph_ids.push_back(load_gxl_graph(graph_dir + gxl_file, node_type, edge_type, irrelevant_node_attributes, irrelevant_edge_attributes, ged::undefined(), graph_class));
+			graph_ids.push_back(load_gxl_graph(graph_dir, gxl_file, node_type, edge_type, irrelevant_node_attributes, irrelevant_edge_attributes, ged::undefined(), graph_class));
 		}
 		else if (val.first != "<xmlattr>") {
 			throw Error("The file " + file + " has the wrong format: unexpected element <GraphCollection>.<" + val.first + ">.");

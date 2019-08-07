@@ -119,7 +119,8 @@ public:
 
 	/*!
 	 * @brief Load graph given in the [GXL file format](http://www.gupro.de/GXL/).
-	 * @param[in] file_name Complete path to GXL file.
+	 * @param[in] graph_dir The path to the directory containing the graphs.
+	 * @param[in] gxl_file_name Name of the GXL file.
 	 * @param[in] node_type Select if nodes are labeled or unlabeled.
 	 * @param[in] edge_type Select if edges are labeled or unlabeled.
 	 * @param[in] irrelevant_node_attributes Set of node attributes that are irrelevant for the selected edit costs.
@@ -131,7 +132,7 @@ public:
 	 * @warning Calls to this method create a compiler error unless the template parameters @p UserNodeID is set to ged::GXLUserNodeID
 	 * and the template parameters @p UserNodeLabel and @p UserEdgeLabel are set to ged::GXLLabel.
 	 */
-	GEDGraph::GraphID load_gxl_graph(const std::string & file_name, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
+	GEDGraph::GraphID load_gxl_graph(const std::string & graph_dir, const std::string & gxl_file_name, Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
 			const std::unordered_set<std::string> & irrelevant_node_attributes, const std::unordered_set<std::string> & irrelevant_edge_attributes,
 			GEDGraph::GraphID graph_id = ged::undefined(), const std::string & graph_class = "");
 

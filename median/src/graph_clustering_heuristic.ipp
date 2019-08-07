@@ -309,11 +309,6 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 		}
 	}
 
-	double converged_sod{sum_of_distances_};
-	if (refine_) {
-		update_clusters_(graph_ids, focal_graph_ids, true);
-	}
-
 	// Print information.
 	if (print_to_stdout_ == 2) {
 		std::cout << "Saving the results: ... " << std::flush;
@@ -328,6 +323,11 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 	assigned_focal_graph_ids_ = best_assigned_focal_graph_ids;
 	node_maps_from_assigned_focal_graphs_ = best_node_maps_from_assigned_focal_graphs;
 	cluster_sums_of_distances_ = best_cluster_sums_of_distances;
+
+	double converged_sod{sum_of_distances_};
+	if (refine_) {
+		update_clusters_(graph_ids, focal_graph_ids, true);
+	}
 
 	// Compute the cluster radii.
 	compute_cluster_radii_(focal_graph_ids);
@@ -345,6 +345,16 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 		if (refine_) {
 			std::cout << "Refined SOD: " << sum_of_distances_ << "\n";
 		}
+		std::cout << "Cluster SODs:";
+		for (const auto & key_val : cluster_sums_of_distances_) {
+			std::cout << " " << key_val.second;
+		}
+		std::cout << "\n";
+		std::cout << "Cluster radii:";
+		for (const auto & key_val : cluster_radii_) {
+			std::cout << " " << key_val.second;
+		}
+		std::cout << "\n";
 		std::cout << "Overall runtime: " << runtime_.count() << "\n";
 		std::cout << "Number of initial solutions: " << num_random_inits_ << "\n";
 		std::size_t total_itr{0};
@@ -430,21 +440,15 @@ get_num_itrs() const {
 template<>
 void
 GraphClusteringHeuristic<GXLNodeID, GXLLabel, GXLLabel>::
-save(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes) const {
-	std::vector<GEDGraph::GraphID> focal_graph_ids;
-	for (const auto & key_val : cluster_radii_) {
-		GEDGraph::GraphID focal_graph_id{key_val.first};
-		focal_graph_ids.emplace_back(focal_graph_id);
-		ged_env_->save_as_gxl_graph(focal_graph_id, focal_graph_file_names.at(focal_graph_id));
-	}
-
+save(const std::string & collection_file_name, const std::string & focal_graph_dir) const {
 	std::vector<std::string> gxl_file_names;
 	std::vector<std::string> graph_classes;
-	for (const auto & key_val : focal_graph_file_names) {
-		gxl_file_names.emplace_back(key_val.second);
-		if (not focal_graph_classes.empty()) {
-			graph_classes.emplace_back(focal_graph_classes.at(key_val.first));
-		}
+	for (const auto & key_val : cluster_radii_) {
+		GEDGraph::GraphID focal_graph_id{key_val.first};
+		std::string focal_graph_name{ged_env_->get_graph_name(focal_graph_id)};
+		gxl_file_names.emplace_back(focal_graph_name);
+		graph_classes.emplace_back(ged_env_->get_graph_class(focal_graph_id));
+		ged_env_->save_as_gxl_graph(focal_graph_id, focal_graph_dir + "/" + focal_graph_name);
 	}
 	ged_env_->save_graph_collection(collection_file_name, gxl_file_names, graph_classes);
 }
@@ -511,6 +515,33 @@ get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & grou
 
 	// Return the adjusted Rand index.
 	return (2 * (n_0_0 * n_1_1 - n_0_1 * n_1_0)) / ((n_0_0 + n_0_1) * (n_0_1 + n_1_1) + (n_0_0 + n_1_0) * (n_1_0 + n_1_1));
+
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_gini_coefficient() const {
+
+	// Compute cluster sizes.
+	std::map<GEDGraph::GraphID, int> cluster_sizes;
+	for (const auto & key_val : cluster_radii_) {
+		cluster_sizes.emplace(key_val.first, 0);
+	}
+	for (const auto & key_val : assigned_focal_graph_ids_) {
+		cluster_sizes[key_val.second]++;
+	}
+
+	// Compute the numerator.
+	int numerator{0};
+	for (const auto & key_val_1 : cluster_sizes) {
+		for (const auto & key_val_2 : cluster_sizes) {
+			numerator += std::abs(key_val_1.second - key_val_2.second);
+		}
+	}
+
+	// Return the Gini coefficient.
+	return static_cast<double>(numerator) / static_cast<double>(cluster_sizes.size() * assigned_focal_graph_ids_.size());
 
 }
 
@@ -934,6 +965,7 @@ compute_cluster_radii_(const std::vector<GEDGraph::GraphID> & focal_graph_ids) {
 	}
 
 	// Initialize the cluster radii.
+	cluster_radii_.clear();
 	for (GEDGraph::GraphID focal_graph_id : focal_graph_ids) {
 		cluster_radii_.emplace(focal_graph_id, 0);
 	}
@@ -941,7 +973,8 @@ compute_cluster_radii_(const std::vector<GEDGraph::GraphID> & focal_graph_ids) {
 	// Compute the radii.
 	for (const auto & key_val : assigned_focal_graph_ids_) {
 		double old_radius{cluster_radii_.at(key_val.second)};
-		cluster_radii_.at(key_val.second) = std::max(old_radius, node_maps_from_assigned_focal_graphs_.at(key_val.first).induced_cost());
+		double current_cost{node_maps_from_assigned_focal_graphs_.at(key_val.first).induced_cost()};
+		cluster_radii_.at(key_val.second) = std::max(old_radius, current_cost);
 		// Print information.
 		if (print_to_stdout_ == 2) {
 			progress.increment();

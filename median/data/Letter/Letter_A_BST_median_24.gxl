@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
+<gxl xmlns:xlink="http://www.w3.org/1999/xlink">
+<graph id="Letter_A_BST_median_24.gxl" edgeids="false" edgemode="undirected">
+<node id="_0"><attr name="x"><TYPENAME>0.606436</TYPENAME></attr><attr name="y"><TYPENAME>0.643628</TYPENAME></attr></node>
+<node id="_1"><attr name="x"><TYPENAME>1.296820</TYPENAME></attr><attr name="y"><TYPENAME>2.290300</TYPENAME></attr></node>
+<node id="_2"><attr name="x"><TYPENAME>2.428298</TYPENAME></attr><attr name="y"><TYPENAME>0.608606</TYPENAME></attr></node>
+<node id="_3"><attr name="x"><TYPENAME>0.659810</TYPENAME></attr><attr name="y"><TYPENAME>1.600218</TYPENAME></attr></node>
+<node id="_4"><attr name="x"><TYPENAME>1.782064</TYPENAME></attr><attr name="y"><TYPENAME>1.795169</TYPENAME></attr></node>
+<edge from="_0" to="_1"></edge>
+<edge from="_0" to="_3"></edge>
+<edge from="_1" to="_2"></edge>
+<edge from="_1" to="_4"></edge>
+<edge from="_3" to="_4"></edge>
+</graph>
+</gxl>

@@ -26,7 +26,7 @@
 # @details 
 # Usage: 
 # ```sh
-# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests|median|cluster] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
+# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|unit_tests|median|cluster|bst] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
 # ```
 #
 # For more information, execute `$ python install.py --help`.
@@ -196,7 +196,7 @@ print("**************************************************")
 parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependencies unless they have already been installed.", epilog="If called without arguments, only the dependencies are installed.")
 parser.add_argument("--doc", help="build documentation", action="store_true")
 parser.add_argument("--lib", help="build shared library", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
-parser.add_argument("--tests", help="build test executables", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "vldbj2019", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster"])
+parser.add_argument("--tests", help="build test executables", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|pr2018|sspr2018|vldbj2019|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster|bst", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pr2018", "sspr2018", "vldbj2019", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster", "bst"])
 parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
 parser.add_argument("--clean", help="clean build directory and update makefile before build", action="store_true")

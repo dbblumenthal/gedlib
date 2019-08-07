@@ -44,7 +44,7 @@ namespace ged {
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--focal-graphs MEDIANS\|MEDOIDS</tt> | use medians or medoids as the focal graphs of the clusters | @p MEDIANS | n.a. |
  * | <tt>\--init-type CLUSTERS\|K-MEANS++</tt> | approach used for generating initial clusters | @p K-MEANS++ | if @p K-MEANS++, well distributed graphs are used as the first focal graphs |
- * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 50 | if @p 1, the option @p \--minimize has no effect |
+ * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 50 | n.a. |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
  * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
  * | <tt>\--refine TRUE\|FALSE</tt> | improve node maps and sums of distances for converged clusters | @p TRUE | n.a. |
@@ -63,7 +63,7 @@ public:
 	 * @param[in] ged_env Pointer to initialized environment. The edit costs must be set by the user.
 	 * @param[in] mge Pointer to median graph estimator constructed on top of the environment @p ged_env.
 	 * You can set this argument to nullptr if you always use the clustering heuristic with one of the
-	 * options "--max-itrs 0" (random clustering), "--clustering-method MEDOID" or "--clustering-method CENTER".
+	 * options "--max-itrs 0" (random clustering) or "--focal-graphs MEDOIDS".
 	 */
 	GraphClusteringHeuristic(GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env, MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel> * mge);
 
@@ -91,7 +91,7 @@ public:
 	/*!
 	 * @brief Runs the graph clustering algorithm.
 	 * @param[in] graph_ids Vector that contains the IDs of the graphs that should be clustered.
-	 * @param[in] focal_graph_ids Vector that contains the IDs of the cluster's focal graph.
+	 * @param[in] focal_graph_ids Vector that contains the IDs of the clusters' focal graphs.
 	 * @note The number of clusters equals the lenght of @p focal_graph_ids.
 	 */
 	void run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph::GraphID> & focal_graph_ids);
@@ -159,12 +159,9 @@ public:
 	/*!
 	 * @brief Saves the computed focal graphs as GXL graphs and creates a GraphCollection file that lists all of them.
 	 * @param[in] collection_file_name The name of the collection file.
-	 * @param[in] focal_graph_file_names A map that contains the names of the GXL files for the focal graphs.
-	 * Must contain a pair <tt>(focal_graph_id, focal_graph_file_name)</tt> for each @p focal_graph_id passed to run().
-	 * @param[in] focal_graph_classes A vector that contains the classes of the focal graphs. If left empty, no classes are specified in the collection file.
-	 * Otherwise, it must have the same length as the argument @p focal_graph_ids passed to run().
+	 * @param[in] focal_graph_dir The directory where the focal graphs should be stored as GXL files.
 	 */
-	void save(const std::string & collection_file_name, const std::map<GEDGraph::GraphID, std::string> & focal_graph_file_names, const std::map<GEDGraph::GraphID, std::string> & focal_graph_classes = {}) const;
+	void save(const std::string & collection_file_name, const std::string & focal_graph_dir) const;
 
 	/*!
 	 * @brief Computes the adjusted Rand index between the computed clustering and a ground truth clustering.
@@ -172,6 +169,12 @@ public:
 	 * @return Adjusted Rand index between the two clusterings, i.e., a score between 0 and 1 that equals 1 just in case the two clusterings are identical.
 	 */
 	double get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
+
+	/*!
+	 * @brief Computes the Gini coefficient of the computed clustering.
+	 * @return Gini coefficient of the computed clustering, i.e., a score between 0 and 1 that equals 0 just in case the clustering is completely balanced and 1 just in case one cluster contains all data graphs.
+	 */
+	double get_gini_coefficient() const;
 
 	/*!
 	 * @brief Returns pointer to the environment employed by the clustering heuristic.

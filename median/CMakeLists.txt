@@ -29,6 +29,8 @@ add_custom_target(median DEPENDS median_letter median_chem)
 
 add_custom_target(cluster DEPENDS cluster_letter)
 
+add_custom_target(bst DEPENDS bst_init_letter bst_query_letter)
+
 add_executable(median_letter tests/median_letter.cpp)
 target_link_libraries(median_letter gxlgedlib)
 if(APPLE)
@@ -60,3 +62,20 @@ if(APPLE)
   add_custom_command(TARGET cluster_letter POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/cluster_letter)
   add_custom_command(TARGET cluster_letter POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/cluster_letter)
 endif()
+
+add_executable(bst_init_letter tests/bst_init_letter.cpp)
+target_link_libraries(bst_init_letter gxlgedlib)
+if(APPLE)
+  add_custom_command(TARGET bst_init_letter POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/bst_init_letter)
+  add_custom_command(TARGET bst_init_letter POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/bst_init_letter)
+  add_custom_command(TARGET bst_init_letter POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/bst_init_letter)
+endif()
+
+add_executable(bst_query_letter tests/bst_query_letter.cpp)
+target_link_libraries(bst_query_letter gxlgedlib)
+if(APPLE)
+  add_custom_command(TARGET bst_query_letter POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/bst_query_letter)
+  add_custom_command(TARGET bst_query_letter POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/bst_query_letter)
+  add_custom_command(TARGET bst_query_letter POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/bst_query_letter)
+endif()
+

@@ -196,7 +196,7 @@ private:
 
 	std::string refine_options_;
 
-	std::string clustering_method_;
+	std::string focal_graphs_;
 
 	std::string init_type_;
 

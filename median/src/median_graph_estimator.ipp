@@ -76,7 +76,7 @@ num_increase_order_{0} {
 	else if (not ged_env_->initialized()) {
 		throw Error("The environment is uninitialized. Call ged::GEDEnv::init() before passing it to the constructor of ged::MedianGraphEstimator.");
 	}
- }
+}
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
@@ -508,9 +508,19 @@ improve_sum_of_distances_() {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+bool
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+median_available_() const {
+	return (median_id_ != undefined());
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_sum_of_distances(Options::AlgorithmState state) const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_sum_of_distances().");
+	}
 	if (state == Options::AlgorithmState::INITIALIZED) {
 		return best_init_sum_of_distances_;
 	}
@@ -524,6 +534,9 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_distance_from_median(GEDGraph::GraphID graph_id) const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_distance_from_median().");
+	}
 	if (node_maps_from_median_.find(graph_id) == node_maps_from_median_.end()) {
 		throw Error("No distance available for graph with ID " + std::to_string(graph_id) + ".");
 	}
@@ -534,6 +547,9 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 const NodeMap &
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_node_map_from_median(GEDGraph::GraphID graph_id) const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_node_map_from_median().");
+	}
 	if (node_maps_from_median_.find(graph_id) == node_maps_from_median_.end()) {
 		throw Error("No node map available for graph with ID " + std::to_string(graph_id) + ".");
 	}
@@ -541,9 +557,23 @@ get_node_map_from_median(GEDGraph::GraphID graph_id) const {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+const NodeMap &
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+compute_node_map_from_median(GEDGraph::GraphID graph_id) const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling compute_node_map_from_median().");
+	}
+	ged_env_->run_method(median_id_, graph_id);
+	return ged_env_->get_node_map(median_id_, graph_id);
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_runtime(Options::AlgorithmState state) const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_runtime().");
+	}
 	if (state == Options::AlgorithmState::INITIALIZED) {
 		return runtime_initialized_.count();
 	}
@@ -557,6 +587,9 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 const vector<std::size_t> &
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_num_itrs() const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_num_itrs().");
+	}
 	return itrs_;
 }
 
@@ -564,6 +597,9 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 std::size_t
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_num_times_order_decreased() const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_num_times_order_decreased().");
+	}
 	return num_decrease_order_;
 }
 
@@ -571,6 +607,9 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 std::size_t
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_num_times_order_increased() const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_num_times_order_increased().");
+	}
 	return num_increase_order_;
 }
 

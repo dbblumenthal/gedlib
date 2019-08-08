@@ -132,6 +132,14 @@ public:
 	const NodeMap & get_node_map_from_median(GEDGraph::GraphID graph_id) const;
 
 	/*!
+	 * @brief Computes node map from the median by using the GED method employed to obtain the final node maps.
+	 * @param graph_id ID of the graph whose node map from the median should be returned.
+	 * Must not necessarily have been contained in the collection of IDs passed to run().
+	 * @return  Node map from the median to the graph with ID @p graph_id.
+	 */
+	const NodeMap & compute_node_map_from_median(GEDGraph::GraphID graph_id) const;
+
+	/*!
 	 * @brief Returns the runtime.
 	 * @param[in] state The state of the estimator.
 	 * @return The runtime up to the point where the estimator entered the state @p state during the last call to run().
@@ -288,6 +296,8 @@ private:
 	void add_node_to_median_(const std::map<GEDGraph::GraphID, std::size_t> & best_config, const UserNodeLabel & best_label, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
 
 	void improve_sum_of_distances_();
+
+	bool median_available_() const;
 
 };
 

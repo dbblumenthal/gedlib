@@ -38,7 +38,7 @@ main_method_{Options::GEDMethod::BRANCH_FAST},
 main_options_(""),
 refine_method_{Options::GEDMethod::IPFP},
 refine_options_(""),
-clustering_method_("K-MEDIANS"),
+focal_graphs_("K-MEDIANS"),
 init_type_("K-MEANS++"),
 use_real_randomness_{true},
 num_random_inits_{1},
@@ -78,10 +78,10 @@ set_options(const std::string & options) {
 	for (const auto & option : options_map) {
 		if (option.first == "focal-graphs") {
 			if (option.second == "MEDIANS") {
-				clustering_method_ = "K-MEDIANS";
+				focal_graphs_ = "K-MEDIANS";
 			}
 			else if (option.second == "MEDOIDS") {
-				clustering_method_ = "K-MEDOIDS";
+				focal_graphs_ = "K-MEDOIDS";
 			}
 			else {
 				throw ged::Error(std::string("Invalid argument ") + option.second + " for option focal-graphs. Usage: options = \"[--focal-graphs MEDIANS|MEDOIDS] [...]\"");
@@ -218,7 +218,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, const std::vector<GEDGraph
 	if (focal_graph_ids.empty()) {
 		throw Error("Vector of focal graph IDs is empty, unable to compute clusters.");
 	}
-	if ((mge_ == nullptr) and (clustering_method_ == "K-MEDIANS") and (max_itrs_ > 0)) {
+	if ((mge_ == nullptr) and (focal_graphs_ == "K-MEDIANS") and (max_itrs_ > 0)) {
 		throw Error("No median graph estimator availabel, unable to compute clusters.");
 	}
 
@@ -556,7 +556,7 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_default_options_() {
-	clustering_method_ = "K-MEDIANS";
+	focal_graphs_ = "K-MEDIANS";
 	init_type_ = "K-MEANS++";
 	num_random_inits_ = 1;
 	use_real_randomness_ = true;
@@ -722,7 +722,7 @@ compute_initial_focal_graphs_cluster_sampling_(const std::vector<GEDGraph::Graph
 	for (std::size_t cluster_id{0}; cluster_id < clustering.size(); cluster_id++) {
 		ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> focal_graph;
 		std::map<GEDGraph::GraphID, NodeMap> new_node_maps_from_focal_graph;
-		if (clustering_method_ == "K-MEDIANS") {
+		if (focal_graphs_ == "K-MEDIANS") {
 			compute_median_(clustering.at(cluster_id), focal_graph_ids.at(cluster_id), focal_graph, new_node_maps_from_focal_graph);
 		}
 		else {
@@ -769,7 +769,7 @@ update_clusters_(const std::vector<GEDGraph::GraphID> & graph_ids, const std::ve
 	if (refine) {
 		ged_env_->set_method(refine_method_, refine_options_);
 	}
-	else if (clustering_method_ == "K-MEDIANS") {
+	else if (focal_graphs_ == "K-MEDIANS") {
 		ged_env_->set_method(main_method_, main_options_);
 	}
 
@@ -861,7 +861,7 @@ update_focal_graphs_(const std::vector<GEDGraph::GraphID> & focal_graph_ids, std
 		// Compute new focal graph for the current cluster.
 		std::map<GEDGraph::GraphID, NodeMap> new_node_maps_from_focal_graph;
 		double new_cluster_sum_of_distances{0};
-		if (clustering_method_ == "K-MEDIANS") {
+		if (focal_graphs_ == "K-MEDIANS") {
 			new_cluster_sum_of_distances = compute_median_(clustering.at(focal_graph_id), focal_graph_id, focal_graphs.at(focal_graph_id), new_node_maps_from_focal_graph);
 		}
 		else {

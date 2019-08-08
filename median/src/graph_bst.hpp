@@ -27,17 +27,25 @@
 #ifndef MEDIAN_SRC_GRAPH_BST_HPP_
 #define MEDIAN_SRC_GRAPH_BST_HPP_
 
-#include "graph_clustering_heuristic.hpp"
+#include "median_graph_estimator.hpp"
 
 namespace ged {
 
 /*!
  * @brief Class for clustering a collection of graphs.
  *
- * @details Implements graph bisector trees as suggested in:
+ * @details Implements monotonic graph bisector trees as suggested in:
  * - N. Boria, S. Bougleux, B. Ga&uuml;z&egrave;re, D. B. Blumenthal, and L. Brun:
  *   &ldquo;Scalable generalized graph median estimation and applications in clustering, classification, and indexing&rdquo;
  *   submitted to VLDB J.,
+ *
+ *   Supports the following options:
+ * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
+ * | ------------------------------ | ------------------ | -------- | ---------------- |
+ * | <tt>\--focal-graphs MEDIANS\|MEDOIDS\|CENTERS</tt> | use medians, medoids, or centers as the focal graphs of the tree's inner nodes | @p MEDIANS | n.a. |
+ * | <tt>\--max-cluster-size @<convertible to int greater 0@></tt> | maximal size of the clusters of the tree's inner nodes | @p 10 | n.a. |
+ * | <tt>\--cutoff @<convertible to double greater 0 and smaller equal 1@></tt> | employed to determine which graphs are used to compute the new focal graphs when splitting inner nodes | @p 0.5 | n.a. |
+ * | <tt>\--stdout 0\|1\|2</tt> | print runtime information to standard output stream | @p 2 | @p 0: no output; @p 1: output only before termination; @p 2: output also during optimization |
  */
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 class GraphBST {
@@ -49,7 +57,7 @@ public:
 	 * @param[in] ged_env Pointer to initialized environment. The edit costs must be set by the user.
 	 * @param[in] clustering_heuristic Pointer to graph clustering heuristic constructed on top of the environment @p ged_env.
 	 */
-	GraphBST(GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env, GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel> * clustering_heuristic);
+	GraphBST(GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env, MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel> * mge);
 
 	/*!
 	 * @brief Destructor.
@@ -57,13 +65,32 @@ public:
 	~GraphBST();
 
 	/*!
+	 * @brief Sets the options of the estimator.
+	 * @param[in] options String that specifies with which options to run the estimator.
+	 */
+	void set_options(const std::string & options);
+
+	/*!
+	 * @brief Selects the lower bound method to be used for processing range queries.
+	 * @param[in] lower_bound_method The selected method. Default: ged::Options::GEDMethod::BRANCH_FAST.
+	 * @param[in] lower_bound_options The options for the selected main method. Default: "".
+	 */
+	void set_lower_bound_method(Options::GEDMethod lower_bound_method, const std::string & lower_bound_options = "");
+
+	/*!
+	 * @brief Selects the upper bound method to be used for processing range queries.
+	 * @param[in] upper_bound_method The selected method. Default: ged::Options::GEDMethod::IPFP.
+	 * @param[in] upper_bound_options The options for the selected main method. Default: "".
+	 */
+	void set_upper_bound_method(Options::GEDMethod upper_bound_method, const std::string & upper_bound_options = "");
+
+	/*!
 	 * @brief Initializes the bisector tree.
 	 * @param[in] graph_ids Vector that contains the IDs of the data graphs that should be indexed.
 	 * @param[in] focal_graph_ids Vector that contains the IDs of the focal graphs used at the inner nodes of the tree.
-	 * Must be of size at least <tt>2 * graph_ids.size()</tt>.
-	 * @param[in] max_cluster_size Maximal size of the clusters at the leaf nodes of the tree.
+	 * Must be of size at least <tt>graph_ids.size()</tt>.
 	 */
-	void init(std::vector<GEDGraph::GraphID> graph_ids, std::vector<GEDGraph::GraphID> focal_graph_ids, std::size_t max_cluster_size);
+	void init(std::vector<GEDGraph::GraphID> graph_ids, std::vector<GEDGraph::GraphID> focal_graph_ids);
 
 	/*!
 	 * @brief Saves the bisector tree.
@@ -85,20 +112,6 @@ public:
 	void load(const std::string & bst_file_name, const std::string & data_graph_dir, const std::string & focal_graph_dir,
 			Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,
 			const std::unordered_set<std::string> & irrelevant_node_attributes = {}, const std::unordered_set<std::string> & irrelevant_edge_attributes = {});
-
-	/*!
-	 * @brief Selects the lower bound method to be used for processing range queries.
-	 * @param[in] lower_bound_method The selected method. Default: ged::Options::GEDMethod::BRANCH_FAST.
-	 * @param[in] lower_bound_options The options for the selected main method. Default: "".
-	 */
-	void set_lower_bound_method(Options::GEDMethod lower_bound_method, const std::string & lower_bound_options = "");
-
-	/*!
-	 * @brief Selects the upper bound method to be used for processing range queries.
-	 * @param[in] upper_bound_method The selected method. Default: ged::Options::GEDMethod::IPFP.
-	 * @param[in] upper_bound_options The options for the selected main method. Default: "".
-	 */
-	void set_upper_bound_method(Options::GEDMethod upper_bound_method, const std::string & upper_bound_options = "");
 
 	/*!
 	 * @brief Process a GED range query.
@@ -139,10 +152,22 @@ public:
 	double get_query_time() const;
 
 	/*!
-	 * @brief Returns the number of GED evaluations.
-	 * @return The number of times the lower and upper bounds for GED were computed during the last call to process_range_query().
+	 * @brief Returns total the number of GED evaluations.
+	 * @return The total number of GED evaluations.
 	 */
 	std::size_t get_num_ged_evals() const;
+
+	/*!
+	 * @brief Returns the number of GED evaluations between the query graph and the focal graphs stored at the inner nodes of the tree.
+	 * @return The number of GED evaluations between the query graph and the focal graphs stored at the inner nodes of the tree.
+	 */
+	std::size_t get_num_ged_evals_focal_graphs() const;
+
+	/*!
+	 * @brief Returns the number of GED evaluations between the query graph and the graphs stored in the leafs of the tree.
+	 * @return The number of GED evaluations between the query graph and and the graphs stored in the leafs of the tree.
+	 */
+	std::size_t get_num_ged_evals_data_graphs() const;
 
 private:
 
@@ -158,6 +183,8 @@ private:
 
 		std::vector<GEDGraph::GraphID> cluster;
 
+		std::map<GEDGraph::GraphID, double> distances_from_focal_graph;
+
 		GraphBST<UserNodeID, UserNodeLabel, UserEdgeLabel>::BSTNode_ * child_1;
 
 		GraphBST<UserNodeID, UserNodeLabel, UserEdgeLabel>::BSTNode_ * child_2;
@@ -165,7 +192,7 @@ private:
 
 	GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env_;
 
-	GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel> * clustering_heuristic_;
+	MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel> * mge_;
 
 	Options::GEDMethod lower_bound_method_;
 
@@ -174,6 +201,14 @@ private:
 	Options::GEDMethod upper_bound_method_;
 
 	std::string upper_bound_options_;
+
+	std::size_t max_cluster_size_;
+
+	std::string focal_graphs_;
+
+	double cutoff_;
+
+	std::size_t print_to_stdout_;
 
 	BSTNode_ * root_;
 
@@ -189,13 +224,19 @@ private:
 
 	Seconds query_time_;
 
-	std::size_t num_ged_evals_;
+	std::size_t num_ged_evals_focal_graphs_;
 
-	void init_bst_node_(BSTNode_ * bst_node, GEDGraph::GraphID focal_graph_id, double radius, const std::vector<GEDGraph::GraphID> & cluster);
+	std::size_t num_ged_evals_data_graphs_;
 
-	std::size_t split_(std::size_t max_cluster_size, BSTNode_ * node, std::size_t pos_next_focal_graph_id, ProgressBar & progress);
+	void set_default_options_();
 
-	void check_(GEDGraph::GraphID query_graph_id, double threshold, const BSTNode_ * node);
+	void init_bst_node_(BSTNode_ * bst_node, GEDGraph::GraphID focal_graph_id, double radius, const std::vector<GEDGraph::GraphID> & cluster, const std::map<GEDGraph::GraphID, double> & distances_from_focal_graph);
+
+	std::size_t split_(BSTNode_ * node, std::size_t pos_next_focal_graph_id, ProgressBar & progress);
+
+	void compute_new_focal_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID new_focal_graph_id, std::map<GEDGraph::GraphID, double> & distances_from_new_focal_graph);
+
+	void check_(GEDGraph::GraphID query_graph_id, double threshold, const BSTNode_ * node, double lower_bound, double upper_bound);
 
 	void serialize_(const BSTNode_ * node, const std::string & node_id, const std::string & focal_graph_dir, std::map<std::string, std::string> & config) const;
 

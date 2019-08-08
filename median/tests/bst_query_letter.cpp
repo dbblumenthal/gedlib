@@ -41,23 +41,35 @@ int main(int argc, char* argv[]) {
 	if (argc > 2) {
 		seed = std::string(argv[2]);
 	}
-	std::string query_collection_file("../collections/Letter_A.xml");
+	std::string query_collection_file("../collections/Letter_60.xml");
 	std::string graph_dir("../../data/datasets/Letter/HIGH/");
 	std::vector<ged::GEDGraph::GraphID> query_graph_ids(env.load_gxl_graphs(graph_dir, query_collection_file,
 			ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED));
-
 	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 
+	std::vector<double> estimated_ged;
+	for (ged::GEDGraph::GraphID g_id : query_graph_ids) {
+		for (ged::GEDGraph::GraphID h_id : query_graph_ids) {
+			env.set_method(ged::Options::GEDMethod::BRANCH_FAST);
+			env.run_method(g_id, h_id);
+			estimated_ged.emplace_back((env.get_lower_bound(g_id, h_id) + env.get_upper_bound(g_id, h_id)) / 2);
+		}
+	}
+	std::sort(estimated_ged.begin(), estimated_ged.end());
 
-	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, false);
-	median_estimator.set_options("--stdout 0 --refine FALSE --seed " + seed);
-	ged::GraphClusteringHeuristic<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> clustering_heuristic(&env, &median_estimator);
-	clustering_heuristic.set_options("--stdout 0 --random-inits 1 --seed " + seed);
-	ged::GraphBST<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> graph_bst(&env, &clustering_heuristic);
 
 
-	std::string config("../data/Letter/Letter_A_BST.ini");
+	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> mge(&env, false);
+	mge.set_options("--stdout 0 --seed " + seed);
+	ged::GraphBST<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> graph_bst(&env, &mge);
+
+
+	std::string config("../data/Letter/Letter_150_BST.ini");
 	std::string focal_graph_dir("../data/Letter");
 	graph_bst.load(config, graph_dir, focal_graph_dir, ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED);
-	graph_bst.process_range_query(query_graph_ids.at(0), 1.0);
+	graph_bst.set_lower_bound_method(ged::Options::GEDMethod::BRANCH_TIGHT);
+	for (std::size_t exp{0}; exp < 12; exp++) {
+		double threshold{estimated_ged.at(std::pow(2, exp))};
+		graph_bst.process_range_query(query_graph_ids.at(0), threshold);
+	}
 }

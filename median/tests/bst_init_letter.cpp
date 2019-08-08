@@ -41,21 +41,20 @@ int main(int argc, char* argv[]) {
 	if (argc > 2) {
 		seed = std::string(argv[2]);
 	}
-	std::string collection_file("../collections/Letter_A.xml");
+	std::string collection_file("../collections/Letter_150.xml");
 	std::string graph_dir("../../data/datasets/Letter/HIGH/");
 	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs(graph_dir, collection_file,
 			ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED));
 
 	std::vector<ged::GEDGraph::GraphID> focal_graph_ids;
 	for (std::size_t counter{0}; counter < 2 * graph_ids.size(); counter++) {
-		focal_graph_ids.emplace_back(env.add_graph("Letter_A_BST_median_" + std::to_string(counter) + ".gxl", "no_class"));
+		focal_graph_ids.emplace_back(env.add_graph("Letter_150_BST_median_" + std::to_string(counter) + ".gxl", "no_class"));
 	}
-	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
-	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, false);
-	median_estimator.set_options("--stdout 0 --refine FALSE --seed " + seed);
-	ged::GraphClusteringHeuristic<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> clustering_heuristic(&env, &median_estimator);
-	clustering_heuristic.set_options("--stdout 0 --random-inits 1 --seed " + seed);
-	ged::GraphBST<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> graph_bst(&env, &clustering_heuristic);
-	graph_bst.init(graph_ids, focal_graph_ids, max_cluster_size);
-	graph_bst.save("../data/Letter/Letter_A_BST.ini", "../data/Letter");
+	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES, true);
+	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> mge(&env, false);
+	mge.set_options("--stdout 0 --seed " + seed);
+	ged::GraphBST<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> graph_bst(&env, &mge);
+	graph_bst.set_options("--max-cluster-size " + std::to_string(max_cluster_size));
+	graph_bst.init(graph_ids, focal_graph_ids);
+	graph_bst.save("../data/Letter/Letter_150_BST.ini", "../data/Letter");
 }

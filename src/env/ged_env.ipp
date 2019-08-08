@@ -863,7 +863,7 @@ init(Options::InitType init_type, bool print_to_stdout) {
 	// Re-initialize adjacency matrices (also previously initialized graphs must be re-initialized because of possible re-allocation).
 	ProgressBar progress(ged_data_.graphs_.size());
 	if (print_to_stdout) {
-		std::cout << "Initializing graphs: " << progress << std::flush;
+		std::cout << "\rInitializing graphs: " << progress << std::flush;
 	}
 	for (auto & graph : ged_data_.graphs_) {
 		if (not graph.initialized()) {
@@ -873,7 +873,7 @@ init(Options::InitType init_type, bool print_to_stdout) {
 		}
 		if (print_to_stdout) {
 			progress.increment();
-			std::cout << "Initializing graphs: " << progress << std::flush;
+			std::cout << "\rInitializing graphs: " << progress << std::flush;
 		}
 	}
 	if (print_to_stdout) {
@@ -882,13 +882,7 @@ init(Options::InitType init_type, bool print_to_stdout) {
 
 	// Initialize cost matrices if necessary.
 	if (ged_data_.eager_init_()) {
-		if (print_to_stdout) {
-			std::cout << "Initializing cost matrices: ... " << std::flush;
-		}
-		ged_data_.init_cost_matrices_();
-		if (print_to_stdout) {
-			std::cout << "done.\n";
-		}
+		ged_data_.init_cost_matrices_(print_to_stdout);
 	}
 
 	// Mark environment as initialized.

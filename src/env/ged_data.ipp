@@ -256,13 +256,17 @@ eager_init_() const {
 template<class UserNodeLabel, class UserEdgeLabel>
 void
 GEDData<UserNodeLabel, UserEdgeLabel>::
-init_cost_matrices_() {
+init_cost_matrices_(bool print_to_stdout) {
 
 	// Update node cost matrix if new node labels have been added to the environment.
 	std::size_t size_old_node_costs = node_costs_.num_rows();
 	if (size_old_node_costs < node_labels_.size() + 1) {
 		DMatrix old_node_costs(node_costs_);
 		node_costs_.resize(node_labels_.size() + 1, node_labels_.size() + 1);
+		ProgressBar progress(node_labels_.size() + 1);
+		if (print_to_stdout) {
+			std::cout << "\rInitializing node cost matrix: " << progress << std::flush;
+		}
 		for (LabelID l_id_lhs = 0; l_id_lhs < node_labels_.size() + 1; l_id_lhs++) {
 			for (LabelID l_id_rhs = 0; l_id_rhs < node_labels_.size() + 1; l_id_rhs++) {
 				if (l_id_lhs < size_old_node_costs and l_id_rhs < size_old_node_costs) {
@@ -281,6 +285,13 @@ init_cost_matrices_() {
 					node_costs_(l_id_lhs, l_id_rhs) = edit_costs_->node_rel_cost_fun(node_labels_.at(l_id_lhs - 1), node_labels_.at(l_id_rhs - 1));
 				}
 			}
+			if (print_to_stdout) {
+				progress.increment();
+				std::cout << "\rInitializing node cost matrix: " << progress << std::flush;
+			}
+		}
+		if (print_to_stdout) {
+			std::cout << "\n";
 		}
 	}
 
@@ -289,6 +300,10 @@ init_cost_matrices_() {
 	if (size_old_edge_costs < edge_labels_.size() + 1) {
 		DMatrix old_edge_costs(edge_costs_);
 		edge_costs_.resize(edge_labels_.size() + 1, edge_labels_.size() + 1);
+		ProgressBar progress(edge_labels_.size() + 1);
+		if (print_to_stdout) {
+			std::cout << "\rInitializing edge cost matrix: " << progress << std::flush;
+		}
 		for (LabelID l_id_lhs = 0; l_id_lhs < edge_labels_.size() + 1; l_id_lhs++) {
 			for (LabelID l_id_rhs = 0; l_id_rhs < edge_labels_.size() + 1; l_id_rhs++) {
 				if (l_id_lhs < size_old_edge_costs and l_id_rhs < size_old_edge_costs) {
@@ -307,6 +322,13 @@ init_cost_matrices_() {
 					edge_costs_(l_id_lhs, l_id_rhs) = edit_costs_->edge_rel_cost_fun(edge_labels_.at(l_id_lhs - 1), edge_labels_.at(l_id_rhs - 1));
 				}
 			}
+			if (print_to_stdout) {
+				progress.increment();
+				std::cout << "\rInitializing edge cost matrix: " << progress << std::flush;
+			}
+		}
+		if (print_to_stdout) {
+			std::cout << "\n";
 		}
 	}
 

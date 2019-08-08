@@ -472,7 +472,7 @@ private:
 
 	void set_edit_costs_(EditCosts<UserNodeLabel, UserEdgeLabel> * edit_costs);
 
-	void init_cost_matrices_();
+	void init_cost_matrices_(bool print_to_stdout = false);
 
 	bool eager_init_() const;
 

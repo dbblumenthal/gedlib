@@ -492,7 +492,8 @@ serialize_(const BSTNode_ * node, const std::string & node_id, const std::string
 	config[node_id] = ged_env_->get_graph_name(node->focal_graph_id) + ";" + std::to_string(node->radius);
 	for (GEDGraph::GraphID graph_id : node->cluster) {
 		config[node_id] += ";" + ged_env_->get_graph_name(graph_id);
-		config[node_id] += "," + std::to_string(node->distances_from_focal_graph.at(graph_id));
+		double distance_from_focal_graph{node->distances_from_focal_graph.at(graph_id)};
+		config[node_id] += "," + std::to_string(distance_from_focal_graph);
 	}
 
 	// Continue with the children.

@@ -95,9 +95,11 @@ public:
 	/*!
 	 * @brief Saves the bisector tree.
 	 * @param[in] bst_file_name The name of the configuration file where the tree should be stored.
-	 * @param[in] focal_graph_dir The directory where the focal graphs of the tree's inner nodes should be stored.
+	 * @param[in] focal_graph_dir The directory where the focal graphs of the tree's inner nodes should be stored. If empty string, only the tree is saved.
+	 * @param[in] max_cluster_size Clusters of size at most @p max_cluster_size are saved as leafs. If @p 0, the internal tree is saved as it is.
+	 * @param[in] only_tree
 	 */
-	void save(const std::string & bst_file_name, const std::string & focal_graph_dir) const;
+	void save(const std::string & bst_file_name, const std::string & focal_graph_dir, std::size_t max_cluster_size = 0) const;
 
 	/*!
 	 * @brief Load the bisector tree from a configuration file.
@@ -238,7 +240,7 @@ private:
 
 	void check_(GEDGraph::GraphID query_graph_id, double threshold, const BSTNode_ * node, double lower_bound, double upper_bound);
 
-	void serialize_(const BSTNode_ * node, const std::string & node_id, const std::string & focal_graph_dir, std::map<std::string, std::string> & config) const;
+	void serialize_(const BSTNode_ * node, const std::string & node_id, std::size_t max_cluster_size, const std::string & focal_graph_dir, std::map<std::string, std::string> & config) const;
 
 	void de_serialize_(const std::string & node_id, const std::map<std::string, std::string> & config, const std::string & data_graph_dir, const std::string & focal_graph_dir,
 			Options::GXLNodeEdgeType node_type, Options::GXLNodeEdgeType edge_type,

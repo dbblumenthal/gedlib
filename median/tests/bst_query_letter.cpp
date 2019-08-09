@@ -63,13 +63,35 @@ int main(int argc, char* argv[]) {
 	mge.set_options("--stdout 0 --seed " + seed);
 	ged::GraphBST<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> graph_bst(&env, &mge);
 
-
-	std::string config("../data/Letter/Letter_150_BST.ini");
-	std::string focal_graph_dir("../data/Letter");
-	graph_bst.load(config, graph_dir, focal_graph_dir, ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED);
-	graph_bst.set_lower_bound_method(ged::Options::GEDMethod::BRANCH_TIGHT);
-	for (std::size_t exp{0}; exp < 12; exp++) {
-		double threshold{estimated_ged.at(std::pow(2, exp))};
-		graph_bst.process_range_query(query_graph_ids.at(0), threshold);
+	std::map<double, std::vector<std::pair<std::size_t, std::size_t>>> num_evals;
+	std::vector<double> thresholds;
+	for (double percent : std::vector<double>({0.01, 0.025, 0.05, 0.075, 0.1})) {
+		double real_index{percent * static_cast<double>(estimated_ged.size() - 1)};
+		std::size_t index{static_cast<std::size_t>(real_index)};
+		double frac{real_index - static_cast<double>(index)};
+		double threshold{estimated_ged.at(index)};
+		if (index + 1 < estimated_ged.size()) {
+			threshold = (1 - frac) * estimated_ged.at(index) + frac * estimated_ged.at(index + 1);
+		}
+		thresholds.emplace_back(threshold);
+		num_evals[threshold] = std::vector<std::pair<std::size_t, std::size_t>>();
+	}
+	for (std::size_t max_cluster_size : {4, 8, 16, 32, 64}) {
+		std::string config("../data/Letter/Letter_150_" + std::to_string(max_cluster_size) + "_BST.ini");
+		std::string focal_graph_dir("../data/Letter");
+		graph_bst.load(config, graph_dir, focal_graph_dir, ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::UNLABELED);
+		graph_bst.set_lower_bound_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS);
+		for (double threshold : thresholds) {
+			graph_bst.process_range_query(query_graph_ids.at(0), threshold);
+			num_evals[threshold].emplace_back(max_cluster_size, graph_bst.get_num_ged_evals());
+		}
+	}
+	std::cout << "====== RESULT SUMMARY =====\n";
+	for (const auto & threshold_evals : num_evals) {
+		std::cout << threshold_evals.first << ":";
+		for (const auto & size_evals : threshold_evals.second) {
+			std::cout << " (" << size_evals.first << "," << size_evals.second << ")";
+		}
+		std::cout << "\n";
 	}
 }

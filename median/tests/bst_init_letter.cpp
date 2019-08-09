@@ -54,7 +54,11 @@ int main(int argc, char* argv[]) {
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> mge(&env, false);
 	mge.set_options("--stdout 0 --seed " + seed);
 	ged::GraphBST<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> graph_bst(&env, &mge);
-	graph_bst.set_options("--max-cluster-size " + std::to_string(max_cluster_size));
+	graph_bst.set_options("--max-cluster-size 4");
 	graph_bst.init(graph_ids, focal_graph_ids);
-	graph_bst.save("../data/Letter/Letter_150_BST.ini", "../data/Letter");
+	graph_bst.save("../data/Letter/Letter_150_4_BST.ini", "../data/Letter");
+	graph_bst.save("../data/Letter/Letter_150_8_BST.ini", "", 8);
+	graph_bst.save("../data/Letter/Letter_150_16_BST.ini", "", 16);
+	graph_bst.save("../data/Letter/Letter_150_32_BST.ini", "", 32);
+	graph_bst.save("../data/Letter/Letter_150_64_BST.ini", "", 64);
 }

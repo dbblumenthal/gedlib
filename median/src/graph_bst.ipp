@@ -358,7 +358,7 @@ process_range_query(GEDGraph::GraphID query_graph_id, double threshold) {
 
 	// Ensure that the BST has been initialized.
 	if (root_ == nullptr) {
-		throw Error("The GraphBST has not been initialized. Call init() or load() before calling process_range_query().");
+		throw Error("The bisector tree has not been initialized. Call init() or load() before calling process_range_query().");
 	}
 
 	// Start recording the query time.
@@ -478,15 +478,12 @@ check_(GEDGraph::GraphID query_graph_id, double threshold, const BSTNode_ * node
 template<>
 void
 GraphBST<GXLNodeID, GXLLabel, GXLLabel>::
-serialize_(const BSTNode_ * node, const std::string & node_id, const std::string & focal_graph_dir, std::map<std::string, std::string> & config) const {
-	// Write "NULL" and return if the current node equals nullptr.
-	if (node == nullptr) {
-		config[node_id] = "NULL";
-		return;
-	}
+serialize_(const BSTNode_ * node, const std::string & node_id, std::size_t max_cluster_size, const std::string & focal_graph_dir, std::map<std::string, std::string> & config) const {
 
 	// Save the focal graph of the current node.
-	ged_env_->save_as_gxl_graph(node->focal_graph_id, focal_graph_dir + "/" + ged_env_->get_graph_name(node->focal_graph_id));
+	if (focal_graph_dir != "") {
+		ged_env_->save_as_gxl_graph(node->focal_graph_id, focal_graph_dir + "/" + ged_env_->get_graph_name(node->focal_graph_id));
+	}
 
 	// Save the radius and the cluster in the configuration map.
 	config[node_id] = ged_env_->get_graph_name(node->focal_graph_id) + ";" + std::to_string(node->radius);
@@ -496,18 +493,28 @@ serialize_(const BSTNode_ * node, const std::string & node_id, const std::string
 		config[node_id] += "," + std::to_string(distance_from_focal_graph);
 	}
 
-	// Continue with the children.
-	serialize_(node->child_1, node_id + "1", focal_graph_dir, config);
-	serialize_(node->child_2, node_id + "2", focal_graph_dir, config);
+	if (node->cluster.size() <= max_cluster_size) {
+		config[node_id + "1"] = "NULL";
+		config[node_id + "2"] = "NULL";
+	}
+	else {
+		serialize_(node->child_1, node_id + "1", max_cluster_size, focal_graph_dir, config);
+		serialize_(node->child_2, node_id + "2", max_cluster_size, focal_graph_dir, config);
+	}
 }
 
 template<>
 void
 GraphBST<GXLNodeID, GXLLabel, GXLLabel>::
-save(const std::string & bst_file_name, const std::string & focal_graph_dir) const {
+save(const std::string & bst_file_name, const std::string & focal_graph_dir, std::size_t max_cluster_size) const {
+	// Sanity check.
+	if (root_ == nullptr) {
+		throw Error("The bisector tree has not been initialized. Call init() or load() before calling save().");
+	}
+
 	// Serialize the tree.
 	std::map<std::string, std::string> config;
-	serialize_(root_, "0", focal_graph_dir, config);
+	serialize_(root_, "0", std::max(max_cluster_size_, max_cluster_size), focal_graph_dir, config);
 
 	// Write the configuration file.
 	util::save_as_config_file(bst_file_name, config);

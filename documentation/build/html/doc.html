@@ -1,0 +1,1477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python GedLib module &mdash; GeDLiBPy 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="GeDLiBPy 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Examples" href="examples.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-gedlibpy"></span><div class="section" id="python-gedlib-module">
+<h1>Python GedLib module<a class="headerlink" href="#python-gedlib-module" title="Permalink to this headline">¶</a></h1>
+<p>This module allow to use a C++ library for edit distance between graphs (GedLib) with Python.</p>
+<div class="section" id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<p>David Blumenthal
+Natacha Lambert</p>
+<p>Copyright (C) 2019 by all the authors</p>
+</div>
+<div class="section" id="classes-functions">
+<h2>Classes &amp; Functions<a class="headerlink" href="#classes-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="gedlibpy.EditCostError">
+<em class="property">exception </em><code class="descclassname">gedlibpy.</code><code class="descname">EditCostError</code><a class="headerlink" href="#gedlibpy.EditCostError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for Edit Cost Error. Raise an error if an edit cost function doesn&#8217;t exist in the library (not in list_of_edit_cost_options).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Attribute message:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">The message to print when an error is detected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="exception">
+<dt id="gedlibpy.Error">
+<em class="property">exception </em><code class="descclassname">gedlibpy.</code><code class="descname">Error</code><a class="headerlink" href="#gedlibpy.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for error&#8217;s management. This one is general.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="gedlibpy.InitError">
+<em class="property">exception </em><code class="descclassname">gedlibpy.</code><code class="descname">InitError</code><a class="headerlink" href="#gedlibpy.InitError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for Init Error. Raise an error if an init option doesn&#8217;t exist in the library (not in list_of_init_options).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Attribute message:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">The message to print when an error is detected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="exception">
+<dt id="gedlibpy.MethodError">
+<em class="property">exception </em><code class="descclassname">gedlibpy.</code><code class="descname">MethodError</code><a class="headerlink" href="#gedlibpy.MethodError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for Method Error. Raise an error if a computation method doesn&#8217;t exist in the library (not in list_of_method_options).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Attribute message:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">The message to print when an error is detected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.add_edge">
+<code class="descclassname">gedlibpy.</code><code class="descname">add_edge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.add_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an edge on a graph selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</li>
+<li><strong>tail</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The ID of the tail node for the new edge</li>
+<li><strong>head</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The ID of the head node for the new edge</li>
+<li><strong>edge_label</strong> (<em>dict{string : string}</em>) &#8211; The label of the new edge</li>
+<li><strong>ignore_duplicates</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; If True, duplicate edges are ignored, otherwise it&#8217;s raise an error if an existing edge is added. True by default</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">add_graph(), add_node(), add_symmetrical_edge()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can also use this function after initialization, but only on a newly added graph. Call init() after you&#8217;re finished your modifications.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.add_graph">
+<code class="descclassname">gedlibpy.</code><code class="descname">add_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.add_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a empty graph on the environment, with its name and its class. Nodes and edges will be add in a second time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the new graph, an empty string by default</li>
+<li><strong>classe</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The class of the new graph, an empty string by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The ID of the newly graphe</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">size_t</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can call this function without parameters. You can also use this function after initialization, call init() after you&#8217;re finished your modifications.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.add_node">
+<code class="descclassname">gedlibpy.</code><code class="descname">add_node</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.add_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a node on a graph selected by its ID. A ID and a label for the node is required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</li>
+<li><strong>node_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The ID of the new node</li>
+<li><strong>node_label</strong> (<em>dict{string : string}</em>) &#8211; The label of the new node</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">add_graph(), add_edge(), add_symmetrical_edge()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can also use this function after initialization, but only on a newly added graph. Call init() after you&#8217;re finished your modifications.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.add_nx_graph">
+<code class="descclassname">gedlibpy.</code><code class="descname">add_nx_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.add_nx_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a Graph (made by networkx) on the environment. Be careful to respect the same format as GXL graphs for labelling nodes and edges.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>networkx.graph</em>) &#8211; The graph to add (networkx graph)</li>
+<li><strong>ignore_duplicates</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; If True, duplicate edges are ignored, otherwise it&#8217;s raise an error if an existing edge is added. True by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The ID of the newly added graphe</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">size_t</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The NX graph must respect the GXL structure. Please see how a GXL graph is construct.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.add_random_graph">
+<code class="descclassname">gedlibpy.</code><code class="descname">add_random_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.add_random_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a Graph (not GXL) on the environment. Be careful to respect the same format as GXL graphs for labelling nodes and edges.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the graph to add, can be an empty string</li>
+<li><strong>classe</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The classe of the graph to add, can be an empty string</li>
+<li><strong>list_of_nodes</strong> (<em>list[tuple(size_t, dict{string : string})]</em>) &#8211; The list of nodes to add</li>
+<li><strong>list_of_edges</strong> (<em>list[tuple(tuple(size_t,size_t), dict{string : string})]</em>) &#8211; The list of edges to add</li>
+<li><strong>ignore_duplicates</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; If True, duplicate edges are ignored, otherwise it&#8217;s raise an error if an existing edge is added. True by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The ID of the newly added graphe</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">size_t</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The graph must respect the GXL structure. Please see how a GXL graph is construct.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.add_symmetrical_edge">
+<code class="descclassname">gedlibpy.</code><code class="descname">add_symmetrical_edge</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.add_symmetrical_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a symmetrical edge on a graph selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</li>
+<li><strong>tail</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The ID of the tail node for the new edge</li>
+<li><strong>head</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The ID of the head node for the new edge</li>
+<li><strong>edge_label</strong> (<em>dict{string : string}</em>) &#8211; The label of the new edge</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">add_graph(), add_node(), add_edge()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can also use this function after initialization, but only on a newly added graph. Call init() after you&#8217;re finished your modifications.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.clear_graph">
+<code class="descclassname">gedlibpy.</code><code class="descname">clear_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.clear_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a graph, selected by its ID, to the environment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Call init() after you&#8217;re finished your modifications.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.compute_edit_distance_on_GXl_graphs">
+<code class="descclassname">gedlibpy.</code><code class="descname">compute_edit_distance_on_GXl_graphs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.compute_edit_distance_on_GXl_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes all the edit distance between each GXL graphs on the folder and the XMl file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The folder&#8217;s path which contains GXL graphs</li>
+<li><strong>path_XML</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The XML&#8217;s path which indicates which graphes you want to load</li>
+<li><strong>edit_cost</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the edit cost function</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the computation method</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The options of the method (like bash options), an empty string by default</li>
+<li><strong>init_option</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the init option, &#8220;EAGER_WITHOUT_SHUFFLED_COPIES&#8221; by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The list of the first and last-1 ID of graphs</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(size_t, size_t)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">list_of_edit_cost_options, list_of_method_options, list_of_init_options</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure each parameter exists with your architecture and these lists : list_of_edit_cost_options, list_of_method_options, list_of_init_options.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.compute_edit_distance_on_nx_graphs">
+<code class="descclassname">gedlibpy.</code><code class="descname">compute_edit_distance_on_nx_graphs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.compute_edit_distance_on_nx_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes all the edit distance between each NX graphs on the dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> (<em>list[networksx.graph]</em>) &#8211; The list of graphs to add and compute</li>
+<li><strong>classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The classe of all the graph, can be an empty string</li>
+<li><strong>edit_cost</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the edit cost function</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the computation method</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The options of the method (like bash options), an empty string by default</li>
+<li><strong>init_option</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the init option, &#8220;EAGER_WITHOUT_SHUFFLED_COPIES&#8221; by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Two matrix, the first with edit distances between graphs and the second the nodeMap between graphs. The result between g and h is one the [g][h] coordinates.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list[list[double]], list[list[list[tuple(size_t, size_t)]]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">list_of_edit_cost_options, list_of_method_options, list_of_init_options</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure each parameter exists with your architecture and these lists :  list_of_edit_cost_options, list_of_method_options, list_of_init_options. The structure of graphs must be similar as GXL.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.compute_ged_on_two_graphs">
+<code class="descclassname">gedlibpy.</code><code class="descname">compute_ged_on_two_graphs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.compute_ged_on_two_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the edit distance between two NX graphs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g1</strong> (<em>networksx.graph</em>) &#8211; The first graph to add and compute</li>
+<li><strong>g2</strong> (<em>networksx.graph</em>) &#8211; The second graph to add and compute</li>
+<li><strong>edit_cost</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the edit cost function</li>
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the computation method</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The options of the method (like bash options), an empty string by default</li>
+<li><strong>init_option</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the init option, &#8220;EAGER_WITHOUT_SHUFFLED_COPIES&#8221; by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The edit distance between the two graphs and the nodeMap between them.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">double, list[tuple(size_t, size_t)]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">list_of_edit_cost_options, list_of_method_options, list_of_init_options</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure each parameter exists with your architecture and these lists :  list_of_edit_cost_options, list_of_method_options, list_of_init_options. The structure of graphs must be similar as GXL.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.encode_your_map">
+<code class="descclassname">gedlibpy.</code><code class="descname">encode_your_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.encode_your_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes a string dictionnary to utf-8 for C++ functions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>map</strong> (<em>dict{string : string}</em>) &#8211; The map to encode</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The encoded map</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict{&#8216;b&#8217;string : &#8216;b&#8217;string}</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is used for type connection.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_all_graph_ids">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_all_graph_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_all_graph_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs all the IDs of the loaded graphs in the environment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The list of all graphs&#8217;s Ids</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list[size_t]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The last ID is equal to (number of graphs - 1). The order correspond to the loading order.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_all_map">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_all_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_all_map" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Returns a vector which contains the forward and the backward maps between nodes of the two indicated graphs.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The forward and backward maps to the adjacence matrix between nodes of the two graphs</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list[list[npy_uint32]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_upper_bound(), get_lower_bound(),  get_forward_map(), get_backward_map(), get_runtime(), quasimetric_cost()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function duplicates data so please don&#8217;t use it. I also don&#8217;t know how to connect the two map to reconstruct the adjacence matrix. Please come back when I know how it&#8217;s work !</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_assignment_matrix">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_assignment_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_assignment_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Assignment Matrix between two selected graphs g and h.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The Assignment Matrix between the two selected graph.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list[list[int]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_forward_map(), get_backward_map(), get_node_image(), get_node_pre_image(), get_node_map()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function creates datas so use it if necessary.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_backward_map">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_backward_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_backward_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the backward map (or the half of the adjacence matrix) between nodes of the two indicated graphs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The backward map to the adjacence matrix between nodes of the two graphs</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list[npy_uint32]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_upper_bound(), get_lower_bound(),  get_forward_map(), get_runtime(), quasimetric_cost(), get_node_map(), get_assignment_matrix()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I don&#8217;t know how to connect the two map to reconstruct the adjacence matrix. Please come back when I know how it&#8217;s work !</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_dummy_node">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_dummy_node</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_dummy_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the ID of a dummy node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The ID of the dummy node (18446744073709551614 for my computer, the hugest number possible)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">size_t</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A dummy node is used when a node isn&#8217;t associated to an other node.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_edit_cost_options">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_edit_cost_options</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_edit_cost_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs the differents edit cost functions and returns the result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The list of edit cost functions</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list[string]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function is useless for an external use. Please use directly list_of_edit_cost_options.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Prefer the list_of_edit_cost_options attribute of this module.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_forward_map">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_forward_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_forward_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the forward map (or the half of the adjacence matrix) between nodes of the two indicated graphs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The forward map to the adjacence matrix between nodes of the two graphs</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list[npy_uint32]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_upper_bound(), get_lower_bound(), get_backward_map(), get_runtime(), quasimetric_cost(), get_node_map(), get_assignment_matrix()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I don&#8217;t know how to connect the two map to reconstruct the adjacence matrix. Please come back when I know how it&#8217;s work !</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_adjacence_matrix">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_adjacence_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_adjacence_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs and returns the adjacence list of a graph, selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The adjacence list of the selected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[list[size_t]]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_graph_internal_id(), get_graph_num_nodes(), get_graph_num_edges(), get_original_node_ids(), get_graph_node_labels(), get_graph_edges()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions allow to collect all the graph&#8217;s informations.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_class">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_class</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the class of a graph with its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The class of the graph which correpond to the ID</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)">string</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_graph_class()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An empty string can be a class.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_edges">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_edges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs and returns all the edges on a graph, selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The list of edges on the selected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict{tuple(size_t,size_t) : dict{string : string}}</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions allow to collect all the graph&#8217;s informations.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_internal_id">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_internal_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_internal_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs and returns the internal Id of a graph, selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The internal ID of the selected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">size_t</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_graph_num_nodes(), get_graph_num_edges(), get_original_node_ids(), get_graph_node_labels(), get_graph_edges(), get_graph_adjacence_matrix()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions allow to collect all the graph&#8217;s informations.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_name">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of a graph with its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The name of the graph which correpond to the ID</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)">string</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_graph_class()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An empty string can be a name.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_node_labels">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_node_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_node_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs and returns all the labels of nodes on a graph, selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The list of labels&#8217;s nodes on the selected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[dict{string : string}]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_graph_internal_id(), get_graph_num_nodes(), get_graph_num_edges(), get_original_node_ids(), get_graph_edges(), get_graph_adjacence_matrix()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions allow to collect all the graph&#8217;s informations.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_num_edges">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_num_edges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_num_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs and returns the number of edges on a graph, selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The number of edges on the selected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">size_t</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_graph_internal_id(), get_graph_num_nodes(), get_original_node_ids(), get_graph_node_labels(), get_graph_edges(), get_graph_adjacence_matrix()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions allow to collect all the graph&#8217;s informations.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_graph_num_nodes">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_graph_num_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_graph_num_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs and returns the number of nodes on a graph, selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The number of nodes on the selected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">size_t</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_graph_internal_id(), get_graph_num_edges(), get_original_node_ids(), get_graph_node_labels(), get_graph_edges(), get_graph_adjacence_matrix()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions allow to collect all the graph&#8217;s informations.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_init_options">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_init_options</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_init_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs the differents initialization parameters for the environment computation for graphs and returns the result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The list of options to initialize the computation environment</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list[string]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function is useless for an external use. Please use directly list_of_init_options.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Prefer the list_of_init_options attribute of this module.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_init_time">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_init_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_init_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the initialization time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The initialization time</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">double</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_lower_bound">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_lower_bound</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_lower_bound" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Returns the lower bound of the edit distance cost between two graphs g and h.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The lower bound of the edit distance cost</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">double</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_upper_bound(),  get_forward_map(), get_backward_map(), get_runtime(), quasimetric_cost()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function can be ignored, because lower bound doesn&#8217;t have a crucial utility.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_method_options">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_method_options</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_method_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs the differents method for edit distance computation between graphs and returns the result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The list of method to compute the edit distance between graphs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list[string]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function is useless for an external use. Please use directly list_of_method_options.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Prefer the list_of_method_options attribute of this module.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_node_image">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_node_image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_node_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the node&#8217;s image in the adjacence matrix, if it exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+<li><strong>node_id</strong> (<em>size_t</em>) &#8211; The ID of the node which you want to see the image</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The ID of the image node</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">size_t</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_forward_map(), get_backward_map(), get_node_pre_image(), get_node_map(), get_assignment_matrix()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Use BackwardMap&#8217;s Node to find its images ! You can also use get_forward_map() and get_backward_map().</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_node_map">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_node_map</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_node_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Node Map, like C++ NodeMap.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The Node Map between the two selected graph.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list[tuple(size_t, size_t)]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_forward_map(), get_backward_map(), get_node_image(), get_node_pre_image(), get_assignment_matrix()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function creates datas so use it if necessary, however you can understand how assignement works with this example.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_node_pre_image">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_node_pre_image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_node_pre_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the node&#8217;s preimage in the adjacence matrix, if it exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+<li><strong>node_id</strong> (<em>size_t</em>) &#8211; The ID of the node which you want to see the preimage</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The ID of the preimage node</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">size_t</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_forward_map(), get_backward_map(), get_node_image(), get_node_map(), get_assignment_matrix()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Use ForwardMap&#8217;s Node to find its images ! You can also use get_forward_map() and get_backward_map().</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_original_node_ids">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_original_node_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_original_node_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs and returns all th Ids of nodes on a graph, selected by its ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>graph_id</strong> (<em>size_t</em>) &#8211; The ID of the wanted graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The list of IDs&#8217;s nodes on the selected graph</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[string]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions allow to collect all the graph&#8217;s informations.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_runtime">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_runtime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_runtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the runtime to compute the edit distance cost between two graphs g and h</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The runtime of the computation of edit distance cost between the two selected graphs</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">double</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_upper_bound(), get_lower_bound(),  get_forward_map(), get_backward_map(), quasimetric_cost()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Python is a bit longer than C++ due to the functions&#8217;s encapsulate.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.get_upper_bound">
+<code class="descclassname">gedlibpy.</code><code class="descname">get_upper_bound</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.get_upper_bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the upper bound of the edit distance cost between two graphs g and h.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The upper bound of the edit distance cost</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">double</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_lower_bound(),  get_forward_map(), get_backward_map(), get_runtime(), quasimetric_cost()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The upper bound is equivalent to the result of the pessimist edit distance cost. Methods are heuristics so the library can&#8217;t compute the real perfect result because it&#8217;s NP-Hard problem.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.graph_ids">
+<code class="descclassname">gedlibpy.</code><code class="descname">graph_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.graph_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs the first and last IDs of the loaded graphs in the environment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The pair of the first and the last graphs Ids</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">tuple(size_t, size_t)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Prefer this function if you have huges structures with lots of graphs.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.hungarian_LSAP">
+<code class="descclassname">gedlibpy.</code><code class="descname">hungarian_LSAP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.hungarian_LSAP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the hungarian algorithm (LSAP) on a matrix Cost.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix_cost</strong> (<em>vector[vector[size_t]]</em>) &#8211; The matrix Cost</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The values of rho, varrho, u and v, in this order</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">vector[vector[size_t]]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">hungarian_LSAPE()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.hungarian_LSAPE">
+<code class="descclassname">gedlibpy.</code><code class="descname">hungarian_LSAPE</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.hungarian_LSAPE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the hungarian algorithm (LSAPE) on a matrix Cost.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix_cost</strong> (<em>vector[vector[double]]</em>) &#8211; The matrix Cost</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The values of rho, varrho, u and v, in this order</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">vector[vector[double]]</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">hungarian_LSAP()</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.init">
+<code class="descclassname">gedlibpy.</code><code class="descname">init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the environment with the chosen edit cost function and graphs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>init_option</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the init option, &#8220;EAGER_WITHOUT_SHUFFLED_COPIES&#8221; by default</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">list_of_init_options</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">No modification were allowed after initialization. Try to make sure your choices is correct. You can though clear or add a graph, but recall init() after that.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Try to make sure the option exists with list_of_init_options or choose no options, raise an error otherwise.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.init_method">
+<code class="descclassname">gedlibpy.</code><code class="descname">init_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.init_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inits the environment with the set method.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">set_method(), list_of_method_options</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Call this function after set the method. You can&#8217;t launch computation or change the method after that.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.is_initialized">
+<code class="descclassname">gedlibpy.</code><code class="descname">is_initialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.is_initialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks and returns if the computation environment is initialized or not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if it&#8217;s initialized, False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function exists for internals verifications but you can use it for your code.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.load_GXL_graphs">
+<code class="descclassname">gedlibpy.</code><code class="descname">load_GXL_graphs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.load_GXL_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads some GXL graphes on the environment which is in a same folder, and present in the XMLfile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The folder&#8217;s path which contains GXL graphs</li>
+<li><strong>path_XML</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The XML&#8217;s path which indicates which graphes you want to load</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can call this function multiple times if you want, but not after an init call.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.quasimetric_cost">
+<code class="descclassname">gedlibpy.</code><code class="descname">quasimetric_cost</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.quasimetric_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks and returns if the edit costs are quasimetric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first compared graph</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second compared graph</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if it&#8217;s verified, False otherwise</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">run_method(), get_upper_bound(), get_lower_bound(),  get_forward_map(), get_backward_map(), get_runtime()</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">run_method() between the same two graph must be called before this function.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.restart_env">
+<code class="descclassname">gedlibpy.</code><code class="descname">restart_env</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.restart_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restarts the environment variable. All data related to it will be delete.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function deletes all graphs, computations and more so make sure you don&#8217;t need anymore your environment.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can now delete and add somes graphs after initialization so you can avoid this function.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.run_method">
+<code class="descclassname">gedlibpy.</code><code class="descname">run_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.run_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the edit distance between two graphs g and h, with the edit cost function and method computation selected.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>g</strong> (<em>size_t</em>) &#8211; The Id of the first graph to compare</li>
+<li><strong>h</strong> (<em>size_t</em>) &#8211; The Id of the second graph to compare</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">get_upper_bound(), get_lower_bound(),  get_forward_map(), get_backward_map(), get_runtime(), quasimetric_cost()</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function only compute the distance between two graphs, without returning a result. Use the differents function to see the result between the two graphs.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.set_edit_cost">
+<code class="descclassname">gedlibpy.</code><code class="descname">set_edit_cost</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.set_edit_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets an edit cost function to the environment, if its exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>edit_cost</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the edit cost function</li>
+<li><strong>edi_cost_constant</strong> &#8211; The parameters you will add to the editCost, empty by default</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">list_of_edit_cost_options</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Try to make sure the edit cost function exists with list_of_edit_cost_options, raise an error otherwise.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.set_method">
+<code class="descclassname">gedlibpy.</code><code class="descname">set_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.set_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a computation method to the environment, if its exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The name of the computation method</li>
+<li><strong>options</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.7)"><em>string</em></a>) &#8211; The options of the method (like bash options), an empty string by default</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">init_method(), list_of_method_options</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Try to make sure the edit cost function exists with list_of_method_options, raise an error otherwise. Call init_method() after your set.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="gedlibpy.set_personal_edit_cost">
+<code class="descclassname">gedlibpy.</code><code class="descname">set_personal_edit_cost</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gedlibpy.set_personal_edit_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets an personal edit cost function to the environment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>edit_cost_constant</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) &#8211; The parameters you will add to the editCost, empty by default</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">list_of_edit_cost_options, set_edit_cost()</p>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="examples.html" title="previous chapter">Examples</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Natacha Lambert.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/doc.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

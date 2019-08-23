@@ -1,0 +1,41 @@
+DIMENSION		2
+
+BB_OUTPUT_TYPE		OBJ CSTR CSTR CSTR 
+# Output type, see the documentation for details
+
+BB_EXE		bb.exe	#'bb.exe' is a C++ executable used for run NOMAD with NOMAD v3.
+
+X0 ( 3 1.2 )	# Starting point
+
+LOWER_BOUND ( -50 -50 )
+
+UPPER_BOUND ( 50 50 )
+
+SOLUTION_FILE		HS23/results.txt
+
+MESH_UPDATE_BASIS		2
+
+MESH_COARSENING_EXPONENT		1
+
+MESH_REFINING_EXPONENT		-1
+
+SEED		1
+
+OPPORTUNISTIC_EVAL		yes
+
+DIRECTION_TYPE		GPS 2N
+
+OPPORTUNISTIC_LH		yes
+
+SPECULATIVE_SEARCH		yes
+
+MAX_BB_EVAL		50
+
+H_MAX_0		5
+
+H_MIN		0.0001
+
+H_NORM		L2
+
+RHO		0.1
+

@@ -1,0 +1,187 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          BIGGS6
+
+*   Problem :
+*   *********
+*   Biggs EXP problem in 6 variables
+
+*   Source: Problem 21 in
+*   A.R. Buckley,
+*   "Test functions for unconstrained minimization",
+*   TR 1989CS-3, Mathematics, statistics and computing centre,
+*   Dalhousie University, Halifax (CDN), 1989.
+
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification SUR2-AN-6-0
+
+*   The number of groups can be varied, but should be larger or equal
+*   to the number of variables.
+
+*   Number of variables
+
+ IE N                   6
+
+*   Number of groups
+
+ IE M                   13
+
+*   Useful parameters
+
+ IE 1                   1
+
+VARIABLES
+
+    X1
+    X2
+    X3
+    X4
+    X5
+    X6
+
+GROUPS
+
+ DO I         1                        M
+ XN G(I)
+ ND
+
+CONSTANTS
+
+ DO I         1                        M
+ RI RI        I
+ RM MTI       RI        -0.1
+ R( EMTI      EXP                      MTI
+ RM MT2       RI        -1.0
+ R( E2        EXP                      MT2
+ RM MT3       MTI       4.0
+ R( E3        EXP                      MT3
+ RM T2        E2        -5.0
+ RM T3        E3        3.0
+ R+ Y0        EMTI                     T2
+ R+ Y         Y0                       T3
+ Z  BIGGS6    G(I)                     Y
+ ND
+
+BOUNDS
+
+ FR BIGGS6    'DEFAULT'
+
+START POINT
+
+    BIGGS6    X1        1.0
+    BIGGS6    X2        2.0
+    BIGGS6    X3        1.0
+    BIGGS6    X4        1.0
+    BIGGS6    X5        1.0
+    BIGGS6    X6        1.0
+
+    OTHERX    X1        1.0
+    OTHERX    X2        2.0
+    OTHERX    X3        1.0
+    OTHERX    X4        1.0
+    OTHERX    X5        4.0
+    OTHERX    X6        3.0
+
+ELEMENT TYPE
+
+ EV PEXP      V1                       V2
+ EP PEXP      T
+
+ELEMENT USES
+
+ XT 'DEFAULT' PEXP
+
+ DO I         1                        M
+
+ RI RI        I
+ RM MTI       RI        -0.1
+
+ ZV A(I)      V1                       X3
+ ZV A(I)      V2                       X1
+ ZP A(I)      T                        MTI
+
+ ZV B(I)      V1                       X4
+ ZV B(I)      V2                       X2
+ ZP B(I)      T                        MTI
+
+ ZV C(I)      V1                       X6
+ ZV C(I)      V2                       X5
+ ZP C(I)      T                        MTI
+
+ ND
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ XT 'DEFAULT' L2
+
+ DO I         1                        M
+ XE G(I)      A(I)      1.0            B(I)      -1.0
+ XE G(I)      C(I)      1.0
+ ND
+
+OBJECT BOUND
+
+ LO BIGGS6              0.0
+
+*   Solution
+
+*LO SOLTN               0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      BIGGS6
+
+TEMPORARIES
+
+ R  EXPA
+ R  V1EXPA
+ M  EXP
+
+INDIVIDUALS
+
+*   Parametric product with exponential
+
+ T  PEXP
+
+ A  EXPA                EXP( T * V2 )
+ A  V1EXPA              V1 * EXPA
+
+ F                      V1EXPA
+
+ G  V1                  EXPA
+ G  V2                  T * V1EXPA
+
+ H  V1        V2        T * EXPA
+ H  V2        V2        T * T * V1EXPA
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        BIGGS6
+
+INDIVIDUALS
+
+*   Least-square groups
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

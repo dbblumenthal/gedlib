@@ -1,0 +1,42 @@
+
+NOMAD - version 3.8.1 has been created by {
+	Charles Audet        - Ecole Polytechnique de Montreal
+	Sebastien Le Digabel - Ecole Polytechnique de Montreal
+	Christophe Tribes    - Ecole Polytechnique de Montreal
+} 
+
+The copyright of NOMAD - version 3.8.1 is owned by {
+	Sebastien Le Digabel - Ecole Polytechnique de Montreal
+	Christophe Tribes    - Ecole Polytechnique de Montreal
+} 
+
+NOMAD v3 has been funded by AFOSR and Exxon Mobil.
+NOMAD v3 is a new version of NOMAD v1 and v2. NOMAD v1 and v2 were created
+and developed by Mark Abramson, Charles Audet, Gilles Couture, and John E.
+Dennis Jr., and were funded by AFOSR and Exxon Mobil.
+
+License   : '$NOMAD_HOME/src/lgpl.txt'
+User guide: '$NOMAD_HOME/doc/user_guide.pdf'
+Examples  : '$NOMAD_HOME/examples'
+Tools     : '$NOMAD_HOME/tools'
+
+Please report bugs to nomad@gerad.ca
+
+Seed: 0
+
+MADS run {
+
+	BBE	(	SOL	)	OBJ
+
+	  2	(	0.0000000000 1.0000000000 1.0000000000 -1.0000000000 1.0000000000 )	144.0000000000 (PhaseOne)
+	  4	(	0.0000000000 3.0000000000 2.0000000000 -2.0000000000 1.0000000000 )	0.0000000000 (PhaseOne)
+	  4	(	0.0000000000 3.0000000000 2.0000000000 -2.0000000000 1.0000000000 )	1.0000000000
+	 20	(	2.0000000000 1.0000000000 3.0000000000 -1.0000000000 -3.0000000000 )	-3.0000000000
+	 57	(	1.0000000000 1.0000000000 1.0000000000 1.0000000000 -4.0000000000 )	-4.0000000000
+	100	(	1.0000000000 1.0000000000 1.0000000000 1.0000000000 -4.0000000000 )	-4.0000000000
+
+} end of run (max number of blackbox evaluations)
+
+blackbox evaluations                     : 100
+best infeasible solution (min. violation): ( 0.98 1 1 1.2 -4 ) h=0.0404 f=-4
+best feasible solution                   : ( 1 1 1 1 -4 ) h=0 f=-4

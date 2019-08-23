@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &mdash; GeDLiBPy 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="GeDLiBPy 1.0 documentation" href="index.html" />
+    <link rel="next" title="Python GedLib module" href="doc.html" />
+    <link rel="prev" title="How to add your own editCost class" href="editcost.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>Before using each example, please make sure to put these lines on the beginnig of your code :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">librariesImport</span>
+<span class="kn">import</span> <span class="nn">gedlibpy</span>
+</pre></div>
+</div>
+<p>Use your path to access it, without changing the library architecture. After that, you are ready to use the library.</p>
+<p>When you want to make new computation, please use this function :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">restart_env</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>All the graphs and results will be delete so make sure you don&#8217;t need it.</p>
+<div class="section" id="classique-case-with-gxl-graphs">
+<h2>Classique case with GXL graphs<a class="headerlink" href="#classique-case-with-gxl-graphs" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">load_GXL_graphs</span><span class="p">(</span><span class="s1">&#39;include/gedlib-master/data/datasets/Mutagenicity/data/&#39;</span><span class="p">,</span> <span class="s1">&#39;collections/MUTA_10.xml&#39;</span><span class="p">)</span>
+<span class="n">listID</span> <span class="o">=</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_all_graph_ids</span><span class="p">()</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_edit_cost</span><span class="p">(</span><span class="s2">&quot;CHEM_1&quot;</span><span class="p">)</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="s2">&quot;IPFP&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init_method</span><span class="p">()</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">listID</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">listID</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">run_method</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Node Map : &quot;</span><span class="p">,</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_node_map</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="s2">&quot;Upper Bound = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_upper_bound</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;, Lower Bound = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_lower_bound</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;, Runtime = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_runtime</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>You can also use this function :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">compute_edit_distance_on_GXl_graphs</span><span class="p">(</span><span class="n">path_folder</span><span class="p">,</span> <span class="n">path_XML</span><span class="p">,</span> <span class="n">edit_cost</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">init_option</span> <span class="o">=</span> <span class="s2">&quot;EAGER_WITHOUT_SHUFFLED_COPIES&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function compute all edit distance between all graphs, even itself. You can see the result with some functions and graphs IDs. Please see the documentation of the function for more informations.</p>
+</div>
+<div class="section" id="classique-case-with-nx-graphs">
+<h2>Classique case with NX graphs<a class="headerlink" href="#classique-case-with-nx-graphs" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">graph</span> <span class="ow">in</span> <span class="n">dataset</span> <span class="p">:</span>
+  <span class="n">gedlibpy</span><span class="o">.</span><span class="n">add_nx_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">classe</span><span class="p">)</span>
+<span class="n">listID</span> <span class="o">=</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_all_graph_ids</span><span class="p">()</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_edit_cost</span><span class="p">(</span><span class="s2">&quot;CHEM_1&quot;</span><span class="p">)</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="s2">&quot;IPFP&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init_method</span><span class="p">()</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">listID</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">listID</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">run_method</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Node Map : &quot;</span><span class="p">,</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_node_map</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="s2">&quot;Upper Bound = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_upper_bound</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;, Lower Bound = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_lower_bound</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;, Runtime = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_runtime</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>You can also use this function :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">compute_edit_distance_on_nx_graphs</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">edit_cost</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">init_option</span> <span class="o">=</span> <span class="s2">&quot;EAGER_WITHOUT_SHUFFLED_COPIES&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function compute all edit distance between all graphs, even itself. You can see the result in the return and with some functions and graphs IDs. Please see the documentation of the function for more informations.</p>
+<p>Or this function :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">compute_ged_on_two_graphs</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">,</span> <span class="n">edit_cost</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">init_option</span> <span class="o">=</span> <span class="s2">&quot;EAGER_WITHOUT_SHUFFLED_COPIES&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function allow to compute the edit distance just for two graphs. Please see the documentation of the function for more informations.</p>
+</div>
+<div class="section" id="add-a-graph-from-scratch">
+<h2>Add a graph from scratch<a class="headerlink" href="#add-a-graph-from-scratch" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">currentID</span> <span class="o">=</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">add_graph</span><span class="p">()</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">currentID</span><span class="p">,</span> <span class="s2">&quot;_1&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;chem&quot;</span> <span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">})</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">currentID</span><span class="p">,</span> <span class="s2">&quot;_2&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;chem&quot;</span> <span class="p">:</span> <span class="s2">&quot;O&quot;</span><span class="p">})</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">currentID</span><span class="p">,</span><span class="s2">&quot;_1&quot;</span><span class="p">,</span> <span class="s2">&quot;_2&quot;</span><span class="p">,</span>  <span class="p">{</span><span class="s2">&quot;valence&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">}</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Please make sure as the type are the same (string for Ids and a dictionnary for labels). If you want a symmetrical graph, you can use this function to ensure the symmetry :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">add_symmetrical_edge</span><span class="p">(</span><span class="n">graph_id</span><span class="p">,</span> <span class="n">tail</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">edge_label</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you have a Nx structure, you can use directly this function :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">add_nx_graph</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">classe</span><span class="p">,</span> <span class="n">ignore_duplicates</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Even if you have another structure, you can use this function :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">add_random_graph</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">classe</span><span class="p">,</span> <span class="n">list_of_nodes</span><span class="p">,</span> <span class="n">list_of_edges</span><span class="p">,</span> <span class="n">ignore_duplicates</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Please read the documentation before using and respect the types.</p>
+</div>
+<div class="section" id="median-computation">
+<h2>Median computation<a class="headerlink" href="#median-computation" title="Permalink to this headline">¶</a></h2>
+<p>An example is available in the Median_Example folder. It contains the necessary to compute a median graph. You can launch xp-letter-gbr.py to compute median graph on all letters in the dataset, or median.py for le letter Z.</p>
+<p>To summarize the use, you can follow this example :</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pygraph</span> <span class="c1">#Available with the median example</span>
+<span class="kn">from</span> <span class="nn">median</span> <span class="kn">import</span> <span class="n">draw_Letter_graph</span><span class="p">,</span> <span class="n">compute_median</span><span class="p">,</span> <span class="n">compute_median_set</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">load_GXL_graphs</span><span class="p">(</span><span class="s1">&#39;../include/gedlib-master/data/datasets/Letter/HIGH/&#39;</span><span class="p">,</span> <span class="s1">&#39;../include/gedlib-master/data/collections/Letter_Z.xml&#39;</span><span class="p">)</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_edit_cost</span><span class="p">(</span><span class="s2">&quot;LETTER&quot;</span><span class="p">)</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="s2">&quot;IPFP&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init_method</span><span class="p">()</span>
+<span class="n">listID</span> <span class="o">=</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_all_graph_ids</span><span class="p">()</span>
+
+<span class="n">dataset</span><span class="p">,</span><span class="n">my_y</span> <span class="o">=</span> <span class="n">pygraph</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">graphfiles</span><span class="o">.</span><span class="n">loadDataset</span><span class="p">(</span><span class="s2">&quot;../include/gedlib-master/data/datasets/Letter/HIGH/Letter_Z.cxl&quot;</span><span class="p">)</span>
+<span class="n">median</span><span class="p">,</span> <span class="n">sod</span><span class="p">,</span> <span class="n">sods_path</span><span class="p">,</span><span class="n">set_median</span> <span class="o">=</span> <span class="n">compute_median</span><span class="p">(</span><span class="n">gedlibpy</span><span class="p">,</span><span class="n">listID</span><span class="p">,</span><span class="n">dataset</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">draw_Letter_graph</span><span class="p">(</span><span class="n">median</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Please use the function in the median.py code to simplify your use. You can adapt this example to your case. Also, some function in the PythonGedLib module can make the work easier. Ask Benoît Gauzere if you want more information.</p>
+</div>
+<div class="section" id="hungarian-algorithm">
+<h2>Hungarian algorithm<a class="headerlink" href="#hungarian-algorithm" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="lsape">
+<h3>LSAPE<a class="headerlink" href="#lsape" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">hungarian_LSAPE</span><span class="p">(</span><span class="n">matrixCost</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Rho = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot; Varrho = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot; u = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot; v = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="lsap">
+<h3>LSAP<a class="headerlink" href="#lsap" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">hungarian_LSAP</span><span class="p">(</span><span class="n">matrixCost</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Rho = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot; u = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot; v = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot; Varrho = &quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="editcost.html" title="previous chapter">How to add your own editCost class</a></li>
+      <li>Next: <a href="doc.html" title="next chapter">Python GedLib module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Natacha Lambert.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/examples.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

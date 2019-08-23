@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="pdb1mea" label="6" edgeids="true" edgemode="undirected">
+<node id="1"><attr name="type"><int>2</int></attr><attr name="aaLength"><int>3</int></attr><attr name="sequence"><int>KGT</int></attr></node>
+<node id="2"><attr name="type"><int>2</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>CPKC</int></attr></node>
+<node id="3"><attr name="type"><int>2</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>QYGD</int></attr></node>
+<node id="4"><attr name="type"><int>2</int></attr><attr name="aaLength"><int>4</int></attr><attr name="sequence"><int>CEVC</int></attr></node>
+<edge from="1" to="2"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>3.0</double></attr></edge>
+<edge from="1" to="3"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>11.0</double></attr></edge>
+<edge from="4" to="2"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>13.0</double></attr></edge>
+<edge from="1" to="4"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>3</double></attr><attr name="distance0"><double>16.0</double></attr></edge>
+<edge from="2" to="3"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>2</double></attr><attr name="distance0"><double>8.0</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>0.0</double></attr></edge>
+<edge from="3" to="4"><attr name="frequency"><int>2</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>5.0</double></attr><attr name="type1"><double>4</double></attr><attr name="distance1"><double>0.0</double></attr></edge>
+</graph>
+</gxl>

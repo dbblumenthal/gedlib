@@ -1,0 +1,26 @@
+DIMENSION      4
+
+DISPLAY_DEGREE 2 
+
+BB_OUTPUT_TYPE EB EB OBJ
+BB_INPUT_TYPE  ( C R C R )
+
+BB_EXE         bb.exe
+
+#NEIGHBORS_EXE  "$python neighbors.py"
+NEIGHBORS_EXE neighbors.exe
+
+x0 ( 0 100 1 100 )
+
+# display_all_eval yes
+display_stats bbe ( sol ) obj
+
+
+lower_bound ( - 0.0 - 0.0 )
+upper_bound ( - 10000 - 10000 )
+
+# TMP_DIR /tmp
+
+F_TARGET 0.0
+
+MAX_BB_EVAL 500

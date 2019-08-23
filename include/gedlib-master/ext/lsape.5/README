@@ -1,0 +1,151 @@
+--------------------------------------------------------------------------------
+
+                       ***   ****    **   ****  *****
+                       ***  ***     ****  ***** **
+                       ***   ***    ****  ****  ****
+                       ***     ***  *  *  **    **
+                       ***** ****  **  ** **    *****
+
+   C++ tools for solving the Linear Sum Assignment Problem with Edition (LSAPE)
+               and the Linear Sum Assignment Problem (LSAP)
+
+             ( https://bougleux.users.greyc.fr/lsape/ )
+
+                            version 1, May 2016
+                            version 5, March 2018
+
+--------------------------------------------------------------------------------
+# Summary
+#---------
+
+  LSAPE is a set of open-source C++ and matlab/octave functions for computing solutions to 
+  - linear sum assignment problem (LSAP)
+  - linear sum assignment problem with error-correction (LSAPE)
+  with
+  - Hungarian algorithms
+  - Greedy algorithms
+
+--------------------------------------------------------------------------------
+# Authors and contributors
+#--------------------------
+
+LSAPE is maintained and developed in the Image team of the GREYC Laboratory
+at Normandie Univ, UNICAEN, ENSICAEN, CNRS) in Caen (France)
+https://www.greyc.fr/
+
+Developer:
+
+  - Sebastien Bougleux (Normandie Univ, UNICAEN, GREYC)
+
+Contributors:
+  
+  - David B. Blumenthal (Free University of Bozen-Bolzano, Faculty of Computer Science, Italy)
+  - Luc Brun (Normandie Univ, ENSICAEN, GREYC)
+  - Évariste Daller (Normandie Univ, UNICAEN, GREYC)
+  - Benoit Gaüzère (Normandie Univ, INSA de Rouen, LITIS)
+
+--------------------------------------------------------------------------------
+# Licenses
+#----------
+
+The source code of LSAPE is distributed under the CeCILL-C license, see files : 
+   - 'Licence_CeCILL-C_V1-en.txt' (in English) or
+   - 'Licence_CeCILL-C_V1-fr.txt' (in French).
+
+It is a Free-Software license. CeCILL-C is adapted to the distribution of library 
+components, and is close in its terms to the well known GNU LGPL license. The 
+files can thus be used in closed-source products under certain conditions, please 
+read carefully the license file.
+
+These two CeCiLL licenses ( http://www.cecill.info/index.en.html ) have been
+created under the supervision of the three biggest research institutions on
+computer sciences in France :
+
+   - CNRS  ( http://www.cnrs.fr/ )
+   - CEA   ( http://www.cea.fr/ )
+   - INRIA ( http://www.inria.fr/ )
+
+Please respect these licenses. More particularly, read carefully
+the license terms before using LSAPE toolbox in commercial products.
+
+--------------------------------------------------------------------------------
+# Package structure
+#-------------------
+
+  The main package directory lsape/ is organized as follows :
+
+  - README                       : This file.
+  - Licence_CeCILL-C_V1-en.txt   : A copy of the CeCiLL-C license file in English.
+  - Licence_CeCILL-C_V1-fr.txt   : A copy of the CeCiLL-C license file in French.
+  - doc-config-file              : Configuration file for generating C++ documentation with Doxygen
+  - doc-cpp/                     : C++ documentation (once Doxygen is executed), open index.html
+  - include/                     : Main C++ files
+    - dev/                       : Core of LSAPE toolbox
+    - lsap.h                     : tools and algorithms for LSAP
+    - lsape.h                    : tools and algorithms for LSAPE
+  - matlab/                      : Matlab scripts and functions
+    - compile_mex                : Compile all Matlab commands with mex
+    - greedyLSAP.cpp             : Compute a cheap assignments with greedy algorithms (mex)
+    - greedyLSAP.m               : Documentation to above mex file
+    - hungarianLSAP.cpp          : Compute a solution to the LSAP (symetric or assymetric) and its dual problem (mex)
+    - hungarianLSAP.m            : Documentation to above mex file
+    - hungarianLSAPE.cpp         : Compute a solution to the LSAPE and its dual problem (mex)
+    - hungarianLSAPE.m           : Documentation to above mex file
+    - transformCost.m            : Transform a cost matrix with respect to a row and a column vectors
+    - extendLSAPEinstance.m      : Augment an edit cost matrix to a square edit cost matrix
+    - nbECGM.m                   : Number of error-correcting graph matching
+    - randCost.m                 : Generate random integer cost matrices
+    - MacholWien.m               : Generate Machol-Wien LSAP instance
+  - test/                        : Matlab and C++ test files
+    - cpp/                       : C++ test files
+      - makefile                 : Compile test command line programs
+      - hungarianLSAPtest.cpp    : Solving LSAP
+      - hungarianLSAPEtest.cpp   : Solving LSAPE
+      - ecm?.txt                 : Simple example matrices that can be used with test programs
+    - matlab/                    : Matlab test files
+      - test_asymmetric_lsap.m   : Solving asymmetric LSAP
+      - test_symmetric_lsap.m    : Solving symmetric LSAP
+      - test_hungarian_lsape.m   : Solving LSAPE
+
+--------------------------------------------------------------------------------
+# Content
+#---------
+
+You can use LSAPE in C++ and in Matlab/Octave
+
+# C++ --------------
+- cost matrices:
+  - any matrix of size nxm is encoded as an array of size nm obtained by concatenating the columns of the matrix
+  - integer and floatting-point values are allowed (rounding errors for floatting-point values are not considered)
+- Optimal/cheap assignments:
+  - encoded as arrays of size n and/or m
+  - integer values with negative values (-1) for unassigned elements
+  - rho[i] = j for i assigned to j, or rho[i] = -1 for i unassigned
+- Example:
+
+  int nbR = 10, nbC = 15;
+  int *C = new int[nbR*nbC], *rho = new int[nbR];
+  int *u = new int[nbR], *v = new int[nbC];  // dual variables
+  for (int c = 0; c < nbC; c++) for (int r = 0; r < nbR; r++) C[nbR*c+r] = c*r; // access to C(r,c)
+  hungarianLSAP(C,nbR,nbC,rho,u,v);
+  int optSol = 0;
+  for (int c = 0; c < nbC; c++) optSol += v[c];
+  for (int r = 0; r < nbR; r++) optSol += u[r];
+
+- documentation can be generated by Doxygen from the command line: doxygen doc-config-file
+- test directory for examples
+
+# Matlab -----------
+- mex to C++ functions and other tools
+- test directory for examples
+- Same example as above
+
+  nbR = 10, nbC = 15;
+  C = int32(MacholWien(nbR,nbC));
+  [rho,u,v] = hungarianLSAP(C);
+  optSol = sum(u) + sum(v);
+
+--------------------------------------------------------------------------------
+# EoF
+#-------------
+

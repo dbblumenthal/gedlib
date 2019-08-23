@@ -1,0 +1,7 @@
+DIMENSION      3
+BB_EXE         bb.exe
+BB_OUTPUT_TYPE OBJ
+x0             x0.txt
+# tmp_dir        /tmp
+max_bb_eval    2000
+display_stats  time bbe obj

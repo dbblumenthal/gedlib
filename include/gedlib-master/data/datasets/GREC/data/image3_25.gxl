@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="sampletest150-mod3_image3.bmp" edgemode="undirected">
+<node id="0">
+<attr name="x"><Integer>116</Integer></attr>
+<attr name="y"><Integer>400</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="1">
+<attr name="x"><Integer>272</Integer></attr>
+<attr name="y"><Integer>320</Integer></attr>
+<attr name="type"><String>circle</String></attr>
+</node>
+<node id="2">
+<attr name="x"><Integer>419</Integer></attr>
+<attr name="y"><Integer>343</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="3">
+<attr name="x"><Integer>108</Integer></attr>
+<attr name="y"><Integer>344</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<node id="4">
+<attr name="x"><Integer>426</Integer></attr>
+<attr name="y"><Integer>402</Integer></attr>
+<attr name="type"><String>corner</String></attr>
+</node>
+<edge from="0" to="4">
+<attr name="frequency"><Integer>2</Integer></attr>
+<attr name="type0"><String>arc</String></attr>
+<attr name="angle0"><String>386.42</String></attr>
+<attr name="type1"><String>line</String></attr>
+<attr name="angle1"><String>.01</String></attr>
+</edge>
+<edge from="2" to="3">
+<attr name="frequency"><Integer>2</Integer></attr>
+<attr name="type0"><String>line</String></attr>
+<attr name="angle0"><String>-.00</String></attr>
+<attr name="type1"><String>arc</String></attr>
+<attr name="angle1"><String>325.99</String></attr>
+</edge>
+</graph>
+</gxl>

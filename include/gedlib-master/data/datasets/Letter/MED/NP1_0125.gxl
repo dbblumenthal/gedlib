@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
+<gxl xmlns:xlink="http://www.w3.org/1999/xlink">
+<graph id="NP1_0125" edgeids="false" edgemode="undirected"><node id="_0"><attr name="x"><float>0.555192</float></attr><attr name="y"><float>2.65204</float></attr></node><node id="_1"><attr name="x"><float>1.86636</float></attr><attr name="y"><float>0.937843</float></attr></node><node id="_2"><attr name="x"><float>2.08269</float></attr><attr name="y"><float>2.44459</float></attr></node><node id="_3"><attr name="x"><float>0.7</float></attr><attr name="y"><float>0.59</float></attr></node><node id="_4"><attr name="x"><float>2.83319</float></attr><attr name="y"><float>2.01354</float></attr></node><edge from="_0" to="_1"/><edge from="_0" to="_3"/><edge from="_1" to="_2"/><edge from="_3" to="_4"/></graph></gxl>

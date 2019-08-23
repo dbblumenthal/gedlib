@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to install this library &mdash; GeDLiBPy 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="GeDLiBPy 1.0 documentation" href="index.html" />
+    <link rel="next" title="How to add your own editCost class" href="editcost.html" />
+    <link rel="prev" title="Welcome to GEDLIBPY’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-install-this-library">
+<h1>How to install this library<a class="headerlink" href="#how-to-install-this-library" title="Permalink to this headline">¶</a></h1>
+<p>Please Read <a class="reference external" href="https://dbblumenthal.github.io/gedlib/">https://dbblumenthal.github.io/gedlib/</a> before using Python code.
+You can also find this module documentation in documentation/build/html folder.</p>
+<p>Make sure you have numpy installed (and Cython if you have to recompile the library). You can use pip for this.</p>
+<div class="section" id="running-the-script">
+<h2>Running the script<a class="headerlink" href="#running-the-script" title="Permalink to this headline">¶</a></h2>
+<p>After donwloading the entire folder, you can run test.py to ensure the library works.</p>
+<p>For your code, you have to make two imports:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">librariesImport</span>
+<span class="kn">import</span> <span class="nn">gedlibpy</span>
+</pre></div>
+</div>
+<p>You can call each function in the library with this. You can&#8217;t move any folder or files on the library, please make sure that the architecture remains the same.</p>
+<p>This library is compiled for Python3 only. If you want to use it with Python 2, you have to recompile it with setup.py. You have to use this command on your favorite shell:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build_ext</span> <span class="o">--</span><span class="n">inplace</span>
+</pre></div>
+</div>
+<p>After this step, you can use the same lines as Python3 for import, it will be ok. Check the documentation inside the documentation/build/html folder before using function. You can also copy the tests examples for basic use.</p>
+</div>
+<div class="section" id="a-problem-with-the-library">
+<h2>A problem with the library ?<a class="headerlink" href="#a-problem-with-the-library" title="Permalink to this headline">¶</a></h2>
+<p>If the library isn&#8217;t found, you can recompile the Python library because your Linux is different to mine. Please delete gedlibpy.so, gedlibpy.cpp and build folder. Then use this command on a linux shell</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build_ext</span> <span class="o">--</span><span class="n">inplace</span>
+</pre></div>
+</div>
+<p>You can make it with Python 2 but make sure you use the same version with your code and the compilation.</p>
+<p>If it&#8217;s doesn&#8217;t work, maybe the version of GedLib or another library can be a problem. If it is, you can re-install GedLib for your computer. You can download it on this git : <a class="reference external" href="https://dbblumenthal.github.io/gedlib/">https://dbblumenthal.github.io/gedlib/</a></p>
+<p>You have to install Gedlib with the Python installer after that.
+Just call:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">install</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Make the links like indicate on the documentation. Use the same architecture like this library, but just change the .so and folders with your installation. You can recompile the Python library with setup command, after that.</p>
+<p>If you use Mac OS, you have to follow all this part, and install the external libraries with this command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">install_name_tool</span> <span class="o">-</span><span class="n">change</span> <span class="o">&lt;</span><span class="n">mylib</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;/&lt;</span><span class="n">to</span><span class="o">&gt;/&lt;</span><span class="n">mylib</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">myexec</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>For an example, you have to write these lines:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">install_name_tool</span> <span class="o">-</span><span class="n">change</span> <span class="n">libdoublefann</span><span class="o">.</span><span class="mf">2.</span><span class="n">dylib</span> <span class="n">lib</span><span class="o">/</span><span class="n">fann</span><span class="o">/</span><span class="n">libdoublefann</span><span class="o">.</span><span class="mf">2.</span><span class="n">dylib</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">so</span>
+<span class="n">install_name_tool</span> <span class="o">-</span><span class="n">change</span> <span class="n">libsvm</span><span class="o">.</span><span class="n">so</span> <span class="n">lib</span><span class="o">/</span><span class="n">libsvm</span><span class="o">.</span><span class="mf">3.22</span><span class="o">/</span><span class="n">libsvm</span><span class="o">.</span><span class="n">so</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">so</span>
+<span class="n">install_name_tool</span> <span class="o">-</span><span class="n">change</span> <span class="n">libnomad</span><span class="o">.</span><span class="n">so</span> <span class="n">lib</span><span class="o">/</span><span class="n">nomad</span><span class="o">/</span><span class="n">libnomad</span><span class="o">.</span><span class="n">so</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">so</span>
+<span class="n">install_name_tool</span> <span class="o">-</span><span class="n">change</span> <span class="n">libsgtelib</span><span class="o">.</span><span class="n">so</span> <span class="n">lib</span><span class="o">/</span><span class="n">nomad</span><span class="o">/</span><span class="n">libsgtelib</span><span class="o">.</span><span class="n">so</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">so</span>
+</pre></div>
+</div>
+<p>The name of the library gedlibpy can be different if you use Python 3.</p>
+<p>If your problem is still here, you can contact me on : <a class="reference external" href="mailto:natacha&#46;lambert&#37;&#52;&#48;unicaen&#46;fr">natacha<span>&#46;</span>lambert<span>&#64;</span>unicaen<span>&#46;</span>fr</a></p>
+</div>
+<div class="section" id="how-to-use-this-library">
+<h2>How to use this library<a class="headerlink" href="#how-to-use-this-library" title="Permalink to this headline">¶</a></h2>
+<p>This library allow to compute edit distance between two graphs. You have to follow these steps to use it :</p>
+<ul class="simple">
+<li>Add your graphs (GXL files, NX Structures or your structure, make sure that the internal type is the same)</li>
+<li>Choose your cost function</li>
+<li>Init your environnment (After that, the cost function and your graphs can&#8217;t be modified)</li>
+<li>Choose your method computation</li>
+<li>Run the computation with the IDs of the two graphs. You can have the ID when you add the graph or with some functions</li>
+<li>Find the result with differents functions (NodeMap, edit distance, etc)</li>
+</ul>
+<p>Here is an example of code with GXL graphs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">load_GXL_graphs</span><span class="p">(</span><span class="s1">&#39;include/gedlib-master/data/datasets/Mutagenicity/data/&#39;</span><span class="p">,</span> <span class="s1">&#39;collections/MUTA_10.xml&#39;</span><span class="p">)</span>
+<span class="n">listID</span> <span class="o">=</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_all_graph_ids</span><span class="p">()</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_edit_cost</span><span class="p">(</span><span class="s2">&quot;CHEM_1&quot;</span><span class="p">)</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">set_method</span><span class="p">(</span><span class="s2">&quot;IPFP&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">init_method</span><span class="p">()</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">listID</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">listID</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">gedlibpy</span><span class="o">.</span><span class="n">run_method</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Node Map : &quot;</span><span class="p">,</span> <span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_node_map</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Upper Bound = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_upper_bound</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;, Lower Bound = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_lower_bound</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;, Runtime = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gedlibpy</span><span class="o">.</span><span class="n">get_runtime</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">h</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>Please read the documentation for more examples and functions.</p>
+</div>
+<div class="section" id="an-advice-if-you-don-t-code-in-a-shell">
+<h2>An advice if you don&#8217;t code in a shell<a class="headerlink" href="#an-advice-if-you-don-t-code-in-a-shell" title="Permalink to this headline">¶</a></h2>
+<p>Python library don&#8217;t indicate each C++ error. If you have a restart causing by an error in your code, please use on a linux shell for having C++ errors.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to GEDLIBPY&#8217;s documentation!</a></li>
+      <li>Next: <a href="editcost.html" title="next chapter">How to add your own editCost class</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Natacha Lambert.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/readme.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,13 @@
+<!-- 
+
+GraphCollection
+Document Type Definition  
+
+This file is part of GEDLIB (1.0)
+
+-->
+
+<!ELEMENT GraphCollection (graph+)>
+<!ELEMENT graph EMPTY>
+<!ATTLIST graph file ID #REQUIRED>
+<!ATTLIST graph class CDATA #REQUIRED>

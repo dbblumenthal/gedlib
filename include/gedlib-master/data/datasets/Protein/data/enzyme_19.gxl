@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="pdb1fyj" label="6" edgeids="true" edgemode="undirected">
+<node id="1"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>22</int></attr><attr name="sequence"><int>DSLVLYNRVAVQGDVVRELKAK</int></attr></node>
+<node id="2"><attr name="type"><int>0</int></attr><attr name="aaLength"><int>24</int></attr><attr name="sequence"><int>PKEDVDAAVKQLLSLKAEYKEKTG</int></attr></node>
+<edge from="1" to="2"><attr name="frequency"><int>1</int></attr><attr name="type0"><double>1</double></attr><attr name="distance0"><double>25.19745</double></attr></edge>
+</graph>
+</gxl>

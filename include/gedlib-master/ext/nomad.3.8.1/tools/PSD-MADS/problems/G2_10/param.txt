@@ -1,0 +1,11 @@
+DIMENSION      10
+BB_EXE         bb.exe
+BB_OUTPUT_TYPE PB PB OBJ
+x0             * 5.0 
+LOWER_BOUND    * 0.0
+UPPER_BOUND    * 10.0
+tmp_dir        /tmp
+max_bb_eval    1000
+display_stats  time bbe obj
+initial_mesh_size r0.2
+snap_to_bounds no

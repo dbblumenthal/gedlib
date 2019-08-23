@@ -1,0 +1,10 @@
+DIMENSION       3
+BB_EXE          bb.exe
+BB_OUTPUT_TYPE  PB OBJ
+x0              x1.txt
+LOWER_BOUND     [0 0 0]
+UPPER_BOUND     [2 2 2]
+# tmp_dir         /tmp
+#max_bb_eval     500
+multi_overall_bb_eval 500
+#multi_nb_mads_runs 5 

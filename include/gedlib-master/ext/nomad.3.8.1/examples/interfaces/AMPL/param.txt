@@ -1,0 +1,10 @@
+DIMENSION      8
+BB_EXE         bb.exe
+BB_OUTPUT_TYPE OBJ PB PB PB
+x0             points/x0.txt
+lower_bound    points/lb.txt
+upper_bound    points/ub.txt
+#tmp_dir        /tmp
+max_bb_eval    1000
+h_min          0.05
+#display_degree 2

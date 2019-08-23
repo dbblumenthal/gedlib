@@ -1,0 +1,17 @@
+
+MADS run {
+
+	BBE	OBJ
+
+	  2	144.0000000000 (PhaseOne)
+	  4	0.0000000000 (PhaseOne)
+	  4	1.0000000000
+	 20	-3.0000000000
+	 57	-4.0000000000
+	100	-4.0000000000
+
+} end of run (max number of blackbox evaluations)
+
+blackbox evaluations                     : 100
+best infeasible solution (min. violation): ( 1.24 1.12 1.03 0.92 -4 ) h=0.0793 f=-4
+best feasible solution                   : ( 1 1 1 1 -4 ) h=0 f=-4

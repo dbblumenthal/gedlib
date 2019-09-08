@@ -38,7 +38,7 @@ GEDLIB uses the following external libraries:
 
 - [CMake](https://cmake.org/), for compilation. For installation instructions, see [https://cmake.org/install/](https://cmake.org/install/). 
 - [Doxygen](http://www.stack.nl/~dimitri/doxygen/), for creating the documentation. For installation instructions, see [https://www.stack.nl/~dimitri/doxygen/manual/install.html](https://www.stack.nl/~dimitri/doxygen/manual/install.html).
-- [OpenMP](http://www.openmp.org/) compatible C++ compiler. Under Linux, OpenMP is supported by default. Under Max OS, you can install clang-omp++ using [Homebrew](https://brew.sh/).  After installing Homebrew, open a shell and execute `$ brew install clang-omp`.
+- [OpenMP](http://www.openmp.org/) compatible C++ compiler. Under Linux, OpenMP is supported by default. Under Max OS, please install [libomp](https://formulae.brew.sh/formula/libomp) using [Homebrew](https://brew.sh/).  After installing Homebrew, open a shell and execute `$ brew install libomp`.
 - [Gurobi (version 8.01 or higher)](http://www.gurobi.com/), for solving mixed integer and linear programming problems. Gurobi is commercial software, but has a free academic licence. Download the binaries and header files into a directory `<GUROBI_ROOT>` and activate your Gurobi licence as described in the Gurobi documentation. If you cannot obtain a licence for Gurobi, you can install GEDLIB without it. In this case, the methods which use mixed integer or linear programming are not available.
 - The following external libraries are distributed with GEDLIB:
     - [Eigen (version 3.3.4)](http://eigen.tuxfamily.org/index.php?title=Main_Page)

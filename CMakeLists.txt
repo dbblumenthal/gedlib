@@ -49,9 +49,10 @@ endif()
 # Set up the compiler.
 
 if(APPLE)
-  set (CMAKE_CXX_COMPILER clang-omp++ CACHE STRING "C++ compiler" FORCE)
+  set(CMAKE_CXX_COMPILER clang++ CACHE STRING "C++ compiler" FORCE)
+#  set(CMAKE_CXX_FLAGS "-Xpreprocessor")
 endif()
-set(CMAKE_CXX_FLAGS "-std=c++11 -fopenmp -Wall -Wextra -pedantic -Wredundant-decls -Wdisabled-optimization -Wctor-dtor-privacy -Wnon-virtual-dtor -Werror=old-style-cast -Wsign-promo -Werror=return-type -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Xpreprocessor -fopenmp -Wall -Wextra -pedantic -Wredundant-decls -Wdisabled-optimization -Wctor-dtor-privacy -Wnon-virtual-dtor -Werror=old-style-cast -Wsign-promo -Werror=return-type -Wno-unused-parameter")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 set(CMAKE_MACOSX_RPATH ON)
@@ -65,12 +66,12 @@ set(LIBSVM_HOME ${CMAKE_SOURCE_DIR}/ext/libsvm.3.22)
 set(EIGEN_HOME ${CMAKE_SOURCE_DIR}/ext/eigen.3.3.4)
 set(FANN_HOME ${CMAKE_SOURCE_DIR}/ext/fann.2.2.0)
 set(BOOST_HOME ${CMAKE_SOURCE_DIR}/ext/boost.1.69.0)
+# set(OMP_HOME $(brew --prefix libomp))
 
 # Add include and link directories.
 
-include_directories(SYSTEM ${BOOST_HOME} ${NOMAD_HOME}/ext/sgtelib/src ${NOMAD_HOME}/src ${LSAPE_HOME}/include ${EIGEN_HOME}/Eigen ${LIBSVM_HOME} ${FANN_HOME}/include ${GUROBI_HOME}/include)
-# include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${NOMAD_HOME}/ext/sgtelib/src ${NOMAD_HOME}/src ${LSAPE_HOME}/include ${EIGEN_HOME}/Eigen ${LIBSVM_HOME} ${FANN_HOME}/include ${GUROBI_HOME}/include)
-link_directories(${NOMAD_HOME}/lib ${FANN_HOME}/lib ${LIBSVM_HOME} ${GUROBI_HOME}/lib)
+include_directories(SYSTEM ${BOOST_HOME} ${NOMAD_HOME}/ext/sgtelib/src ${NOMAD_HOME}/src ${LSAPE_HOME}/include ${EIGEN_HOME}/Eigen ${LIBSVM_HOME} ${FANN_HOME}/include ${GUROBI_HOME}/include ${OMP_HOME}/include)
+link_directories(${NOMAD_HOME}/lib ${FANN_HOME}/lib ${LIBSVM_HOME} ${GUROBI_HOME}/lib ${OMP_HOME}/lib)
 
 if(GUROBI_ROOT)
   add_definitions(-DGUROBI)

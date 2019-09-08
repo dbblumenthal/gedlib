@@ -34,10 +34,12 @@
 '''Installs GEDLIB and its dependencies.'''
 
 from subprocess import call
+from subprocess import check_output
 import argparse
 import shutil
 import os.path
 import glob
+import platform
 
 def append_ged_env_hpp(identifier, node_id_type, node_label_type, edge_label_type):
 	append = ""
@@ -62,19 +64,21 @@ def append_ged_env_hpp(identifier, node_id_type, node_label_type, edge_label_typ
 	shutil.move("temp", "src/env/ged_env.hpp")
 
 def append_cmake_lists(identifier):
-	append = ""
-	append = append + "\n"
-	append = append + "add_library(" + identifier.lower() + "gedlib SHARED env/ged_env." + identifier.lower() + ".cpp)\n"
-	append = append + "set_target_properties(" + identifier.lower() + "gedlib PROPERTIES SUFFIX \".so\")\n"
-	append = append + "target_link_libraries(" + identifier.lower() + "gedlib nomad doublefann svm)\n"
-	append = append + "if(APPLE)\n"
-	append = append + "  add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
-	append = append + "  add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
-	append = append + "add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
-	append = append + "endif()\n"
-	delete_line = 0
-	temp = open("temp", "wb")
-	with open("src/CMakeLists.txt", "r") as f:
+    append = ""
+    append = append + "\n"
+    append = append + "add_library(" + identifier.lower() + "gedlib SHARED env/ged_env." + identifier.lower() + ".cpp)\n"
+    append = append + "set_target_properties(" + identifier.lower() + "gedlib PROPERTIES SUFFIX \".so\")\n"
+    append = append + "target_link_libraries(" + identifier.lower() + "gedlib nomad doublefann svm)\n"
+    append = append + "if(APPLE)\n"
+    append = append + "  add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
+    append = append + "  add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
+    append = append + "  add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
+    append = append + "  target_link_libraries(" + identifier.lower() + "gedlib omp)\n"
+    append = append + "  add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libomp.dylib ${OMP_HOME}/lib/libomp.dylib ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
+    append = append + "endif()\n"
+    delete_line = 0
+    temp = open("temp", "wb")
+    with open("src/CMakeLists.txt", "r") as f:
 		for line in f:
 			if line.startswith("add_library(") and not line.startswith("add_library(gxlgedlib"):
 				delete_line = 9
@@ -83,8 +87,8 @@ def append_cmake_lists(identifier):
 			if delete_line <= 0:
 				temp.write(line)
 			delete_line = delete_line - 1
-	temp.close()
-	shutil.move("temp", "src/CMakeLists.txt")
+    temp.close()
+    shutil.move("temp", "src/CMakeLists.txt")
 
 def create_template_instantiation(identifier, node_id_type, node_label_type, edge_label_type):
 	with open("src/env/ged_env." + identifier.lower() + ".cpp", "w") as f:
@@ -171,7 +175,9 @@ def build_gedlib(args):
 			commands = commands + "Release"
 		if args.gurobi:
 			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_VERSION=" + determine_gurobi_version(args.gurobi)
-		call(commands, shell=True)
+        if platform.system() == "Darwin":
+            commands = commands + " -DOMP_HOME=" + check_output("brew --prefix", shell=True)
+	    call(commands, shell=True)
 
 	if args.doc:
 		print("\n***** Generate documentation. *****")

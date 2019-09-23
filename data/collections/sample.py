@@ -92,23 +92,20 @@ min_candidate_sizes = min([candidate_sizes[cl] for cl in candidate_sizes])
 if args.size_ratio:
 	if args.size_ratio < 0 or args.size_ratio > 1:
 		raise Exception("SIZE_RATIO must be between 0 and 1")
-	if args.balanced:
-		sample_sizes = {cl : min(min_candidate_sizes, int((total_candidate_size * args.size_ratio) / num_classes)) for cl in classes}
-	else:
-		sample_sizes = {cl : int(candidate_sizes[cl] * args.size_ratio) for cl in classes}
-else:
-	if args.size < 0:
-		raise Exception("SIZE must be greater than 0")
-	if args.size > total_candidate_size:
-		args.size = total_candidate_size
+	args.size = int(total_candidate_size * args.size_ratio)
+
+if args.size < 0:
+	raise Exception("SIZE must be greater than 0")
+if args.size > total_candidate_size:
+	args.size = total_candidate_size
 		
 # Sample the graphs.
 sampled_graphs = []
 if args.balanced:
-    sample_sizes = {cl : min(min_candidate_sizes, int(args.size / num_classes)) for cl in classes}
-    sampled_graphs = [graph for cl in classes for graph in random.sample(candidate_graphs[cl], sample_sizes[cl])]
+	sample_sizes = {cl : min(min_candidate_sizes, int(args.size / num_classes)) for cl in classes}
+	sampled_graphs = [graph for cl in classes for graph in random.sample(candidate_graphs[cl], sample_sizes[cl])]
 else:
-    sampled_graphs = random.sample([graph for cl in classes for graph in candidate_graphs[cl]], args.size)
+	sampled_graphs = random.sample([graph for cl in classes for graph in candidate_graphs[cl]], args.size)
 
 # Write sampled graphs to XML file.
 file = open(args.sample, "w")

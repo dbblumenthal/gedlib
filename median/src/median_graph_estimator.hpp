@@ -273,6 +273,9 @@ private:
 	void delete_node_from_median_(std::size_t id_deleted_node, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
 
 	bool increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
+	
+	double compute_best_insertion_delta_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, 
+			std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const;
 
 	double compute_insertion_delta_unlabeled_(const std::map<GEDGraph::GraphID, std::vector<std::pair<std::size_t, UserNodeLabel>>> & inserted_nodes,
 			std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const;

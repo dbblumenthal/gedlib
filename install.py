@@ -79,14 +79,14 @@ def append_cmake_lists(identifier):
     delete_line = 0
     temp = open("temp", "wb")
     with open("src/CMakeLists.txt", "r") as f:
-		for line in f:
-			if line.startswith("add_library(") and not line.startswith("add_library(gxlgedlib"):
-				delete_line = 9
-			if line.startswith("endif()"):
-				line = line + append
-			if delete_line <= 0:
-				temp.write(line)
-			delete_line = delete_line - 1
+        for line in f:
+            if line.startswith("add_library(") and not line.startswith("add_library(gxlgedlib"):
+                delete_line = 9
+            if line.startswith("endif()"):
+                line = line + append
+            if delete_line <= 0:
+                temp.write(line)
+            delete_line = delete_line - 1
     temp.close()
     shutil.move("temp", "src/CMakeLists.txt")
 
@@ -175,9 +175,10 @@ def build_gedlib(args):
 			commands = commands + "Release"
 		if args.gurobi:
 			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_VERSION=" + determine_gurobi_version(args.gurobi)
-        if platform.system() == "Darwin":
-            commands = commands + " -DOMP_HOME=" + check_output("brew --prefix", shell=True)
-	    call(commands, shell=True)
+		if platform.system() == "Darwin":
+			commands = commands + " -DOMP_HOME=" + check_output("brew --prefix", shell=True).decode("utf-8")
+#			commands = commands + " -DOMP_HOME=/usr/local"
+		call(commands, shell=True)
 
 	if args.doc:
 		print("\n***** Generate documentation. *****")

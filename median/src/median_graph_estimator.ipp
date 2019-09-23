@@ -937,29 +937,23 @@ decrease_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 		std::cout << "Trying to decrease order: ... " << std::flush;
 	}
 
-	// Compute best deletion delta and determine deleted node.
+	// Initialize ID of the node that is to be deleted.
 	std::size_t id_deleted_node{undefined()};
-	double best_delta{compute_best_deletion_delta_(graphs, median, id_deleted_node)};
-
-	// Return false if deleting a node does not improve the median.
-	if (best_delta > -epsilon_) {
-		// Print information about current iteration.
-		if (print_to_stdout_ == 2) {
-			std::cout << "done.\n";
-		}
-		return false;
+	bool decreased_order{false};
+	
+	// Decrease the order as long as the best deletion delta is negative.
+	while (compute_best_deletion_delta_(graphs, median, id_deleted_node) < -epsilon_) {
+		decreased_order = true;
+		delete_node_from_median_(id_deleted_node, median);
 	}
-
-	// Otherwise, delete the node that yielded the best delta from the median.
-	delete_node_from_median_(id_deleted_node, median);
 
 	// Print information about current iteration.
 	if (print_to_stdout_ == 2) {
 		std::cout << "done.\n";
 	}
 
-	// Return true since the order was decreased.
-	return true;
+	// Return true iff the order was decreased.
+	return decreased_order;
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -1084,11 +1078,36 @@ increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 	if (print_to_stdout_ == 2) {
 		std::cout << "Trying to increase order: ... " << std::flush;
 	}
+	
+	// Initialize the best configuration and the best label of the node that is to be inserted.
+	std::map<GEDGraph::GraphID, std::size_t> best_config;
+	UserNodeLabel best_label{ged_env_->get_node_label(1)};
+	bool increased_order{false};
+	
+	// Increase the order as long as the best insertion delta is negative.
+	while (compute_best_insertion_delta_(graphs, best_config, best_label) < -epsilon_) {
+		increased_order = true;
+		add_node_to_median_(best_config, best_label, median);
+	}
 
+	// Print information about current iteration.
+	if (print_to_stdout_ == 2) {
+		std::cout << "done.\n";
+	}
+
+	// Return true iff the order was increased.
+	return increased_order;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+compute_best_insertion_delta_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, 
+		std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const {
+	
 	// Construct sets of inserted nodes.
 	bool no_inserted_node{true};
 	std::map<GEDGraph::GraphID, std::vector<std::pair<std::size_t, UserNodeLabel>>> inserted_nodes;
-	std::map<GEDGraph::GraphID, std::size_t> best_config;
 	for (const auto & key_val : graphs) {
 		GEDGraph::GraphID graph_id{key_val.first};
 		const ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & graph{key_val.second};
@@ -1102,18 +1121,13 @@ increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 		}
 	}
 
-	// Return false if no node is inserted in any of the graphs.
+	// Return 0.0 if no node is inserted in any of the graphs.
 	if (no_inserted_node) {
-		// Print information about current iteration.
-		if (print_to_stdout_ == 2) {
-			std::cout << "done.\n";
-		}
-		return false;
+		return 0.0;
 	}
 
 	// Compute insertion configuration, label, and delta.
 	double best_delta;
-	UserNodeLabel best_label{ged_env_->get_node_label(1)};
 	if (not labeled_nodes_) {
 		best_delta = compute_insertion_delta_unlabeled_(inserted_nodes, best_config, best_label);
 	}
@@ -1123,27 +1137,10 @@ increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 	else {
 		best_delta = compute_insertion_delta_generic_(inserted_nodes, best_config, best_label);
 	}
-
-
-	// Return false if inserting an isolated node does not improve the median.
-	if (best_delta > -epsilon_) {
-		// Print information about current iteration.
-		if (print_to_stdout_ == 2) {
-			std::cout << "done.\n";
-		}
-		return false;
-	}
-
-	// Otherwise, use the configuration that yielded the best delta to add an isolated node to the median.
-	add_node_to_median_(best_config, best_label, median);
-
-	// Print information about current iteration.
-	if (print_to_stdout_ == 2) {
-		std::cout << "done.\n";
-	}
-
-	// Return true since the order was increased.
-	return true;
+		
+	// Return the best delta.
+	return best_delta;
+			
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

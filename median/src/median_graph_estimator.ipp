@@ -33,7 +33,7 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 MedianGraphEstimator(GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> * ged_env, bool constant_node_costs):
 ged_env_{ged_env},
-init_method_{Options::GEDMethod::BRANCH_UNIFORM},
+init_method_{Options::GEDMethod::BRANCH_FAST},
 init_options_(""),
 descent_method_{Options::GEDMethod::BRANCH_FAST},
 descent_options_(""),
@@ -46,7 +46,7 @@ node_ins_cost_{ged_env_->node_ins_cost(ged_env_->get_node_label(1))},
 labeled_edges_{ged_env_->num_edge_labels() > 1},
 edge_del_cost_{ged_env_->edge_del_cost(ged_env_->get_edge_label(1))},
 edge_ins_cost_{ged_env_->edge_ins_cost(ged_env_->get_edge_label(1))},
-init_type_("MEDOID"),
+init_type_("RANDOM"),
 num_random_inits_{10},
 use_real_randomness_{true},
 seed_{0},
@@ -88,8 +88,8 @@ set_options(const std::string & options) {
 	for (const auto & option : options_map) {
 		if (option.first == "init-type") {
 			init_type_ = option.second;
-			if (option.second != "MEDOID" and option.second != "RANDOM") {
-				throw ged::Error(std::string("Invalid argument ") + option.second + " for option init-type. Usage: options = \"[--init-type RANDOM|MEDOID] [...]\"");
+			if (option.second != "MEDOID" and option.second != "RANDOM" and option.second != "EMPTY" and option.second != "MIN" and option.second != "MAX" and option.second != "MEAN") {
+				throw ged::Error(std::string("Invalid argument ") + option.second + " for option init-type. Usage: options = \"[--init-type RANDOM|MEDOID|EMPTY|MIN|MAX|MEAN] [...]\"");
 			}
 		}
 		else if (option.first == "random-inits") {
@@ -342,9 +342,9 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 
 			// Update the median.
 			median_modified = update_median_(graphs, median);
-			if (not median_modified) {
+			if (not median_modified or itrs_.at(median_pos) == 0) {
 				decreased_order = decrease_order_(graphs, median);
-				if (not decreased_order) {
+				if (not decreased_order or itrs_.at(median_pos) == 0) {
 					increased_order = increase_order_(graphs, median);
 				}
 			}
@@ -624,7 +624,7 @@ template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_default_options_() {
-	init_type_ = "MEDOID";
+	init_type_ = "RANDOM";
 	num_random_inits_ = 10;
 	use_real_randomness_ = true;
 	seed_ = 0;
@@ -655,6 +655,18 @@ construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std
 	if (init_type_ == "MEDOID") {
 		compute_medoid_(graph_ids, initial_medians);
 	}
+	else if (init_type_ == "EMPTY") {
+		initial_medians.emplace_back(ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>());
+	}
+	else if (init_type_ == "MAX") {
+		compute_max_order_graph_(graph_ids, initial_medians);
+	}
+	else if (init_type_ == "MIN") {
+		compute_min_order_graph_(graph_ids, initial_medians);
+	}
+	else if (init_type_ == "MEAN") {
+		compute_mean_order_graph_(graph_ids, initial_medians);
+	}
 	else {
 		sample_initial_medians_(graph_ids, initial_medians);
 	}
@@ -664,6 +676,64 @@ construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std
 		std::cout << "\n===========================================================\n";
 	}
 }
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+compute_max_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const  {
+	GEDGraph::GraphID max_order_id{0};
+	std::size_t max_order{0};
+	for (auto g_id : graph_ids) {
+		if (ged_env_->get_num_nodes(g_id) > max_order) {
+			max_order = ged_env_->get_num_nodes(g_id);
+			max_order_id = g_id;
+		}
+	}
+	initial_medians.emplace_back(ged_env_->get_graph(max_order_id, true, true, false));
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+compute_min_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const  {
+	GEDGraph::GraphID min_order_id{0};
+	std::size_t min_order{std::numeric_limits<std::size_t>::infinity()};
+	for (auto g_id : graph_ids) {
+		if (ged_env_->get_num_nodes(g_id) < min_order) {
+			min_order = ged_env_->get_num_nodes(g_id);
+			min_order_id = g_id;
+		}
+	}
+	initial_medians.emplace_back(ged_env_->get_graph(min_order_id, true, true, false));
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+void
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+compute_mean_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const  {
+	std::vector<std::pair<std::size_t, GEDGraph::GraphID>> order_id_pairs;
+	std::size_t sum_orders{0};
+	for (auto g_id : graph_ids) {
+		sum_orders += ged_env_->get_num_nodes(g_id);
+		order_id_pairs.emplace_back(ged_env_->get_num_nodes(g_id), g_id);
+	}
+	std::sort(order_id_pairs.begin(), order_id_pairs.end());
+	double mean_order{static_cast<double>(sum_orders) / static_cast<double>(graph_ids.size())};
+	std::size_t median_pos{0};
+	for (std::size_t pos{0}; pos < graph_ids.size(); pos++) {
+		if (static_cast<double>(order_id_pairs.at(pos).first) >= mean_order) {
+			median_pos = pos;
+			break;
+		}
+	}
+	if (median_pos > 0) {
+		if (mean_order - static_cast<double>(order_id_pairs.at(median_pos - 1).first) < static_cast<double>(order_id_pairs.at(median_pos).first) - mean_order) {
+			median_pos--;
+		}
+	}
+	initial_medians.emplace_back(ged_env_->get_graph(order_id_pairs.at(median_pos).second, true, true, false));
+}
+
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
@@ -940,7 +1010,7 @@ decrease_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 	// Initialize ID of the node that is to be deleted.
 	std::size_t id_deleted_node{undefined()};
 	bool decreased_order{false};
-	
+
 	// Decrease the order as long as the best deletion delta is negative.
 	while (compute_best_deletion_delta_(graphs, median, id_deleted_node) < -epsilon_) {
 		decreased_order = true;
@@ -1078,12 +1148,12 @@ increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 	if (print_to_stdout_ == 2) {
 		std::cout << "Trying to increase order: ... " << std::flush;
 	}
-	
+
 	// Initialize the best configuration and the best label of the node that is to be inserted.
 	std::map<GEDGraph::GraphID, std::size_t> best_config;
 	UserNodeLabel best_label{ged_env_->get_node_label(1)};
 	bool increased_order{false};
-	
+
 	// Increase the order as long as the best insertion delta is negative.
 	while (compute_best_insertion_delta_(graphs, best_config, best_label) < -epsilon_) {
 		increased_order = true;
@@ -1104,7 +1174,7 @@ double
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 compute_best_insertion_delta_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, 
 		std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const {
-	
+
 	// Construct sets of inserted nodes.
 	bool no_inserted_node{true};
 	std::map<GEDGraph::GraphID, std::vector<std::pair<std::size_t, UserNodeLabel>>> inserted_nodes;
@@ -1137,10 +1207,10 @@ compute_best_insertion_delta_(const std::map<GEDGraph::GraphID, ExchangeGraph<Us
 	else {
 		best_delta = compute_insertion_delta_generic_(inserted_nodes, best_config, best_label);
 	}
-		
+
 	// Return the best delta.
 	return best_delta;
-			
+
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

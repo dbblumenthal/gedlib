@@ -93,8 +93,10 @@ ls_run_from_initial_solution_(const GEDGraph & g, const GEDGraph & h, double low
 	DMatrix linear_cost_matrix(qap_instance_.num_rows(), qap_instance_.num_cols());
 	init_linear_cost_matrix_(qap_instance_, linear_cost_matrix);
 
+
 	// Main loop.
 	for (std::size_t current_itr{1}; not termination_criterion_met_(timer, alpha, min_linear_problem, current_itr, lower_bound, upper_bound); current_itr++) {
+
 
 		// Compute the next gradient direction b and update the upper bound and the output node map.
 		init_next_linear_problem_(qap_instance_, x, linear_cost_matrix, linear_problem);

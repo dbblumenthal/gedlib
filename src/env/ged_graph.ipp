@@ -239,6 +239,9 @@ un_init() {
 GEDGraph::EdgeID
 GEDGraph::
 get_edge(NodeID source, NodeID target) const {
+	if (source >= num_nodes() or target >= num_nodes()) {
+		return dummy_edge();
+	}
 	auto am_edge = boost::edge(source, target, amatrix_);
 	if (am_edge.second == false) {
 		return dummy_edge();

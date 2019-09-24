@@ -108,9 +108,9 @@ TEST_CASE("testing on Letter graphs") {
 
 
 		for (std::size_t i=0;i<exp_numsols.size();i++){
-			std::cout << "\n=== running IPFP RANDPOST (T1, I"<< exp_numsols[i]<<", L"<<exp_numloops[i] <<", R0, P0) ===\n";
+			std::cout << "\n=== running IPFP RANDPOST (T5, I"<< exp_numsols[i]<<", L"<<exp_numloops[i] <<", R0, P0) ===\n";
 			std::cout << "\r" << progress << std::flush;
-			env.set_method(ged::Options::GEDMethod::IPFP, " --threads 1 --initial-solutions "+ exp_numsols[i] +" --num-randpost-loops " + exp_numloops[i]);
+			env.set_method(ged::Options::GEDMethod::IPFP, " --threads 5 --initial-solutions "+ exp_numsols[i] +" --num-randpost-loops " + exp_numloops[i]);
 			upper_bound = 0;
 			runtime = 0;
 			progress.reset();

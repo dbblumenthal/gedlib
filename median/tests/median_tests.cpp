@@ -40,6 +40,9 @@ bool constant_node_costs(const std::string & dataset) {
 	if (dataset == "Letter") {
 		return false;
 	}
+	else if (dataset != "Mutagenicity" and dataset != "AIDS") {
+		throw ged::Error("Invalid dataset " + dataset + ". Usage: ./median_tests <AIDS|Mutagenicity|Letter>");
+	}
 	return true;
 }
 
@@ -62,7 +65,7 @@ std::string dir(const std::string & dataset) {
 		return (root_dir + dataset + "/HIGH/");
 	}
 	else {
-		throw ged::Error("Invalid dataset specified. Usage: ./median_chem <AIDS|Mutagenicity|Letter>");
+		throw ged::Error("Invalid dataset specified. Usage: ./median_tests <AIDS|Mutagenicity|Letter>");
 	}
 	return "";
 }
@@ -83,19 +86,39 @@ int main(int argc, char* argv[]) {
 		throw ged::Error("No dataset specified. Usage: ./median_chem <AIDS|Mutagenicity|Letter>");
 	}
 	std::string dataset(argv[1]);
-	std::vector<std::string> init_types{"--init-type MEDOID", "--init-type MIN", "--init-type MAX", "--init-type MEAN", "--init-type RANDOM --random-inits 1", "--init-type RANDOM --random-inits 2", "--init-type RANDOM --random-inits 4", "--init-type RANDOM --random-inits 8", "--init-type RANDOM --random-inits 16", "--init-type RANDOM --random-inits 32"};
+
+	// Set dataset identifiers.
 	std::vector<std::string> percents{"10", "20", "30", "40", "50", "60", "70", "80", "90", "100"};
 	std::vector<std::string> ids{"0", "1", "2", "3", "4"};
 
+	// Set options of MGE.
+	std::vector<std::string> init_types{" MEDOID", " MIN", " MAX", " MEAN", " RANDOM --random-inits 1", " RANDOM --random-inits 2", " RANDOM --random-inits 4", " RANDOM --random-inits 8", " RANDOM --random-inits 16", " RANDOM --random-inits 32"};
+
+	// Set algorithms.
+	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::IPFP};
+	std::vector<std::string> algo_options{"", "", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5", "", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
+
 	for (const auto & percent : percents) {
 		for (const auto & id : ids) {
+
+			// Set up the environment.
 			ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 			env.set_edit_costs(edit_costs(dataset));
 			std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs(dir(dataset), collection(dataset, percent, id),
 					ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::LABELED, irrelevant_node_attributes(dataset)));
+			ged::GEDGraph::GraphID median_id{env.add_graph("median")};
+			env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
+
+			// Set up the estimator.
+			ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> mge(&env, constant_node_costs(dataset));
+			mge.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
 
 			for (const auto & init_type : init_types) {
-				;
+				mge.set_options("--time-limit 600 --init-type" + init_type);
+				for (std::size_t algo_id{0}; algo_id < algos.size(); algo_id++) {
+					mge.set_init_method(algos.at(algo_id), "--threads 6" + algo_options.at(algo_id));
+					mge.set_descent_method(algos.at(algo_id), "--threads 6" + algo_options.at(algo_id));
+				}
 			}
 		}
 	}

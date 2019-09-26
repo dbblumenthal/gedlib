@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 	ged::GEDGraph::GraphID median_id{env.add_graph("median_" + dataset)};
 	env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, true);
-	median_estimator.set_options("--init-type MAX --randomness PSEUDO --seed 0 --refine TRUE --random-inits " + num_inits);
+	median_estimator.set_options("--randomness PSEUDO --seed 0 --refine TRUE --time-limit 1 --init-type MAX");
 	median_estimator.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 5");
 	median_estimator.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 5 --initial-solutions 4 --ratio-runs-from-initial-solutions .25");
 	median_estimator.run(graph_ids, median_id);

@@ -88,7 +88,7 @@ set_options(const std::string & options) {
 	for (const auto & option : options_map) {
 		if (option.first == "init-type") {
 			init_type_ = option.second;
-			if (option.second != "MEDOID" and option.second != "RANDOM" and option.second != "EMPTY" and option.second != "MIN" and option.second != "MAX" and option.second != "MEAN") {
+			if (option.second != "MEDOID" and option.second != "RANDOM" and option.second != "MIN" and option.second != "MAX" and option.second != "MEAN") {
 				throw ged::Error(std::string("Invalid argument ") + option.second + " for option init-type. Usage: options = \"[--init-type RANDOM|MEDOID|EMPTY|MIN|MAX|MEAN] [...]\"");
 			}
 		}
@@ -262,7 +262,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 
 	// Construct initial medians.
 	std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> medians;
-	construct_initial_medians_(graph_ids, medians);
+	construct_initial_medians_(graph_ids, timer, medians);
 	auto end_init = std::chrono::high_resolution_clock::now();
 	runtime_initialized_ = end_init - start;
 
@@ -432,7 +432,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 	// Refine the sum of distances and the node maps for the converged median.
 	converged_sum_of_distances_ = sum_of_distances_;
 	if (refine_) {
-		improve_sum_of_distances_();
+		improve_sum_of_distances_(timer);
 	}
 
 	// Record end time and set runtime.
@@ -471,7 +471,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-improve_sum_of_distances_() {
+improve_sum_of_distances_(const Timer & timer) {
 	// Use method selected for refinement phase.
 	ged_env_->set_method(refine_method_, refine_options_);
 
@@ -485,8 +485,10 @@ improve_sum_of_distances_() {
 	}
 
 	// Improving the node maps.
-	sum_of_distances_ = 0;
 	for (auto & key_val : node_maps_from_median_) {
+		if (timer.expired()) {
+			break;
+		}
 		GEDGraph::GraphID graph_id{key_val.first};
 		NodeMap & node_map{key_val.second};
 		ged_env_->run_method(median_id_, graph_id);
@@ -499,6 +501,10 @@ improve_sum_of_distances_() {
 			progress.increment();
 			std::cout << "\rImproving node maps: " << progress << std::flush;
 		}
+	}
+	sum_of_distances_ = 0;
+	for (auto & key_val : node_maps_from_median_) {
+		sum_of_distances_ += key_val.second.induced_cost();
 	}
 
 	// Print information.
@@ -642,7 +648,7 @@ set_default_options_() {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const {
+construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const {
 	// Print information about current iteration.
 	if (print_to_stdout_ == 2) {
 		std::cout << "\n===========================================================\n";
@@ -653,10 +659,7 @@ construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std
 	// Compute or sample the initial median(s).
 	initial_medians.clear();
 	if (init_type_ == "MEDOID") {
-		compute_medoid_(graph_ids, initial_medians);
-	}
-	else if (init_type_ == "EMPTY") {
-		initial_medians.emplace_back(ged::ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>());
+		compute_medoid_(graph_ids, timer, initial_medians);
 	}
 	else if (init_type_ == "MAX") {
 		compute_max_order_graph_(graph_ids, initial_medians);
@@ -738,7 +741,7 @@ compute_mean_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std:
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const {
+compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const {
 	// Use method selected for initialization phase.
 	ged_env_->set_method(init_method_, init_options_);
 
@@ -749,9 +752,12 @@ compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<Ex
 	}
 
 	// Compute the medoid.
-	GEDGraph::GraphID medoid_id{0};
+	GEDGraph::GraphID medoid_id{graph_ids.at(0)};
 	double best_sum_of_distances{std::numeric_limits<double>::infinity()};
 	for (auto g_id : graph_ids) {
+		if (timer.expired()) {
+			break;
+		}
 		double sum_of_distances{0};
 		for (auto h_id : graph_ids) {
 			ged_env_->run_method(g_id, h_id);

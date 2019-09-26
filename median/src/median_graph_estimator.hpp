@@ -42,7 +42,7 @@ namespace ged {
  * Supports the following options:
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
- * | <tt>\--init-type RANDOM\|MEDOID\|EMPTY\|MIN\|MAX\|MEAN</tt> | method for computing the initial medians | @p RANDOM | unless @p RANDOM, the option @p \--random-inits has no effect |
+ * | <tt>\--init-type RANDOM\|MEDOID\|MIN\|MAX\|MEAN</tt> | method for computing the initial medians | @p RANDOM | unless @p RANDOM, the option @p \--random-inits has no effect |
  * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial medians | @p 50 | n.a. |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
  * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
@@ -250,9 +250,9 @@ private:
 
 	void set_default_options_();
 
-	void construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
+	void construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
-	void compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
+	void compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
 	void compute_max_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
@@ -304,7 +304,7 @@ private:
 
 	void add_node_to_median_(const std::map<GEDGraph::GraphID, std::size_t> & best_config, const UserNodeLabel & best_label, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
 
-	void improve_sum_of_distances_();
+	void improve_sum_of_distances_(const Timer & timer);
 
 	bool median_available_() const;
 

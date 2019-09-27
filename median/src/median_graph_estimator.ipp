@@ -69,7 +69,8 @@ runtime_initialized_(),
 runtime_converged_(),
 itrs_(),
 num_decrease_order_{0},
-num_increase_order_{0} {
+num_increase_order_{0},
+state_{Options::AlgorithmState::TERMINATED} {
 	if (ged_env_ == nullptr) {
 		throw Error("The environment pointer passed to the constructor of ged::MedianGraphEstimator is null.");
 	}
@@ -253,6 +254,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 	auto start = std::chrono::high_resolution_clock::now();
 	Timer timer(time_limit_in_sec_);
 	median_id_ = median_id;
+	state_ = Options::AlgorithmState::TERMINATED;
 
 	// Get ExchangeGraph representations of the input graphs.
 	std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> graphs;
@@ -488,6 +490,9 @@ improve_sum_of_distances_(const Timer & timer) {
 	for (auto & key_val : node_maps_from_median_) {
 		if (timer.expired()) {
 			break;
+			if (state_ == Options::AlgorithmState::TERMINATED) {
+				state_ = Options::AlgorithmState::CONVERGED;
+			}
 		}
 		GEDGraph::GraphID graph_id{key_val.first};
 		NodeMap & node_map{key_val.second};
@@ -519,6 +524,17 @@ MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 median_available_() const {
 	return (median_id_ != undefined());
 }
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+Options::AlgorithmState
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_state() const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_state().");
+	}
+	return state_;
+}
+
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 double
@@ -648,7 +664,7 @@ set_default_options_() {
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const {
+construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) {
 	// Print information about current iteration.
 	if (print_to_stdout_ == 2) {
 		std::cout << "\n===========================================================\n";
@@ -741,7 +757,7 @@ compute_mean_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std:
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const {
+compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) {
 	// Use method selected for initialization phase.
 	ged_env_->set_method(init_method_, init_options_);
 
@@ -757,6 +773,7 @@ compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & 
 	for (auto g_id : graph_ids) {
 		if (timer.expired()) {
 			break;
+			state_ = Options::AlgorithmState::CALLED;
 		}
 		double sum_of_distances{0};
 		for (auto h_id : graph_ids) {
@@ -827,8 +844,14 @@ sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::v
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 bool
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr, std::size_t itrs_without_update) const {
-	return converged or timer.expired() or (max_itrs_ >= 0 ? itr >= max_itrs_ : false) or (max_itrs_without_update_ >= 0 ? itrs_without_update > max_itrs_without_update_ : false);
+termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr, std::size_t itrs_without_update) {
+	if (timer.expired() or (max_itrs_ >= 0 ? itr >= max_itrs_ : false)) {
+		if (state_ == Options::AlgorithmState::TERMINATED) {
+			state_ = Options::AlgorithmState::INITIALIZED;
+		}
+		return true;
+	}
+	return converged or (max_itrs_without_update_ >= 0 ? itrs_without_update > max_itrs_without_update_ : false);
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

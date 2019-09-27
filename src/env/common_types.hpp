@@ -244,12 +244,32 @@ struct Options {
 	 * @brief can be used to specify the state of an algorithm.
 	 */
 	enum class AlgorithmState {
+		CALLED,     //!< The algorithm has been called.
 		INITIALIZED,//!< The algorithm has been initialized.
 		CONVERGED,  //!< The algorithm has converged.
 		TERMINATED  //!< The algorithm has terminated.
 	};
 
 };
+
+std::ostream & operator<<(std::ostream & os, const Options::AlgorithmState & state) {
+	switch (state) {
+	case Options::AlgorithmState::CALLED:
+		os << 0;
+		break;
+	case Options::AlgorithmState::INITIALIZED:
+		os << 1;
+		break;
+	case Options::AlgorithmState::CONVERGED:
+		os << 2;
+		break;
+	case Options::AlgorithmState::TERMINATED:
+		os << 3;
+		break;
+	}
+	return os;
+
+}
 
 /*!
  * @brief Streams Options::GEDMethod object.

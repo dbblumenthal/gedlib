@@ -87,18 +87,32 @@ int main(int argc, char* argv[]) {
 	}
 	std::string dataset(argv[1]);
 
-	// Set dataset identifiers.
+	// Varied sub-collections.
 	std::vector<std::string> percents{"10", "20", "30", "40", "50", "60", "70", "80", "90", "100"};
 	std::vector<std::string> ids{"0", "1", "2", "3", "4"};
 
-	// Set options of MGE.
-	std::vector<std::string> init_types{" MEDOID", " MIN", " MAX", " MEAN", " RANDOM --random-inits 1", " RANDOM --random-inits 2", " RANDOM --random-inits 4", " RANDOM --random-inits 8", " RANDOM --random-inits 16", " RANDOM --random-inits 32"};
+	// Varied estimator parameters.
+	std::vector<std::string> init_types{"MIN", "MAX", "MEAN", "RANDOM", "MEDOID"};
+	std::vector<std::string> nums_inits{"1", "2", "4", "8", "16", "32"};
 
-	// Set algorithms.
-	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::IPFP};
-	std::vector<std::string> algo_options{"", "", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5", "", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
+	// Varied algorithm parameters.
+	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP};
+	std::vector<std::string> algo_options_suffixes{"", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
 
+	// Generate the result file.
+	std::string result_filename("../output/");
+	result_filename += dataset + "_RESULTS.csv";
+	std::ofstream result_file(result_filename.c_str());
+	result_file << "percent,id,init_type,num_inits,algo,time,time_init,time_converged,sod,sod_init,sod_converged,itrs,state\n";
+	result_file.close();
+
+	// Iterate through all varied sub-collections.
 	for (const auto & percent : percents) {
+
+		// Initialize progress bar.
+		ged::ProgressBar progress(ids.size() * (init_types.size() + nums_inits.size() - 1) * algos.size());
+		std::cout << "\rRunning tests for " << percent << "% collections:" << progress << std::flush;
+
 		for (const auto & id : ids) {
 
 			// Set up the environment.
@@ -114,12 +128,46 @@ int main(int argc, char* argv[]) {
 			mge.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
 
 			for (const auto & init_type : init_types) {
-				mge.set_options("--time-limit 600 --init-type" + init_type);
-				for (std::size_t algo_id{0}; algo_id < algos.size(); algo_id++) {
-					mge.set_init_method(algos.at(algo_id), "--threads 6" + algo_options.at(algo_id));
-					mge.set_descent_method(algos.at(algo_id), "--threads 6" + algo_options.at(algo_id));
+				for (const auto & num_inits : nums_inits) {
+					std::string mge_options("--time-limit 600 --stdout 0 --init-type " + init_type);
+					if (init_type != "RANDOM" and num_inits != "1") {
+						continue;
+					}
+					else {
+						std::random_device rng;
+						mge_options += " --random-inits " + num_inits + " --seed " + std::to_string(rng());
+					}
+					for (std::size_t algo_id{0}; algo_id < algos.size(); algo_id++) {
+						// Select the GED algorithm.
+						ged::Options::GEDMethod algo{algos.at(algo_id)};
+						std::string algo_options("--threads 6" + algo_options_suffixes.at(algo_id));
+						mge.set_options(mge_options);
+						mge.set_init_method(algo, algo_options);
+						mge.set_descent_method(algo, algo_options);
+
+						// Run the estimator.
+						mge.run(graph_ids, median_id);
+
+						// Write the results.
+						result_file.open(result_filename.c_str(),std::ios_base::app);
+						result_file << percent << "," << id << "," << init_type << "," << num_inits << "," << algo;
+						result_file << "," << mge.get_runtime() << "," << mge.get_runtime(ged::Options::AlgorithmState::INITIALIZED) << "," << mge.get_runtime(ged::Options::AlgorithmState::CONVERGED);
+						result_file << "," << mge.get_sum_of_distances() << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::INITIALIZED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::CONVERGED);
+						std::vector<std::size_t> nums_itrs(mge.get_num_itrs());
+						result_file << "," << nums_itrs.at(0);
+						for (std::size_t pos{1}; pos < nums_itrs.size(); pos++) {
+							result_file << ";" << nums_itrs.at(pos);
+						}
+						result_file << "," << mge.get_state() << "\n";
+						result_file.close();
+
+						// Increment the progress bar and print current progress.
+						progress.increment();
+						std::cout << "\rRunning tests for " << percent << "% collections:" << progress << std::flush;
+					}
 				}
 			}
 		}
+		std::cout << "\n";
 	}
 }

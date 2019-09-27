@@ -109,6 +109,14 @@ public:
 	void run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_id);
 
 	/*!
+	 * @brief Returns the state of the estimator.
+	 * @return The state of the estimator at termination of the last call to run().
+	 * If run without time limit or maximum number of iterations, this method always returns ged::Options::AlgorithmState::TERMINATED.
+	 * Otherwise, the last uninterrupted state is returned.
+	 */
+	Options::AlgorithmState get_state() const;
+
+	/*!
 	 * @brief Returns the sum of distances.
 	 * @param[in] state The state of the estimator.
 	 * @return The sum of distances of the median when the estimator was in the state @p state during the last call to run().
@@ -248,11 +256,13 @@ private:
 
 	std::size_t num_increase_order_;
 
+	Options::AlgorithmState state_;
+
 	void set_default_options_();
 
-	void construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
+	void construct_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians);
 
-	void compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
+	void compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & timer, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians);
 
 	void compute_max_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
@@ -262,7 +272,7 @@ private:
 
 	void sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
-	bool termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr, std::size_t itrs_without_update) const;
+	bool termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr, std::size_t itrs_without_update);
 
 	bool update_median_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median) const;
 

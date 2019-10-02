@@ -137,7 +137,7 @@ In your source file, include the header `src/env/ged_env.hpp` and create your en
 ```cpp
 #include "src/env/ged_env.hpp"
 ged::GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> env;
-``` 
+```
 
 All functionality of GEDLIB is accessible via the environment class `ged::GEDEnv`, whose template parameters `UserNodeID`, `UserNodeLabel`, and `UserEdgeLabel` must be set to the types of the node IDs, the node labels, and the edge labels of your graphs. Use the member functions `ged::GEDEnv::add_graph()`, `ged::GEDEnv::add_node()`, and `ged::GEDEnv::add_edge()`, and `ged::GEDEnv::set_edit_costs()` for adding graphs and edit costs to the environment. Once you're done with this, call `ged::GEDEnv::init()` to initialize the environment.
 
@@ -153,23 +153,23 @@ If you use GEDLIB with the template parameter `UserNodeID` set to `ged::GXLNodeI
 
 If you want to use GEDLIB as a shared library for graphs given as GXL files, make sure that you have installed GEDLIB with the option `--lib gxl`. In your source file, you have to define `GXL_GEDLIB_SHARED` before including `src/env/ged_env.hpp`:
 
-  ```cpp
+```cpp
   #define GXL_GEDLIB_SHARED  
   #include "src/env/ged_env.hpp"  
   ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env  
   // ...
-  ``` 
+```
 
 #### 5.3.2 Graphs with User-Defined Node ID, Node Label, and Edge Label Types
   
 If you want to use GEDLIB as a shared library for graphs with custom node ID, node label, and edge label types, make sure that you have installed GEDLIB with the option `--lib <indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>`. In your source file, you have to define `<IDENTIFIER>_GEDLIB_SHARED` before including `src/env/ged_env.hpp`, where `<IDENTIFIER>` is the upper case transformation of `<identifier>`. For example, if you have installed GEDLIB by executing `$ python install.py --lib mytypes,int,double,double`, you have to do the following:
 
-  ```cpp
+```cpp
   #define MYTYPES_GEDLIB_SHARED  
   #include "src/env/ged_env.hpp"  
   ged::GEDEnv<int, double, double> env  
   // ...
-  ``` 
+```
 
 ### 5.4 Examples
 
@@ -190,6 +190,7 @@ $ ./learn_subgraph_depths
 $ ./learn_walks_depth
 $ ./test_lsape_based_methods
 ```
+
 After having executed these commands, the results of the experiments are contained in the folder `tests/sspr2018/output/`.
 
 ##### D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, and L. Brun. &ldquo;Comparing heuristics for graph edit distance computation&rdquo;, VLDB J. 2019

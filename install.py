@@ -177,7 +177,6 @@ def build_gedlib(args):
 			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_VERSION=" + determine_gurobi_version(args.gurobi)
 		if platform.system() == "Darwin":
 			commands = commands + " -DOMP_HOME=" + check_output("brew --prefix", shell=True).decode("utf-8")
-#			commands = commands + " -DOMP_HOME=/usr/local"
 		call(commands, shell=True)
 
 	if args.doc:

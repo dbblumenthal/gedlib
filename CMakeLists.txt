@@ -51,9 +51,9 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic -Wredundant-decls -Wdisabled-optimization -Wctor-dtor-privacy -Wnon-virtual-dtor -Werror=old-style-cast -Wsign-promo -Werror=return-type -Wno-unused-parameter")
 if(APPLE)
   set(CMAKE_CXX_COMPILER clang++ CACHE STRING "C++ compiler" FORCE)
-  string(APPEND CMAKE_CXX_FLAGS " -Xpreprocessor -fopenmp")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xpreprocessor -fopenmp")
 else()
-  string(APPEND CMAKE_CXX_FLAGS " -fopenmp")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} " -fopenmp")
 endif()
 
 

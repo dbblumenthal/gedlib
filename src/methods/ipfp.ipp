@@ -647,8 +647,6 @@ quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 		return 0.0;
 	}
 	double return_val{0.0};
-	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
-	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
 	if (row_1 < num_nodes_g_ and  col_1 >= num_nodes_h_ and col_1 != row_1 + num_nodes_h_) {
 		return_val += ipfp_->omega_;
 	}
@@ -662,6 +660,8 @@ quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 		return_val += ipfp_->omega_;
 	}
 	else if (row_1 < num_nodes_g_ and col_1 < num_nodes_h_ and row_2 < num_nodes_g_ and col_2 < num_nodes_h_) {
+		GEDGraph::EdgeID edge_g(g_->get_edge(row_1, row_2));
+		GEDGraph::EdgeID edge_h(h_->get_edge(col_1, col_2));
 		if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 		}
@@ -673,11 +673,13 @@ quadratic_cost_b_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 		}
 	}
 	else if (row_1 < num_nodes_g_ and row_2 < num_nodes_g_) {
+		GEDGraph::EdgeID edge_g(g_->get_edge(row_1, row_2));
 		if (edge_g != GEDGraph::dummy_edge()) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 		}
 	}
 	else if (col_1 < num_nodes_h_ and col_2 < num_nodes_h_) {
+		GEDGraph::EdgeID edge_h(h_->get_edge(col_1, col_2));
 		if (edge_h != GEDGraph::dummy_edge()) {
 			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 		}
@@ -694,8 +696,8 @@ quadratic_cost_c_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, s
 		return 0.0;
 	}
 	double return_val{0.0};
-	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
-	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
+	GEDGraph::EdgeID edge_g(g_->get_edge(row_1, row_2));
+	GEDGraph::EdgeID edge_h(h_->get_edge(col_1, col_2));
 	if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
 		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 	}
@@ -726,8 +728,8 @@ quadratic_cost_qap_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std
 		return 0.0;
 	}
 	double return_val{0.0};
-	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
-	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
+	GEDGraph::EdgeID edge_g(g_->get_edge(row_1, row_2));
+	GEDGraph::EdgeID edge_h(h_->get_edge(col_1, col_2));
 	if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
 		return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 	}
@@ -745,6 +747,7 @@ double
 IPFP<UserNodeLabel, UserEdgeLabel>::
 QAPInstance_ ::
 quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, std::size_t col_2) const {
+	//std::cout << "1\n"; // todo rm
 	if (row_1 == row_2 and col_1 == col_2) {
 		return 0.0;
 	}
@@ -755,9 +758,9 @@ quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, st
 		return 0.0;
 	}
 	double return_val{0.0};
-	GEDGraph::EdgeID edge_g{g_->get_edge(row_1, row_2)};
-	GEDGraph::EdgeID edge_h{h_->get_edge(col_1, col_2)};
 	if (row_1 < num_nodes_g_ and col_1 < num_nodes_h_ and row_2 < num_nodes_g_ and col_2 < num_nodes_h_) {
+		GEDGraph::EdgeID edge_g(g_->get_edge(row_1, row_2));
+		GEDGraph::EdgeID edge_h(h_->get_edge(col_1, col_2));
 		if (edge_g != GEDGraph::dummy_edge() and edge_h != GEDGraph::dummy_edge()) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), h_->get_edge_label(edge_h));
 		}
@@ -769,15 +772,18 @@ quadratic_cost_qape_(std::size_t row_1, std::size_t col_1, std::size_t row_2, st
 		}
 	}
 	else if (row_1 < num_nodes_g_ and row_2 < num_nodes_g_) {
+		GEDGraph::EdgeID edge_g(g_->get_edge(row_1, row_2));
 		if (edge_g != GEDGraph::dummy_edge()) {
 			return_val += ipfp_->ged_data_.edge_cost(g_->get_edge_label(edge_g), dummy_label());
 		}
 	}
 	else if (col_1 < num_nodes_h_ and col_2 < num_nodes_h_) {
+		GEDGraph::EdgeID edge_h(h_->get_edge(col_1, col_2));
 		if (edge_h != GEDGraph::dummy_edge()) {
 			return_val += ipfp_->ged_data_.edge_cost(dummy_label(), h_->get_edge_label(edge_h));
 		}
 	}
+	//std::cout << "2\n"; // todo rm
 	return return_val;
 }
 

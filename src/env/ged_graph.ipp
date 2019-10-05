@@ -95,7 +95,7 @@ GEDGraph ::
 setup_adjacency_matrix() {
 	detail::GedGraphAM tmp(num_nodes());
 	for (auto eitr = boost::edges(alist_); eitr.first != eitr.second; ++eitr.first) {
-		EdgeID e{*eitr.first};
+		EdgeID e(*eitr.first);
 		NodeID source {boost::source(e, alist_)};
 		NodeID target {boost::target(e, alist_)};
 
@@ -239,9 +239,9 @@ un_init() {
 GEDGraph::EdgeID
 GEDGraph::
 get_edge(NodeID source, NodeID target) const {
-	if (source >= num_nodes() or target >= num_nodes()) {
-		return dummy_edge();
-	}
+	//if (source >= num_nodes() or target >= num_nodes()) {
+	//	return dummy_edge();
+	//}
 	auto am_edge = boost::edge(source, target, amatrix_);
 	if (am_edge.second == false) {
 		return dummy_edge();
@@ -253,8 +253,8 @@ GEDGraph::EdgeID
 GEDGraph::
 safe_get_edge(NodeID source, NodeID target) const {
 	for (auto iedges = incident_edges(source); iedges.first != iedges.second; ++iedges.first) {
-		EdgeID e { *iedges.first };
-		NodeID n { this->head( e ) };
+		EdgeID e(*iedges.first);
+		NodeID n{this->head(e)};
 		if (n == target) return e;
 	}
 	return dummy_edge();
@@ -274,8 +274,8 @@ bool
 GEDGraph ::
 safe_is_edge(NodeID source, NodeID target) const {
 	for (auto iedges = incident_edges(source); iedges.first != iedges.second; ++iedges.first) {
-		EdgeID e { *iedges.first };
-		NodeID n { this->head( e ) };
+		EdgeID e(*iedges.first);
+		NodeID n{this->head(e)};
 		if (n == target) return true;
 	}
 	return false;

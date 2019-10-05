@@ -92,12 +92,12 @@ int main(int argc, char* argv[]) {
 	std::vector<std::string> ids{"0", "1", "2", "3", "4"};
 
 	// Varied estimator parameters.
-	std::vector<std::string> init_types{"MIN", "MAX", "MEAN", "RANDOM", "MEDOID"};
+	std::vector<std::string> init_types{"MAX", "MIN", "MEAN", "RANDOM", "MEDOID"};
 	std::vector<std::string> nums_inits{"1", "2", "4", "8", "16", "32"};
 
 	// Varied algorithm parameters.
-	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::IPFP};
-	std::vector<std::string> algo_options_suffixes{"", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
+	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE};
+	std::vector<std::string> algo_options_suffixes{" --initial-solutions 10 --ratio-runs-from-initial-solutions .5", "", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
 
 	// Generate the result file.
 	std::string result_filename("../output/");

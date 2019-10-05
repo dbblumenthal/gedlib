@@ -60,6 +60,7 @@ init_type_increase_order_("K-MEANS++"),
 max_itrs_increase_order_{10},
 print_to_stdout_{2},
 median_id_{undefined()},
+median_node_id_prefix_(),
 node_maps_from_median_(),
 sum_of_distances_{0},
 best_init_sum_of_distances_{std::numeric_limits<double>::infinity()},
@@ -246,8 +247,20 @@ void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_id) {
 
+	// Sanity checks.
 	if (graph_ids.empty()) {
 		throw Error("Empty vector of graph IDs, unable to compute median.");
+	}
+	bool all_graphs_empty{true};
+	for (auto graph_id : graph_ids) {
+		if (ged_env_->get_num_nodes(graph_id) > 0) {
+			median_node_id_prefix_ = ged_env_->get_graph(graph_id).original_node_ids.front();
+			all_graphs_empty = false;
+			break;
+		}
+	}
+	if (all_graphs_empty) {
+		throw Error("All graphs in the collection are empty.");
 	}
 
 	// Start timer and record start time.
@@ -1580,7 +1593,11 @@ add_node_to_median_(const std::map<GEDGraph::GraphID, std::size_t> & best_config
 	}
 	median.num_nodes++;
 	median.node_labels.emplace_back(best_label);
-	median.original_node_ids.emplace_back(median.original_node_ids.back() + median.original_node_ids.back());
+	UserNodeID new_node_id(median_node_id_prefix_);
+	for (const auto & original_node_id : median.original_node_ids) {
+		new_node_id += original_node_id;
+	}
+	median.original_node_ids.emplace_back(new_node_id);
 	median.adj_matrix.emplace_back(std::vector<std::size_t>(median.num_nodes, 0));
 	median.adj_lists.emplace_back(std::list<std::pair<std::size_t, UserEdgeLabel>>());
 

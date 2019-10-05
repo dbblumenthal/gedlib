@@ -236,6 +236,8 @@ private:
 
 	GEDGraph::GraphID median_id_;
 
+	UserNodeID median_node_id_prefix_;
+
 	std::map<GEDGraph::GraphID, NodeMap> node_maps_from_median_;
 
 	double sum_of_distances_;

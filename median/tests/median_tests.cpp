@@ -89,11 +89,11 @@ int main(int argc, char* argv[]) {
 
 	// Varied sub-collections.
 	std::vector<std::string> percents{"10", "20", "30", "40", "50", "60", "70", "80", "90", "100"};
-	std::vector<std::string> ids{"0", "1", "2", "3", "4"};
+	std::vector<std::string> ids{"4", "0", "1", "2", "3"};
 
 	// Varied estimator parameters.
-	std::vector<std::string> init_types{"MAX", "MIN", "MEAN", "RANDOM", "MEDOID"};
-	std::vector<std::string> nums_inits{"1", "2", "4", "8", "16", "32"};
+	std::vector<std::string> init_types{"RANDOM", "MAX", "MIN", "MEAN", "MEDOID"};
+	std::vector<std::string> nums_inits{"16", "1", "2", "4", "8", "32"};
 
 	// Varied algorithm parameters.
 	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE};

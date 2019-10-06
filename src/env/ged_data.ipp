@@ -91,7 +91,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 	switch (edit_costs) {
 	case Options::EditCosts::CHEM_1:
 		if (edit_cost_constants.size() == 4) {
-			edit_costs_ = new CHEM1<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2), edit_cost_constants.at(3));
+			edit_costs_ = new CHEM1<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2), edit_cost_constants.at(3)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new CHEM1<GXLLabel, GXLLabel>();
@@ -102,7 +102,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	case Options::EditCosts::CHEM_2:
 		if (edit_cost_constants.size() == 3) {
-			edit_costs_ = new CHEM2<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+			edit_costs_ = new CHEM2<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new CHEM2<GXLLabel, GXLLabel>();
@@ -121,7 +121,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	case Options::EditCosts::GREC_2:
 		if (edit_cost_constants.size() == 3) {
-			edit_costs_ = new GREC2<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+			edit_costs_ = new GREC2<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new GREC2<GXLLabel, GXLLabel>();
@@ -132,7 +132,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	case Options::EditCosts::PROTEIN:
 		if (edit_cost_constants.size() == 3) {
-			edit_costs_ = new Protein<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+			edit_costs_ = new Protein<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new Protein<GXLLabel, GXLLabel>();
@@ -143,7 +143,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	case Options::EditCosts::FINGERPRINT:
 		if (edit_cost_constants.size() == 3) {
-			edit_costs_ = new Fingerprint<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+			edit_costs_ = new Fingerprint<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new Fingerprint<GXLLabel, GXLLabel>();
@@ -154,7 +154,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	case Options::EditCosts::LETTER:
 		if (edit_cost_constants.size() == 3) {
-			edit_costs_ = new Letter<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2));
+			edit_costs_ = new Letter<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new Letter<GXLLabel, GXLLabel>();
@@ -165,7 +165,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	case Options::EditCosts::CMU:
 		if (edit_cost_constants.size() == 2) {
-			edit_costs_ = new CMU<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(2));
+			edit_costs_ = new CMU<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(2)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new CMU<GXLLabel, GXLLabel>();
@@ -176,7 +176,7 @@ set_edit_costs_(Options::EditCosts edit_costs, const std::vector<double> & edit_
 		break;
 	case Options::EditCosts::CONSTANT:
 		if (edit_cost_constants.size() == 6) {
-			edit_costs_ = new Constant<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2), edit_cost_constants.at(3), edit_cost_constants.at(4), edit_cost_constants.at(5));
+			edit_costs_ = new Constant<GXLLabel, GXLLabel>(edit_cost_constants.at(0), edit_cost_constants.at(1), edit_cost_constants.at(2), edit_cost_constants.at(3), edit_cost_constants.at(4), edit_cost_constants.at(5)); // @suppress("Symbol is not resolved")
 		}
 		else if (edit_cost_constants.size() == 0) {
 			edit_costs_ = new Constant<GXLLabel, GXLLabel>();

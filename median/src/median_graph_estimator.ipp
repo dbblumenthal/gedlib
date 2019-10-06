@@ -785,8 +785,8 @@ compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & 
 	double best_sum_of_distances{std::numeric_limits<double>::infinity()};
 	for (auto g_id : graph_ids) {
 		if (timer.expired()) {
-			break;
 			state_ = Options::AlgorithmState::CALLED;
+			break;
 		}
 		double sum_of_distances{0};
 		for (auto h_id : graph_ids) {

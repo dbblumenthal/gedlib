@@ -173,6 +173,12 @@ public:
 	std::size_t get_num_times_order_increased() const;
 
 	/*!
+	 * @brief Returns the number of converged descents.
+	 * @return Overall number of converged descents during the last call to run().
+	 */
+	std::size_t get_num_converged_descents() const;
+
+	/*!
 	 * @brief Returns pointer to the environment employed by the estimator.
 	 * @return Pointer to the environment employed by the estimator.
 	 */
@@ -258,6 +264,8 @@ private:
 
 	std::size_t num_increase_order_;
 
+	std::size_t num_converged_descents_;
+
 	Options::AlgorithmState state_;
 
 	void set_default_options_();
@@ -291,7 +299,7 @@ private:
 	void delete_node_from_median_(std::size_t id_deleted_node, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
 
 	bool increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & median);
-	
+
 	double compute_best_insertion_delta_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & graphs, 
 			std::map<GEDGraph::GraphID, std::size_t> & best_config, UserNodeLabel & best_label) const;
 

@@ -71,6 +71,7 @@ runtime_converged_(),
 itrs_(),
 num_decrease_order_{0},
 num_increase_order_{0},
+num_converged_descents_{0},
 state_{Options::AlgorithmState::TERMINATED} {
 	if (ged_env_ == nullptr) {
 		throw Error("The environment pointer passed to the constructor of ged::MedianGraphEstimator is null.");
@@ -285,6 +286,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 	itrs_ = std::vector<std::size_t>(medians.size(), 0);
 	num_decrease_order_ = 0;
 	num_increase_order_ = 0;
+	num_converged_descents_ = 0;
 
 	// Initialize the best median.
 	double best_sum_of_distances{std::numeric_limits<double>::infinity()};
@@ -295,6 +297,11 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 	// Run block gradient descent from all initial medians.
 	ged_env_->set_method(descent_method_, descent_options_);
 	for (std::size_t median_pos{0}; median_pos < medians.size(); median_pos++) {
+
+		// Terminate if the timer has expired and at least one SOD has been computed.
+		if (timer.expired() and (median_pos > 0)) {
+			break;
+		}
 
 		// Print information about current iteration.
 		if (print_to_stdout_ == 2) {
@@ -434,6 +441,11 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 			node_maps_from_best_median = node_maps_from_median_;
 			best_median = median;
 		}
+
+		// Update the number of converged descents.
+		if (converged) {
+			num_converged_descents_++;
+		}
 	}
 
 	// Store the best encountered median.
@@ -472,13 +484,19 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 		}
 		std::cout << "Number of initial medians: " << medians.size() << "\n";
 		std::size_t total_itr{0};
+		std::size_t num_started_descents{0};
 		for (auto itr : itrs_) {
 			total_itr += itr;
+			if (itr > 0) {
+				num_started_descents++;
+			}
 		}
 		std::cout << "Size of graph collection: " << graph_ids.size() << "\n";
-		std::cout << "Mean number of iterations: " << static_cast<double>(total_itr) / static_cast<double>(medians.size()) << "\n";
-		std::cout << "Mean number of times the order decreased: " << static_cast<double>(num_decrease_order_) / static_cast<double>(medians.size()) << "\n";
-		std::cout << "Mean number of times the order increased: " << static_cast<double>(num_increase_order_) / static_cast<double>(medians.size()) << "\n";
+		std::cout << "Number of started descents: " << num_started_descents << "\n";
+		std::cout << "Number of converged descents: " << num_converged_descents_ << "\n";
+		std::cout << "Overall number of iterations: " << total_itr << "\n";
+		std::cout << "Overall number of times the order decreased: " << num_decrease_order_<< "\n";
+		std::cout << "Overall number of times the order increased: " << num_increase_order_ << "\n";
 		std::cout << "===========================================================\n";
 	}
 }
@@ -646,6 +664,16 @@ get_num_times_order_increased() const {
 		throw Error("No median has been computed. Call run() before calling get_num_times_order_increased().");
 	}
 	return num_increase_order_;
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+std::size_t
+MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_num_converged_descents() const {
+	if (not median_available_()) {
+		throw Error("No median has been computed. Call run() before calling get_num_converged_descents().");
+	}
+	return num_converged_descents_;
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

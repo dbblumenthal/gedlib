@@ -44,7 +44,7 @@ namespace ged {
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--focal-graphs MEDIANS\|MEDOIDS</tt> | use medians or medoids as the focal graphs of the clusters | @p MEDIANS | n.a. |
  * | <tt>\--init-type CLUSTERS\|K-MEANS++</tt> | approach used for generating initial clusters | @p K-MEANS++ | if @p K-MEANS++, well distributed graphs are used as the first focal graphs |
- * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 50 | n.a. |
+ * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial clusterings | @p 10 | n.a. |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
  * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
  * | <tt>\--refine TRUE\|FALSE</tt> | improve node maps and sums of distances for converged clusters | @p TRUE | n.a. |

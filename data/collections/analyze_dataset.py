@@ -49,13 +49,14 @@ Python script that computes statistics of a given dataset.
 import xml.etree.ElementTree as ET
 import argparse
 import os.path
-import planarity
+#import planarity
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
 import numpy as np
 
 def is_planar(edge_list):
-	return planarity.is_planar(edge_list)
+	#return planarity.is_planar(edge_list)
+	return False
 
 def num_connected_components(adj_matrix):
 	graph = csr_matrix(adj_matrix)
@@ -98,15 +99,15 @@ def parse_graph(dir, gxl_file):
     adj_list = {node_id : [] for node_id in range(num_nodes)}
     adj_matrix = [[0 for col in range(num_nodes)] for row in range(num_nodes)]
     for edge in graph.findall("graph/edge"):
-		tail = str_to_id[edge.attrib["from"]]
-		head = str_to_id[edge.attrib["to"]]
-		if adj_matrix[tail][head] == 1:
-			continue
-		adj_matrix[tail][head] = 1
-		adj_matrix[head][tail] = 1
-		edge_list.append((tail,head))
-		adj_list[tail].append(head)
-		adj_list[head].append(tail)
+    	tail = str_to_id[edge.attrib["from"]]
+    	head = str_to_id[edge.attrib["to"]]
+    	if adj_matrix[tail][head] == 1:
+    		continue
+    	adj_matrix[tail][head] = 1
+    	adj_matrix[head][tail] = 1
+    	edge_list.append((tail,head))
+    	adj_list[tail].append(head)
+    	adj_list[head].append(tail)
     return edge_list, adj_list, adj_matrix, num_nodes, len(edge_list)
 
 # Parse the command line arguments.
@@ -118,7 +119,7 @@ parser.add_argument("--topology", help="compute topology avgerage number compone
 parser.add_argument("--distr", help="file to save distibution of number of nodes and edges")
 args = parser.parse_args()
 if not os.path.isdir(args.dir):
-        raise Exception("Invalid argument \"" + dir + "\": not a directory. Usage: python analyze_dataset.py <dataset> <dir> [--max-size <arg>]")
+	raise Exception("Invalid argument \"" + dir + "\": not a directory. Usage: python analyze_dataset.py <dataset> <dir> [--max-size <arg>]")
 
 # Parse the dataset file.
 dataset = ET.parse(args.dataset).getroot()

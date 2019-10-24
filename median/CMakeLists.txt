@@ -27,7 +27,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/median/bin)
 
 add_custom_target(median DEPENDS median_letter median_chem median_tests)
 
-add_custom_target(cluster DEPENDS cluster_letter)
+add_custom_target(cluster DEPENDS cluster_letter clustering_tests)
 
 add_custom_target(bst DEPENDS bst_init_letter bst_query_letter)
 
@@ -69,6 +69,14 @@ if(APPLE)
   add_custom_command(TARGET cluster_letter POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/cluster_letter)
   add_custom_command(TARGET cluster_letter POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/cluster_letter)
   add_custom_command(TARGET cluster_letter POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/cluster_letter)
+endif()
+
+add_executable(clustering_tests tests/clustering_tests.cpp)
+target_link_libraries(clustering_tests gxlgedlib)
+if(APPLE)
+  add_custom_command(TARGET clustering_tests POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/clustering_tests)
+  add_custom_command(TARGET clustering_tests POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/clustering_tests)
+  add_custom_command(TARGET clustering_tests POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/clustering_tests)
 endif()
 
 add_executable(bst_init_letter tests/bst_init_letter.cpp)

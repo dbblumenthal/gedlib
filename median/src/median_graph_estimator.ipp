@@ -520,10 +520,10 @@ improve_sum_of_distances_(const Timer & timer) {
 	// Improving the node maps.
 	for (auto & key_val : node_maps_from_median_) {
 		if (timer.expired()) {
-			break;
 			if (state_ == Options::AlgorithmState::TERMINATED) {
 				state_ = Options::AlgorithmState::CONVERGED;
 			}
+			break;
 		}
 		GEDGraph::GraphID graph_id{key_val.first};
 		NodeMap & node_map{key_val.second};

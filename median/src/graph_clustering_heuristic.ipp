@@ -41,7 +41,7 @@ refine_options_(""),
 focal_graphs_("K-MEDIANS"),
 init_type_("K-MEANS++"),
 use_real_randomness_{true},
-num_random_inits_{1},
+num_random_inits_{10},
 seed_{0},
 refine_{true},
 time_limit_in_sec_{0},
@@ -558,7 +558,7 @@ GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_default_options_() {
 	focal_graphs_ = "K-MEDIANS";
 	init_type_ = "K-MEANS++";
-	num_random_inits_ = 1;
+	num_random_inits_ = 10;
 	use_real_randomness_ = true;
 	seed_ = 0;
 	time_limit_in_sec_ = 0;

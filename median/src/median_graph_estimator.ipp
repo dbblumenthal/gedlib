@@ -48,6 +48,7 @@ edge_del_cost_{ged_env_->edge_del_cost(ged_env_->get_edge_label(1))},
 edge_ins_cost_{ged_env_->edge_ins_cost(ged_env_->get_edge_label(1))},
 init_type_("RANDOM"),
 num_random_inits_{10},
+desired_num_random_inits_{10},
 use_real_randomness_{true},
 seed_{0},
 refine_{true},
@@ -98,6 +99,7 @@ set_options(const std::string & options) {
 		else if (option.first == "random-inits") {
 			try {
 				num_random_inits_ = std::stoul(option.second);
+				desired_num_random_inits_ = num_random_inits_;
 			}
 			catch (...) {
 				throw Error(std::string("Invalid argument \"") + option.second + "\" for option random-inits. Usage: options = \"[--random-inits <convertible to int greater 0>]\"");
@@ -462,9 +464,10 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 		improve_sum_of_distances_(timer);
 	}
 
-	// Record end time and set runtime.
+	// Record end time, set runtime and reset the number of initial medians.
 	auto end = std::chrono::high_resolution_clock::now();
 	runtime_ = end - start;
+	num_random_inits_ = desired_num_random_inits_;
 
 	// Print global information.
 	if (print_to_stdout_ != 0) {
@@ -689,6 +692,7 @@ MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_default_options_() {
 	init_type_ = "RANDOM";
 	num_random_inits_ = 10;
+	desired_num_random_inits_ = 10;
 	use_real_randomness_ = true;
 	seed_ = 0;
 	refine_ = true;
@@ -849,9 +853,9 @@ sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::v
 		std::cout << "\rSampling initial medians: " << progress << std::flush;
 	}
 
-	// Sanity check.
+	// Set the number of initial medians to the size of the collection, if it exceeds this size (undone at the end of run()).
 	if (num_random_inits_ > graph_ids.size()) {
-		throw Error("The number of initial medians is selected to be greater than the size of the collection.");
+		num_random_inits_ = graph_ids.size();
 	}
 
 	// Set the seed of the random number generator.

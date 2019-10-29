@@ -218,6 +218,8 @@ private:
 
 	std::size_t num_random_inits_;
 
+	std::size_t desired_num_random_inits_;
+
 	bool use_real_randomness_;
 
 	std::size_t seed_;

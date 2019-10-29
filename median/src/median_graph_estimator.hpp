@@ -282,7 +282,7 @@ private:
 
 	void compute_mean_order_graph_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
 
-	void sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const;
+	void sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians);
 
 	bool termination_criterion_met_(bool converged, const Timer & timer, std::size_t itr, std::size_t itrs_without_update);
 

@@ -846,7 +846,7 @@ compute_medoid_(const std::vector<GEDGraph::GraphID> & graph_ids, const Timer & 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
-sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) const {
+sample_initial_medians_(const std::vector<GEDGraph::GraphID> & graph_ids, std::vector<ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel>> & initial_medians) {
 	// Print information about current iteration.
 	ged::ProgressBar progress(num_random_inits_);
 	if (print_to_stdout_ == 2) {

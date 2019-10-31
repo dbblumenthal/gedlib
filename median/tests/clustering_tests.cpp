@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
 
 		// Set up the clustering heuristic.
 		ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> median_estimator(&env, constant_node_costs(dataset));
-		median_estimator.set_options("--time-limit 600 --stdout 0 --init-type RANDOM --random-inits 8");
+		median_estimator.set_options("--time-limit 600 --stdout 0 --init-type RANDOM --random-inits 8 --refine FALSE");
 		ged::GraphClusteringHeuristic<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> clustering_heuristic(&env, &median_estimator);
 		clustering_heuristic.set_main_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
 

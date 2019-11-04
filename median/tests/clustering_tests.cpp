@@ -146,10 +146,10 @@ int main(int argc, char* argv[]) {
 		std::vector<std::string> methods{"RANDOM", "MEDIAN"};
 		for (const auto & method : methods) {
 			if (method == "RANDOM") {
-				clustering_heuristic.set_options("--refine FALSE --stdout 0 --max-itrs 0");
+				clustering_heuristic.set_options("--refine FALSE --stdout 2 --max-itrs 0");
 			}
 			else {
-				clustering_heuristic.set_options("--refine FALSE --stdout 0 --max-itrs 100");
+				clustering_heuristic.set_options("--refine FALSE --stdout 2 --max-itrs 10");
 			}
 			clustering_heuristic.run(graph_ids, focal_graph_ids);
 			result_file.open(result_filename.c_str(),std::ios_base::app);

@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
 	for (const auto & key_val : training_classes) {
 		std::vector<ged::GEDGraph::GraphID> focal_graph_ids;
 		for (std::size_t counter{0}; counter < 10; counter++) {
-			focal_graph_ids.emplace_back(env.add_graph(dataset + "_" + key_val.first + "_" + method + "_" + std::to_string(counter) + ".gxl", key_val.first));
+			focal_graph_ids.emplace_back(env.add_graph(dataset + "_" + key_val.first + "_" + std::to_string(counter) + ".gxl", key_val.first));
 			all_focal_graph_ids.emplace_back(focal_graph_ids.back());
 		}
 		env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);

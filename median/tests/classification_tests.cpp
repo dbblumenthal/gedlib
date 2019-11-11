@@ -167,12 +167,7 @@ int main(int argc, char* argv[]) {
 			all_focal_graph_ids.emplace_back(focal_graph_ids.back());
 		}
 		env.init(ged::Options::InitType::EAGER_WITHOUT_SHUFFLED_COPIES);
-		if (method == "RANDOM") {
-			clustering_heuristic.set_options("--refine FALSE --stdout 0 --max-itrs 0 --random-inits 1");
-		}
-		else {
-			clustering_heuristic.set_options("--refine FALSE --stdout 0 --max-itrs 10 --random-inits 1");
-		}
+		clustering_heuristic.set_options("--refine FALSE --stdout 0 --max-itrs 10 --random-inits 1");
 		clustering_heuristic.run(key_val.second, focal_graph_ids);
 		progress.increment();
 		std::cout << "\rRunning classification tests:" << progress << std::flush;

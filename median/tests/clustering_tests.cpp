@@ -76,7 +76,6 @@ std::string collection(const std::string & dataset, const std::string & id) {
 	if (dataset == "Mutagenicity") {
 		collection_file += "-Correct";
 	}
-
 	return collection_file + "-90-" + id + ".xml";
 }
 

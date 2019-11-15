@@ -29,7 +29,7 @@ add_custom_target(median DEPENDS median_letter median_chem median_tests)
 
 add_custom_target(cluster DEPENDS cluster_letter clustering_tests classification_tests)
 
-add_custom_target(bst DEPENDS bst_init_letter bst_query_letter)
+add_custom_target(bst DEPENDS bst_init_letter bst_query_letter indexing_tests)
 
 add_executable(median_letter tests/median_letter.cpp)
 target_link_libraries(median_letter gxlgedlib)
@@ -85,6 +85,14 @@ if(APPLE)
   add_custom_command(TARGET clustering_tests POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/clustering_tests)
   add_custom_command(TARGET clustering_tests POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/clustering_tests)
   add_custom_command(TARGET clustering_tests POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/clustering_tests)
+endif()
+
+add_executable(indexing_tests tests/indexing_tests.cpp)
+target_link_libraries(indexing_tests gxlgedlib)
+if(APPLE)
+  add_custom_command(TARGET indexing_tests POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/indexing_tests)
+  add_custom_command(TARGET indexing_tests POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/indexing_tests)
+  add_custom_command(TARGET indexing_tests POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/indexing_tests)
 endif()
 
 add_executable(bst_init_letter tests/bst_init_letter.cpp)

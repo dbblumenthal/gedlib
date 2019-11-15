@@ -142,8 +142,10 @@ def build_external_libraries():
 def determine_gurobi_version(gurobi_root):
 	if not os.path.isdir(gurobi_root):
 		raise Exception("Invalid argument \"" + gurobi_root + "\" for option gurobi: not a directory. Usage: python install.py [--gurobi <path-to-root-directory-of-Gurobi>] [...]")
-	gurobi_shared_lib = glob.glob(gurobi_root + "*/lib/libgurobi*.so")[0]
-	return gurobi_shared_lib[len(gurobi_shared_lib)-5:len(gurobi_shared_lib)-3]
+	return gurobi_root[gurobi_root.index("gurobi") + 6 : gurobi_root.index("gurobi") + 8]
+	gurobi_shared_lib = glob.glob(gurobi_root + "*/lib/libgurobi*.dylib")[0]
+	print(gurobi_shared_lib[len(gurobi_shared_lib)-8:len(gurobi_shared_lib)-6])
+	return gurobi_shared_lib[len(gurobi_shared_lib)-8:len(gurobi_shared_lib)-6]
 	
 
 def build_gedlib(args):

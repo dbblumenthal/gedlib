@@ -71,22 +71,14 @@ std::string dir(const std::string & dataset) {
 
 std::string train_collection(const std::string & dataset) {
 	std::string collection_file("../collections/");
-	collection_file += dataset;
-	if (dataset == "Mutagenicity") {
-		collection_file += "-Correct";
-	}
-	//return collection_file + "-90-0.xml";
-	return collection_file + "_150.xml";
+	collection_file += dataset + "-train.xml";
+	return collection_file;
 }
 
 std::string test_collection(const std::string & dataset) {
 	std::string collection_file("../collections/");
-	collection_file += dataset;
-	if (dataset == "Mutagenicity") {
-		collection_file += "-Correct";
-	}
-	//return collection_file + "-90-0-test.xml";
-	return collection_file + "_60.xml";
+	collection_file += dataset + "-test.xml";
+	return collection_file;
 }
 
 
@@ -150,7 +142,7 @@ int main(int argc, char* argv[]) {
 	graph_bst.set_options("--stdout 1");
 	graph_bst.init(train_graph_ids, focal_graph_ids);
 	graph_bst.save("../data/indexing/" + dataset + "_BST.ini", "../data/indexing"); // Save the tree, just in case something goes wrong.
-	graph_bst.set_lower_bound_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS);
+	graph_bst.set_lower_bound_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS, "--relax TRUE --project-to-node-map FALSE");
 	graph_bst.set_upper_bound_method(ged::Options::GEDMethod::IPFP);
 
 	// Run the queries.
@@ -167,7 +159,7 @@ int main(int argc, char* argv[]) {
 			std::vector<ged::GEDGraph::GraphID> verified_graphs;
 			std::vector<ged::GEDGraph::GraphID> undecided_graphs;
 			for (ged::GEDGraph::GraphID data_id : train_graph_ids) {
-				env.set_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS);
+				env.set_method(ged::Options::GEDMethod::BLP_NO_EDGE_LABELS, "--relax TRUE --project-to-node-map FALSE");
 				env.run_method(query_id, data_id);
 				if (env.get_lower_bound(query_id, data_id) > threshold) {
 					filtered_graphs.emplace_back(data_id);
@@ -181,6 +173,7 @@ int main(int argc, char* argv[]) {
 				else {
 					undecided_graphs.emplace_back(data_id);
 				}
+				std::cout << "\rRunning linear scans:" << progress << std::flush;
 			}
 			ged::Seconds runtime(std::chrono::high_resolution_clock::now() - start);
 			mean_scan_time += runtime.count();

@@ -139,14 +139,18 @@ def build_external_libraries():
 		f = open("ext/.INSTALLED", "w")
 		f.close()
 		
-def determine_gurobi_version(gurobi_root):
+def determine_gurobi_dylib(gurobi_root):
 	if not os.path.isdir(gurobi_root):
 		raise Exception("Invalid argument \"" + gurobi_root + "\" for option gurobi: not a directory. Usage: python install.py [--gurobi <path-to-root-directory-of-Gurobi>] [...]")
-	return gurobi_root[gurobi_root.index("gurobi") + 6 : gurobi_root.index("gurobi") + 8]
-	gurobi_shared_lib = glob.glob(gurobi_root + "*/lib/libgurobi*.dylib")[0]
-	print(gurobi_shared_lib[len(gurobi_shared_lib)-8:len(gurobi_shared_lib)-6])
-	return gurobi_shared_lib[len(gurobi_shared_lib)-8:len(gurobi_shared_lib)-6]
-	
+	return "gurobi" + gurobi_root[gurobi_root.index("gurobi") + 6 : gurobi_root.index("gurobi") + 8]
+
+def determine_gurobi_statlib(gurobi_root):
+	statlib = "gurobi_c++"
+	if platform.system() == "Linux":
+		info = {item.split(":\t")[0] : item.split(":\t")[1] for item in subprocess.check_output("lsb_release -a", shell=True).decode("utf-8").split("\n")[:-1]}
+		if info["Distributor ID"] == "Ubuntu" and (info["Release"] == "16.04" or info["Release"] == "18.04"):
+			statlib = "gurobi_g++5.2"
+	return statlib	
 
 def build_gedlib(args):
 	identifier = "gxl"
@@ -176,7 +180,7 @@ def build_gedlib(args):
 		else:
 			commands = commands + "Release"
 		if args.gurobi:
-			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_VERSION=" + determine_gurobi_version(args.gurobi)
+			commands = commands + " -DGUROBI_ROOT=" + args.gurobi + " -DGUROBI_DYLIB=" + determine_gurobi_dylib(args.gurobi) + " -DGUROBI_STATLIB=" + determine_gurobi_statlib(args.gurobi)
 		if platform.system() == "Darwin":
 			commands = commands + " -DOMP_HOME=" + check_output("brew --prefix", shell=True).decode("utf-8")
 		call(commands, shell=True)

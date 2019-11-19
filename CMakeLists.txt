@@ -79,7 +79,7 @@ endif()
 
 if(GUROBI_ROOT)
   add_definitions(-DGUROBI)
-  set(GUROBI_SHARED_LIB gurobi${GUROBI_VERSION})
+#  set(GUROBI_SHARED_LIB gurobi${GUROBI_VERSION})
   if(APPLE)
     set(GUROBI_HOME ${GUROBI_ROOT}/mac64)
   else()

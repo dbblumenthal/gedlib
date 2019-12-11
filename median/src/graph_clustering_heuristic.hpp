@@ -166,7 +166,7 @@ public:
 	/*!
 	 * @brief Computes the adjusted Rand index between the computed clustering and a ground truth clustering.
 	 * @param[in] ground_truth_clustering The ground truth clustering.
-	 * @return Adjusted Rand index between the two clusterings, i.e., a score between 0 and 1 that equals 1 just in case the two clusterings are identical.
+	 * @return Adjusted Rand index between the two clusterings, i.e., a score between -1 and 1 that equals 1 just in case the two clusterings are identical.
 	 */
 	double get_adjusted_rand_index(const std::vector<std::vector<GEDGraph::GraphID>> & ground_truth_clustering) const;
 
@@ -175,6 +175,14 @@ public:
 	 * @return Gini coefficient of the computed clustering, i.e., a score between 0 and 1 that equals 0 just in case the clustering is completely balanced and 1 just in case one cluster contains all data graphs.
 	 */
 	double get_gini_coefficient() const;
+
+	/*!
+	 * @brief Computes the mean silhouette coefficient of all clustered graphs.
+	 * @return The mean silhouette score of all clustered graphs.
+	 * The silhouette a of a clustered graph is a score between -1 and 1 that is close to 1 if the mean distance from the graph to the other graphs contained in its own cluster is much smaller than the mean distance
+	 * to the graphs in the closest other cluster.
+	 */
+	double get_silhouette_score() const;
 
 	/*!
 	 * @brief Returns pointer to the environment employed by the clustering heuristic.

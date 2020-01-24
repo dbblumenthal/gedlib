@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 	// Compute the lower and upper bounds for GED.
 	ged::DMatrix lower_bounds(env.num_graphs(), env.num_graphs(), 0.0);
 	ged::DMatrix upper_bounds(env.num_graphs(), env.num_graphs(), 0.0);
-	ged::ProgressBar progress(env.num_graphs());
+	ged::ProgressBar progress((env.num_graphs() * (env.num_graphs() - 1)) / 2);
 	std::cout << "\rComputing patient embeddings: " << progress << std::flush;
 	for (std::size_t g_id{0}; g_id < env.num_graphs(); g_id++) {
 		for (std::size_t h_id{g_id + 1}; h_id < env.num_graphs(); h_id++) {
@@ -58,9 +58,9 @@ int main(int argc, char* argv[]) {
 			lower_bounds(h_id, g_id) = env.get_lower_bound(g_id, h_id);
 			upper_bounds(g_id, h_id) = env.get_upper_bound(g_id, h_id);
 			upper_bounds(h_id, g_id) = env.get_upper_bound(g_id, h_id);
+			progress.increment();
+			std::cout << "\rComputing patient embeddings: " << progress << std::flush;
 		}
-		progress.increment();
-		std::cout << "\rComputing patient embeddings: " << progress << std::flush;
 	}
 	std::cout << "\n";
 

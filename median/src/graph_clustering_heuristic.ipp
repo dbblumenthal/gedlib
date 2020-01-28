@@ -546,6 +546,56 @@ get_gini_coefficient() const {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
+double
+GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
+get_silhouette_score() const {
+    if (refine_) {
+        ged_env_->set_method(refine_method_, refine_options_);
+    }
+    else if (focal_graphs_ == "K-MEDIANS") {
+        ged_env_->set_method(main_method_, main_options_);
+    }
+    double score{0};
+    for (const auto & key_val : assigned_focal_graph_ids_) {
+        GEDGraph::GraphID g_id{key_val.first};
+        GEDGraph::GraphID assigned_focal_graph_id{key_val.second};
+        std::map<GEDGraph::GraphID, double> mean_cluster_dists;
+        std::map<GEDGraph::GraphID, std::size_t> cluster_sizes;
+        for (const auto & key_val_2 : cluster_radii_) {
+            mean_cluster_dists.emplace(key_val_2.first, 0);
+            cluster_sizes.emplace(key_val_2.first, 0);
+        }
+        for (const auto & key_val_2 : assigned_focal_graph_ids_) {
+            GEDGraph::GraphID h_id{key_val_2.first};
+            GEDGraph::GraphID focal_graph_id{key_val_2.second};
+            if (g_id == h_id) {
+                continue;
+            }
+            cluster_sizes[focal_graph_id]++;
+            ged_env_->run_method(g_id, h_id);
+            mean_cluster_dists[focal_graph_id] += ged_env_->get_upper_bound(g_id, h_id);
+        }
+        if (cluster_sizes.at(assigned_focal_graph_id) == 0) {
+            continue;
+        }
+        double a{0};
+        double b{std::numeric_limits<double>::infinity()};
+        for (auto & key_val_2 : mean_cluster_dists) {
+            GEDGraph::GraphID focal_graph_id{key_val_2.first};
+            key_val_2.second /= static_cast<double>(cluster_sizes.at(focal_graph_id));
+            if (focal_graph_id == assigned_focal_graph_id) {
+                a = key_val_2.second;
+            }
+            else if (key_val_2.second < b) {
+                b = key_val_2.second;
+            }
+        }
+        score += (b - a) / std::max(b, a);
+    }
+    return score / static_cast<double>(assigned_focal_graph_ids_.size());
+}
+
+template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel> *
 GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_ged_env() {

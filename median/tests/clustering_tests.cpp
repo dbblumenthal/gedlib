@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
 	std::string result_filename("../output/");
 	result_filename += dataset + "_CLUSTERING_RESULTS.csv";
 	std::ofstream result_file(result_filename.c_str());
-	result_file << "id,method,ari,gini,sod,time\n";
+	result_file << "id,method,ari,gini,sil,sod,time\n";
 	result_file.close();
 
 	ged::ProgressBar progress(ids.size() * 2);
@@ -155,6 +155,7 @@ int main(int argc, char* argv[]) {
 			result_file << id << "," << method << ",";
 			result_file << clustering_heuristic.get_adjusted_rand_index(ground_truth_clustering) << ",";
 			result_file << clustering_heuristic.get_gini_coefficient() << ",";
+			result_file << clustering_heuristic.get_silhouette_score() << ",";
 			result_file << clustering_heuristic.get_sum_of_distances() << ",";
 			result_file << clustering_heuristic.get_runtime() << "\n";
 			result_file.close();

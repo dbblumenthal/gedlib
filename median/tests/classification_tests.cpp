@@ -73,20 +73,12 @@ std::string train_collection(const std::string & dataset) {
 	std::string collection_file("../collections/");
 	collection_file += dataset + "-train.xml";
 	return collection_file;
-	//if (dataset == "Mutagenicity") {
-	//	collection_file += "-Correct";
-	//}
-	//return collection_file + "-90-0.xml";
 }
 
 std::string test_collection(const std::string & dataset) {
 	std::string collection_file("../collections/");
 	collection_file += dataset + "-test.xml";
 	return collection_file;
-	//if (dataset == "Mutagenicity") {
-	//	collection_file += "-Correct";
-	//}
-	//return collection_file + "-90-0-test.xml";
 }
 
 

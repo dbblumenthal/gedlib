@@ -22,14 +22,22 @@
 
 /*!
  * @file  compute_ibd_embeddings.cpp
- * @brief 
+ * @brief Computes GED embeddings of IBD graphs.
  */
 
 #define GXL_GEDLIB_SHARED
 #include "../../../src/env/ged_env.hpp"
 #include "ibd_costs.hpp"
+#include "CLI11.hpp"
 
 int main(int argc, char* argv[]) {
+
+	// Parse command line argument.
+	CLI::App app;
+	ged::Options::GEDMethod method{ged::Options::GEDMethod::BRANCH};
+	std::map<std::string, ged::Options::GEDMethod> map{{"BRANCH", ged::Options::GEDMethod::BRANCH}, {"BRANCH_FAST", ged::Options::GEDMethod::BRANCH_FAST}};
+	app.add_option("-m,--method", method, "Employed GED method.")->transform(CLI::CheckedTransformer(map, CLI::ignore_case));
+	CLI11_PARSE(app, argc, argv);
 
 	// Load the graphs and initialize the environment.
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
@@ -43,7 +51,7 @@ int main(int argc, char* argv[]) {
 	env.init(ged::Options::InitType::LAZY_WITHOUT_SHUFFLED_COPIES);
 
 	// Set and initialize the GED method.
-	env.set_method(ged::Options::GEDMethod::BRANCH, "--threads 10");
+	env.set_method(method, "--threads 10");
 	env.init_method();
 
 	// Compute the lower and upper bounds for GED.

@@ -1,23 +1,23 @@
-/*******************************************************************************
- *                                                                             *
- *   Copyright (C) 2019 by David B. Blumenthal                                 *
- *                                                                             *
- *   This file is part of GenEpiSeeker.                                        *
- *                                                                             *
- *   GenEpiSeeker is free software: you can redistribute it and/or modify it   *
- *   under the terms of the GNU General Public License as published by         *
- *   the Free Software Foundation, either version 3 of the License, or         *
- *   (at your option) any later version.                                       *
- *                                                                             *
- *   GenEpiSeeker is distributed in the hope that it will be useful,           *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of            *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              *
- *   GNU General Public License for more details.                              *
- *                                                                             *
- *   You should have received a copy of the GNU General Public License         *
- *   along with GenEpiSeeker. If not, see <http://www.gnu.org/licenses/>.      *
- *                                                                             *
- ******************************************************************************/
+/***************************************************************************
+ *                                                                          *
+ *   Copyright (C) 2020 by David B. Blumenthal                              *
+ *                                                                          *
+ *   This file is part of GEDLIB.                                           *
+ *                                                                          *
+ *   GEDLIB is free software: you can redistribute it and/or modify it      *
+ *   under the terms of the GNU Lesser General Public License as published  *
+ *   by the Free Software Foundation, either version 3 of the License, or   *
+ *   (at your option) any later version.                                    *
+ *                                                                          *
+ *   GEDLIB is distributed in the hope that it will be useful,              *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of         *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           *
+ *   GNU Lesser General Public License for more details.                    *
+ *                                                                          *
+ *   You should have received a copy of the GNU Lesser General Public       *
+ *   License along with GEDLIB. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                          *
+ ***************************************************************************/
 
 
 /*!
@@ -28,8 +28,16 @@
 #define GXL_GEDLIB_SHARED
 #include "../../../median/src/median_graph_estimator.hpp"
 #include "ibd_costs.hpp"
+#include "CLI11.hpp"
 
 int main(int argc, char* argv[]) {
+
+	// Parse command line argument.
+	CLI::App app;
+	ged::Options::GEDMethod method{ged::Options::GEDMethod::BRANCH};
+	std::map<std::string, ged::Options::GEDMethod> map{{"BRANCH", ged::Options::GEDMethod::BRANCH}, {"BRANCH_FAST", ged::Options::GEDMethod::BRANCH_FAST}};
+	app.add_option("-m,--method", method, "Employed GED method.")->transform(CLI::CheckedTransformer(map, CLI::ignore_case));
+	CLI11_PARSE(app, argc, argv);
 
 	// Load the graphs and initialize the environment.
 	std::cout << "Initializing the environment and the estimator ...\n";
@@ -46,7 +54,7 @@ int main(int argc, char* argv[]) {
 	env.init(ged::Options::InitType::LAZY_WITHOUT_SHUFFLED_COPIES);
 	ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> mge(&env, false);
 	mge.set_options("--init-type RANDOM --random-inits 8 --refine FALSE");
-	mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 10");
+	mge.set_descent_method(method, "--threads 10");
 
 	// Construct the folds for cross-validation.
 	std::cout << "Constructing folds for cross-validation ...\n";
@@ -102,7 +110,7 @@ int main(int argc, char* argv[]) {
 		std::size_t false_positive{0};
 		std::size_t true_negative{0};
 		std::size_t false_negative{0};
-		env.set_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 10");
+		env.set_method(method, "--threads 10");
 		for (ged::GEDGraph::GraphID graph_id : test_ids) {
 			env.run_method(control_median_id, graph_id);
 			env.run_method(case_median_id, graph_id);

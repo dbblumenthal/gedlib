@@ -65,6 +65,10 @@ public:
 
 	virtual UserEdgeLabel median_edge_label(const std::vector<UserEdgeLabel> & edge_labels) const final;
 
+	void set_alpha(double alpha);
+
+	void set_ins_del_factor(double ins_del_factor);
+
 private:
 
 	DMatrix node_rel_costs_;

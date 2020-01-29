@@ -54,6 +54,9 @@ void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_edit_costs(Options::EditCosts edit_costs, std::vector<double> edit_cost_constants) {
 	ged_data_.set_edit_costs_(edit_costs, edit_cost_constants);
+	if (ged_data_.eager_init_()) {
+		initialized_ = false;
+	}
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
@@ -61,6 +64,9 @@ void
 GEDEnv<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_edit_costs(EditCosts<UserNodeLabel, UserEdgeLabel> * edit_costs) {
 	ged_data_.set_edit_costs_(edit_costs);
+	if (ged_data_.eager_init_()) {
+		initialized_ = false;
+	}
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>

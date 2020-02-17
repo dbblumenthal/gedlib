@@ -40,8 +40,12 @@ bool is_synth_mol_dataset(const std::string & dataset) {
 	return ((dataset == "S-MOL_NL01") or (dataset == "S-MOL_NL04") or (dataset == "S-MOL_NL07") or (dataset == "S-MOL_NL10"));
 }
 
+bool is_synth_aids_dataset(const std::string & dataset) {
+	return ((dataset == "S-AIDS_NL01") or (dataset == "S-AIDS_NL04") or (dataset == "S-AIDS_NL07") or (dataset == "S-AIDS_NL10") or (dataset == "S-AIDS_NL13") or (dataset == "S-AIDS_NL16") or (dataset == "S-AIDS_NL19"));
+}
+
 bool is_chemical_dataset(const std::string & dataset) {
-	return (is_synth_mol_dataset(dataset) or (dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah") );
+	return (is_synth_mol_dataset(dataset) or is_synth_aids_dataset(dataset) or (dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah") );
 }
 
 bool is_letter_dataset(const std::string & dataset) {
@@ -80,6 +84,27 @@ std::string graph_dir(const std::string & dataset) {
 	else if (dataset == "S-MOL_NL10") {
 		return (root_dir + "S-MOL/NL10/");
 	}
+	else if (dataset == "S-AIDS_NL01") {
+		return (root_dir + "S-AIDS/NL01/");
+	}
+	else if (dataset == "S-AIDS_NL04") {
+		return (root_dir + "S-AIDS/NL04/");
+	}
+	else if (dataset == "S-AIDS_NL07") {
+		return (root_dir + "S-AIDS/NL07/");
+	}
+	else if (dataset == "S-AIDS_NL10") {
+		return (root_dir + "S-AIDS/NL10/");
+	}
+	else if (dataset == "S-AIDS_NL13") {
+		return (root_dir + "S-AIDS/NL13/");
+	}
+	else if (dataset == "S-AIDS_NL16") {
+		return (root_dir + "S-AIDS/NL16/");
+	}
+	else if (dataset == "S-AIDS_NL19") {
+		return (root_dir + "S-AIDS/NL19/");
+	}
 	else if (dataset == "CMU-GED") {
 		return (root_dir + dataset + "/CMU/");
 	}
@@ -101,6 +126,9 @@ std::string train_collection(const std::string & dataset) {
 	if (is_synth_mol_dataset(dataset)) {
 		return (root_dir + "S-MOL_50.xml");
 	}
+	if (is_synth_aids_dataset(dataset)) {
+		return (root_dir + "AIDS_50.xml");
+	}
 	return root_dir + dataset + "_50.xml";
 }
 
@@ -113,6 +141,9 @@ std::string test_collection(const std::string & dataset) {
 	if (is_synth_mol_dataset(dataset)) {
 		return (root_dir + "S-MOL_100.xml");
 	}
+	if (is_synth_aids_dataset(dataset)) {
+		return (root_dir + "AIDS_100.xml");
+	}
 	return root_dir + dataset + "_100.xml";
 }
 
@@ -121,7 +152,7 @@ std::string config_prefix(const std::string & dataset) {
 	return std::string("../output/" + dataset + "_");
 }
 
-std::string init_options(const std::string & dataset, const std::string & config_suffix, const std::string & data_suffix = "", bool save_train = false, bool load_train = false, std::size_t threads = 8) {
+std::string init_options(const std::string & dataset, const std::string & config_suffix, const std::string & data_suffix = "", bool save_train = false, bool load_train = false, std::size_t threads = 10) {
 	check_dataset(dataset);
 	std::string options("--threads ");
 	options += std::to_string(threads) + " --save ../output/";
@@ -140,9 +171,6 @@ std::string init_options(const std::string & dataset, const std::string & config
 
 std::string ground_truth_option(const std::string & dataset) {
 	check_dataset(dataset);
-	//if (is_letter_dataset(dataset)) {
-	//	return std::string(" --ground-truth-method EXACT");
-	//}
 	return std::string(" --ground-truth-method IPFP");
 }
 
@@ -191,7 +219,7 @@ std::unordered_set<std::string> irrelevant_node_attributes(const std::string & d
 	check_dataset(dataset);
 	std::unordered_set<std::string> irrelevant_attributes;
 	if ((dataset == "AIDS")) {
-		irrelevant_attributes.insert({"x", "y", "symbol"});
+		irrelevant_attributes.insert({"x", "y", "symbol", "charge"});
 	}
 	else if (dataset == "Protein") {
 		irrelevant_attributes.insert("aaLength");

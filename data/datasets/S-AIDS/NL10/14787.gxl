@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
+<gxl>
+<graph id="14787.gxl" edgeids="false" edgemode="undirected">
+<node id="_0">
+<attr name="chem"><int>38</int></attr>
+</node>
+<node id="_1">
+<attr name="chem"><int>38</int></attr>
+</node>
+<node id="_2">
+<attr name="chem"><int>29</int></attr>
+</node>
+<node id="_3">
+<attr name="chem"><int>7</int></attr>
+</node>
+<node id="_4">
+<attr name="chem"><int>23</int></attr>
+</node>
+<node id="_5">
+<attr name="chem"><int>29</int></attr>
+</node>
+<edge from="_1" to="_2">
+<attr name="valence"><int>2</int></attr>
+</edge>
+<edge from="_1" to="_3">
+<attr name="valence"><int>2</int></attr>
+</edge>
+</graph>
+</gxl>

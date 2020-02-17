@@ -21,7 +21,7 @@
 
 # Set executable path.
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/pr2018/bin)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/tkde2019/bin)
 
 # Add targets.
 

@@ -25,6 +25,20 @@
 #include "../../../src/env/ged_env.hpp"
 #include<string>
 
+TEST_CASE("determining number of AIDS node labels") {
+	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
+	std::unordered_set<std::string> irrelevant_attributes{"x", "y", "symbol", "charge"};
+	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/AIDS/data/", "../collections/AIDS.xml", ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::LABELED, irrelevant_attributes));
+	env.set_edit_costs(ged::Options::EditCosts::CHEM_2);
+	std::size_t num_node_labels{env.num_node_labels()};
+
+	std::cout << "number of AIDS node labels: " << num_node_labels << "\n[";
+	for (std::size_t label_id{1}; label_id <= num_node_labels; label_id++) {
+		std::cout << env.get_node_label(label_id)["chem"] << ",";
+	}
+	std::cout << "]\n";
+}
+
 TEST_CASE("testing on Letter graphs") {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 	std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs("../../../data/datasets/Mutagenicity/data/", "../collections/MUTA_10.xml"));

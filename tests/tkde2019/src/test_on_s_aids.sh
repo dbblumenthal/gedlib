@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=BOOST_ME
-#SBATCH --output=../bin/BOOST_ME.txt
+#SBATCH --job-name=S-AIDS
+#SBATCH --output=../bin/S-AIDS.txt
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
 #SBATCH --cpus-per-task=8

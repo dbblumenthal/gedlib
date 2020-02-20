@@ -44,8 +44,12 @@ bool is_synth_aids_dataset(const std::string & dataset) {
 	return ((dataset == "S-AIDS_NL01") or (dataset == "S-AIDS_NL04") or (dataset == "S-AIDS_NL07") or (dataset == "S-AIDS_NL10") or (dataset == "S-AIDS_NL13") or (dataset == "S-AIDS_NL16") or (dataset == "S-AIDS_NL19"));
 }
 
+bool is_synth_mao_dataset(const std::string & dataset) {
+	return ((dataset == "S-mao_NL03") or (dataset == "S-mao_NL05") or (dataset == "S-mao_NL07") or (dataset == "S-mao_NL09"));
+}
+
 bool is_chemical_dataset(const std::string & dataset) {
-	return (is_synth_mol_dataset(dataset) or is_synth_aids_dataset(dataset) or (dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah") );
+	return (is_synth_mao_dataset(dataset) or is_synth_mol_dataset(dataset) or is_synth_aids_dataset(dataset) or (dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah") );
 }
 
 bool is_letter_dataset(const std::string & dataset) {
@@ -83,6 +87,18 @@ std::string graph_dir(const std::string & dataset) {
 	}
 	else if (dataset == "S-MOL_NL10") {
 		return (root_dir + "S-MOL/NL10/");
+	}
+	else if (dataset == "S-mao_NL03") {
+		return (root_dir + "S-mao/NL03/");
+	}
+	else if (dataset == "S-mao_NL05") {
+		return (root_dir + "S-mao/NL05/");
+	}
+	else if (dataset == "S-mao_NL07") {
+		return (root_dir + "S-mao/NL07/");
+	}
+	else if (dataset == "S-mao_NL09") {
+		return (root_dir + "S-mao/NL09/");
 	}
 	else if (dataset == "S-AIDS_NL01") {
 		return (root_dir + "S-AIDS/NL01/");
@@ -129,6 +145,9 @@ std::string train_collection(const std::string & dataset) {
 	if (is_synth_aids_dataset(dataset)) {
 		return (root_dir + "AIDS_50.xml");
 	}
+	if (is_synth_mao_dataset(dataset)) {
+		return (root_dir + "mao_50.xml");
+	}
 	return root_dir + dataset + "_50.xml";
 }
 
@@ -143,6 +162,9 @@ std::string test_collection(const std::string & dataset) {
 	}
 	if (is_synth_aids_dataset(dataset)) {
 		return (root_dir + "AIDS_100.xml");
+	}
+	if (is_synth_mao_dataset(dataset)) {
+		return (root_dir + "mao_100.xml");
 	}
 	return root_dir + dataset + "_100.xml";
 }

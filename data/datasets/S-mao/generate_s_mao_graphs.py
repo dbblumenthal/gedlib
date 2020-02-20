@@ -50,9 +50,6 @@ class Graph:
         self.filename = filename
         self.nodes = []
         self.edges = []
-        self.node_alphabet = []
-        self.num_node_labels = 0
-        self.node_label_ids = {}
         
         # Parse the nodes.
         node_id = 0
@@ -68,7 +65,6 @@ class Graph:
             if node_label == "":
                 raise Exception("node " + str(node_id) + " does not have attribute chem.")
             self.nodes.append((node_id, node_label))
-            self.node_alphabet.append(node_label)
             node_id += 1
         
         # Parse the edges.
@@ -82,14 +78,10 @@ class Graph:
             adj_matrix[head][tail] = 1
             self.edges.append((tail, head, edge.find("attr/int").text))
         
-    def shrink_node_label_alphabet(self):
-        self.num_node_labels -= 1
-        if self.num_node_labels > 0:
-            for node in range(len(self.nodes)):
-                label = self.nodes[node][1]
-                if self.node_label_ids[label] >= self.num_node_labels:
-                    label_id = random.randint(0, self.num_node_labels - 1)
-                    self.nodes[node] = (self.nodes[node][0], self.node_alphabet[label_id])
+        
+    def generate_node_labels(self, num_node_labels):
+        for node in range(len(self.nodes)):
+            self.nodes[node] = (self.nodes[node][0], random.randint(1, num_node_labels))
             
     def to_gxl(self, directory):
         gxl_file_name = os.path.join(directory, self.filename)
@@ -111,24 +103,11 @@ class Graph:
         gxl_file.close()
         
 
-collection = ET.parse("../../collections/S-AIDS.xml").getroot()
-graphs = [Graph("../AIDS/data/", entry.attrib["file"]) for entry in collection]
-node_alphabet = []
-for graph in graphs:
-    node_alphabet += graph.node_alphabet
-node_alphabet = [label for label in set(node_alphabet)]
-node_alphabet.sort()
-random.shuffle(node_alphabet)
-num_node_labels = len(node_alphabet)
-node_label_ids = {node_alphabet[i] : i for i in range(num_node_labels)}
-for graph in graphs:
-    graph.node_alphabet = node_alphabet
-    graph.node_label_ids = node_label_ids
-    graph.num_node_labels = num_node_labels
-while num_node_labels > 0:
-    dir = "NL" + str(graphs[0].num_node_labels)
+collection = ET.parse("../../collections/mao.xml").getroot()
+graphs = [Graph("../mao/", entry.attrib["file"]) for entry in collection]
+for size in [3,5,7,9]:
+    dir = "NL0{}".format(size)
     subprocess.call("mkdir -p " + dir, shell=True)
     for graph in graphs:
         graph.to_gxl(dir)
-        graph.shrink_node_label_alphabet()
-    num_node_labels -= 1
+        graph.generate_node_labels(size + 2)

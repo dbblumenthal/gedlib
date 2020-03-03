@@ -44,10 +44,10 @@ public:
 	/*!
 	 * @brief Constructor.
 	 * @param[in] distance_matrix Path to distance matrix for node relabeling costs.
-	 * @param[in] ins_del_factor Importance of insertions and deletions w.r.t. importance of substitutions.
-	 * @param[in] alpha Importance of node edit operations vs. importance of edge edit operations.
+	 * @param[in] alpha Controls importance of node edit operations vs. importance of edge edit operations.
+	 * @param[in] feature_name Name of the node features.
 	 */
-	IBDCosts(const std::string & distance_matrix, double ins_del_factor = 1, double alpha = 0.5);
+	IBDCosts(const std::string & distance_matrix, double alpha = 0.5, const std::string & feature_name = "OTU");
 
 	virtual double node_ins_cost_fun(const UserNodeLabel & node_label) const final;
 
@@ -67,23 +67,18 @@ public:
 
 	void set_alpha(double alpha);
 
-	void set_ins_del_factor(double ins_del_factor);
-
 private:
 
 	DMatrix node_rel_costs_;
 
-	double max_node_rel_cost_;
-
-	std::vector<std::size_t> otu_to_index_;
-
-	std::vector<std::size_t> index_to_otu_;
-
-	double max_edge_rel_cost_;
+	string feature_name_;
 
 	double alpha_;
 
-	double ins_del_factor_;
+	std::vector<std::size_t> feature_id_to_index_;
+
+	std::vector<std::size_t> index_to_feature_id_;
+
 };
 
 

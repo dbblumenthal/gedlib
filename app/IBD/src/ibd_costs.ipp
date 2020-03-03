@@ -36,41 +36,39 @@ IBDCosts<GXLLabel, GXLLabel>::
 
 template<>
 IBDCosts<GXLLabel, GXLLabel>::
-IBDCosts(const std::string & distance_matrix, double ins_del_factor, double alpha) :
-node_rel_costs_(452, 452),
-max_node_rel_cost_{0.0},
-otu_to_index_(2197, undefined()),
-index_to_otu_(452, undefined()),
-max_edge_rel_cost_{1.0},
+IBDCosts(const std::string & distance_matrix, double alpha, const std::string & feature_name) :
+node_rel_costs_(0, 0),
+feature_name_(feature_name),
 alpha_{alpha},
-ins_del_factor_{ins_del_factor} {
+feature_id_to_index_(),
+index_to_feature_id_() {
 	std::ifstream csv_file(distance_matrix);
 	std::string row;
 	std::getline(csv_file, row);
-	std::size_t max_otu_index{451};
-	std::size_t max_otu{2196};
 	std::vector<std::string> row_as_vector;
-	std::size_t otu;
-	std::size_t otu_index_1{0};
+	util::tokenize(row, ',', row_as_vector);
+	std::size_t num_features{row_as_vector.size() - 1};
+	node_rel_costs_.resize(num_features, num_features);
+	std::size_t feature_id;
+	std::size_t max_feature_id{0};
+	for (std::size_t pos{1}; pos < row_as_vector.size(); pos++) {
+		feature_id = std::stoul(row_as_vector.at(pos));
+		index_to_feature_id_.emplace_back(feature_id);
+		max_feature_id = std::max(max_feature_id, feature_id);
+	}
+	feature_id_to_index_ = std::vector<std::size_t>(max_feature_id + 1, undefined());
+	for (std::size_t index{0}; index < num_features; index++) {
+		feature_id_to_index_.at(index_to_feature_id_.at(index)) = index;
+	}
+	std::size_t index_1{0};
 	while(std::getline(csv_file, row)) {
 		row_as_vector.clear();
 		util::tokenize(row, ',', row_as_vector);
-		if (row_as_vector.size() != max_otu_index + 2) {
-			throw Error("Each row in the distance matrix must have exactly 453 columns.");
+		feature_id = std::stoul(row_as_vector.at(0));
+		for (std::size_t index_2{0}; index_2 < num_features; index_2++) {
+			node_rel_costs_(index_1, index_2) = std::stod(row_as_vector.at(index_2 + 1));
 		}
-		otu = std::stoul(row_as_vector.at(0));
-		if (otu > max_otu) {
-			throw Error(std::string("OTU ") + std::to_string(otu) + " is larger than 2196.");
-		}
-		otu_to_index_.at(otu) = otu_index_1;
-		index_to_otu_.at(otu_index_1) = otu;
-		for (std::size_t otu_index_2{0}; otu_index_2 <= max_otu_index; otu_index_2++) {
-			node_rel_costs_(otu_index_1, otu_index_2) = std::stod(row_as_vector.at(otu_index_2 + 1));
-		}
-		otu_index_1++;
-	}
-	if (otu_index_1 != max_otu_index + 1) {
-		throw Error("The distance matrix must have exactly 453 rows.");
+		index_1++;
 	}
 }
 
@@ -78,53 +76,53 @@ template<>
 double
 IBDCosts<GXLLabel, GXLLabel>::
 node_ins_cost_fun(const GXLLabel & node_label) const {
-	return alpha_ * ins_del_factor_ * max_node_rel_cost_;
+	return alpha_;
 }
 
 template<>
 double
 IBDCosts<GXLLabel, GXLLabel>::
 node_del_cost_fun(const GXLLabel & node_label) const {
-	return alpha_ * ins_del_factor_ * max_node_rel_cost_;
+	return alpha_;
 }
 
 template<>
 double
 IBDCosts<GXLLabel, GXLLabel>::
 node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
-	std::size_t otu_1{std::stoul(node_label_1.at("OTU"))};
-	std::size_t otu_2{std::stoul(node_label_2.at("OTU"))};
-	return node_rel_costs_(otu_to_index_.at(otu_1), otu_to_index_.at(otu_2));
+	std::size_t feature_id_1{std::stoul(node_label_1.at(feature_name_))};
+	std::size_t feature_id_2{std::stoul(node_label_2.at(feature_name_))};
+	return alpha_ * node_rel_costs_(feature_id_to_index_.at(feature_id_1), feature_id_to_index_.at(feature_id_2));
 }
 
 template<>
 GXLLabel
 IBDCosts<GXLLabel, GXLLabel>::
 median_node_label(const std::vector<GXLLabel> & node_labels) const {
-	// Transform labels to OTU indices.
-	std::vector<std::size_t> otu_indices;
+	// Transform labels to indices.
+	std::vector<std::size_t> indices;
 	for (const auto & label : node_labels) {
-		otu_indices.emplace_back(otu_to_index_.at(std::stoul(label.at("OTU"))));
+		indices.emplace_back(feature_id_to_index_.at(std::stoul(label.at(feature_name_))));
 	}
 
-	// Determine the OTU with the smallest SOD to the OTUs of the node labels.
-	std::size_t best_otu_index{undefined()};
+	// Determine the feature with the smallest SOD to all node features.
+	std::size_t best_index{undefined()};
 	double best_sod{std::numeric_limits<double>::infinity()};
 	double current_sod{0.0};
-	for (std::size_t otu_index_1{0}; otu_index_1 < index_to_otu_.size(); otu_index_1++) {
+	for (std::size_t index_1{0}; index_1 < index_to_feature_id_.size(); index_1++) {
 		current_sod = 0.0;
-		for (std::size_t otu_index_2 : otu_indices) {
-			current_sod += node_rel_costs_(otu_index_1, otu_index_2);
+		for (std::size_t index_2 : indices) {
+			current_sod += node_rel_costs_(index_1, index_2);
 		}
 		if (current_sod < best_sod) {
 			best_sod = current_sod;
-			best_otu_index = otu_index_1;
+			best_index = index_1;
 		}
 	}
 
 	// Construct and return the median label.
 	ged::GXLLabel median_label;
-	median_label["OTU"] = std::to_string(index_to_otu_.at(best_otu_index));
+	median_label[feature_name_] = std::to_string(index_to_feature_id_.at(best_index));
 	return median_label;
 }
 
@@ -132,14 +130,14 @@ template<>
 double
 IBDCosts<GXLLabel, GXLLabel>::
 edge_ins_cost_fun(const GXLLabel & edge_label) const {
-	return (1 - alpha_) * ins_del_factor_ * max_edge_rel_cost_;
+	return (1 - alpha_);
 }
 
 template<>
 double
 IBDCosts<GXLLabel, GXLLabel>::
 edge_del_cost_fun(const GXLLabel & edge_label) const {
-	return (1 - alpha_) * ins_del_factor_ * max_edge_rel_cost_;
+	return (1 - alpha_);
 }
 
 template<>
@@ -148,7 +146,7 @@ IBDCosts<GXLLabel, GXLLabel>::
 edge_rel_cost_fun(const GXLLabel & edge_label_1, const GXLLabel & edge_label_2) const {
 	double nlogratio_1{std::stod(edge_label_1.at("nlogratio"))};
 	double nlogratio_2{std::stod(edge_label_2.at("nlogratio"))};
-	return std::fabs(nlogratio_1 - nlogratio_2);
+	return (1 - alpha_) * std::fabs(nlogratio_1 - nlogratio_2);
 }
 
 template<>
@@ -185,13 +183,6 @@ void
 IBDCosts<GXLLabel, GXLLabel>::
 set_alpha(double alpha) {
 	alpha_ = alpha;
-}
-
-template<>
-void
-IBDCosts<GXLLabel, GXLLabel>::
-set_ins_del_factor(double ins_del_factor) {
-	ins_del_factor_ = ins_del_factor;
 }
 
 #endif /* APP_IBD_SRC_IBD_COSTS_IPP_ */

@@ -54,10 +54,6 @@ int main(int argc, char* argv[]) {
 	// Initialize the edit costs.
 	ged::IBD<ged::GXLLabel, ged::GXLLabel> ibd_costs("../../src/edit_costs/otu_distances.csv");
 
-	// Define the configurations of the algorithm that should be tested.
-	std::random_device rng;
-	std::string common_mge_options("--init-type RANDOM --stdout " + stdout + " --random-inits 8 --seed " + std::to_string(rng()));
-	std::vector<std::string> mge_options{common_mge_options + " --refine TRUE", common_mge_options};
 
 	// Compute medians for all three classes.
 	std::vector<std::string> graph_classes{"C", "NO", "YES"};
@@ -69,31 +65,26 @@ int main(int argc, char* argv[]) {
 		result_file << "bcu_1_time,bcu_1_sod,bcu_3_time,bcu_3_sod\n";
 		result_file.close();
 
-		// Initialize the environment and the median graph estimator.
+		// Initialize the environment.
 		ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 		env.set_edit_costs(&ibd_costs);
 		std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs(dir(), collection(graph_class)));
 		ged::GEDGraph::GraphID median_id{env.add_graph("median.gxl", graph_class)};
 		env.init(ged::Options::InitType::LAZY_WITHOUT_SHUFFLED_COPIES);
+
+		// Initialize the median graph estimator.
 		ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> mge(&env, false);
 		mge.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
+		std::random_device rng;
+		mge.set_options("--init-type RANDOM --refine TRUE --stdout " + stdout + " --random-inits 8 --seed " + std::to_string(rng()));
+		mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
 
-		// Compute medians with both configurations and save results.
-		for (std::size_t algo_id{0}; algo_id < 2; algo_id++) {
-			mge.set_options(mge_options.at(algo_id));
-			mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
-			mge.run(graph_ids, median_id);
-			result_file.open(result_filename.c_str(),std::ios_base::app);
-			result_file << mge.get_runtime() << "," << mge.get_sum_of_distances();
-			if (algo_id == 0) {
-				result_file << ",";
-			}
-			else {
-				result_file << "\n";
-			}
-			result_file.close();
-		}
-
+		// Compute the median graphs and save the results.
+		mge.run(graph_ids, median_id);
+		result_file.open(result_filename.c_str(),std::ios_base::app);
+		result_file << mge.get_runtime(ged::Options::AlgorithmState::TERMINATED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED) << ",";
+		result_file << mge.get_runtime(ged::Options::AlgorithmState::CONVERGED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::CONVERGED) << "\n";
+		result_file.close();
 	}
 
 

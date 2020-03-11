@@ -25,26 +25,18 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/median/bin)
 
 # Add targets.
 
-add_custom_target(median DEPENDS median_letter median_chem median_tests ibd_tests)
+add_custom_target(median DEPENDS median_tests ibd_tests aids_edit_iso_test)
 
 add_custom_target(cluster DEPENDS cluster_letter clustering_tests classification_tests)
 
 add_custom_target(bst DEPENDS bst_init_letter bst_query_letter indexing_tests)
 
-add_executable(median_letter tests/median_letter.cpp)
-target_link_libraries(median_letter gxlgedlib)
+add_executable(aids_edit_iso_test tests/aids_edit_iso_test.cpp)
+target_link_libraries(aids_edit_iso_test gxlgedlib)
 if(APPLE)
-  add_custom_command(TARGET median_letter POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/median_letter)
-  add_custom_command(TARGET median_letter POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/median_letter)
-  add_custom_command(TARGET median_letter POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/median_letter)
-endif()
-
-add_executable(median_chem tests/median_chem.cpp)
-target_link_libraries(median_chem gxlgedlib)
-if(APPLE)
-  add_custom_command(TARGET median_chem POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/median_chem)
-  add_custom_command(TARGET median_chem POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/median_chem)
-  add_custom_command(TARGET median_chem POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/median_chem)
+  add_custom_command(TARGET aids_edit_iso_test POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/aids_edit_iso_test)
+  add_custom_command(TARGET aids_edit_iso_test POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/aids_edit_iso_test)
+  add_custom_command(TARGET aids_edit_iso_test POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/aids_edit_iso_test)
 endif()
 
 add_executable(median_tests tests/median_tests.cpp)

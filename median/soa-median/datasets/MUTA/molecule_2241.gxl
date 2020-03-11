@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="molecule_2241" edgeids="true" edgemode="undirected">
+<node id="1"><attr name="chem"><string>C</string></attr></node>
+<node id="2"><attr name="chem"><string>C</string></attr></node>
+<node id="3"><attr name="chem"><string>C</string></attr></node>
+<node id="4"><attr name="chem"><string>C</string></attr></node>
+<node id="5"><attr name="chem"><string>C</string></attr></node>
+<node id="6"><attr name="chem"><string>C</string></attr></node>
+<node id="7"><attr name="chem"><string>C</string></attr></node>
+<node id="8"><attr name="chem"><string>C</string></attr></node>
+<node id="9"><attr name="chem"><string>C</string></attr></node>
+<node id="10"><attr name="chem"><string>C</string></attr></node>
+<node id="11"><attr name="chem"><string>C</string></attr></node>
+<node id="12"><attr name="chem"><string>N</string></attr></node>
+<node id="13"><attr name="chem"><string>C</string></attr></node>
+<node id="14"><attr name="chem"><string>N</string></attr></node>
+<node id="15"><attr name="chem"><string>O</string></attr></node>
+<node id="16"><attr name="chem"><string>O</string></attr></node>
+<node id="17"><attr name="chem"><string>N</string></attr></node>
+<node id="18"><attr name="chem"><string>H</string></attr></node>
+<node id="19"><attr name="chem"><string>H</string></attr></node>
+<node id="20"><attr name="chem"><string>H</string></attr></node>
+<node id="21"><attr name="chem"><string>H</string></attr></node>
+<node id="22"><attr name="chem"><string>H</string></attr></node>
+<node id="23"><attr name="chem"><string>H</string></attr></node>
+<node id="24"><attr name="chem"><string>H</string></attr></node>
+<node id="25"><attr name="chem"><string>H</string></attr></node>
+<node id="26"><attr name="chem"><string>H</string></attr></node>
+<node id="27"><attr name="chem"><string>H</string></attr></node>
+<node id="28"><attr name="chem"><string>H</string></attr></node>
+<edge from="1" to="2"><attr name="valence"><int>1</int></attr></edge>
+<edge from="1" to="3"><attr name="valence"><int>2</int></attr></edge>
+<edge from="1" to="4"><attr name="valence"><int>1</int></attr></edge>
+<edge from="2" to="5"><attr name="valence"><int>1</int></attr></edge>
+<edge from="2" to="6"><attr name="valence"><int>2</int></attr></edge>
+<edge from="3" to="7"><attr name="valence"><int>1</int></attr></edge>
+<edge from="4" to="8"><attr name="valence"><int>2</int></attr></edge>
+<edge from="5" to="9"><attr name="valence"><int>2</int></attr></edge>
+<edge from="6" to="10"><attr name="valence"><int>1</int></attr></edge>
+<edge from="7" to="11"><attr name="valence"><int>2</int></attr></edge>
+<edge from="7" to="12"><attr name="valence"><int>1</int></attr></edge>
+<edge from="9" to="13"><attr name="valence"><int>1</int></attr></edge>
+<edge from="11" to="14"><attr name="valence"><int>1</int></attr></edge>
+<edge from="12" to="15"><attr name="valence"><int>2</int></attr></edge>
+<edge from="12" to="16"><attr name="valence"><int>1</int></attr></edge>
+<edge from="13" to="17"><attr name="valence"><int>1</int></attr></edge>
+<edge from="8" to="11"><attr name="valence"><int>1</int></attr></edge>
+<edge from="10" to="13"><attr name="valence"><int>2</int></attr></edge>
+<edge from="3" to="18"><attr name="valence"><int>1</int></attr></edge>
+<edge from="4" to="19"><attr name="valence"><int>1</int></attr></edge>
+<edge from="5" to="20"><attr name="valence"><int>1</int></attr></edge>
+<edge from="6" to="21"><attr name="valence"><int>1</int></attr></edge>
+<edge from="8" to="22"><attr name="valence"><int>1</int></attr></edge>
+<edge from="9" to="23"><attr name="valence"><int>1</int></attr></edge>
+<edge from="10" to="24"><attr name="valence"><int>1</int></attr></edge>
+<edge from="14" to="25"><attr name="valence"><int>1</int></attr></edge>
+<edge from="14" to="26"><attr name="valence"><int>1</int></attr></edge>
+<edge from="17" to="27"><attr name="valence"><int>1</int></attr></edge>
+<edge from="17" to="28"><attr name="valence"><int>1</int></attr></edge>
+</graph>
+</gxl>

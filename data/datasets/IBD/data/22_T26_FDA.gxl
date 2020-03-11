@@ -1,0 +1,921 @@
+<?xml version="1.0"?>
+<!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
+<gxl>
+<graph id="22_T26_FDA.gxl" edgeids="false" edgemode="undirected">
+	<node id="_0">
+		<attr name="OTU"><int>7</int></attr>
+	</node>
+	<node id="_1">
+		<attr name="OTU"><int>6</int></attr>
+	</node>
+	<node id="_2">
+		<attr name="OTU"><int>1303</int></attr>
+	</node>
+	<node id="_3">
+		<attr name="OTU"><int>1698</int></attr>
+	</node>
+	<node id="_4">
+		<attr name="OTU"><int>3</int></attr>
+	</node>
+	<node id="_5">
+		<attr name="OTU"><int>9</int></attr>
+	</node>
+	<node id="_6">
+		<attr name="OTU"><int>54</int></attr>
+	</node>
+	<node id="_7">
+		<attr name="OTU"><int>19</int></attr>
+	</node>
+	<node id="_8">
+		<attr name="OTU"><int>2</int></attr>
+	</node>
+	<node id="_9">
+		<attr name="OTU"><int>52</int></attr>
+	</node>
+	<node id="_10">
+		<attr name="OTU"><int>58</int></attr>
+	</node>
+	<node id="_11">
+		<attr name="OTU"><int>5</int></attr>
+	</node>
+	<node id="_12">
+		<attr name="OTU"><int>12</int></attr>
+	</node>
+	<node id="_13">
+		<attr name="OTU"><int>1</int></attr>
+	</node>
+	<node id="_14">
+		<attr name="OTU"><int>166</int></attr>
+	</node>
+	<node id="_15">
+		<attr name="OTU"><int>10</int></attr>
+	</node>
+	<node id="_16">
+		<attr name="OTU"><int>40</int></attr>
+	</node>
+	<node id="_17">
+		<attr name="OTU"><int>8</int></attr>
+	</node>
+	<node id="_18">
+		<attr name="OTU"><int>24</int></attr>
+	</node>
+	<node id="_19">
+		<attr name="OTU"><int>1440</int></attr>
+	</node>
+	<node id="_20">
+		<attr name="OTU"><int>59</int></attr>
+	</node>
+	<node id="_21">
+		<attr name="OTU"><int>1691</int></attr>
+	</node>
+	<node id="_22">
+		<attr name="OTU"><int>75</int></attr>
+	</node>
+	<node id="_23">
+		<attr name="OTU"><int>69</int></attr>
+	</node>
+	<node id="_24">
+		<attr name="OTU"><int>466</int></attr>
+	</node>
+	<node id="_25">
+		<attr name="OTU"><int>111</int></attr>
+	</node>
+	<node id="_26">
+		<attr name="OTU"><int>39</int></attr>
+	</node>
+	<node id="_27">
+		<attr name="OTU"><int>17</int></attr>
+	</node>
+	<node id="_28">
+		<attr name="OTU"><int>55</int></attr>
+	</node>
+	<node id="_29">
+		<attr name="OTU"><int>816</int></attr>
+	</node>
+	<node id="_30">
+		<attr name="OTU"><int>1264</int></attr>
+	</node>
+	<node id="_31">
+		<attr name="OTU"><int>152</int></attr>
+	</node>
+	<node id="_32">
+		<attr name="OTU"><int>871</int></attr>
+	</node>
+	<node id="_33">
+		<attr name="OTU"><int>264</int></attr>
+	</node>
+	<node id="_34">
+		<attr name="OTU"><int>811</int></attr>
+	</node>
+	<node id="_35">
+		<attr name="OTU"><int>53</int></attr>
+	</node>
+	<node id="_36">
+		<attr name="OTU"><int>105</int></attr>
+	</node>
+	<node id="_37">
+		<attr name="OTU"><int>14</int></attr>
+	</node>
+	<node id="_38">
+		<attr name="OTU"><int>34</int></attr>
+	</node>
+	<node id="_39">
+		<attr name="OTU"><int>106</int></attr>
+	</node>
+	<node id="_40">
+		<attr name="OTU"><int>172</int></attr>
+	</node>
+	<node id="_41">
+		<attr name="OTU"><int>36</int></attr>
+	</node>
+	<node id="_42">
+		<attr name="OTU"><int>508</int></attr>
+	</node>
+	<node id="_43">
+		<attr name="OTU"><int>299</int></attr>
+	</node>
+	<node id="_44">
+		<attr name="OTU"><int>232</int></attr>
+	</node>
+	<node id="_45">
+		<attr name="OTU"><int>70</int></attr>
+	</node>
+	<node id="_46">
+		<attr name="OTU"><int>821</int></attr>
+	</node>
+	<node id="_47">
+		<attr name="OTU"><int>1664</int></attr>
+	</node>
+	<node id="_48">
+		<attr name="OTU"><int>80</int></attr>
+	</node>
+	<node id="_49">
+		<attr name="OTU"><int>1246</int></attr>
+	</node>
+	<node id="_50">
+		<attr name="OTU"><int>188</int></attr>
+	</node>
+	<edge from="_0" to="_15">
+		<attr name="nlogratio"><float>0.8015400391744192</float></attr>
+	</edge>
+	<edge from="_0" to="_17">
+		<attr name="nlogratio"><float>0.8015400391744192</float></attr>
+	</edge>
+	<edge from="_0" to="_19">
+		<attr name="nlogratio"><float>0.8015400391744192</float></attr>
+	</edge>
+	<edge from="_0" to="_20">
+		<attr name="nlogratio"><float>0.8015400391744192</float></attr>
+	</edge>
+	<edge from="_0" to="_21">
+		<attr name="nlogratio"><float>0.8015400391744192</float></attr>
+	</edge>
+	<edge from="_0" to="_25">
+		<attr name="nlogratio"><float>0.8015400391744192</float></attr>
+	</edge>
+	<edge from="_0" to="_50">
+		<attr name="nlogratio"><float>0.5571587834756041</float></attr>
+	</edge>
+	<edge from="_1" to="_6">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_15">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_17">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_19">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_20">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_21">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_23">
+		<attr name="nlogratio"><float>0.8358683057101073</float></attr>
+	</edge>
+	<edge from="_1" to="_25">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_28">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_30">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_33">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_37">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_38">
+		<attr name="nlogratio"><float>0.872731800873214</float></attr>
+	</edge>
+	<edge from="_1" to="_50">
+		<attr name="nlogratio"><float>0.628350545174399</float></attr>
+	</edge>
+	<edge from="_2" to="_4">
+		<attr name="nlogratio"><float>0.1291026917051629</float></attr>
+	</edge>
+	<edge from="_2" to="_11">
+		<attr name="nlogratio"><float>0.15356886662385982</float></attr>
+	</edge>
+	<edge from="_2" to="_16">
+		<attr name="nlogratio"><float>0.47843623768406685</float></attr>
+	</edge>
+	<edge from="_2" to="_19">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_2" to="_21">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_2" to="_24">
+		<attr name="nlogratio"><float>0.2981453271531077</float></attr>
+	</edge>
+	<edge from="_2" to="_29">
+		<attr name="nlogratio"><float>0.3148579684170821</float></attr>
+	</edge>
+	<edge from="_2" to="_30">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_2" to="_33">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_2" to="_40">
+		<attr name="nlogratio"><float>0.3559783574259977</float></attr>
+	</edge>
+	<edge from="_2" to="_43">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_2" to="_46">
+		<attr name="nlogratio"><float>0.31324624563169207</float></attr>
+	</edge>
+	<edge from="_2" to="_49">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_2" to="_50">
+		<attr name="nlogratio"><float>0.29248223946429175</float></attr>
+	</edge>
+	<edge from="_3" to="_4">
+		<attr name="nlogratio"><float>0.15066645402109605</float></attr>
+	</edge>
+	<edge from="_3" to="_11">
+		<attr name="nlogratio"><float>0.17513262893979298</float></attr>
+	</edge>
+	<edge from="_3" to="_21">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_3" to="_33">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_3" to="_43">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_3" to="_46">
+		<attr name="nlogratio"><float>0.3348100079476252</float></attr>
+	</edge>
+	<edge from="_3" to="_47">
+		<attr name="nlogratio"><float>0.3757982657540116</float></attr>
+	</edge>
+	<edge from="_3" to="_50">
+		<attr name="nlogratio"><float>0.31404600178022496</float></attr>
+	</edge>
+	<edge from="_4" to="_6">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_7">
+		<attr name="nlogratio"><float>0.7570826367801329</float></attr>
+	</edge>
+	<edge from="_4" to="_15">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_17">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_18">
+		<attr name="nlogratio"><float>0.8708973082948371</float></attr>
+	</edge>
+	<edge from="_4" to="_19">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_20">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_21">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_22">
+		<attr name="nlogratio"><float>0.8708973082948371</float></attr>
+	</edge>
+	<edge from="_4" to="_23">
+		<attr name="nlogratio"><float>0.8708973082948371</float></attr>
+	</edge>
+	<edge from="_4" to="_25">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_28">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_30">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_31">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_33">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_34">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_35">
+		<attr name="nlogratio"><float>0.721806805238169</float></attr>
+	</edge>
+	<edge from="_4" to="_36">
+		<attr name="nlogratio"><float>0.8708973082948371</float></attr>
+	</edge>
+	<edge from="_4" to="_37">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_38">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_43">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_48">
+		<attr name="nlogratio"><float>0.7433705675541021</float></attr>
+	</edge>
+	<edge from="_4" to="_49">
+		<attr name="nlogratio"><float>0.9077608034579439</float></attr>
+	</edge>
+	<edge from="_4" to="_50">
+		<attr name="nlogratio"><float>0.6633795477591289</float></attr>
+	</edge>
+	<edge from="_5" to="_50">
+		<attr name="nlogratio"><float>0.341213129396147</float></attr>
+	</edge>
+	<edge from="_6" to="_9">
+		<attr name="nlogratio"><float>0.15136788570865062</float></attr>
+	</edge>
+	<edge from="_6" to="_11">
+		<attr name="nlogratio"><float>0.11670537146075301</float></attr>
+	</edge>
+	<edge from="_6" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_6" to="_45">
+		<attr name="nlogratio"><float>0.2589437507959316</float></attr>
+	</edge>
+	<edge from="_6" to="_47">
+		<attr name="nlogratio"><float>0.31737100827497167</float></attr>
+	</edge>
+	<edge from="_6" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_7" to="_11">
+		<attr name="nlogratio"><float>0.2673835381385641</float></attr>
+	</edge>
+	<edge from="_7" to="_50">
+		<attr name="nlogratio"><float>0.40629691097899606</float></attr>
+	</edge>
+	<edge from="_8" to="_50">
+		<attr name="nlogratio"><float>0.5523642973675983</float></attr>
+	</edge>
+	<edge from="_9" to="_20">
+		<attr name="nlogratio"><float>0.8486321142913493</float></attr>
+	</edge>
+	<edge from="_9" to="_21">
+		<attr name="nlogratio"><float>0.8486321142913493</float></attr>
+	</edge>
+	<edge from="_9" to="_22">
+		<attr name="nlogratio"><float>0.8117686191282426</float></attr>
+	</edge>
+	<edge from="_9" to="_23">
+		<attr name="nlogratio"><float>0.8117686191282426</float></attr>
+	</edge>
+	<edge from="_9" to="_50">
+		<attr name="nlogratio"><float>0.6042508585925344</float></attr>
+	</edge>
+	<edge from="_10" to="_50">
+		<attr name="nlogratio"><float>0.35910765889157953</float></attr>
+	</edge>
+	<edge from="_11" to="_15">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_17">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_18">
+		<attr name="nlogratio"><float>0.8464311333761403</float></attr>
+	</edge>
+	<edge from="_11" to="_19">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_20">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_21">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_22">
+		<attr name="nlogratio"><float>0.8464311333761403</float></attr>
+	</edge>
+	<edge from="_11" to="_23">
+		<attr name="nlogratio"><float>0.8464311333761403</float></attr>
+	</edge>
+	<edge from="_11" to="_25">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_28">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_30">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_31">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_33">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_34">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_36">
+		<attr name="nlogratio"><float>0.8464311333761403</float></attr>
+	</edge>
+	<edge from="_11" to="_37">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_38">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_42">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_44">
+		<attr name="nlogratio"><float>0.8464311333761403</float></attr>
+	</edge>
+	<edge from="_11" to="_49">
+		<attr name="nlogratio"><float>0.8832946285392469</float></attr>
+	</edge>
+	<edge from="_11" to="_50">
+		<attr name="nlogratio"><float>0.638913372840432</float></attr>
+	</edge>
+	<edge from="_12" to="_20">
+		<attr name="nlogratio"><float>0.7228174933828818</float></attr>
+	</edge>
+	<edge from="_12" to="_30">
+		<attr name="nlogratio"><float>0.7228174933828818</float></attr>
+	</edge>
+	<edge from="_12" to="_50">
+		<attr name="nlogratio"><float>0.47843623768406673</float></attr>
+	</edge>
+	<edge from="_13" to="_15">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_19">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_20">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_21">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_23">
+		<attr name="nlogratio"><float>0.9382676412864807</float></attr>
+	</edge>
+	<edge from="_13" to="_25">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_28">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_30">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_33">
+		<attr name="nlogratio"><float>0.9751311364495874</float></attr>
+	</edge>
+	<edge from="_13" to="_50">
+		<attr name="nlogratio"><float>0.7307498807507724</float></attr>
+	</edge>
+	<edge from="_14" to="_50">
+		<attr name="nlogratio"><float>0.341213129396147</float></attr>
+	</edge>
+	<edge from="_15" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_15" to="_45">
+		<attr name="nlogratio"><float>0.2589437507959316</float></attr>
+	</edge>
+	<edge from="_15" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_16" to="_20">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_16" to="_24">
+		<attr name="nlogratio"><float>0.3197090894690409</float></attr>
+	</edge>
+	<edge from="_16" to="_25">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_16" to="_30">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_16" to="_33">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_16" to="_43">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_16" to="_46">
+		<attr name="nlogratio"><float>0.3348100079476252</float></attr>
+	</edge>
+	<edge from="_16" to="_49">
+		<attr name="nlogratio"><float>0.55842725747904</float></attr>
+	</edge>
+	<edge from="_16" to="_50">
+		<attr name="nlogratio"><float>0.31404600178022496</float></attr>
+	</edge>
+	<edge from="_17" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_17" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_17" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_18" to="_50">
+		<attr name="nlogratio"><float>0.29248223946429175</float></attr>
+	</edge>
+	<edge from="_19" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_19" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_19" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_20" to="_24">
+		<attr name="nlogratio"><float>0.26128183199000093</float></attr>
+	</edge>
+	<edge from="_20" to="_27">
+		<attr name="nlogratio"><float>0.18436581780937847</float></attr>
+	</edge>
+	<edge from="_20" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_20" to="_35">
+		<attr name="nlogratio"><float>0.314046001780225</float></attr>
+	</edge>
+	<edge from="_20" to="_40">
+		<attr name="nlogratio"><float>0.3191148622628909</float></attr>
+	</edge>
+	<edge from="_20" to="_41">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_20" to="_44">
+		<attr name="nlogratio"><float>0.46313650483689317</float></attr>
+	</edge>
+	<edge from="_20" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_20" to="_48">
+		<attr name="nlogratio"><float>0.33560976409615806</float></attr>
+	</edge>
+	<edge from="_20" to="_49">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_20" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_21" to="_27">
+		<attr name="nlogratio"><float>0.18436581780937847</float></attr>
+	</edge>
+	<edge from="_21" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_21" to="_39">
+		<attr name="nlogratio"><float>0.3525460193475723</float></attr>
+	</edge>
+	<edge from="_21" to="_45">
+		<attr name="nlogratio"><float>0.2589437507959316</float></attr>
+	</edge>
+	<edge from="_21" to="_47">
+		<attr name="nlogratio"><float>0.31737100827497167</float></attr>
+	</edge>
+	<edge from="_21" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_22" to="_29">
+		<attr name="nlogratio"><float>0.3148579684170821</float></attr>
+	</edge>
+	<edge from="_22" to="_32">
+		<attr name="nlogratio"><float>0.3309822570316393</float></attr>
+	</edge>
+	<edge from="_22" to="_50">
+		<attr name="nlogratio"><float>0.29248223946429175</float></attr>
+	</edge>
+	<edge from="_23" to="_27">
+		<attr name="nlogratio"><float>0.22122931297248527</float></attr>
+	</edge>
+	<edge from="_23" to="_32">
+		<attr name="nlogratio"><float>0.3309822570316393</float></attr>
+	</edge>
+	<edge from="_23" to="_39">
+		<attr name="nlogratio"><float>0.3894095145106791</float></attr>
+	</edge>
+	<edge from="_23" to="_40">
+		<attr name="nlogratio"><float>0.3559783574259977</float></attr>
+	</edge>
+	<edge from="_23" to="_41">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_23" to="_43">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_23" to="_45">
+		<attr name="nlogratio"><float>0.29580724595903846</float></attr>
+	</edge>
+	<edge from="_23" to="_46">
+		<attr name="nlogratio"><float>0.31324624563169207</float></attr>
+	</edge>
+	<edge from="_23" to="_47">
+		<attr name="nlogratio"><float>0.35423450343807844</float></attr>
+	</edge>
+	<edge from="_23" to="_50">
+		<attr name="nlogratio"><float>0.29248223946429175</float></attr>
+	</edge>
+	<edge from="_24" to="_25">
+		<attr name="nlogratio"><float>0.7387181680099991</float></attr>
+	</edge>
+	<edge from="_24" to="_30">
+		<attr name="nlogratio"><float>0.7387181680099991</float></attr>
+	</edge>
+	<edge from="_24" to="_33">
+		<attr name="nlogratio"><float>0.7387181680099991</float></attr>
+	</edge>
+	<edge from="_24" to="_40">
+		<attr name="nlogratio"><float>0.5578330302728899</float></attr>
+	</edge>
+	<edge from="_24" to="_41">
+		<attr name="nlogratio"><float>0.7387181680099991</float></attr>
+	</edge>
+	<edge from="_24" to="_43">
+		<attr name="nlogratio"><float>0.7387181680099991</float></attr>
+	</edge>
+	<edge from="_24" to="_44">
+		<attr name="nlogratio"><float>0.7018546728468923</float></attr>
+	</edge>
+	<edge from="_24" to="_46">
+		<attr name="nlogratio"><float>0.5151009184785843</float></attr>
+	</edge>
+	<edge from="_24" to="_50">
+		<attr name="nlogratio"><float>0.49433691231118404</float></attr>
+	</edge>
+	<edge from="_25" to="_29">
+		<attr name="nlogratio"><float>0.2779944732539753</float></attr>
+	</edge>
+	<edge from="_25" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_25" to="_39">
+		<attr name="nlogratio"><float>0.3525460193475723</float></attr>
+	</edge>
+	<edge from="_25" to="_40">
+		<attr name="nlogratio"><float>0.3191148622628909</float></attr>
+	</edge>
+	<edge from="_25" to="_43">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_25" to="_44">
+		<attr name="nlogratio"><float>0.46313650483689317</float></attr>
+	</edge>
+	<edge from="_25" to="_45">
+		<attr name="nlogratio"><float>0.2589437507959316</float></attr>
+	</edge>
+	<edge from="_25" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_25" to="_49">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_25" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_26" to="_33">
+		<attr name="nlogratio"><float>0.5952907526421468</float></attr>
+	</edge>
+	<edge from="_26" to="_50">
+		<attr name="nlogratio"><float>0.35090949694333173</float></attr>
+	</edge>
+	<edge from="_27" to="_28">
+		<attr name="nlogratio"><float>0.8156341821906216</float></attr>
+	</edge>
+	<edge from="_27" to="_37">
+		<attr name="nlogratio"><float>0.8156341821906216</float></attr>
+	</edge>
+	<edge from="_27" to="_50">
+		<attr name="nlogratio"><float>0.5712529264918065</float></attr>
+	</edge>
+	<edge from="_28" to="_32">
+		<attr name="nlogratio"><float>0.2941187618685325</float></attr>
+	</edge>
+	<edge from="_28" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_28" to="_47">
+		<attr name="nlogratio"><float>0.31737100827497167</float></attr>
+	</edge>
+	<edge from="_28" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_29" to="_33">
+		<attr name="nlogratio"><float>0.7220055267460248</float></attr>
+	</edge>
+	<edge from="_29" to="_50">
+		<attr name="nlogratio"><float>0.47762427104720967</float></attr>
+	</edge>
+	<edge from="_30" to="_40">
+		<attr name="nlogratio"><float>0.3191148622628909</float></attr>
+	</edge>
+	<edge from="_30" to="_41">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_30" to="_44">
+		<attr name="nlogratio"><float>0.46313650483689317</float></attr>
+	</edge>
+	<edge from="_30" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_30" to="_47">
+		<attr name="nlogratio"><float>0.31737100827497167</float></attr>
+	</edge>
+	<edge from="_30" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_31" to="_45">
+		<attr name="nlogratio"><float>0.2589437507959316</float></attr>
+	</edge>
+	<edge from="_31" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_31" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_32" to="_50">
+		<attr name="nlogratio"><float>0.4614999824326525</float></attr>
+	</edge>
+	<edge from="_33" to="_35">
+		<attr name="nlogratio"><float>0.314046001780225</float></attr>
+	</edge>
+	<edge from="_33" to="_40">
+		<attr name="nlogratio"><float>0.3191148622628909</float></attr>
+	</edge>
+	<edge from="_33" to="_41">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_33" to="_43">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_33" to="_44">
+		<attr name="nlogratio"><float>0.46313650483689317</float></attr>
+	</edge>
+	<edge from="_33" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_33" to="_47">
+		<attr name="nlogratio"><float>0.31737100827497167</float></attr>
+	</edge>
+	<edge from="_33" to="_48">
+		<attr name="nlogratio"><float>0.33560976409615806</float></attr>
+	</edge>
+	<edge from="_33" to="_49">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_33" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_34" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_35" to="_44">
+		<attr name="nlogratio"><float>0.6490905030566682</float></attr>
+	</edge>
+	<edge from="_35" to="_46">
+		<attr name="nlogratio"><float>0.4623367486883602</float></attr>
+	</edge>
+	<edge from="_35" to="_50">
+		<attr name="nlogratio"><float>0.44157274252095996</float></attr>
+	</edge>
+	<edge from="_36" to="_43">
+		<attr name="nlogratio"><float>0.5368634951631068</float></attr>
+	</edge>
+	<edge from="_36" to="_50">
+		<attr name="nlogratio"><float>0.29248223946429175</float></attr>
+	</edge>
+	<edge from="_37" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_38" to="_45">
+		<attr name="nlogratio"><float>0.2589437507959316</float></attr>
+	</edge>
+	<edge from="_38" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_39" to="_49">
+		<attr name="nlogratio"><float>0.6474539806524277</float></attr>
+	</edge>
+	<edge from="_39" to="_50">
+		<attr name="nlogratio"><float>0.4030727249536126</float></attr>
+	</edge>
+	<edge from="_40" to="_44">
+		<attr name="nlogratio"><float>0.6440216425740023</float></attr>
+	</edge>
+	<edge from="_40" to="_46">
+		<attr name="nlogratio"><float>0.4572678882056943</float></attr>
+	</edge>
+	<edge from="_40" to="_47">
+		<attr name="nlogratio"><float>0.49825614601208074</float></attr>
+	</edge>
+	<edge from="_40" to="_49">
+		<attr name="nlogratio"><float>0.6808851377371091</float></attr>
+	</edge>
+	<edge from="_40" to="_50">
+		<attr name="nlogratio"><float>0.4365038820382941</float></attr>
+	</edge>
+	<edge from="_41" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_41" to="_49">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_41" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_42" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_42" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_43" to="_44">
+		<attr name="nlogratio"><float>0.46313650483689317</float></attr>
+	</edge>
+	<edge from="_43" to="_45">
+		<attr name="nlogratio"><float>0.2589437507959316</float></attr>
+	</edge>
+	<edge from="_43" to="_46">
+		<attr name="nlogratio"><float>0.27638275046858524</float></attr>
+	</edge>
+	<edge from="_43" to="_47">
+		<attr name="nlogratio"><float>0.31737100827497167</float></attr>
+	</edge>
+	<edge from="_43" to="_49">
+		<attr name="nlogratio"><float>0.5</float></attr>
+	</edge>
+	<edge from="_43" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+	<edge from="_44" to="_46">
+		<attr name="nlogratio"><float>0.31324624563169207</float></attr>
+	</edge>
+	<edge from="_44" to="_50">
+		<attr name="nlogratio"><float>0.29248223946429175</float></attr>
+	</edge>
+	<edge from="_45" to="_50">
+		<attr name="nlogratio"><float>0.49667499350525335</float></attr>
+	</edge>
+	<edge from="_46" to="_47">
+		<attr name="nlogratio"><float>0.5409882578063864</float></attr>
+	</edge>
+	<edge from="_46" to="_48">
+		<attr name="nlogratio"><float>0.5592270136275729</float></attr>
+	</edge>
+	<edge from="_46" to="_49">
+		<attr name="nlogratio"><float>0.7236172495314147</float></attr>
+	</edge>
+	<edge from="_46" to="_50">
+		<attr name="nlogratio"><float>0.4792359938325997</float></attr>
+	</edge>
+	<edge from="_47" to="_50">
+		<attr name="nlogratio"><float>0.4382477360262133</float></attr>
+	</edge>
+	<edge from="_48" to="_50">
+		<attr name="nlogratio"><float>0.42000898020502686</float></attr>
+	</edge>
+	<edge from="_49" to="_50">
+		<attr name="nlogratio"><float>0.255618744301185</float></attr>
+	</edge>
+</graph>
+</gxl>

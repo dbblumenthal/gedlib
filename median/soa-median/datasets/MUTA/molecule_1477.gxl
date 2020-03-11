@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<gxl>
+<graph id="molecule_1477" edgeids="true" edgemode="undirected">
+<node id="1"><attr name="chem"><string>C</string></attr></node>
+<node id="2"><attr name="chem"><string>N</string></attr></node>
+<node id="3"><attr name="chem"><string>Cl</string></attr></node>
+<node id="4"><attr name="chem"><string>Cl</string></attr></node>
+<node id="5"><attr name="chem"><string>O</string></attr></node>
+<node id="6"><attr name="chem"><string>O</string></attr></node>
+<node id="7"><attr name="chem"><string>H</string></attr></node>
+<edge from="1" to="2"><attr name="valence"><int>1</int></attr></edge>
+<edge from="1" to="3"><attr name="valence"><int>1</int></attr></edge>
+<edge from="1" to="4"><attr name="valence"><int>1</int></attr></edge>
+<edge from="2" to="5"><attr name="valence"><int>2</int></attr></edge>
+<edge from="2" to="6"><attr name="valence"><int>1</int></attr></edge>
+<edge from="1" to="7"><attr name="valence"><int>1</int></attr></edge>
+</graph>
+</gxl>

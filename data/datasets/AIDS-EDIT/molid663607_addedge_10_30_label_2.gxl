@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE gxl SYSTEM "http://www.gupro.de/GXL/gxl-1.0.dtd">
+<gxl>
+<graph id="molid663607_addedge_10_30_label_2" edgeids="true" edgemode="undirected">
+<node id="_0"><attr name="chem"><int>C</int></attr></node>
+<node id="_1"><attr name="chem"><int>C</int></attr></node>
+<node id="_2"><attr name="chem"><int>C</int></attr></node>
+<node id="_3"><attr name="chem"><int>N</int></attr></node>
+<node id="_4"><attr name="chem"><int>C</int></attr></node>
+<node id="_5"><attr name="chem"><int>N</int></attr></node>
+<node id="_6"><attr name="chem"><int>C</int></attr></node>
+<node id="_7"><attr name="chem"><int>O</int></attr></node>
+<node id="_8"><attr name="chem"><int>O</int></attr></node>
+<node id="_9"><attr name="chem"><int>C</int></attr></node>
+<node id="_10"><attr name="chem"><int>O</int></attr></node>
+<node id="_11"><attr name="chem"><int>C</int></attr></node>
+<node id="_12"><attr name="chem"><int>C</int></attr></node>
+<node id="_13"><attr name="chem"><int>C</int></attr></node>
+<node id="_14"><attr name="chem"><int>F</int></attr></node>
+<node id="_15"><attr name="chem"><int>C</int></attr></node>
+<node id="_16"><attr name="chem"><int>O</int></attr></node>
+<node id="_17"><attr name="chem"><int>C</int></attr></node>
+<node id="_18"><attr name="chem"><int>O</int></attr></node>
+<node id="_19"><attr name="chem"><int>C</int></attr></node>
+<node id="_20"><attr name="chem"><int>C</int></attr></node>
+<node id="_21"><attr name="chem"><int>C</int></attr></node>
+<node id="_22"><attr name="chem"><int>C</int></attr></node>
+<node id="_23"><attr name="chem"><int>C</int></attr></node>
+<node id="_24"><attr name="chem"><int>C</int></attr></node>
+<node id="_25"><attr name="chem"><int>C</int></attr></node>
+<node id="_26"><attr name="chem"><int>C</int></attr></node>
+<node id="_27"><attr name="chem"><int>C</int></attr></node>
+<node id="_28"><attr name="chem"><int>C</int></attr></node>
+<node id="_29"><attr name="chem"><int>C</int></attr></node>
+<node id="_30"><attr name="chem"><int>O</int></attr></node>
+<node id="_31"><attr name="chem"><int>C</int></attr></node>
+<edge from="_0" to="_1"><attr name="valence"><int>2</int></attr></edge>
+<edge from="_0" to="_5"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_1" to="_2"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_1" to="_6"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_2" to="_3"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_2" to="_7"><attr name="valence"><int>2</int></attr></edge>
+<edge from="_3" to="_4"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_4" to="_8"><attr name="valence"><int>2</int></attr></edge>
+<edge from="_4" to="_5"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_5" to="_9"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_9" to="_10"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_9" to="_13"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_10" to="_11"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_10" to="_30"><attr name="valence"><int>2</int></attr></edge>
+<edge from="_11" to="_12"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_11" to="_15"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_12" to="_14"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_12" to="_13"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_15" to="_16"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_16" to="_17"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_17" to="_18"><attr name="valence"><int>2</int></attr></edge>
+<edge from="_17" to="_19"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_19" to="_20"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_20" to="_21"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_21" to="_22"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_22" to="_23"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_23" to="_24"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_24" to="_25"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_25" to="_26"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_26" to="_27"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_27" to="_28"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_28" to="_29"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_29" to="_30"><attr name="valence"><int>1</int></attr></edge>
+<edge from="_30" to="_31"><attr name="valence"><int>1</int></attr></edge>
+</graph>
+</gxl>

@@ -1,0 +1,34 @@
+/**
+* \mainpage LSAPE - Tools for Bipartite Matching - C++ Documentation
+* \author <a href="https://bougleux.users.greyc.fr/">Sebastien Bougleux</a> (Normandie Univ, CNRS - ENSICAEN - UNICAEN, GREYC, Caen France)
+* \author <a href="https://brunl01.users.greyc.fr/">Luc Brun</a> (Normandie Univ, CNRS - ENSICAEN - UNICAEN, GREYC, Caen, France)
+* \section Content
+* <p>Compute optimal correspondances between the elements of
+* two sets, i.e. solving bipartite matching problems (aka linear sum assignment problems),
+* together with their dual (aka labeling problems). Equivalently, compute dissimilarity measures between two sets, based on optimal correspondances.</p>
+*  <p>Solve the following problems:</p>
+*    <ul><li>symmetric or assymmetric MIN-LSAP / minimal-cost perfect or maximal bipartite matching</li>
+*    <li>MIN-LSAP with Error-correction (LSAPE) / minimal-cost error-correcting bipartite matching</li></ul>
+*  <p>with the Hungarian method (each problem is solved by a specific Hungarian algorithm)</p>
+*  <p>or compute a cheap assignment with greedy methods.</p>
+* <p>More information on <a href="https://bougleux.users.greyc.fr/lsape/">LSAPE</a> website.</p>
+* \remarks
+* <ul><li>nxm matrices are represented by arrays of size nm (concatenation of the columns)</li>
+* <li>optimal solutions (and partial ones) are encoded by arrays of integers (element indicies), negative values (-1) denote unassigned elements</li>
+* </ul>
+* \section Licence
+* The source code of LSAPE is distributed under the CeCILL-C license, see files : 
+*   - <a href="Licence_CeCILL-C_V1-en.txt">Licence_CeCILL-C_V1-en.txt</a> (in English) or
+*   - <a href="Licence_CeCILL-C_V1-fr.txt">Licence_CeCILL-C_V1-fr.txt</a> (in French)
+*
+* It is a Free-Software license. CeCILL-C is adapted to the distribution of library 
+* components, and is close in its terms to the well known GNU LGPL license. The 
+* files can thus be used in closed-source products under certain conditions, please 
+* read carefully the license file.
+*
+* These two <a href="http://www.cecill.info/index.en.html">CeCiLL licenses</a> have been
+* created under the supervision of the three biggest research institutions on
+* computer sciences in France: <a href="http://www.cnrs.fr/">CNRS</a>, <a href="http://www.cea.fr/">CEA</a> and <a href="http://www.inria.fr/">INRIA</a>. Please respect these licenses. More particularly, read carefully the license terms before using LSAPE library in commercial products.
+*
+*/
+

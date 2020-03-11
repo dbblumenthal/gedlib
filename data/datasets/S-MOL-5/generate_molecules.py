@@ -130,7 +130,7 @@ def generate_molecule(min_num_nodes, max_num_nodes):
     pruefer_seq = generate_canonical_pruefer_seq(randint(min_num_nodes, max_num_nodes))
     # shuffle the Pruefer sequences
     num_nodes = len(pruefer_seq) + 2
-    permutation = range(num_nodes)
+    permutation = [i for i in range(num_nodes)]
     shuffle(permutation)
     for i in range(num_nodes - 2):
         pruefer_seq[i] = permutation[pruefer_seq[i]]
@@ -138,7 +138,7 @@ def generate_molecule(min_num_nodes, max_num_nodes):
     return pruefer_seq_to_tree(pruefer_seq)
 
 parser = argparse.ArgumentParser(description="Generate synthetic molecules for scalability tests.")
-parser.add_argument("--num-molecules", help="number of molecules that should be generated", type=int, default=50000)
+parser.add_argument("--num-molecules", help="number of molecules that should be generated", type=int, default=1000000)
 parser.add_argument("--num-node-labels", help="size of node label alphabet", type=int, default=5)
 parser.add_argument("--min-num-nodes", help="minimal number of nodes in molecules", type=int, default=10)
 parser.add_argument("--max-num-nodes", help="minimal number of nodes in molecules", type=int, default=15)
@@ -147,13 +147,13 @@ args = parser.parse_args()
 for mol_id in range(args.num_molecules):
     molecule = generate_molecule(args.min_num_nodes, args.max_num_nodes)
     molecule.generate_node_labels(args.num_node_labels)
-    write_to_gxl("molecule_{}.gxl".format(mol_id))
+    molecule.write_to_gxl("molecule_{}.gxl".format(mol_id))
 
 collection = open("../../collections/S-MOL-5.xml", "w")
 collection.write("<?xml version=\"1.0\"?>\n")
 collection.write("<!DOCTYPE GraphCollection SYSTEM \"http://github.com/dbblumenthal/gedlib/data/collections/GraphCollection.dtd\">\n")
 collection.write("<GraphCollection>\n")
 for mol_id in range(args.num_molecules):
-    collection.write("<graph file=\"molecule_{}.gxl\" class=\"1\"/>\n".format(mol_id))
+    collection.write("\t<graph file=\"molecule_{}.gxl\" class=\"1\"/>\n".format(mol_id))
 collection.write("</GraphCollection>\n")
 collection.close()

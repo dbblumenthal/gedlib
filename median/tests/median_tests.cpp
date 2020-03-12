@@ -40,10 +40,9 @@ bool constant_node_costs(const std::string & dataset) {
 	if (dataset == "Letter") {
 		return false;
 	}
-	else if (dataset != "Mutagenicity" and dataset != "AIDS") {
-		throw ged::Error("Invalid dataset " + dataset + ". Usage: ./median_tests <AIDS|Mutagenicity|Letter>");
+	else {
+		return true;
 	}
-	return true;
 }
 
 ged::Options::EditCosts edit_costs(const std::string & dataset) {

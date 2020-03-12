@@ -1,7 +1,5 @@
-
 #include "LetterMedianLabel.h"
 #include <cmath>
-
 
 double* computeGeometricMedian_bis(double* vectors, int lengthVector, int numVectors){
 /*
@@ -284,7 +282,6 @@ for (int k_means = 2;k_means<=max_k_means;k_means++){
         std::cout << "candidate Labels = ";
         for (int ind_cluster = (k_means*(k_means-1))/2;ind_cluster < (k_means*(k_means+1))/2;ind_cluster ++){
             std::cout << "("<< candidate_labels[ind_cluster].x << ";" << candidate_labels[ind_cluster].y <<  ") " ;
-
         }
         std::cout << "init_SOD before updating clusters = "<< init_SOD<< ", updated SOD = " << SOD <<  std::endl;
         */
@@ -456,15 +453,17 @@ if (best_Delta < 0){
 *NodeLabel= candidate_labels[ind_best_candidate];
 return best_Delta;
 
-};
+}
 
- double LetterMedianLabel::WeightedEdgeMeanLabel(double label1, double label2, double alpha){return 1;};
-
-
-CMUPoint LetterMedianLabel::WeightedVertexMeanLabel(CMUPoint label1, CMUPoint label2, double alpha){CMUPoint nodeLabel;
-nodeLabel.x=0.0;
-nodeLabel.y=0.0;
-return nodeLabel;
-};
+double LetterMedianLabel::WeightedEdgeMeanLabel(double label1, double label2, double alpha) { return 1; }
 
 
+CMUPoint LetterMedianLabel::WeightedVertexMeanLabel(CMUPoint label1, CMUPoint label2, double alpha)
+{
+  alpha /= cf->SubstitutionCost(label1,label2);
+  double a1 = 1.0 - alpha;
+  CMUPoint nodeLabel;
+  nodeLabel.x = alpha * label2.x + a1 * label1.x;
+  nodeLabel.y = alpha * label2.y + a1 * label1.y;
+  return nodeLabel;
+}

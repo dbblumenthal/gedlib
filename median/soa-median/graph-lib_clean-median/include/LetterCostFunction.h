@@ -16,6 +16,7 @@ private:
   double _tnodes;
   double _tedges;
   double _alpha;
+  unsigned int _power;
 
 public:
 
@@ -30,10 +31,9 @@ public:
 
   virtual LetterDistanceCost * clone() const {return new LetterDistanceCost(*this);}
 
-  LetterDistanceCost (double tn, double te, double a) :
-    _tnodes(tn),
-    _tedges(te),
-    _alpha(a)
+  // cost = power of Euclidean distance between labels (2D positions)
+  LetterDistanceCost (double tn, double te, double a, unsigned int power = 1) :
+  _tnodes(tn), _tedges(te), _alpha(a), _power(power)
   {}
 
 

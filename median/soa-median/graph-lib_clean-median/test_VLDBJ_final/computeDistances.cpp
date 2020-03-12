@@ -83,6 +83,7 @@ struct Options{
   bool shuffle = false;
   bool cmu = false;
   bool letter = false;
+  unsigned int power_cost = 1;
   bool web = false;
   int k = 3;
   int nep = 100; // number of edit paths for allsolution
@@ -103,7 +104,7 @@ struct Options * parseOptions(int argc, char** argv){
   options->dataset_file = string(argv[1]);
   int opt;
   stringstream sstream;
-  while ((opt = getopt(argc, argv, "m:i:o:c:sp:r:zywda:h:etu:v:x:b:f:I:P:")) != -1) {
+  while ((opt = getopt(argc, argv, "m:i:o:c:sp:r:zywda:g:h:etu:v:x:b:f:I:P:")) != -1) {
     switch (opt) {
     case 'I':
       options->collection_id = string(optarg);
@@ -145,56 +146,59 @@ struct Options * parseOptions(int argc, char** argv){
      case 'y':
       options->letter=true;
       break;
-      case 'w':
+    case 'g':
+      options->power_cost = (unsigned int)atoi(optarg);
+      break;
+    case 'w':
       options->web=true;
       break;
     case 'd':
       options->diag = true;
       break;
     case 'r':
-	options->nrep = atoi(optarg);
+      options->nrep = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-     case 'a':
-	options->adap = atoi(optarg);
+    case 'a':
+      options->adap = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-       case 'u':
-	options->size_random_trainset = atoi(optarg);
+    case 'u':
+      options->size_random_trainset = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-      case 'x':
-	options->num_repetitions_xp = atoi(optarg);
+    case 'x':
+      options->num_repetitions_xp = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-      case 'v':
-	options->proportion_random_trainset = atoi(optarg);
+    case 'v':
+      options->proportion_random_trainset = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-      case 'h':
-	options->numshuffle = atoi(optarg);
+    case 'h':
+      options->numshuffle = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-       case 'f':
-	options->dataset_seed = atoi(optarg);
+    case 'f':
+      options->dataset_seed = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-      case 'b':
-	options->proportion_random_init_median = atoi(optarg);
+    case 'b':
+      options->proportion_random_init_median = atoi(optarg);
       //sstream << optarg;
       //sstream >> options->nrep;
       break;
-      case 'e':
-        options->median = true;
+    case 'e':
+      options->median = true;
       break;
-
+      
     default: /* '?' */
       cerr << "Options parsing failed."  << endl;
       usage(argv[0]);
@@ -1849,68 +1853,67 @@ return taux_precision;
 
 int main (int argc, char** argv)
 {
-   //std::cout << "setting options \n";
+  //std::cout << "setting options \n";
   struct Options * options =   parseOptions(argc,argv);
-     //std::cout << "options set \n";
+  //std::cout << "options set \n";
 
   options->k = 3;
   if (options->letter){
+    LetterDistanceCost *cf = new LetterDistanceCost(0.9,1.7,0.75,options->power_cost);
+    LetterMedianLabel * mcf =  new LetterMedianLabel(cf);
+    //std::cout << "median labels set\n";
 
-   LetterDistanceCost *cf = new LetterDistanceCost(0.9,1.7,0.75);
-   LetterMedianLabel * mcf =  new LetterMedianLabel(cf);
-   //std::cout << "median labels set\n";
+    // IPFP used as a refinement method
 
-  // IPFP used as a refinement method
-
-  IPFPGraphEditDistance<CMUPoint,double> * algoIPFP = new IPFPGraphEditDistance<CMUPoint,double>(cf);
-  algoIPFP->recenterInit();
-  RandomMappingsGED<CMUPoint,double> *final_init = new RandomMappingsGED<CMUPoint,double>();
-  GraphEditDistance<CMUPoint,double>* final_ed = new MultistartRefinementGraphEditDistance<CMUPoint,double>(cf, final_init, 10, algoIPFP,5,options->adap);
-  GraphEditDistance<CMUPoint,double>* ed;
-  if(options->method == "lsape_multi_bunke")
-        ed = new BipartiteGraphEditDistanceMulti<CMUPoint,double>(cf, options->nep);
+    IPFPGraphEditDistance<CMUPoint,double> * algoIPFP = new IPFPGraphEditDistance<CMUPoint,double>(cf);
+    algoIPFP->recenterInit();
+    RandomMappingsGED<CMUPoint,double> *final_init = new RandomMappingsGED<CMUPoint,double>();
+    GraphEditDistance<CMUPoint,double>* final_ed = new MultistartRefinementGraphEditDistance<CMUPoint,double>(cf, final_init, 10, algoIPFP,5,options->adap);
+    GraphEditDistance<CMUPoint,double>* ed;
+    if(options->method == "lsape_multi_bunke")
+      ed = new BipartiteGraphEditDistanceMulti<CMUPoint,double>(cf, options->nep);
     else{
-        RandomMappingsGED<CMUPoint,double> *init = new RandomMappingsGED<CMUPoint,double>();
-        ed = new MultistartRefinementGraphEditDistance<CMUPoint,double>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
+      RandomMappingsGED<CMUPoint,double> *init = new RandomMappingsGED<CMUPoint,double>();
+      ed = new MultistartRefinementGraphEditDistance<CMUPoint,double>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
     }
 
 
-   int dataset_reduction =0;
-  int dataset_max_reduction=std::numeric_limits<int>::max();
+    int dataset_reduction =0;
+    int dataset_max_reduction=std::numeric_limits<int>::max();
 
-  for(int k=0; k<options->num_repetitions_xp;k++){
+    for(int k=0; k<options->num_repetitions_xp;k++){
       double init_time = 0.0;
       LetterDataset * completeset = new LetterDataset((options->dataset_file+"-"+options->collection_percentage+"-"+options->collection_id+".ds").c_str());
       int M = completeset->size();
-           std::vector<LetterDataset*> complete_datasets_by_class;
-           std::vector<LetterDataset*> datasets_by_class;
-           LetterDataset* initial_dataset = new LetterDataset();
-           initial_dataset->add((*completeset)[0],(*completeset)(0));
-           complete_datasets_by_class.push_back(initial_dataset);
-           //separation
+      std::vector<LetterDataset*> complete_datasets_by_class;
+      std::vector<LetterDataset*> datasets_by_class;
+      LetterDataset* initial_dataset = new LetterDataset();
+      initial_dataset->add((*completeset)[0],(*completeset)(0));
+      complete_datasets_by_class.push_back(initial_dataset);
+      //separation
       datasets_by_class.push_back(completeset);
       int P=datasets_by_class.size(); //P now equal to the number of classes in dataset_by_class
       for (int class_index = 0;class_index<P;class_index++){
-          LetterDataset* test_set = datasets_by_class[class_index];
-          int N=test_set->size();
-          int prop_init_random_median = 10;
-          bool init_distances = true;
-          struct timeval  tv1, tv2;
-            #ifdef PRINT_TIMES
-            gettimeofday(&tv1, NULL);
-            #endif
+	LetterDataset* test_set = datasets_by_class[class_index];
+	int N=test_set->size();
+	int prop_init_random_median = 10;
+	bool init_distances = true;
+	struct timeval  tv1, tv2;
+#ifdef PRINT_TIMES
+	gettimeofday(&tv1, NULL);
+#endif
 
-          for (int init_method = 0; init_method<1; init_method++){
+	for (int init_method = 0; init_method<1; init_method++){
           init_distances = true;
           GraphEditDistance<CMUPoint,double>* i_ed = nullptr;
           if(init_method == 0)
             i_ed = new BipartiteGraphEditDistanceMulti<CMUPoint,double>(cf, options->nep);
           else if (init_method == 1){
-                RandomMappingsGED<CMUPoint,double> *init = new RandomMappingsGED<CMUPoint,double>();
-                i_ed = new MultistartRefinementGraphEditDistance<CMUPoint,double>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
+	    RandomMappingsGED<CMUPoint,double> *init = new RandomMappingsGED<CMUPoint,double>();
+	    i_ed = new MultistartRefinementGraphEditDistance<CMUPoint,double>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
           }
           else{
-                init_distances=false;
+	    init_distances=false;
           }
           double rec_init_time;
           Graph<CMUPoint,double>* local_median = nullptr;
@@ -1923,414 +1926,414 @@ int main (int argc, char** argv)
           int * p_num_it = new int;
           //std::cout << std::endl <<"----- Method Based on Block gradient descent with set median init------"<< std::endl << std::endl;
           if (init_distances){
-                  // init_distances
-                  int status;
-                  int ** AllPairMappings =  new int*[N*N];
-                  double * distances = new double[N*N];
-                   #ifdef PRINT_TIMES
-                    gettimeofday(&tv1, NULL);
-                    #endif
-                    bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,600.0);
-                   #ifdef PRINT_TIMES
-                    gettimeofday(&tv2, NULL);
-                    init_time=((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                  #endif
-                  //std::cout << "distances initialized in " << init_time << "seconds" << std::end
+	    // init_distances
+	    int status;
+	    int ** AllPairMappings =  new int*[N*N];
+	    double * distances = new double[N*N];
+#ifdef PRINT_TIMES
+	    gettimeofday(&tv1, NULL);
+#endif
+	    bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,600.0);
+#ifdef PRINT_TIMES
+	    gettimeofday(&tv2, NULL);
+	    init_time=((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+#endif
+	    //std::cout << "distances initialized in " << init_time << "seconds" << std::end
 
-                    std::cout << "Id_collection,percentage,algo,SOD,time,refined_SOD,refinement_time,status" << std::endl;
-                  //Linear
-                  std::cout << options->collection_id <<"," << options->collection_percentage << ",linear,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,1);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                        finalSOD=-1;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
-                  //std::cout << "descent converged !! :)" << std::endl;
-                  delete init_median;
-                  delete local_median;
-                  //Triangular
-                   std::cout << options->collection_id <<"," << options->collection_percentage << ",Triangular,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,1);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
-                  //std::cout << "descent converged !! :)" << std::endl;
-                  delete init_median;
-                  delete local_median;
-                  //std::cout << "init BestLinear" << std::endl;
-                   std::cout << options->collection_id <<"," << options->collection_percentage << ",BestLinear,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,0);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
+	    std::cout << "Id_collection,percentage,algo,SOD,time,refined_SOD,refinement_time,status" << std::endl;
+	    //Linear
+	    std::cout << options->collection_id <<"," << options->collection_percentage << ",linear,";
+	    if(!init_computed){
+	      std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	    }
+	    else{
+	      gettimeofday(&tv1, NULL);
+	      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,1);
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_computed"<< std::endl;
+	      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      gettimeofday(&tv1, NULL);
+	      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_refined" << std::endl;
+	      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      status=3;
+	      if(rec_init_time+init_time>600.0){
+		status=1;
+	      }
+	      else if(rec_init_time+init_time+refinement_time>600.0){
+		status=2;
+		finalSOD=-1;
+	      }
+	      std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	    }
+	    //std::cout << "descent converged !! :)" << std::endl;
+	    delete init_median;
+	    delete local_median;
+	    //Triangular
+	    std::cout << options->collection_id <<"," << options->collection_percentage << ",Triangular,";
+	    if(!init_computed){
+	      std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	    }
+	    else{
+	      gettimeofday(&tv1, NULL);
+	      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,1);
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_computed"<< std::endl;
+	      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      gettimeofday(&tv1, NULL);
+	      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_refined" << std::endl;
+	      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      status=3;
+	      if(rec_init_time+init_time>600.0){
+		status=1;
+	      }
+	      else if(rec_init_time+init_time+refinement_time>600.0){
+		status=2;
+	      }
+	      std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	    }
+	    //std::cout << "descent converged !! :)" << std::endl;
+	    delete init_median;
+	    delete local_median;
+	    //std::cout << "init BestLinear" << std::endl;
+	    std::cout << options->collection_id <<"," << options->collection_percentage << ",BestLinear,";
+	    if(!init_computed){
+	      std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	    }
+	    else{
+	      gettimeofday(&tv1, NULL);
+	      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,0);
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_computed"<< std::endl;
+	      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      gettimeofday(&tv1, NULL);
+	      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_refined" << std::endl;
+	      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      status=3;
+	      if(rec_init_time+init_time>600.0){
+		status=1;
+	      }
+	      else if(rec_init_time+init_time+refinement_time>600.0){
+		status=2;
+	      }
+	      std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	    }
 
-                  //BestLinear
-                 delete init_median;
-                  delete local_median;
-                  //std::cout << "init Besttriangular" << std::endl;
-                   std::cout << options->collection_id <<"," << options->collection_percentage << ",BestTriangular,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,0);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
-                  delete i_ed;
-                  for (int j = 0;j<N;j++){
-                    delete [] mappingsFromMedian[j];
-                    delete [] mappingsToMedian[j];
-                    }
-                  delete [] mappingsFromMedian;
-                  delete [] mappingsToMedian;
-              }
-              else{
-                local_median = computeMedianGraph(test_set,ed,mcf,0,final_ed); // tests min, mean, and max order
-                local_median = computeMedianGraph(test_set,ed,mcf,40,final_ed);
-              }
-          }
+	    //BestLinear
+	    delete init_median;
+	    delete local_median;
+	    //std::cout << "init Besttriangular" << std::endl;
+	    std::cout << options->collection_id <<"," << options->collection_percentage << ",BestTriangular,";
+	    if(!init_computed){
+	      std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	    }
+	    else{
+	      gettimeofday(&tv1, NULL);
+	      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,0);
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_computed"<< std::endl;
+	      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      gettimeofday(&tv1, NULL);
+	      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+	      gettimeofday(&tv2, NULL);
+	      //std::cout<<"median_refined" << std::endl;
+	      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+	      status=3;
+	      if(rec_init_time+init_time>600.0){
+		status=1;
+	      }
+	      else if(rec_init_time+init_time+refinement_time>600.0){
+		status=2;
+	      }
+	      std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	    }
+	    delete i_ed;
+	    for (int j = 0;j<N;j++){
+	      delete [] mappingsFromMedian[j];
+	      delete [] mappingsToMedian[j];
+	    }
+	    delete [] mappingsFromMedian;
+	    delete [] mappingsToMedian;
+	  }
+	  else{
+	    local_median = computeMedianGraph(test_set,ed,mcf,0,final_ed); // tests min, mean, and max order
+	    local_median = computeMedianGraph(test_set,ed,mcf,40,final_ed);
+	  }
+	}
 
       }
       delete ed;
-      }
+    }
 
-  delete cf;
-  delete mcf;
-  delete options;
-  delete algoIPFP;
-  //delete i_ed;
-}
+    delete cf;
+    delete mcf;
+    delete options;
+    delete algoIPFP;
+    //delete i_ed;
+  }
 
   else{
 
- ConstantEditDistanceCost* cf = new ConstantEditDistanceCost(options->cns,options->cni, options->cnd,
-							       options->ces,options->cei, options->ced);
-  ConstantMedianLabel* mcf = new ConstantMedianLabel(cf);
-   //std::cout << "median labels set\n";
+    ConstantEditDistanceCost* cf = new ConstantEditDistanceCost(options->cns,options->cni, options->cnd,
+								options->ces,options->cei, options->ced);
+    ConstantMedianLabel* mcf = new ConstantMedianLabel(cf);
+    //std::cout << "median labels set\n";
 
-  // IPFP used as a refinement method
+    // IPFP used as a refinement method
 
-  IPFPGraphEditDistance<int,int> * algoIPFP = new IPFPGraphEditDistance<int,int>(cf);
-  algoIPFP->recenterInit();
-  RandomMappingsGED<int,int> *final_init = new RandomMappingsGED<int,int>();
-  //GraphEditDistance<int,int>* final_ed = new MultistartRefinementGraphEditDistance<int,int>(cf, final_init, 40, 10,options->adap);
-  GraphEditDistance<int,int>* final_ed = new MultistartRefinementGraphEditDistance<int,int>(cf, final_init, 10, algoIPFP,5,options->adap); // fast final GED fpr testing
-  GraphEditDistance<int,int>* ed;
-  if(options->method == "lsape_multi_bunke")
-        ed = new BipartiteGraphEditDistanceMulti<int,int>(cf, options->nep);
+    IPFPGraphEditDistance<int,int> * algoIPFP = new IPFPGraphEditDistance<int,int>(cf);
+    algoIPFP->recenterInit();
+    RandomMappingsGED<int,int> *final_init = new RandomMappingsGED<int,int>();
+    //GraphEditDistance<int,int>* final_ed = new MultistartRefinementGraphEditDistance<int,int>(cf, final_init, 40, 10,options->adap);
+    GraphEditDistance<int,int>* final_ed = new MultistartRefinementGraphEditDistance<int,int>(cf, final_init, 10, algoIPFP,5,options->adap); // fast final GED fpr testing
+    GraphEditDistance<int,int>* ed;
+    if(options->method == "lsape_multi_bunke")
+      ed = new BipartiteGraphEditDistanceMulti<int,int>(cf, options->nep);
     else{
-        RandomMappingsGED<int,int> *init = new RandomMappingsGED<int,int>();
-        ed = new MultistartRefinementGraphEditDistance<int,int>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
+      RandomMappingsGED<int,int> *init = new RandomMappingsGED<int,int>();
+      ed = new MultistartRefinementGraphEditDistance<int,int>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
     }
 
 
-   int dataset_reduction =0;
-  int dataset_max_reduction=std::numeric_limits<int>::max();
+    int dataset_reduction =0;
+    int dataset_max_reduction=std::numeric_limits<int>::max();
 
-  for(int k=0; k<options->num_repetitions_xp;k++){
+    for(int k=0; k<options->num_repetitions_xp;k++){
       double init_time = 0.0;
       ChemicalDataset<double> * completeset = new ChemicalDataset<double>((options->dataset_file+"-"+options->collection_percentage+"-"+options->collection_id+".ds").c_str());
       int M = completeset->size();
-           std::vector<ChemicalDataset<double>*> complete_datasets_by_class;
-           std::vector<ChemicalDataset<double>*> datasets_by_class;
-           ChemicalDataset<double>* initial_dataset = new ChemicalDataset<double>();
-           initial_dataset->add((*completeset)[0],(*completeset)(0));
-           complete_datasets_by_class.push_back(initial_dataset);
-           //separation
-           datasets_by_class.push_back(completeset);
+      std::vector<ChemicalDataset<double>*> complete_datasets_by_class;
+      std::vector<ChemicalDataset<double>*> datasets_by_class;
+      ChemicalDataset<double>* initial_dataset = new ChemicalDataset<double>();
+      initial_dataset->add((*completeset)[0],(*completeset)(0));
+      complete_datasets_by_class.push_back(initial_dataset);
+      //separation
+      datasets_by_class.push_back(completeset);
 
       int P=datasets_by_class.size(); //P now equal to the number of classes in dataset_by_class
       for (int class_index = 0;class_index<P;class_index++){
-          std::vector<int> set_sizes;
-          if(options->all_train_set_sizes){
-                for (int i = 0;i<19;i++){
-                    if (i<10){
-                        set_sizes.push_back((i+1)*10);
-                    }
-                    else
-                        set_sizes.push_back((i-8)*100);
+	std::vector<int> set_sizes;
+	if(options->all_train_set_sizes){
+	  for (int i = 0;i<19;i++){
+	    if (i<10){
+	      set_sizes.push_back((i+1)*10);
+	    }
+	    else
+	      set_sizes.push_back((i-8)*100);
 
-                }
+	  }
 
+	}
+	else
+	  set_sizes.push_back(datasets_by_class[class_index]->size());
+
+	for (int size_index = 0; size_index < set_sizes.size();size_index++){
+	  int current_size;
+	  ChemicalDataset<double>* test_set = nullptr;
+	  if (set_sizes[size_index]>datasets_by_class[class_index]->size()){
+	    current_size = datasets_by_class[class_index]->size();
+	  }
+	  else
+	    current_size = set_sizes[size_index];
+
+	  if (current_size == datasets_by_class[class_index]->size()){
+	    test_set = datasets_by_class[class_index];
+	  }
+	  else{
+	    test_set = new ChemicalDataset<double>;
+	    for (int i =0;i<current_size;i++){
+	      test_set->add(datasets_by_class[class_index]->getGraph(i),datasets_by_class[class_index]->getProperty(i));
+	    }
+	    //std::cout << " taille dataset " << test_set->size() << std::endl;
+	  }
+	  int N=test_set->size();
+	  int prop_init_random_median = 10;
+	  bool init_distances = true;
+	  struct timeval  tv1, tv2;
+#ifdef PRINT_TIMES
+	  gettimeofday(&tv1, NULL);
+#endif
+
+	  for (int init_method = 0; init_method<1; init_method++){ // only bipartite initialization
+	    init_distances = true;
+	    GraphEditDistance<int,int>* i_ed = nullptr;
+	    if(init_method == 0)
+	      i_ed = new BipartiteGraphEditDistanceMulti<int,int>(cf, options->nep);
+	    else if (init_method == 1){
+	      RandomMappingsGED<int,int> *init = new RandomMappingsGED<int,int>();
+	      i_ed = new MultistartRefinementGraphEditDistance<int,int>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
+	    }
+	    else{
+	      init_distances=false;
+	    }
+	    double rec_init_time;
+	    Graph<int,int>* local_median = nullptr;
+	    Graph<int,int>* init_median = nullptr;
+	    double * distancesToMedian = new double [N];
+	    int * * mappingsFromMedian = new int*[N];
+	    int * * mappingsToMedian = new int*[N];
+	    double finalSOD;
+	    double * p_SOD= new double;
+	    int * p_num_it = new int;
+	    //std::cout << std::endl <<"----- Method Based on Block gradient descent with set median init------"<< std::endl << std::endl;
+	    if (init_distances){
+	      // init_distances
+	      int status;
+	      int ** AllPairMappings =  new int*[N*N];
+	      double * distances = new double[N*N];
+#ifdef PRINT_TIMES
+	      gettimeofday(&tv1, NULL);
+#endif
+	      bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,600.0);
+#ifdef PRINT_TIMES
+	      gettimeofday(&tv2, NULL);
+	      init_time=((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+#endif
+	      //std::cout << "distances initialized in " << init_time << "seconds" << std::end
+
+	      std::cout << "Id_collection,percentage,algo,SOD,time,refined_SOD,refinement_time,status" << std::endl;
+	      //Linear
+	      std::cout << options->collection_id <<"," << options->collection_percentage << ",linear,";
+	      if(!init_computed){
+		std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	      }
+	      else{
+		gettimeofday(&tv1, NULL);
+		local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,1);
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_computed"<< std::endl;
+		double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		gettimeofday(&tv1, NULL);
+		finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_refined" << std::endl;
+		double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		status=3;
+		if(rec_init_time+init_time>600.0){
+		  status=1;
+		}
+		else if(rec_init_time+init_time+refinement_time>600.0){
+		  status=2;
+		}
+		std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	      }
+	      //std::cout << "descent converged !! :)" << std::endl;
+	      delete init_median;
+	      delete local_median;
+	      //Triangular
+	      std::cout << options->collection_id <<"," << options->collection_percentage << ",Triangular,";
+	      if(!init_computed){
+		std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	      }
+	      else{
+		gettimeofday(&tv1, NULL);
+		local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,1);
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_computed"<< std::endl;
+		double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		gettimeofday(&tv1, NULL);
+		finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_refined" << std::endl;
+		double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		status=3;
+		if(rec_init_time+init_time>600.0){
+		  status=1;
+		}
+		else if(rec_init_time+init_time+refinement_time>600.0){
+		  status=2;
+		}
+		std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	      }
+	      //std::cout << "descent converged !! :)" << std::endl;
+	      delete init_median;
+	      delete local_median;
+	      //std::cout << "init BestLinear" << std::endl;
+	      std::cout << options->collection_id <<"," << options->collection_percentage << ",BestLinear,";
+	      if(!init_computed){
+		std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	      }
+	      else{
+		gettimeofday(&tv1, NULL);
+		local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,0);
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_computed"<< std::endl;
+		double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		gettimeofday(&tv1, NULL);
+		finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_refined" << std::endl;
+		double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		status=3;
+		if(rec_init_time+init_time>600.0){
+		  status=1;
+		}
+		else if(rec_init_time+init_time+refinement_time>600.0){
+		  status=2;
+		}
+		std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	      }
+
+	      //BestLinear
+	      delete init_median;
+	      delete local_median;
+	      //std::cout << "init Besttriangular" << std::endl;
+	      std::cout << options->collection_id <<"," << options->collection_percentage << ",BestTriangular,";
+	      if(!init_computed){
+		std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
+	      }
+	      else{
+		gettimeofday(&tv1, NULL);
+		local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,0);
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_computed"<< std::endl;
+		double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		gettimeofday(&tv1, NULL);
+		finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+		gettimeofday(&tv2, NULL);
+		//std::cout<<"median_refined" << std::endl;
+		double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
+		status=3;
+		if(rec_init_time+init_time>600.0){
+		  status=1;
+		}
+		else if(rec_init_time+init_time+refinement_time>600.0){
+		  status=2;
+		}
+		std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
+	      }
+	      delete i_ed;
+	      for (int j = 0;j<N;j++){
+		delete [] mappingsFromMedian[j];
+		delete [] mappingsToMedian[j];
+	      }
+	      delete [] mappingsFromMedian;
+	      delete [] mappingsToMedian;
+	    }
+	    else{
+	      local_median = computeMedianGraph(test_set,ed,mcf,0,final_ed); // tests min, mean, and max order
+	      local_median = computeMedianGraph(test_set,ed,mcf,40,final_ed);
+	    }
           }
-          else
-            set_sizes.push_back(datasets_by_class[class_index]->size());
 
-          for (int size_index = 0; size_index < set_sizes.size();size_index++){
-              int current_size;
-              ChemicalDataset<double>* test_set = nullptr;
-              if (set_sizes[size_index]>datasets_by_class[class_index]->size()){
-                    current_size = datasets_by_class[class_index]->size();
-                }
-              else
-                current_size = set_sizes[size_index];
-
-              if (current_size == datasets_by_class[class_index]->size()){
-                test_set = datasets_by_class[class_index];
-                }
-              else{
-                 test_set = new ChemicalDataset<double>;
-                for (int i =0;i<current_size;i++){
-                    test_set->add(datasets_by_class[class_index]->getGraph(i),datasets_by_class[class_index]->getProperty(i));
-                }
-                //std::cout << " taille dataset " << test_set->size() << std::endl;
-              }
-              int N=test_set->size();
-              int prop_init_random_median = 10;
-              bool init_distances = true;
-              struct timeval  tv1, tv2;
-                #ifdef PRINT_TIMES
-                gettimeofday(&tv1, NULL);
-                #endif
-
-              for (int init_method = 0; init_method<1; init_method++){ // only bipartite initialization
-              init_distances = true;
-              GraphEditDistance<int,int>* i_ed = nullptr;
-              if(init_method == 0)
-                i_ed = new BipartiteGraphEditDistanceMulti<int,int>(cf, options->nep);
-              else if (init_method == 1){
-                    RandomMappingsGED<int,int> *init = new RandomMappingsGED<int,int>();
-                    i_ed = new MultistartRefinementGraphEditDistance<int,int>(cf, init, options->nep, algoIPFP,options->nrep,options->adap);
-              }
-              else{
-                    init_distances=false;
-              }
-              double rec_init_time;
-              Graph<int,int>* local_median = nullptr;
-              Graph<int,int>* init_median = nullptr;
-              double * distancesToMedian = new double [N];
-              int * * mappingsFromMedian = new int*[N];
-              int * * mappingsToMedian = new int*[N];
-              double finalSOD;
-              double * p_SOD= new double;
-              int * p_num_it = new int;
-              //std::cout << std::endl <<"----- Method Based on Block gradient descent with set median init------"<< std::endl << std::endl;
-               if (init_distances){
-                  // init_distances
-                  int status;
-                  int ** AllPairMappings =  new int*[N*N];
-                  double * distances = new double[N*N];
-                   #ifdef PRINT_TIMES
-                    gettimeofday(&tv1, NULL);
-                    #endif
-                    bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,600.0);
-                   #ifdef PRINT_TIMES
-                    gettimeofday(&tv2, NULL);
-                    init_time=((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                  #endif
-                  //std::cout << "distances initialized in " << init_time << "seconds" << std::end
-
-                    std::cout << "Id_collection,percentage,algo,SOD,time,refined_SOD,refinement_time,status" << std::endl;
-                  //Linear
-                  std::cout << options->collection_id <<"," << options->collection_percentage << ",linear,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,1);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
-                  //std::cout << "descent converged !! :)" << std::endl;
-                  delete init_median;
-                  delete local_median;
-                  //Triangular
-                   std::cout << options->collection_id <<"," << options->collection_percentage << ",Triangular,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,1);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
-                  //std::cout << "descent converged !! :)" << std::endl;
-                  delete init_median;
-                  delete local_median;
-                  //std::cout << "init BestLinear" << std::endl;
-                   std::cout << options->collection_id <<"," << options->collection_percentage << ",BestLinear,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,0);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
-
-                  //BestLinear
-                 delete init_median;
-                  delete local_median;
-                  //std::cout << "init Besttriangular" << std::endl;
-                   std::cout << options->collection_id <<"," << options->collection_percentage << ",BestTriangular,";
-                  if(!init_computed){
-                    std::cout << "-1,"<<init_time <<",-1,"<< init_time << ",0" << std::endl;
-                  }
-                  else{
-                      gettimeofday(&tv1, NULL);
-                      local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,0);
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_computed"<< std::endl;
-                      double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      gettimeofday(&tv1, NULL);
-                      finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
-                      gettimeofday(&tv2, NULL);
-                      //std::cout<<"median_refined" << std::endl;
-                      double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
-                      status=3;
-                      if(rec_init_time+init_time>600.0){
-                        status=1;
-                      }
-                      else if(rec_init_time+init_time+refinement_time>600.0){
-                        status=2;
-                      }
-                       std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
-                    }
-                  delete i_ed;
-                  for (int j = 0;j<N;j++){
-                    delete [] mappingsFromMedian[j];
-                    delete [] mappingsToMedian[j];
-                    }
-                  delete [] mappingsFromMedian;
-                  delete [] mappingsToMedian;
-              }
-              else{
-                local_median = computeMedianGraph(test_set,ed,mcf,0,final_ed); // tests min, mean, and max order
-                local_median = computeMedianGraph(test_set,ed,mcf,40,final_ed);
-              }
-          }
-
-      }
+	}
       }
 
-  delete cf;
-  delete mcf;
-  delete options;
-  delete algoIPFP;
-  //delete i_ed;
-}
-  return 0;
+      delete cf;
+      delete mcf;
+      delete options;
+      delete algoIPFP;
+      //delete i_ed;
+    }
+    return 0;
 
 
 
 
-}
+  }
 }

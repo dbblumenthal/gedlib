@@ -70,7 +70,7 @@ std::string dir(const std::string & dataset) {
 		return (root_dir + dataset + "/");
 	}
 	else {
-		throw ged::Error("Invalid dataset specified. Usage: ./median_tests <AIDS|Mutagenicity|Letter|AIDS-EDIT|S-MOL-5>");
+		throw ged::Error("Invalid dataset specified. Usage: ./time_limit_tests <AIDS|Mutagenicity|Letter|AIDS-EDIT|S-MOL-5>");
 	}
 	return "";
 }
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
 
 	// Initialize progress bar.
 	ged::ProgressBar progress(ids.size() * time_limits.size() * algos.size());
-	std::cout << "\rRunning time limit tests:" << progress << std::flush;
+	std::cout << "\rRunning time limit tests: " << progress << std::flush;
 
 	for (const auto & id : ids) {
 
@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
 
 				// Increment the progress bar and print current progress.
 				progress.increment();
-				std::cout << "\rRunning tests for " << percent << "% collections:" << progress << std::flush;
+				std::cout << "\rRunning time limit tests: " << progress << std::flush;
 			}
 		}
 		std::cout << "\n";

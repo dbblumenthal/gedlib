@@ -41,10 +41,10 @@ multithread: $(TESTDIR)/chemical-edit-distances
 #uncomment next line on macOS
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-	multithread_with_times: CXXFLAGS += -fopenmp -D PRINT_TIMES
+multithread_with_times: CXXFLAGS += -fopenmp -D PRINT_TIMES
 endif
 ifeq ($(UNAME_S),Darwin)
-    multithread_with_times: CXXFLAGS += -Xpreprocessor -fopenmp -D PRINT_TIMES -L$(OMP_DIR) -lomp
+multithread_with_times: CXXFLAGS += -Xpreprocessor -fopenmp -D PRINT_TIMES -L$(OMP_DIR) -lomp
 endif
 multithread_with_times: $(TESTDIR)/chemical-edit-distances
 

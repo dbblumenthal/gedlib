@@ -50,6 +50,9 @@ ged::Options::EditCosts edit_costs(const std::string & dataset) {
 	if (dataset == "Letter") {
 		return ged::Options::EditCosts::LETTER;
 	}
+	else if (dataset == "AIDS-EDIT") {
+		return ged::Options::EditCosts::CONSTANT;
+	}
 	else {
 		return ged::Options::EditCosts::CHEM_1;
 	}
@@ -58,14 +61,17 @@ ged::Options::EditCosts edit_costs(const std::string & dataset) {
 
 std::string dir(const std::string & dataset) {
 	std::string root_dir("../../data/datasets/");
-	if ((dataset == "AIDS") or (dataset == "Mutagenicity")) {
+	if ((dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "S-MOL-5")) {
 		return (root_dir + dataset + "/data/");
 	}
 	else if (dataset == "Letter") {
 		return (root_dir + dataset + "/HIGH/");
 	}
+	else if (dataset == "AIDS-EDIT") {
+		return (root_dir + dataset + "/");
+	}
 	else {
-		throw ged::Error("Invalid dataset specified. Usage: ./median_tests <AIDS|Mutagenicity|Letter>");
+		throw ged::Error("Invalid dataset specified. Usage: ./median_tests <AIDS|Mutagenicity|Letter|AIDS-EDIT|S-MOL-5>");
 	}
 	return "";
 }
@@ -76,20 +82,22 @@ std::string collection(const std::string & dataset, const std::string & percent,
 	if (dataset == "Mutagenicity") {
 		collection_file += "-Correct";
 	}
-
+	else if (dataset == "AIDS-EDIT") {
+		collection_file += "-NON-ISO";
+	}
 	return collection_file + "-" + percent + "-" + id + ".xml";
 }
 
 int main(int argc, char* argv[]) {
 
 	if (argc <= 1) {
-		throw ged::Error("No dataset specified. Usage: ./median_chem <AIDS|Mutagenicity|Letter>");
+		throw ged::Error("No dataset specified. Usage: ./median_chem <AIDS|Mutagenicity|Letter|AIDS-EDIT|S-MOL-5>");
 	}
 	std::string dataset(argv[1]);
 
 	// Varied sub-collections.
-	std::vector<std::string> percents{"10", "20", "30", "40", "50", "60", "70", "80", "90", "100"};
-	std::vector<std::string> ids{"4", "0", "1", "2", "3"};
+	std::vector<std::string> percents{"10", "20", "30", "40", "50", "60", "70", "80", "90"};
+	std::vector<std::string> ids{"0", "1", "2", "3", "4"};
 
 	// Varied estimator parameters.
 	std::vector<std::string> init_types{"RANDOM", "MAX", "MIN", "MEAN", "MEDOID"};
@@ -98,6 +106,14 @@ int main(int argc, char* argv[]) {
 	// Varied algorithm parameters.
 	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE};
 	std::vector<std::string> algo_options_suffixes{" --initial-solutions 10 --ratio-runs-from-initial-solutions .5", "", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
+
+	// On synthetic datasets, only compare best performing configurations.
+	if (dataset == "AIDS-EDIT" or dataset == "S-MOL-5") {
+		init_types = {"RANDOM"};
+		nums_inits = {"8"};
+		algos = {ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE};
+		algo_options_suffixes = {"", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
+	}
 
 	// Generate the result file.
 	std::string result_filename("../output/");

@@ -173,7 +173,7 @@ If you want to use GEDLIB as a shared library for graphs with custom node ID, no
 
 ### 5.4 Examples
 
-For exacmples of how to use GEDLIB, have a look at `median/src/median_letter.cpp` and at the `.cpp` files contained in the subdirectories of `tests/`. 
+For an extensively commented example of how to use GEDLIB, have a look at `median/tests/median_letter_demo.cpp`. For more examples, see the `.cpp` files contained in the sub-directories of the `tests/` directory. 
 
 ## 6. Reproducability Packages
 
@@ -195,10 +195,10 @@ After having executed these commands, the results of the experiments are contain
 
 ##### D. B. Blumenthal, N. Boria, J. Gamper, S. Bougleux, and L. Brun. &ldquo;Comparing heuristics for graph edit distance computation&rdquo;, VLDB J. 29(1), pp. 419-458, 2020, [https://doi.org/10.1007/s00778-019-00544-1](https://doi.org/10.1007/s00778-019-00544-1)
 
-In order to reproduce the experiments reported in this paper, install GEDLIB with the options `--tests vldbj2019` and `--gurobi <GUROBI_ROOT>`. After installation, open a shell and execute the following commands:
+In order to reproduce the experiments reported in this paper, install GEDLIB with the options `--tests vldbj2020` and `--gurobi <GUROBI_ROOT>`. After installation, open a shell and execute the following commands:
 
 ```sh
-$ cd <GEDLIB_ROOT>/tests/vldbj2019/bin
+$ cd <GEDLIB_ROOT>/tests/vldbj2020/bin
 $ ./vldbj_train_subgraph
 $ ./vldbj_train_walks
 $ ./vldbj_train_ring
@@ -210,7 +210,7 @@ $ ./vldbj_test_misc_methods
 $ ./vldbj_test_best_methods
 ```
 
-After having executed these commands, the results of the experiments are contained in the folder `tests/vldbj2019/results/`. For creating TikZ figures and tables that visualize the results, run the script `process_results.py`.
+After having executed these commands, the results of the experiments are contained in the folder `tests/vldbj2020/results/`. For creating TikZ figures and tables that visualize the results, run the script `process_results.py`.
 
 # 7. Datasets
 
@@ -227,7 +227,8 @@ GEDLIB comes with several datassets which contain graphs given in the [GXL file 
       &ldquo;A graph database repository and performance evaluation metrics for graph edit distance&rdquo;,
       [https://doi.org/10.1007/978-3-319-18224-7\_14](https://doi.org/10.1007/978-3-319-18224-7_14)
 - <b>`acyclic`, `alkane`, `mao`, `pah`:</b> These datasets are taken from [GREYC's Chemistry Dataset](https://brunl01.users.greyc.fr/CHEMISTRY/).
-- <b> `S-MOL`:</b> Synthetically generated graphs with varying number of node labels whose structure is similar to the structure of `pah` graphs. 
+- <b> `S-MOL`:</b> Synthetically generated graphs with varying number of node labels whose structure is similar to the structure of `pah` graphs.
+- <b> `S-MOL-5`:</b> Synthetically generated graphs with 5 node labels whose structure is similar to the structure of `pah` graphs. 
 
 For each dataset, the directory `data/collections/` contains an XML file which lists the contained graphs' GXL files along with their classes. These files match the document type definition `data/collections/GraphCollection.dtd` and can hence be used as input for `ged::GEDEnv::load_gxl_graphs()`. The Python script `data/collections/sample.py` can be used to generate samples of the datasets.
 

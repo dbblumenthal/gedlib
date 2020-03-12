@@ -25,7 +25,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/median/bin)
 
 # Add targets.
 
-add_custom_target(median DEPENDS median_tests ibd_tests aids_edit_iso_test)
+add_custom_target(median DEPENDS median_tests ibd_tests aids_edit_iso_test time_limit_tests)
 
 add_custom_target(cluster DEPENDS cluster_letter clustering_tests classification_tests)
 
@@ -38,6 +38,15 @@ if(APPLE)
   add_custom_command(TARGET aids_edit_iso_test POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/aids_edit_iso_test)
   add_custom_command(TARGET aids_edit_iso_test POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/aids_edit_iso_test)
 endif()
+
+add_executable(time_limit_tests tests/time_limit_tests.cpp)
+target_link_libraries(time_limit_tests gxlgedlib)
+if(APPLE)
+  add_custom_command(TARGET time_limit_tests POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/time_limit_tests)
+  add_custom_command(TARGET time_limit_tests POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/time_limit_tests)
+  add_custom_command(TARGET time_limit_tests POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/time_limit_tests)
+endif()
+
 
 add_executable(median_tests tests/median_tests.cpp)
 target_link_libraries(median_tests gxlgedlib)

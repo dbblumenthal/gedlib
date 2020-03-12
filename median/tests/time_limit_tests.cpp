@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
 
 	// Generate the result file.
 	std::string result_filename("../output/");
-	result_filename += dataset + "_RESULTS.csv";
+	result_filename += dataset + "_TIME_LIMIT_RESULTS.csv";
 	std::ofstream result_file(result_filename.c_str());
 	result_file << "time-limit,percent,id,init_type,num_inits,algo,time,time_init,time_converged,sod,sod_init,sod_converged,itrs,state\n";
 	result_file.close();
@@ -137,13 +137,12 @@ int main(int argc, char* argv[]) {
 		std::string mge_options("--stdout 0 --init-type RANDOM --random-inits 8 --seed " + std::to_string(rng()));
 
 		for (const auto & time_limit : time_limits) {
-			mge_options += " --time-limit " + time_limit;
 
 			for (std::size_t algo_id{0}; algo_id < algos.size(); algo_id++) {
 				// Select the GED algorithm.
 				ged::Options::GEDMethod algo{algos.at(algo_id)};
 				std::string algo_options("--threads 6" + algo_options_suffixes.at(algo_id));
-				mge.set_options(mge_options);
+				mge.set_options(mge_options + " --time-limit " + time_limit);
 				mge.set_init_method(algo, algo_options);
 				mge.set_descent_method(algo, algo_options);
 

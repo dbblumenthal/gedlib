@@ -4,8 +4,6 @@ IDIR = ./include
 LSAPE_DIR=../lsape-for-graphlib/include
 
 ## Eigen library
-## EIGEN_DIR=/export/home/boria/Documents/code/eigen-git-mirror-3.0.6
-#EIGEN_DIR=../../../ext/eigen.3.3.4
 EIGEN_DIR=../eigen3
 OMP_DIR=/usr/local/lib
 
@@ -41,8 +39,13 @@ multithread: CXXFLAGS += -fopenmp
 multithread: $(TESTDIR)/chemical-edit-distances
 
 #uncomment next line on macOS
-multithread_with_times: CXXFLAGS += -Xpreprocessor -fopenmp -D PRINT_TIMES -L$(OMP_DIR)
-#multithread_with_times: CXXFLAGS += -fopenmp -D PRINT_TIMES
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	multithread_with_times: CXXFLAGS += -fopenmp -D PRINT_TIMES
+endif
+ifeq ($(UNAME_S),Darwin)
+    multithread_with_times: CXXFLAGS += -Xpreprocessor -fopenmp -D PRINT_TIMES -L$(OMP_DIR) -lomp
+endif
 multithread_with_times: $(TESTDIR)/chemical-edit-distances
 
 qaplib_mt: CXXFLAGS += -fopenmp
@@ -56,7 +59,7 @@ $(TESTDIR)/benchmark: $(DEPS) $(OBJ) $(TESTDIR)/benchmark.cpp
 	$(CXX) -o $@ $^ $(CXXFLAGS) -ltinyxml #-lomp
 
 $(TESTDIR)/chemical-edit-distances: $(TESTDIR)/computeDistances.cpp $(OBJ)
-	$(CXX) -o $@ $^ $(CXXFLAGS) -ltinyxml -lomp
+	$(CXX) -o $@ $^ $(CXXFLAGS) -ltinyxml
 
 $(TESTDIR)/QAPlib: $(TESTDIR)/QAPLib.cpp $(OBJ_QAP)
 	$(CXX)  -D PRINT_TIMES -o $@ $^ $(CXXFLAGS) -ltinyxml #-lomp

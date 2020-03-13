@@ -99,8 +99,7 @@ int main(int argc, char* argv[]) {
 	std::vector<std::string> ids{"0", "1", "2", "3", "4"};
 
 	// Varied estimator parameters.
-	std::vector<std::string> time_limits{"60"};
-	//std::vector<std::string> time_limits{"60", "120", "180", "240", "300", "360", "420", "480", "540", "600"};
+	std::vector<std::string> time_limits{"60", "120", "180", "240", "300", "360", "420", "480", "540", "600"};
 
 	// Varied algorithm parameters.
 	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE};

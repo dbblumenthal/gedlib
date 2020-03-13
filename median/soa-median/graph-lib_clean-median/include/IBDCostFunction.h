@@ -1,7 +1,6 @@
 #ifndef __IBD_COSTFUNCTION_H__
 #define __IBD_COSTFUNCTION_H__
 
-#include "../../../../src/env/matrix.hpp"
 #include "GraphEditDistance.h"
 #include "IBDGraph.h"
 
@@ -14,7 +13,7 @@ tokenizeB(const std::string & sentence, char sep, std::vector<std::string> & wor
 		if (sentence.at(pos) == '\'') {
 			if (not outside_quotes and pos < sentence.size() - 1) {
 				if (sentence.at(pos + 1) != sep) {
-					throw Error("Sentence contains closing single quote which is followed by a char different from " + std::to_string(sep) + ".");
+					throw std::runtime_error("Sentence contains closing single quote which is followed by a char different from " + std::to_string(sep) + ".");
 				}
 			}
 			word_length++;
@@ -32,7 +31,7 @@ tokenizeB(const std::string & sentence, char sep, std::vector<std::string> & wor
 		}
 	}
 	if (not outside_quotes) {
-		throw Error("Sentence contains unbalanced single quotes.");
+		throw std::runtime_error("Sentence contains unbalanced single quotes.");
 	}
 	if (word_length > 0) {
 		words.push_back(sentence.substr(pos_word_start, word_length));
@@ -45,7 +44,7 @@ class IBDDistanceCost:public EditDistanceCost<int,double>
 private:
 
   double _alpha;
-  ged::DMatrix node_rel_costs_;
+  std::vector<std::vector<double>> node_rel_costs_;
   std::vector<std::size_t> otus_;
   
 public:
@@ -53,7 +52,7 @@ public:
   double NodeSubstitutionCost(GNode<int,double> * n1,GNode<int,double> * n2,
 			      Graph<int,double> * g1,Graph<int,double> * g2)
   {
-    return _alpha * node_rel_costs_(n1->attr,n2->attr);
+    return _alpha * node_rel_costs_.at(n1->attr).at(n2->attr);
   }
   double NodeDeletionCost(GNode<int,double> * n1,Graph<int,double> * g1)
   {
@@ -66,7 +65,7 @@ public:
   double EdgeSubstitutionCost(GEdge<double> * e1,GEdge<double> * e2,
 			      Graph<int,double> * g1,Graph<int,double> * g2)
   {
-    return (1 - alpha_) * std::abs(e1->attr - e2->attr);
+    return (1 - _alpha) * std::abs(e1->attr - e2->attr);
   }
   double EdgeDeletionCost(GEdge<double> * e1,Graph<int,double> * g1)
   {
@@ -78,11 +77,11 @@ public:
   }
   double SubstitutionCost(int label_1, int label_2) // for nodes
   {
-    return _alpha * node_rel_costs_(label_1,label_2);
+    return _alpha * node_rel_costs_.at(label_1).at(label_2);
   }
   double EdgeSubstitutionCost(int label_1, int label_2)
   {
-    return (1 - alpha_) * std::abs(label_1 - label_2);
+    return (1 - _alpha) * std::abs(label_1 - label_2);
   }
 
   IBDDistanceCost * clone() const {return new IBDDistanceCost(*this);}
@@ -103,8 +102,7 @@ public:
 		otus_.emplace_back(std::stoul(otu_as_vector.at(1)));
 		max_otu = std::max(max_otu, otus_.back());
 	}
-	node_rel_costs_.resize(max_otu + 1, max_otu + 1);
-	node_rel_costs_.set_to_val(0);
+	node_rel_costs_ = std::vector<std::vector<double>>(max_otu + 1, std::vector<double>(max_otu + 1, 0));
 
 	std::size_t otu_1;
 	std::size_t otu_2;
@@ -116,10 +114,20 @@ public:
 		otu_1 = std::stoul(otu_as_vector.at(1));
 		for (std::size_t pos{1}; pos < row_as_vector.size(); pos++) {
 			otu_2 = otus_.at(pos - 1);
-			node_rel_costs_(otu_1, otu_2) = std::stod(row_as_vector.at(pos));
+			node_rel_costs_.at(otu_1).at(otu_2) = std::stod(row_as_vector.at(pos));
 		}
 	}
-	node_rel_costs_ /= node_rel_costs_.max();
+	double max_node_rel_cost(0);
+	for (std::size_t otu_1(0); otu_1 <= max_otu; otu_1++) {
+		for (std::size_t otu_2(0); otu_2 <= max_otu; otu_2++) {
+			max_node_rel_cost = std::max(max_node_rel_cost, node_rel_costs_.at(otu_1).at(otu_2));
+		}
+	}
+	for (std::size_t otu_1(0); otu_1 <= max_otu; otu_1++) {
+		for (std::size_t otu_2(0); otu_2 <= max_otu; otu_2++) {
+			node_rel_costs_.at(otu_1).at(otu_2) /= max_node_rel_cost;
+		}
+	}
 }
 
 

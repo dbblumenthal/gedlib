@@ -54,6 +54,7 @@ public:
 
 	/*!
 	 * @brief Constructor.
+	 * @param[in] euclidean_exponent Raise Euclidean node substitution cost to the power of @p exponent.
 	 * @param[in] node_ins_del_cost Cost for deleting or inserting nodes.
 	 * @param[in] edge_ins_del_cost Cost for deleting or inserting edges.
 	 * @param[in] alpha Importance of node edit operations vs. importance of edge edit operations.
@@ -61,7 +62,7 @@ public:
 	 * For Letter medium, the suggested arguments are <tt>node_ins_del_cost = 0.7</tt>, <tt>edge_ins_del_cost = 1.9</tt>, and <tt>alpha = 0.75</tt>.
 	 * For Letter low, the suggested arguments are <tt>node_ins_del_cost = 0.3</tt>, <tt>edge_ins_del_cost = 0.1</tt>, and <tt>alpha = 0.25</tt>.
 	 */
-	Letter(double node_ins_del_cost = 0.9, double edge_ins_del_cost = 1.7, double alpha = 0.75);
+	Letter(double euclidean_exponent = 1, double node_ins_del_cost = 0.9, double edge_ins_del_cost = 1.7, double alpha = 0.75);
 
 	virtual double node_ins_cost_fun(const UserNodeLabel & node_label) const final;
 
@@ -78,6 +79,8 @@ public:
 	virtual double edge_rel_cost_fun(const UserEdgeLabel & edge_label_1, const UserEdgeLabel & edge_label_2) const final;
 
 private:
+
+	double euclidean_exponent_;
 
 	double node_ins_del_cost_;
 

@@ -224,6 +224,30 @@ is_option_name(std::string & word) {
 	return false;
 }
 
+template<>
+std::string
+new_string_or_numeric_(const std::vector<std::string> & values) {
+	if (values.empty()) {
+		return "0";
+	}
+	std::string new_string(values.at(0));
+	for (const std::string & value : values) {
+		if (value.size() > new_string.size()) {
+			new_string = value;
+		}
+	}
+	return new_string + "0";
+}
+
+template<class StringOrNumeric>
+StringOrNumeric
+new_string_or_numeric_(const std::vector<StringOrNumeric> & values) {
+	if (values.empty()) {
+		return 0;
+	}
+	return std::max_element(values.begin(), values.end()) + 1;
+}
+
 }
 
 }

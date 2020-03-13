@@ -37,7 +37,7 @@ std::unordered_set<std::string> irrelevant_node_attributes(const std::string & d
 }
 
 bool constant_node_costs(const std::string & dataset) {
-	if (dataset == "Letter") {
+	if (dataset == "Letter-1" or dataset == "Letter-2") {
 		return false;
 	}
 	else {
@@ -46,7 +46,7 @@ bool constant_node_costs(const std::string & dataset) {
 }
 
 ged::Options::EditCosts edit_costs(const std::string & dataset) {
-	if (dataset == "Letter") {
+	if (dataset == "Letter-1" or dataset == "Letter-2") {
 		return ged::Options::EditCosts::LETTER;
 	}
 	else if (dataset == "AIDS-EDIT") {
@@ -57,14 +57,21 @@ ged::Options::EditCosts edit_costs(const std::string & dataset) {
 	}
 }
 
+std::vector<double> edit_cost_constants(std::string & dataset) {
+	if (dataset == "Letter-2") {
+		return {2};
+	}
+	return {};
+}
+
 
 std::string dir(const std::string & dataset) {
 	std::string root_dir("../../data/datasets/");
 	if ((dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "S-MOL-5")) {
 		return (root_dir + dataset + "/data/");
 	}
-	else if (dataset == "Letter") {
-		return (root_dir + dataset + "/HIGH/");
+	else if (dataset == "Letter-1" or dataset == "Letter-2") {
+		return (root_dir + "Letter/HIGH/");
 	}
 	else if (dataset == "AIDS-EDIT") {
 		return (root_dir + dataset + "/");
@@ -77,7 +84,12 @@ std::string dir(const std::string & dataset) {
 
 std::string collection(const std::string & dataset, const std::string & percent, const std::string & id) {
 	std::string collection_file("../collections/");
-	collection_file += dataset;
+	if (dataset == "Letter-1" or dataset == "Letter-2") {
+		collection_file += "Letter";
+	}
+	else {
+		collection_file += dataset;
+	}
 	if (dataset == "Mutagenicity") {
 		collection_file += "-Correct";
 	}
@@ -132,7 +144,7 @@ int main(int argc, char* argv[]) {
 
 			// Set up the environment.
 			ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
-			env.set_edit_costs(edit_costs(dataset));
+			env.set_edit_costs(edit_costs(dataset), edit_cost_constants(dataset));
 			std::vector<ged::GEDGraph::GraphID> graph_ids(env.load_gxl_graphs(dir(dataset), collection(dataset, percent, id),
 					ged::Options::GXLNodeEdgeType::LABELED, ged::Options::GXLNodeEdgeType::LABELED, irrelevant_node_attributes(dataset)));
 			ged::GEDGraph::GraphID median_id{env.add_graph("median")};
@@ -150,7 +162,7 @@ int main(int argc, char* argv[]) {
 					}
 					else {
 						std::random_device rng;
-						mge_options += " --random-inits " + num_inits + " --seed " + std::to_string(rng());
+						mge_options += " --random-inits " + num_inits + " --randomness PSEUDO --seed " + std::to_string(rng());
 					}
 					for (std::size_t algo_id{0}; algo_id < algos.size(); algo_id++) {
 						// Select the GED algorithm.

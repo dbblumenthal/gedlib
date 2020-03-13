@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 		ged::MedianGraphEstimator<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> mge(&env, false);
 		mge.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
 		std::random_device rng;
-		mge.set_options("--init-type RANDOM --refine TRUE --stdout " + stdout + " --random-inits 8 --seed " + std::to_string(rng()));
+		mge.set_options("--init-type RANDOM --refine TRUE --stdout " + stdout + " --random-inits 8 --randomness PSEUDO --seed " + std::to_string(rng()));
 		mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
 
 		// Compute the median graphs and save the results.

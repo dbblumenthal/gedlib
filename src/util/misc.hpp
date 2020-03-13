@@ -101,6 +101,15 @@ void tokenize(const std::string & sentence, char sep, std::vector<std::string> &
  */
 bool is_option_name(std::string & word);
 
+/*!
+ * @brief Returns a string or numeric value not contained in a given vector of values.
+ * @tparam StringOrNumeric Either std::string or a numeric type.
+ * @param[in] values Vector of values that should be different from returned value.
+ * @return A value which is different from all elements of @p values.
+ */
+template<class StringOrNumeric>
+StringOrNumeric new_string_or_numeric_(const std::vector<StringOrNumeric> & values);
+
 }
 
 }

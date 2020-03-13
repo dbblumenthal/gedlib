@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=median_letter
-#SBATCH --output=../bin/median_letter.txt
+#SBATCH --job-name=median_letter_2
+#SBATCH --output=../bin/median_letter_2.txt
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
 #SBATCH --cpus-per-task=6
@@ -10,4 +10,4 @@
 
 export OMP_NUM_THREADS=6
 
-srun --ntasks 1 --cpus-per-task $OMP_NUM_THREADS ../bin/median_tests Letter-1
+srun --ntasks 1 --cpus-per-task $OMP_NUM_THREADS ../bin/median_tests Letter-2

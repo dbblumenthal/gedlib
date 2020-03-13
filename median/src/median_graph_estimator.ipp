@@ -61,7 +61,6 @@ init_type_increase_order_("K-MEANS++"),
 max_itrs_increase_order_{10},
 print_to_stdout_{2},
 median_id_{undefined()},
-median_node_id_prefix_(),
 node_maps_from_median_(),
 sum_of_distances_{0},
 best_init_sum_of_distances_{std::numeric_limits<double>::infinity()},
@@ -257,7 +256,6 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 	bool all_graphs_empty{true};
 	for (auto graph_id : graph_ids) {
 		if (ged_env_->get_num_nodes(graph_id) > 0) {
-			median_node_id_prefix_ = ged_env_->get_graph(graph_id).original_node_ids.front();
 			all_graphs_empty = false;
 			break;
 		}
@@ -1092,16 +1090,13 @@ decrease_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 
 	// Decrease the order as long as the best deletion delta is negative.
 	while (compute_best_deletion_delta_(graphs, median, id_deleted_node) < -epsilon_) {
-		if (print_to_stdout_ == 2) {
-			std::cout << "-" << std::flush;
-		}
 		decreased_order = true;
 		delete_node_from_median_(id_deleted_node, median);
 	}
 
 	// Print information about current iteration.
 	if (print_to_stdout_ == 2) {
-		std::cout << " done. New order: " << median.num_nodes << ".\n";
+		std::cout << "done.\n";
 	}
 
 	// Return true iff the order was decreased.
@@ -1238,16 +1233,13 @@ increase_order_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, User
 
 	// Increase the order as long as the best insertion delta is negative.
 	while (compute_best_insertion_delta_(graphs, best_config, best_label) < -epsilon_) {
-		if (print_to_stdout_ == 2) {
-			std::cout << "+" << std::flush;
-		}
 		increased_order = true;
 		add_node_to_median_(best_config, best_label, median);
 	}
 
 	// Print information about current iteration.
 	if (print_to_stdout_ == 2) {
-		std::cout << " done. New order: " << median.num_nodes << ".\n";
+		std::cout << "done.\n";
 	}
 
 	// Return true iff the order was increased.
@@ -1451,6 +1443,7 @@ compute_insertion_delta_generic_(const std::map<GEDGraph::GraphID, std::vector<s
 
 }
 
+
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
 void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
@@ -1637,11 +1630,7 @@ add_node_to_median_(const std::map<GEDGraph::GraphID, std::size_t> & best_config
 	}
 	median.num_nodes++;
 	median.node_labels.emplace_back(best_label);
-	UserNodeID new_node_id(median_node_id_prefix_);
-	for (const auto & original_node_id : median.original_node_ids) {
-		new_node_id += original_node_id;
-	}
-	median.original_node_ids.emplace_back(new_node_id);
+	median.original_node_ids.emplace_back(util::new_string_or_numeric_(median.original_node_ids));
 	median.adj_matrix.emplace_back(std::vector<std::size_t>(median.num_nodes, 0));
 	median.adj_lists.emplace_back(std::list<std::pair<std::size_t, UserEdgeLabel>>());
 

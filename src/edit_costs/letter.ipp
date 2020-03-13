@@ -35,7 +35,8 @@ Letter<GXLLabel, GXLLabel>::
 
 template<>
 Letter<GXLLabel, GXLLabel>::
-Letter(double node_ins_del_cost, double edge_ins_del_cost, double alpha) :
+Letter(double euclidean_exponent, double node_ins_del_cost, double edge_ins_del_cost, double alpha) :
+euclidean_exponent_{euclidean_exponent},
 node_ins_del_cost_{node_ins_del_cost},
 edge_ins_del_cost_{edge_ins_del_cost},
 alpha_{alpha} {}
@@ -60,7 +61,14 @@ Letter<GXLLabel, GXLLabel>::
 node_rel_cost_fun(const GXLLabel & node_label_1, const GXLLabel & node_label_2) const {
 	double x_l_minus_x_r(std::stod(node_label_1.at("x")) - std::stod(node_label_2.at("x")));
 	double y_l_minus_y_r(std::stod(node_label_1.at("y")) - std::stod(node_label_2.at("y")));
-	return alpha_ * std::sqrt(std::pow(x_l_minus_x_r, 2) + std::pow(y_l_minus_y_r, 2));
+	double squared_euclidean{std::pow(x_l_minus_x_r, 2) + std::pow(y_l_minus_y_r, 2)};
+	if (euclidean_exponent_ == 2) {
+		return alpha_ * squared_euclidean;
+	}
+	if (euclidean_exponent_ == 1) {
+		return alpha_ * std::sqrt(squared_euclidean);
+	}
+	return alpha_ * std::pow(squared_euclidean, euclidean_exponent_ / 2);
 }
 
 template<>
@@ -80,6 +88,12 @@ median_node_label(const std::vector<GXLLabel> & node_labels) const {
 		node_labels_as_coords.emplace_back(label_x, label_y);
 	}
 	std::pair<double, double> median(sum_x / static_cast<double>(node_labels.size()), sum_y / static_cast<double>(node_labels.size()));
+	if (euclidean_exponent_ == 2) {
+		ged::GXLLabel median_label;
+		median_label["x"] = std::to_string(median.first);
+		median_label["y"] = std::to_string(median.second);
+		return median_label;
+	}
 
 	// Run main loop of Weiszfeld's Algorithm.
 	double epsilon{0.0001};

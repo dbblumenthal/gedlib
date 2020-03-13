@@ -99,25 +99,20 @@ int main(int argc, char* argv[]) {
 	std::vector<std::string> ids{"0", "1", "2", "3", "4"};
 
 	// Varied estimator parameters.
-	std::vector<std::string> time_limits{"60", "120", "180", "240", "300", "360", "420", "480", "540", "600"};
+	std::vector<std::string> time_limits{"60"};
+	//std::vector<std::string> time_limits{"60", "120", "180", "240", "300", "360", "420", "480", "540", "600"};
 
 	// Varied algorithm parameters.
 	std::vector<ged::Options::GEDMethod> algos{ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::REFINE};
 	std::vector<std::string> algo_options_suffixes{"", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
 
-	// Generate the result file.
-	std::string result_filename("../output/");
-	result_filename += dataset + "_TIME_LIMIT_RESULTS.csv";
-	std::ofstream result_file(result_filename.c_str());
-	result_file << "time-limit,percent,id,init_type,num_inits,algo,time,time_init,time_converged,sod,sod_init,sod_converged,itrs,state\n";
-	result_file.close();
-
-	// Iterate through all varied sub-collections.
-
 
 	// Initialize progress bar.
 	ged::ProgressBar progress(ids.size() * time_limits.size() * algos.size());
 	std::cout << "\rRunning time limit tests: " << progress << std::flush;
+
+	ged::DMatrix sums_of_distances(time_limits.size(), 3, 0);
+	ged::IMatrix nums_terminated(time_limits.size(), 3, 0);
 
 	for (const auto & id : ids) {
 
@@ -136,7 +131,8 @@ int main(int argc, char* argv[]) {
 		std::random_device rng;
 		std::string mge_options("--stdout 0 --init-type RANDOM --random-inits 8 --seed " + std::to_string(rng()));
 
-		for (const auto & time_limit : time_limits) {
+		for (std::size_t time_limit_id{0}; time_limit_id < time_limits.size(); time_limit_id++) {
+			std::string time_limit(time_limits.at(time_limit_id));
 
 			for (std::size_t algo_id{0}; algo_id < algos.size(); algo_id++) {
 				// Select the GED algorithm.
@@ -149,24 +145,43 @@ int main(int argc, char* argv[]) {
 				// Run the estimator.
 				mge.run(graph_ids, median_id);
 
-				// Write the results.
-				result_file.open(result_filename.c_str(),std::ios_base::app);
-				result_file << time_limit << "," << percent << "," << id << ",RANDOM,8," << algo;
-				result_file << "," << mge.get_runtime() << "," << mge.get_runtime(ged::Options::AlgorithmState::INITIALIZED) << "," << mge.get_runtime(ged::Options::AlgorithmState::CONVERGED);
-				result_file << "," << mge.get_sum_of_distances() << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::INITIALIZED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::CONVERGED);
-				std::vector<std::size_t> nums_itrs(mge.get_num_itrs());
-				result_file << "," << nums_itrs.at(0);
-				for (std::size_t pos{1}; pos < nums_itrs.size(); pos++) {
-					result_file << ";" << nums_itrs.at(pos);
+				if (algo_id == 0) {
+					sums_of_distances(time_limit_id, 0) += mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED);
+					if (mge.get_runtime(ged::Options::AlgorithmState::TERMINATED) <= std::stod(time_limit)) {
+						nums_terminated(time_limit_id, 0) += 1;
+					}
+					sums_of_distances(time_limit_id, 2) += mge.get_sum_of_distances(ged::Options::AlgorithmState::CONVERGED);
+					if (mge.get_runtime(ged::Options::AlgorithmState::CONVERGED) <= std::stod(time_limit)) {
+						nums_terminated(time_limit_id, 2) += 1;
+					}
+
 				}
-				result_file << "," << mge.get_state() << "\n";
-				result_file.close();
+				else {
+					sums_of_distances(time_limit_id, 1) += mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED);
+					if (mge.get_runtime(ged::Options::AlgorithmState::TERMINATED) <= std::stod(time_limit)) {
+						nums_terminated(time_limit_id, 1) += 1;
+					}
+				}
 
 				// Increment the progress bar and print current progress.
 				progress.increment();
 				std::cout << "\rRunning time limit tests: " << progress << std::flush;
 			}
 		}
-		std::cout << "\n";
 	}
+	std::cout << "\n";
+	sums_of_distances /= static_cast<double>(ids.size());
+
+	// Generate the result file.
+	std::string result_filename("../output/");
+	result_filename += dataset + "_TIME_LIMIT_RESULTS.csv";
+	std::ofstream result_file(result_filename.c_str());
+	result_file << "time_limit,bcu_1_sod,bcu_1_num_terminated,bcu_2_sod,bcu_2_num_terminated,bcu_3_sod,bcu_3_sod_num_terminated\n";
+	for (std::size_t time_limit_id{0}; time_limit_id < time_limits.size(); time_limit_id++) {
+		result_file << std::stod(time_limits.at(time_limit_id)) / 60 << ",";
+		result_file << sums_of_distances(time_limit_id, 0) << "," << nums_terminated(time_limit_id, 0) << ",";
+		result_file << sums_of_distances(time_limit_id, 1) << "," << nums_terminated(time_limit_id, 1) << ",";
+		result_file << sums_of_distances(time_limit_id, 2) << "," << nums_terminated(time_limit_id, 2) << "\n";
+	}
+	result_file.close();
 }

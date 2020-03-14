@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 		// Write header of the result file.
 		std::string result_filename("../output/IBD_" + graph_class + "_RESULTS.csv");
 		std::ofstream result_file(result_filename.c_str());
-		result_file << "bcu_1_time,bcu_1_sod,bcu_3_time,bcu_3_sod\n";
+		result_file << "time_bcu_I,sod_bcu_I,time_bcu_II,sod_bcu_II,time_bcu_III,sod_bcu_III,\n";
 		result_file.close();
 
 		// Initialize the environment.
@@ -77,12 +77,18 @@ int main(int argc, char* argv[]) {
 		mge.set_refine_method(ged::Options::GEDMethod::IPFP, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
 		std::random_device rng;
 		mge.set_options("--init-type RANDOM --refine TRUE --stdout " + stdout + " --random-inits 8 --randomness PSEUDO --seed " + std::to_string(rng()));
-		mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
 
-		// Compute the median graphs and save the results.
+
+		// Run the tests and save the results.
+		mge.set_descent_method(ged::Options::GEDMethod::REFINE, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
+		mge.run(graph_ids, median_id);
+		double time_bcu_II{mge.get_runtime(ged::Options::AlgorithmState::TERMINATED)};
+		double sod_bcu_II{mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED)};
+		mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
 		mge.run(graph_ids, median_id);
 		result_file.open(result_filename.c_str(),std::ios_base::app);
 		result_file << mge.get_runtime(ged::Options::AlgorithmState::TERMINATED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED) << ",";
+		result_file << time_bcu_II << "," << sod_bcu_II << ",";
 		result_file << mge.get_runtime(ged::Options::AlgorithmState::CONVERGED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::CONVERGED) << "\n";
 		result_file.close();
 	}

@@ -84,6 +84,7 @@ struct Options{
 	bool all_train_set_sizes = false;
 	double size_random_trainset = 0;
 	double proportion_random_trainset = 100;
+	double time_limit = 600;
 	bool shuffle = false;
 	bool cmu = false;
 	bool letter = false;
@@ -111,7 +112,7 @@ struct Options * parseOptions(int argc, char* argv[]){
 	int opt;
 	stringstream sstream;
 	optind = 2;
-	while ((opt = getopt(argc, argv, "m:i:o:c:sp:r:zywdaq:g:h:etu:v:x:b:f:I:P:")) != -1) {
+	while ((opt = getopt(argc, argv, "m:i:o:c:sp:r:zywdaq:l:g:h:etu:v:x:b:f:I:P:")) != -1) {
 		switch (opt) {
 		case 'I':
 			options->collection_id = string(optarg);
@@ -161,6 +162,9 @@ struct Options * parseOptions(int argc, char* argv[]){
 			break;
 		case 'd':
 			options->diag = true;
+			break;
+		case 'l':
+			options->time_limit = atof(optarg);
 			break;
 		case 'r':
 			options->nrep = atoi(optarg);
@@ -1910,7 +1914,7 @@ int main (int argc, char* argv[])
 #ifdef PRINT_TIMES
 			gettimeofday(&tv1, NULL);
 #endif
-			bool init_computed = computeMappingsAndDistances(completeset,i_ed,AllPairMappings,distances,600.0);
+			bool init_computed = computeMappingsAndDistances(completeset,i_ed,AllPairMappings,distances,options->time_limit);
 #ifdef PRINT_TIMES
 			gettimeofday(&tv2, NULL);
 			init_time=((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
@@ -1923,20 +1927,20 @@ int main (int argc, char* argv[])
 			}
 			else{
 				gettimeofday(&tv1, NULL);
-				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,1);
+				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,options->time_limit-init_time,1);
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_computed"<< std::endl;
 				double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				gettimeofday(&tv1, NULL);
-				finalSOD=computeSOD(completeset,final_ed,local_median,600.0 -(rec_init_time+init_time));
+				finalSOD=computeSOD(completeset,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_refined" << std::endl;
 				double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				status=3;
-				if(rec_init_time+init_time>600.0){
+				if(rec_init_time+init_time>options->time_limit){
 					status=1;
 				}
-				else if(rec_init_time+init_time+refinement_time>600.0){
+				else if(rec_init_time+init_time+refinement_time>options->time_limit){
 					status=2;
 					finalSOD=-1;
 				}
@@ -1952,20 +1956,20 @@ int main (int argc, char* argv[])
 			}
 			else{
 				gettimeofday(&tv1, NULL);
-				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,1);
+				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,options->time_limit-init_time,1);
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_computed"<< std::endl;
 				double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				gettimeofday(&tv1, NULL);
-				finalSOD=computeSOD(completeset,final_ed,local_median,600.0 -(rec_init_time+init_time));
+				finalSOD=computeSOD(completeset,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_refined" << std::endl;
 				double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				status=3;
-				if(rec_init_time+init_time>600.0){
+				if(rec_init_time+init_time>options->time_limit){
 					status=1;
 				}
-				else if(rec_init_time+init_time+refinement_time>600.0){
+				else if(rec_init_time+init_time+refinement_time>options->time_limit){
 					status=2;
 				}
 				std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -1980,20 +1984,20 @@ int main (int argc, char* argv[])
 			}
 			else{
 				gettimeofday(&tv1, NULL);
-				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,0);
+				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,options->time_limit-init_time,0);
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_computed"<< std::endl;
 				double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				gettimeofday(&tv1, NULL);
-				finalSOD=computeSOD(completeset,final_ed,local_median,600.0 -(rec_init_time+init_time));
+				finalSOD=computeSOD(completeset,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_refined" << std::endl;
 				double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				status=3;
-				if(rec_init_time+init_time>600.0){
+				if(rec_init_time+init_time>options->time_limit){
 					status=1;
 				}
-				else if(rec_init_time+init_time+refinement_time>600.0){
+				else if(rec_init_time+init_time+refinement_time>options->time_limit){
 					status=2;
 				}
 				std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2009,20 +2013,20 @@ int main (int argc, char* argv[])
 			}
 			else{
 				gettimeofday(&tv1, NULL);
-				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,0);
+				local_median = computeRecursiveLinearMedian(completeset,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,options->time_limit-init_time,0);
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_computed"<< std::endl;
 				double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				gettimeofday(&tv1, NULL);
-				finalSOD=computeSOD(completeset,final_ed,local_median,600.0 -(rec_init_time+init_time));
+				finalSOD=computeSOD(completeset,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 				gettimeofday(&tv2, NULL);
 				//std::cout<<"median_refined" << std::endl;
 				double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 				status=3;
-				if(rec_init_time+init_time>600.0){
+				if(rec_init_time+init_time>options->time_limit){
 					status=1;
 				}
-				else if(rec_init_time+init_time+refinement_time>600.0){
+				else if(rec_init_time+init_time+refinement_time>options->time_limit){
 					status=2;
 				}
 				std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2121,7 +2125,7 @@ int main (int argc, char* argv[])
 #ifdef PRINT_TIMES
 							gettimeofday(&tv1, NULL);
 #endif
-							bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,600.0);
+							bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,options->time_limit);
 #ifdef PRINT_TIMES
 							gettimeofday(&tv2, NULL);
 							init_time=((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
@@ -2136,20 +2140,20 @@ int main (int argc, char* argv[])
 							}
 							else{
 								gettimeofday(&tv1, NULL);
-								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,1);
+								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,options->time_limit-init_time,1);
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_computed"<< std::endl;
 								double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								gettimeofday(&tv1, NULL);
-								finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+								finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_refined" << std::endl;
 								double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								status=3;
-								if(rec_init_time+init_time>600.0){
+								if(rec_init_time+init_time>options->time_limit){
 									status=1;
 								}
-								else if(rec_init_time+init_time+refinement_time>600.0){
+								else if(rec_init_time+init_time+refinement_time>options->time_limit){
 									status=2;
 									finalSOD=-1;
 								}
@@ -2165,20 +2169,20 @@ int main (int argc, char* argv[])
 							}
 							else{
 								gettimeofday(&tv1, NULL);
-								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,1);
+								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,options->time_limit-init_time,1);
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_computed"<< std::endl;
 								double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								gettimeofday(&tv1, NULL);
-								finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+								finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_refined" << std::endl;
 								double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								status=3;
-								if(rec_init_time+init_time>600.0){
+								if(rec_init_time+init_time>options->time_limit){
 									status=1;
 								}
-								else if(rec_init_time+init_time+refinement_time>600.0){
+								else if(rec_init_time+init_time+refinement_time>options->time_limit){
 									status=2;
 								}
 								std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2193,20 +2197,20 @@ int main (int argc, char* argv[])
 							}
 							else{
 								gettimeofday(&tv1, NULL);
-								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,0);
+								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,options->time_limit-init_time,0);
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_computed"<< std::endl;
 								double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								gettimeofday(&tv1, NULL);
-								finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+								finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_refined" << std::endl;
 								double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								status=3;
-								if(rec_init_time+init_time>600.0){
+								if(rec_init_time+init_time>options->time_limit){
 									status=1;
 								}
-								else if(rec_init_time+init_time+refinement_time>600.0){
+								else if(rec_init_time+init_time+refinement_time>options->time_limit){
 									status=2;
 								}
 								std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2222,20 +2226,20 @@ int main (int argc, char* argv[])
 							}
 							else{
 								gettimeofday(&tv1, NULL);
-								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,0);
+								local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,options->time_limit-init_time,0);
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_computed"<< std::endl;
 								double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								gettimeofday(&tv1, NULL);
-								finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+								finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 								gettimeofday(&tv2, NULL);
 								//std::cout<<"median_refined" << std::endl;
 								double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 								status=3;
-								if(rec_init_time+init_time>600.0){
+								if(rec_init_time+init_time>options->time_limit){
 									status=1;
 								}
-								else if(rec_init_time+init_time+refinement_time>600.0){
+								else if(rec_init_time+init_time+refinement_time>options->time_limit){
 									status=2;
 								}
 								std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2376,7 +2380,7 @@ int main (int argc, char* argv[])
 #ifdef PRINT_TIMES
 								gettimeofday(&tv1, NULL);
 #endif
-								bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,600.0);
+								bool init_computed = computeMappingsAndDistances(test_set,i_ed,AllPairMappings,distances,options->time_limit);
 #ifdef PRINT_TIMES
 								gettimeofday(&tv2, NULL);
 								init_time=((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
@@ -2391,20 +2395,20 @@ int main (int argc, char* argv[])
 								}
 								else{
 									gettimeofday(&tv1, NULL);
-									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,1);
+									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,options->time_limit-init_time,1);
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_computed"<< std::endl;
 									double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									gettimeofday(&tv1, NULL);
-									finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+									finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_refined" << std::endl;
 									double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									status=3;
-									if(rec_init_time+init_time>600.0){
+									if(rec_init_time+init_time>options->time_limit){
 										status=1;
 									}
-									else if(rec_init_time+init_time+refinement_time>600.0){
+									else if(rec_init_time+init_time+refinement_time>options->time_limit){
 										status=2;
 									}
 									std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2419,20 +2423,20 @@ int main (int argc, char* argv[])
 								}
 								else{
 									gettimeofday(&tv1, NULL);
-									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,1);
+									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,options->time_limit-init_time,1);
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_computed"<< std::endl;
 									double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									gettimeofday(&tv1, NULL);
-									finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+									finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_refined" << std::endl;
 									double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									status=3;
-									if(rec_init_time+init_time>600.0){
+									if(rec_init_time+init_time>options->time_limit){
 										status=1;
 									}
-									else if(rec_init_time+init_time+refinement_time>600.0){
+									else if(rec_init_time+init_time+refinement_time>options->time_limit){
 										status=2;
 									}
 									std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2447,20 +2451,20 @@ int main (int argc, char* argv[])
 								}
 								else{
 									gettimeofday(&tv1, NULL);
-									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,600.0-init_time,0);
+									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,2,1,0,options->time_limit-init_time,0);
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_computed"<< std::endl;
 									double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									gettimeofday(&tv1, NULL);
-									finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+									finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_refined" << std::endl;
 									double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									status=3;
-									if(rec_init_time+init_time>600.0){
+									if(rec_init_time+init_time>options->time_limit){
 										status=1;
 									}
-									else if(rec_init_time+init_time+refinement_time>600.0){
+									else if(rec_init_time+init_time+refinement_time>options->time_limit){
 										status=2;
 									}
 									std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;
@@ -2476,20 +2480,20 @@ int main (int argc, char* argv[])
 								}
 								else{
 									gettimeofday(&tv1, NULL);
-									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,600.0-init_time,0);
+									local_median = computeRecursiveLinearMedian(test_set,ed,mcf,AllPairMappings,distances,mappingsFromMedian,mappingsToMedian, distancesToMedian,3,1,0,options->time_limit-init_time,0);
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_computed"<< std::endl;
 									double rec_init_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									gettimeofday(&tv1, NULL);
-									finalSOD=computeSOD(test_set,final_ed,local_median,600.0 -(rec_init_time+init_time));
+									finalSOD=computeSOD(test_set,final_ed,local_median,options->time_limit -(rec_init_time+init_time));
 									gettimeofday(&tv2, NULL);
 									//std::cout<<"median_refined" << std::endl;
 									double refinement_time = ((double)(tv2.tv_usec - tv1.tv_usec)/1000000 + (double)(tv2.tv_sec - tv1.tv_sec));
 									status=3;
-									if(rec_init_time+init_time>600.0){
+									if(rec_init_time+init_time>options->time_limit){
 										status=1;
 									}
-									else if(rec_init_time+init_time+refinement_time>600.0){
+									else if(rec_init_time+init_time+refinement_time>options->time_limit){
 										status=2;
 									}
 									std::cout << init_time+rec_init_time << "," << finalSOD <<","<<refinement_time << "," << status << std::endl;

@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=soa_letter
-#SBATCH --output=soa_letter.txt
+#SBATCH --job-name=soa_ibd
+#SBATCH --output=soa_ibd.txt
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
 #SBATCH --cpus-per-task=6

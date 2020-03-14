@@ -106,7 +106,6 @@ struct Options{
 };
 
 struct Options * parseOptions(int argc, char* argv[]){
-	std::cout << "parseOptions() 1\n";
 	struct Options * options = new struct Options();
 	options->dataset_file = string(argv[1]);
 	int opt;

@@ -65,7 +65,7 @@ public:
   double EdgeSubstitutionCost(GEdge<double> * e1,GEdge<double> * e2,
 			      Graph<int,double> * g1,Graph<int,double> * g2)
   {
-    return (1 - _alpha) * std::abs(e1->attr - e2->attr);
+    return (1 - _alpha) * std::fabs(e1->attr - e2->attr);
   }
   double EdgeDeletionCost(GEdge<double> * e1,Graph<int,double> * g1)
   {
@@ -79,9 +79,9 @@ public:
   {
     return _alpha * node_rel_costs_.at(label_1).at(label_2);
   }
-  double EdgeSubstitutionCost(int label_1, int label_2)
+  double EdgeSubstitutionCost(double label_1, double label_2)
   {
-    return (1 - _alpha) * std::abs(label_1 - label_2);
+    return (1 - _alpha) * std::fabs(label_1 - label_2);
   }
 
   IBDDistanceCost * clone() const {return new IBDDistanceCost(*this);}

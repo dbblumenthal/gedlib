@@ -185,14 +185,6 @@ public:
     double get_silhouette_score() const;
 
 	/*!
-	 * @brief Computes the mean silhouette coefficient of all clustered graphs.
-	 * @return The mean silhouette score of all clustered graphs.
-	 * The silhouette a of a clustered graph is a score between -1 and 1 that is close to 1 if the mean distance from the graph to the other graphs contained in its own cluster is much smaller than the mean distance
-	 * to the graphs in the closest other cluster.
-	 */
-	double get_silhouette_score() const;
-
-	/*!
 	 * @brief Returns pointer to the environment employed by the clustering heuristic.
 	 * @return Pointer to the environment employed by the clustering heuristic.
 	 */

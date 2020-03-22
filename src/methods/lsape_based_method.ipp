@@ -333,7 +333,7 @@ add_centralities_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_probl
 	// substitution
 	master_problem *= (1 - centrality_weight_);
 #ifdef _OPENMP
-	omp_set_num_threads(this->num_threads_ - 1);
+	omp_set_num_threads(this->num_threads_);
 #pragma omp parallel for if(this->num_threads_ > 1)
 #endif
 	for (std::size_t row = 0; row < master_problem.num_rows(); row++) {

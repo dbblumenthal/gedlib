@@ -987,7 +987,7 @@ update_edges_(const std::map<GEDGraph::GraphID, ExchangeGraph<UserNodeID, UserNo
 		for (std::size_t j{i+1}; j < median.num_nodes; j++) {
 
 			// Collect the labels of the edges to which (i,j) is mapped by the node maps.
-			std::vector<UserNodeLabel> edge_labels;
+			std::vector<UserEdgeLabel> edge_labels;
 			for (const auto & key_val : graphs) {
 				GEDGraph::GraphID graph_id{key_val.first};
 				const ExchangeGraph<UserNodeID, UserNodeLabel, UserEdgeLabel> & graph{key_val.second};

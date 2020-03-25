@@ -154,7 +154,7 @@ public:
 	 * @brief Returns number of iterations.
 	 * @return A vector that contains the number of iterations for each initial median for the last call to run().
 	 */
-	const vector<std::size_t> & get_num_itrs() const;
+	const std::vector<std::size_t> & get_num_itrs() const;
 
 	/*!
 	 * @brief Saves the computed focal graphs as GXL graphs and creates a GraphCollection file that lists all of them.

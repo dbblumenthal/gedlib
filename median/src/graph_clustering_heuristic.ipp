@@ -431,7 +431,7 @@ get_node_map_from_assigned_focal_graph(GEDGraph::GraphID graph_id) const {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
-const vector<std::size_t> &
+const std::vector<std::size_t> &
 GraphClusteringHeuristic<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_num_itrs() const {
 	return itrs_;

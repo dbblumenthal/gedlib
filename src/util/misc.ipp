@@ -245,7 +245,7 @@ new_string_or_numeric_(const std::vector<StringOrNumeric> & values) {
 	if (values.empty()) {
 		return 0;
 	}
-	return std::max_element(values.begin(), values.end()) + 1;
+	return *(std::max_element(values.begin(), values.end())) + 1;
 }
 
 }

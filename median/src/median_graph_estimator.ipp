@@ -643,7 +643,7 @@ get_runtime(Options::AlgorithmState state) const {
 }
 
 template<class UserNodeID, class UserNodeLabel, class UserEdgeLabel>
-const vector<std::size_t> &
+const std::vector<std::size_t> &
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 get_num_itrs() const {
 	if (not median_available_()) {

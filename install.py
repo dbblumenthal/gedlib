@@ -84,7 +84,7 @@ def append_cmake_lists(identifier):
             if line.startswith("if(GUROBI_HOME)"):
                 ignore_next_endif = True
             if line.startswith("add_library(") and not line.startswith("add_library(gxlgedlib"):
-                delete_line = 10
+                delete_line = append.count("\n")-1
             if line.startswith("endif()"):
                 if ignore_next_endif:
                     ignore_next_endif = False

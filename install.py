@@ -40,6 +40,9 @@ import shutil
 import os.path
 import glob
 import platform
+import multiprocessing
+
+n_cores = multiprocessing.cpu_count()
 
 def append_ged_env_hpp(identifier, node_id_type, node_label_type, edge_label_type):
     append = ""
@@ -136,11 +139,11 @@ def build_external_libraries():
         print("\n***** External libraries already installed. *****")
     else:
         print("\n***** Install external libraries. *****")
-        commands = "cd ext/fann.2.2.0; mkdir -p build; cd build; rm -rf *; cmake -DCMAKE_INSTALL_PREFIX=.. ..; make install; cd ..; rm -rf build"
+        commands = "cd ext/fann.2.2.0; mkdir -p build; cd build; rm -rf *; cmake -DCMAKE_INSTALL_PREFIX=.. ..; make -j"+str(n_cores) + " install; cd ..; rm -rf build"
         call(commands, shell=True)
-        commands = "cd ext/nomad.3.8.1; mkdir -p lib; mkdir -p bin; cd src; make clean; make all; make clean; rm -rf ../bin"
+        commands = "cd ext/nomad.3.8.1; mkdir -p lib; mkdir -p bin; cd src; make clean; make -j"+str(n_cores) + " all; make clean; rm -rf ../bin"
         call(commands, shell=True)
-        commands = "cd ext/libsvm.3.22; make lib; rm -f svm.o"
+        commands = "cd ext/libsvm.3.22; make -j"+str(n_cores) + " lib; rm -f svm.o"
         call(commands, shell=True)
         f = open("ext/.INSTALLED", "w")
         f.close()
@@ -193,21 +196,21 @@ def build_gedlib(args):
 
     if args.doc:
         print("\n***** Generate documentation. *****")
-        commands = "cd build; make doc"
+        commands = "cd build; make -j"+str(n_cores) + " doc"
         call(commands, shell=True)
 
     if args.lib:
         print("\n***** Build shared library. *****")
-        commands = "cd build; make " + identifier.lower() + "gedlib"
+        commands = "cd build; make -j"+str(n_cores) + " " + identifier.lower() + "gedlib"
         call(commands, shell=True)
 
     if args.tests:
         print("\n***** Build test executables. *****")
         if args.tests == "all":
-            commands = "cd build; make tests"
+            commands = "cd build; make -j"+str(n_cores) + " tests"
             call(commands, shell=True)
         else:
-            commands = "cd build; make " + args.tests
+            commands = "cd build; make -j"+str(n_cores) + " " + args.tests
             call(commands, shell=True)
 
 

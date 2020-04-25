@@ -29,13 +29,13 @@
 /*     string comparison         */
 /*-------------------------------*/
 bool SGTELIB::streq  ( const std::string & s1 , const std::string & s2 ){
-  return !std::strcmp(s1.c_str(),s2.c_str()); 
+  return !std::strcmp(s1.c_str(),s2.c_str());
 }//
 
 bool SGTELIB::streqi ( const std::string & s1 , const std::string & s2 ){
   const std::string s1u = SGTELIB::toupper(s1);
   const std::string s2u = SGTELIB::toupper(s2);
-  return !std::strcmp(SGTELIB::toupper(s1).c_str(),s2u.c_str()); 
+  return !std::strcmp(SGTELIB::toupper(s1).c_str(),s2u.c_str());
 }//
 
 // Check if s is in S.
@@ -64,7 +64,7 @@ std::string SGTELIB::deblank ( const std::string & s_input ){
   while ( (i>0) && (s.at(i-1)==' ') ) {
     s.erase(i-1,1);
     i--;
-  }  
+  }
   // Remove double spaces
   i=1;
   while (i+2<s.length()){
@@ -85,8 +85,8 @@ std::string SGTELIB::deblank ( const std::string & s_input ){
 /*  test if a file is existing   */
 /*-------------------------------*/
 bool SGTELIB::exists (const std::string & file) {
-  struct stat buffer;   
-  return (stat (file.c_str(), &buffer) == 0); 
+  struct stat buffer;
+  return (stat (file.c_str(), &buffer) == 0);
 }//
 
 
@@ -155,8 +155,10 @@ double SGTELIB::dist ( const double * x , const double * y , int n ) {
   double s = 0.0;
   double d = 0;
   for ( int i = 0 ; i < n ; ++i )
+  {
     d = x[i]-y[i];
     s += d*d;
+  }
   return sqrt(s);
 }
 
@@ -206,14 +208,14 @@ std::string SGTELIB::btos (bool b ) {
 /*------------------------------------------*/
 double SGTELIB::stod ( const std::string & s ){
 /*------------------------------------------*/
-  double d = atof(s.c_str()); 
+  double d = atof(s.c_str());
   return d;
 }//
 
 /*------------------------------------------*/
 int SGTELIB::stoi ( const std::string & s ){
 /*------------------------------------------*/
-  int d = atoi(s.c_str()); 
+  int d = atoi(s.c_str());
   return d;
 }//
 
@@ -334,8 +336,8 @@ std::string SGTELIB::metric_type_to_str ( const SGTELIB::metric_t mt ) {
     case SGTELIB::METRIC_RMSECV : return "RMSECV" ;
     case SGTELIB::METRIC_ARMSE  : return "ARMSE"  ;
     case SGTELIB::METRIC_ARMSECV: return "ARMSECV";
-    case SGTELIB::METRIC_OE     : return "OE"     ; 
-    case SGTELIB::METRIC_OECV   : return "OECV"   ; 
+    case SGTELIB::METRIC_OE     : return "OE"     ;
+    case SGTELIB::METRIC_OECV   : return "OECV"   ;
     case SGTELIB::METRIC_AOE    : return "AOE"    ;
     case SGTELIB::METRIC_AOECV  : return "AOECV"  ;
     case SGTELIB::METRIC_EFIOE  : return "EFIOE"    ;
@@ -351,20 +353,20 @@ std::string SGTELIB::metric_type_to_str ( const SGTELIB::metric_t mt ) {
 bool SGTELIB::metric_multiple_obj ( const SGTELIB::metric_t mt ) {
 /*----------------------------------------------------------*/
   switch (mt){
-    case SGTELIB::METRIC_EMAX   : 
-    case SGTELIB::METRIC_EMAXCV : 
-    case SGTELIB::METRIC_RMSE   : 
-    case SGTELIB::METRIC_RMSECV : 
-    case SGTELIB::METRIC_OE     : 
-    case SGTELIB::METRIC_OECV   : 
-    case SGTELIB::METRIC_LINV   : 
+    case SGTELIB::METRIC_EMAX   :
+    case SGTELIB::METRIC_EMAXCV :
+    case SGTELIB::METRIC_RMSE   :
+    case SGTELIB::METRIC_RMSECV :
+    case SGTELIB::METRIC_OE     :
+    case SGTELIB::METRIC_OECV   :
+    case SGTELIB::METRIC_LINV   :
       return true;
-    case SGTELIB::METRIC_ARMSE  : 
-    case SGTELIB::METRIC_ARMSECV: 
-    case SGTELIB::METRIC_AOE    : 
-    case SGTELIB::METRIC_AOECV  : 
-    case SGTELIB::METRIC_EFIOE    : 
-    case SGTELIB::METRIC_EFIOECV  : 
+    case SGTELIB::METRIC_ARMSE  :
+    case SGTELIB::METRIC_ARMSECV:
+    case SGTELIB::METRIC_AOE    :
+    case SGTELIB::METRIC_AOECV  :
+    case SGTELIB::METRIC_EFIOE    :
+    case SGTELIB::METRIC_EFIOECV  :
       return false;
     default:
       throw SGTELIB::Exception ( __FILE__ , __LINE__ ,"Undefined metric" );
@@ -376,28 +378,28 @@ SGTELIB::metric_t SGTELIB::metric_convert_single_obj ( const SGTELIB::metric_t m
 /*----------------------------------------------------------*/
   switch (mt){
     // Metric that do not have a "Single obj" equivalent
-    case SGTELIB::METRIC_EMAX   : 
-    case SGTELIB::METRIC_EMAXCV : 
-    case SGTELIB::METRIC_LINV   : 
+    case SGTELIB::METRIC_EMAX   :
+    case SGTELIB::METRIC_EMAXCV :
+    case SGTELIB::METRIC_LINV   :
       std::cout << "The metric " << SGTELIB::metric_type_to_str(mt) << "is not supported for this type of model\n";
       std::cout << "AOECV metric will be used.\n";
       return SGTELIB::METRIC_AOECV;
     // Metric that have a "single obj" equivalent
-    case SGTELIB::METRIC_RMSE   : 
+    case SGTELIB::METRIC_RMSE   :
       return SGTELIB::METRIC_ARMSE;
-    case SGTELIB::METRIC_RMSECV : 
+    case SGTELIB::METRIC_RMSECV :
       return SGTELIB::METRIC_ARMSECV;
-    case SGTELIB::METRIC_OE     : 
+    case SGTELIB::METRIC_OE     :
       return SGTELIB::METRIC_AOE;
-    case SGTELIB::METRIC_OECV   : 
+    case SGTELIB::METRIC_OECV   :
       return SGTELIB::METRIC_AOECV;
     // Metric that are "single obj"
-    case SGTELIB::METRIC_ARMSE  : 
-    case SGTELIB::METRIC_ARMSECV: 
-    case SGTELIB::METRIC_AOE    : 
-    case SGTELIB::METRIC_AOECV  : 
-    case SGTELIB::METRIC_EFIOE    : 
-    case SGTELIB::METRIC_EFIOECV  : 
+    case SGTELIB::METRIC_ARMSE  :
+    case SGTELIB::METRIC_ARMSECV:
+    case SGTELIB::METRIC_AOE    :
+    case SGTELIB::METRIC_AOECV  :
+    case SGTELIB::METRIC_EFIOE    :
+    case SGTELIB::METRIC_EFIOECV  :
       return mt;
     default:
       throw SGTELIB::Exception ( __FILE__ , __LINE__ ,"Undefined metric" );
@@ -477,11 +479,11 @@ SGTELIB::distance_t SGTELIB::int_to_distance_type ( const int i ) {
       "int_to_distance_type: invalid integer "+itos(i) );
   }
   switch ( i ){
-    case 0: return SGTELIB::DISTANCE_NORM2; 
-    case 1: return SGTELIB::DISTANCE_NORM1; 
-    case 2: return SGTELIB::DISTANCE_NORMINF; 
-    case 3: return SGTELIB::DISTANCE_NORM2_IS0; 
-    case 4: return SGTELIB::DISTANCE_NORM2_CAT; 
+    case 0: return SGTELIB::DISTANCE_NORM2;
+    case 1: return SGTELIB::DISTANCE_NORM1;
+    case 2: return SGTELIB::DISTANCE_NORMINF;
+    case 3: return SGTELIB::DISTANCE_NORM2_IS0;
+    case 4: return SGTELIB::DISTANCE_NORM2_CAT;
     default:
       throw SGTELIB::Exception ( __FILE__ , __LINE__ ,
         "int_to_kernel_type: invalid integer "+itos(i) );
@@ -545,7 +547,7 @@ double SGTELIB::normcdf ( double x , double mu , double sigma ) {
   if (sigma<-EPSILON){
     throw SGTELIB::Exception ( __FILE__ , __LINE__ ,
              "Surrogate_Utils::normpdf: sigma is <0" );
-  } 
+  }
   // Apply lower bound to sigma
   if (APPROX_CDF){
     sigma = std::max(sigma,EPSILON);
@@ -578,7 +580,7 @@ double SGTELIB::normpdf ( double x , double mu , double sigma ) {
   if (sigma<EPSILON){
     throw SGTELIB::Exception ( __FILE__ , __LINE__ ,
              "Surrogate_Utils::normpdf: sigma is NULL" );
-  } 
+  }
   return normpdf( (x-mu)/sigma )/sigma;
 }//
 
@@ -590,7 +592,7 @@ double SGTELIB::normei ( double fh , double sh , double f_min ) {
   if (sh<-EPSILON){
     throw SGTELIB::Exception ( __FILE__ , __LINE__ ,
              "Surrogate_Utils::normei: sigma is <0" );
-  } 
+  }
   // Apply lower bound to sigma
   if (APPROX_CDF){
     sh = std::max(sh,EPSILON);
@@ -617,7 +619,7 @@ double SGTELIB::gammacdf(double x, double a, double b){
   if ( (a<=0) || (b<=0) ){
     throw SGTELIB::Exception ( __FILE__ , __LINE__ ,
              "Surrogate_Utils::gammacdf: a or b is <0" );
-  }  
+  }
   if (x<EPSILON) return 0.0;
 
   return lower_incomplete_gamma(x/b,a);
@@ -632,11 +634,11 @@ double SGTELIB::gammacdfinv(double f, double a, double b){
   if ( (a<=0) || (b<=0) ){
     throw SGTELIB::Exception ( __FILE__ , __LINE__ ,
              "Surrogate_Utils::gammacdfinv: a or b is <0" );
-  }  
+  }
   if ( (f<0) || (f>1) ){
     throw SGTELIB::Exception ( __FILE__ , __LINE__ ,
              "Surrogate_Utils::gammacdfinv: f<0 or f>1" );
-  }  
+  }
   if (f==1.0) return INF;
   if (f==0.0) return 0;
 
@@ -691,7 +693,7 @@ double SGTELIB::lower_incomplete_gamma ( const double x, double p ){
     v += dv;
   }
   return v*f;
-    
+
 }//
 
 /*----------------------------------------*/
@@ -728,8 +730,3 @@ double SGTELIB::rceil (double d){
   else if (d<0) return std::floor(d);
   else return 0.0;
 }//
-
-
-
-
-

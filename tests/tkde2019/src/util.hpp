@@ -40,8 +40,8 @@ bool is_synth_mol_dataset(const std::string & dataset) {
 	return ((dataset == "S-MOL_NL01") or (dataset == "S-MOL_NL04") or (dataset == "S-MOL_NL07") or (dataset == "S-MOL_NL10"));
 }
 
-bool is_synth_aids_dataset(const std::string & dataset) {
-	return ((dataset == "S-AIDS_NL01") or (dataset == "S-AIDS_NL04") or (dataset == "S-AIDS_NL07") or (dataset == "S-AIDS_NL10") or (dataset == "S-AIDS_NL13") or (dataset == "S-AIDS_NL16") or (dataset == "S-AIDS_NL19"));
+bool is_synth_acyclic_dataset(const std::string & dataset) {
+    return ((dataset == "S-acyclic_NL03") or (dataset == "S-acyclic_NL05") or (dataset == "S-acyclic_NL07") or (dataset == "S-acyclic_NL09"));
 }
 
 bool is_synth_mao_dataset(const std::string & dataset) {
@@ -49,7 +49,7 @@ bool is_synth_mao_dataset(const std::string & dataset) {
 }
 
 bool is_chemical_dataset(const std::string & dataset) {
-	return (is_synth_mao_dataset(dataset) or is_synth_mol_dataset(dataset) or is_synth_aids_dataset(dataset) or (dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah") );
+	return (is_synth_mao_dataset(dataset) or is_synth_mol_dataset(dataset) or is_synth_acyclic_dataset(dataset) or (dataset == "AIDS") or (dataset == "Mutagenicity") or (dataset == "acyclic") or (dataset == "alkane") or (dataset == "mao") or (dataset == "pah") );
 }
 
 bool is_letter_dataset(const std::string & dataset) {
@@ -100,26 +100,17 @@ std::string graph_dir(const std::string & dataset) {
 	else if (dataset == "S-mao_NL09") {
 		return (root_dir + "S-mao/NL09/");
 	}
-	else if (dataset == "S-AIDS_NL01") {
-		return (root_dir + "S-AIDS/NL01/");
+	else if (dataset == "S-acyclic_NL03") {
+		return (root_dir + "S-acyclic/NL03/");
 	}
-	else if (dataset == "S-AIDS_NL04") {
-		return (root_dir + "S-AIDS/NL04/");
+	else if (dataset == "S-acyclic_NL05") {
+		return (root_dir + "S-acyclic/NL05/");
 	}
-	else if (dataset == "S-AIDS_NL07") {
-		return (root_dir + "S-AIDS/NL07/");
+	else if (dataset == "S-acyclic_NL07") {
+		return (root_dir + "S-acyclic/NL07/");
 	}
-	else if (dataset == "S-AIDS_NL10") {
-		return (root_dir + "S-AIDS/NL10/");
-	}
-	else if (dataset == "S-AIDS_NL13") {
-		return (root_dir + "S-AIDS/NL13/");
-	}
-	else if (dataset == "S-AIDS_NL16") {
-		return (root_dir + "S-AIDS/NL16/");
-	}
-	else if (dataset == "S-AIDS_NL19") {
-		return (root_dir + "S-AIDS/NL19/");
+	else if (dataset == "S-acyclic_NL09") {
+		return (root_dir + "S-acyclic/NL10/");
 	}
 	else if (dataset == "CMU-GED") {
 		return (root_dir + dataset + "/CMU/");
@@ -142,8 +133,8 @@ std::string train_collection(const std::string & dataset) {
 	if (is_synth_mol_dataset(dataset)) {
 		return (root_dir + "S-MOL_50.xml");
 	}
-	if (is_synth_aids_dataset(dataset)) {
-		return (root_dir + "AIDS_50.xml");
+	if (is_synth_acyclic_dataset(dataset)) {
+		return (root_dir + "acyclic_50.xml");
 	}
 	if (is_synth_mao_dataset(dataset)) {
 		return (root_dir + "mao_50.xml");
@@ -160,8 +151,8 @@ std::string test_collection(const std::string & dataset) {
 	if (is_synth_mol_dataset(dataset)) {
 		return (root_dir + "S-MOL_100.xml");
 	}
-	if (is_synth_aids_dataset(dataset)) {
-		return (root_dir + "AIDS_100.xml");
+	if (is_synth_acyclic_dataset(dataset)) {
+		return (root_dir + "acyclic_100.xml");
 	}
 	if (is_synth_mao_dataset(dataset)) {
 		return (root_dir + "mao_100.xml");

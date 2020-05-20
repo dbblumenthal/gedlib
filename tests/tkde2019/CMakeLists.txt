@@ -25,7 +25,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/tkde2019/bin)
 
 # Add targets.
 
-add_custom_target(tkde2019 DEPENDS train_ring train_walks train_subgraph train_ml run_tests)
+add_custom_target(tkde2019 DEPENDS train_ring train_walks train_subgraph train_ml run_tests run_ipfp)
 
 add_executable(train_ring src/train_ring.cpp)
 target_link_libraries(train_ring gxlgedlib)
@@ -65,4 +65,12 @@ if(APPLE)
   add_custom_command(TARGET run_tests POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/run_tests)
   add_custom_command(TARGET run_tests POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/run_tests)
   add_custom_command(TARGET run_tests POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/run_tests)
+endif()
+
+add_executable(run_ipfp src/run_ipfp.cpp)
+target_link_libraries(run_ipfp gxlgedlib)
+if(APPLE)
+  add_custom_command(TARGET run_ipfp POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/run_ipfp)
+  add_custom_command(TARGET run_ipfp POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/run_ipfp)
+  add_custom_command(TARGET run_ipfp POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/run_ipfp)
 endif()

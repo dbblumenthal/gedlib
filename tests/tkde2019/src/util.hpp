@@ -110,7 +110,7 @@ std::string graph_dir(const std::string & dataset) {
 		return (root_dir + "S-acyclic/NL07/");
 	}
 	else if (dataset == "S-acyclic_NL09") {
-		return (root_dir + "S-acyclic/NL10/");
+		return (root_dir + "S-acyclic/NL09/");
 	}
 	else if (dataset == "CMU-GED") {
 		return (root_dir + dataset + "/CMU/");

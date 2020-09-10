@@ -220,6 +220,6 @@ parser.add_argument("--clean", help="clean build directory and update makefile b
 args = parser.parse_args()
 build_external_libraries()
 create_directories()
-if args.lib or args.tests or args.doc or args.median:
+if args.lib or args.tests or args.doc:
 	build_gedlib(args)
 print("\n***** Successfully installed GEDLIB. *****")

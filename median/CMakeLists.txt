@@ -25,7 +25,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/median/bin)
 
 # Add targets.
 
-add_custom_target(median DEPENDS median_tests ibd_tests aids_edit_iso_test time_limit_tests)
+add_custom_target(median DEPENDS median_tests ibd_tests aids_edit_iso_test time_limit_tests median_letter_demo)
 
 add_custom_target(cluster DEPENDS cluster_letter clustering_tests classification_tests)
 

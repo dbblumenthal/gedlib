@@ -1,6 +1,6 @@
 ############################################################################
 #                                                                          #
-#   Copyright (C) 2018 by David B. Blumenthal                              #
+#   Copyright (C) 2020 by David B. Blumenthal                              #
 #                                                                          #
 #   This file is part of GEDLIB.                                           #
 #                                                                          #
@@ -19,9 +19,14 @@
 #                                                                          #
 ############################################################################
 
-add_custom_target(tests DEPENDS unit_tests ijprai2020 sspr2018 vldbj2020)
-add_subdirectory(unit_tests)
-add_subdirectory(sspr2018)
-add_subdirectory(ijprai2020)
-add_subdirectory(vldbj2020)
-add_subdirectory(pvldb2020)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/pvldb2020/bin)
+
+add_custom_target(pvldb2020 DEPENDS test_lsape_enum)
+
+add_executable(test_lsape_enum src/test_lsape_enum.cpp)
+target_link_libraries(test_lsape_enum gxlgedlib)
+if(APPLE)
+    add_custom_command(TARGET test_lsape_enum POST_BUILD COMMAND install_name_tool -change libnomad.so ${NOMAD_HOME}/lib/libnomad.so ${EXECUTABLE_OUTPUT_PATH}/test_lsape_enum)
+    add_custom_command(TARGET test_lsape_enum POST_BUILD COMMAND install_name_tool -change libdoublefann.2.dylib ${FANN_HOME}/lib/libdoublefann.2.dylib ${EXECUTABLE_OUTPUT_PATH}/test_lsape_enum)
+    add_custom_command(TARGET test_lsape_enum POST_BUILD COMMAND install_name_tool -change libsvm.so ${LIBSVM_HOME}/libsvm.so ${EXECUTABLE_OUTPUT_PATH}/test_lsape_enum)
+endif()

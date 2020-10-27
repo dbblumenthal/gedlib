@@ -200,8 +200,9 @@ public:
 	 * @brief Runs the GED method specified by call to set_method() between the graphs with IDs @p g_id and @p h_id.
 	 * @param[in] g_id ID of an input graph that has been added to the environment.
 	 * @param[in] h_id ID of an input graph that has been added to the environment.
+	 * @param[in] use_shuffled_graphs If true, the shuffled copies of the graphs are used if available.
 	 */
-	void run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id);
+	void run_method(GEDGraph::GraphID g_id, GEDGraph::GraphID h_id, bool use_shuffled_graphs = false);
 
 	/*!
 	 * @brief Initializes the method specified by call to set_method().

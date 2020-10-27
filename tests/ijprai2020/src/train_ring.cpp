@@ -20,11 +20,11 @@
  ***************************************************************************/
 
 /*!
- * @file tests/tkde2019/src/train_subgraph.cpp
- * @brief Trains the method ged::Subgraph for different datasets.
+ * @file tests/ijprai2020/src/train_ring.cpp
+ * @brief Trains the method ged::Ring for different datasets.
  * @details The binary built from this file was used for the experiments in the following submission:
  * - D. B. Blumenthal, S. Bougleux, J. Gamper, L. Brun:
- *   &ldquo;Upper Bounding GED via Transformations to LSAPE Based on Rings and Machine Learning&rdquo;,
+ *   &ldquo;Upper Bounding GED via Transformations to LSAPE Based on Rings and Machine Learninge&rdquo;,
  *   Submitted to TKDE.
  */
 
@@ -38,9 +38,13 @@ void train_on_dataset(const std::string & dataset) {
 	ged::GEDEnv<ged::GXLNodeID, ged::GXLLabel, ged::GXLLabel> env;
 	util::setup_environment(dataset, true, env);
 
-	// Initialize the method.
-	env.set_method(ged::Options::GEDMethod::SUBGRAPH, util::init_options(dataset, "subgraph"));
-	env.init_method();
+	// Learn the parameters.
+	std::vector<std::string> led_methods{"GAMMA", "LSAPE_GREEDY", "LSAPE_OPTIMAL"};
+	for (auto led_method : led_methods) {
+		std::cout << "\n=== " << led_method << " ===\n";
+		env.set_method(ged::Options::GEDMethod::RING, util::init_options(dataset, std::string("ring_") + led_method) +  " --led-method " + led_method);
+		env.init_method();
+	}
 }
 
 int main(int argc, char* argv[]) {

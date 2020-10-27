@@ -26,7 +26,7 @@
 # @details 
 # Usage: 
 # ```sh
-# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|tkde2019|sspr2018|vldbj2020|unit_tests|median|cluster|bst|ibd] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
+# $ python install.py [--help] [-h] [--doc] [--tests all|ged_env_tests|lsap_solver_tests|ijprai2020|sspr2018|vldbj2020|unit_tests|median|cluster|bst|ibd] [--gurobi \<GUROBI_ROOT\>][--debug] [--clean] [--update_makefile] [--lib gxl|\<indentifier>,\<UserNodeID\>,\<UserNodeLabel\>,\<UserEdgeLabel\>]
 # ```
 #
 # For more information, execute `$ python install.py --help`.
@@ -118,7 +118,7 @@ def parse_custom_types(custom_types):
 def create_directories():
 	print("\n***** Create directories for shared libraries, executables and output. *****")
 	commands = "mkdir -p lib; "
-	commands = commands + "mkdir -p tests/tkde2019/bin; mkdir -p tests/tkde2019/output; "
+	commands = commands + "mkdir -p tests/ijprai2020/bin; mkdir -p tests/ijprai2020/output; "
 	commands = commands + "mkdir -p tests/vldbj2020/bin; mkdir -p tests/vldbj2020/ini; mkdir -p tests/vldbj2020/results; "
 	commands = commands + "mkdir -p median/bin; mkdir -p median/output; mkdir -p median/data; mkdir -p median/data/Letter; mkdir -p median/data/Mutagenicity; "
 	commands = commands + "mkdir -p tests/sspr2018/bin; mkdir -p tests/sspr2018/output; "
@@ -213,7 +213,7 @@ print("**************************************************")
 parser = argparse.ArgumentParser(description="Installs GEDLIB and its dependencies unless they have already been installed.", epilog="If called without arguments, only the dependencies are installed.")
 parser.add_argument("--doc", help="build documentation", action="store_true")
 parser.add_argument("--lib", help="build shared library", metavar="gxl|<indentifier>,<UserNodeID>,<UserNodeLabel>,<UserEdgeLabel>")
-parser.add_argument("--tests", help="build test executables", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|tkde2019|sspr2018|vldbj2020|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster|bst|ibd", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "tkde2019", "sspr2018", "vldbj2020", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster", "bst", "ibd"])
+parser.add_argument("--tests", help="build test executables", metavar="all|unit_tests|ged_env_tests|lsap_solver_tests|ijprai2020|pvldb2020|sspr2018|vldbj2020|vldbj_train_ml|vldbj_test_lsape_based_methods|vldbj_test_lp_based_methods|vldbj_test_ls_based_methods|vldbj_test_misc_methods|median|cluster|bst|ibd", choices=["all", "unit_tests", "ged_env_tests", "lsap_solver_tests", "pvldb2020", "ijprai2020", "sspr2018", "vldbj2020", "vldbj_train_ml", "vldbj_test_lsape_based_methods", "vldbj_test_lp_based_methods", "vldbj_test_ls_based_methods", "vldbj_test_misc_methods", "median", "cluster", "bst", "ibd"])
 parser.add_argument("--gurobi", metavar="<GUROBI_ROOT>", help="specify path to directory containing Gurobi")
 parser.add_argument("--debug", help="build in debug mode", action="store_true")
 parser.add_argument("--clean", help="clean build directory and update makefile before build", action="store_true")

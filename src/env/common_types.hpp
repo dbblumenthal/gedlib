@@ -69,8 +69,8 @@
 #ifndef LSAPE_IndexType
 #define LSAPE_IndexType std::size_t
 #endif
-#include <lsap.h>
-#include <lsape.h>
+#include <lsap.hh>
+#include <lsape.hh>
 #include <svm.h>
 #include <doublefann.h>
 #include <fann_cpp.h>

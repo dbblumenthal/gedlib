@@ -40,6 +40,7 @@ LSAPEBasedMethod(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data) :
 GEDMethod<UserNodeLabel, UserEdgeLabel>(ged_data),
 lsape_model_{LSAPESolver::ECBP},
 greedy_method_{LSAPESolver::BASIC},
+enumeration_method_{LSAPESolver::DISSIMILAR},
 compute_lower_bound_{true},
 solve_optimally_{true},
 num_threads_{1},
@@ -77,6 +78,7 @@ populate_instance_and_run_as_util(const GEDGraph & g, const GEDGraph & h, Result
 	// Solve the LSAPE instance.
 	if (solve_optimally_) {
 		lsape_solver.set_model(lsape_model_);
+        lsape_solver.set_enumeration_method(enumeration_method_);
 	}
 	else {
 		lsape_solver.set_greedy_method(greedy_method_);
@@ -194,6 +196,18 @@ ged_parse_option_(const std::string & option, const std::string & arg) {
 		}
 		is_valid_option = true;
 	}
+	else if (option == "enumeration-method") {
+	    if (arg == "BASELINE") {
+	        enumeration_method_ = LSAPESolver::BASELINE;
+	    }
+	    else if (arg == "DISSIMILAR") {
+            enumeration_method_ = LSAPESolver::DISSIMILAR;
+	    }
+	    else {
+            throw ged::Error(std::string("Invalid argument ") + arg  + " for option enumeration-method. Usage: options = \"[--enumeration-method BASELINE|DISSIMILAR] [...]\"");
+	    }
+        is_valid_option = true;
+	}
 	else if (option == "optimal") {
 		if (arg == "TRUE") {
 			solve_optimally_ = true;
@@ -262,9 +276,9 @@ std::string
 LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_valid_options_string_() const {
 	if (lsape_valid_options_string_() == "") {
-		return "[--lsape-model <arg>] [--threads <arg>] [--greedy-method <arg>] [--optimal <arg>] [--centrality-method <arg>] [--centrality-weight <arg>] [--max-num-solutions <arg>]";
+		return "[--lsape-model <arg>] [--threads <arg>] [--greedy-method <arg>] [--enumeration-method <arg>] [--optimal <arg>] [--centrality-method <arg>] [--centrality-weight <arg>] [--max-num-solutions <arg>]";
 	}
-	return lsape_valid_options_string_() + " [--lsape-model <arg>] [--greedy-method <arg>] [--optimal <arg>] [--centrality-method <arg>] [--centrality-weight <arg>] [--max-num-solutions <arg>]";
+	return lsape_valid_options_string_() + " [--lsape-model <arg>] [--greedy-method <arg>] [--enumeration-method <arg>] [--optimal <arg>] [--centrality-method <arg>] [--centrality-weight <arg>] [--max-num-solutions <arg>]";
 }
 
 template<class UserNodeLabel, class UserEdgeLabel>
@@ -273,6 +287,7 @@ LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel>::
 ged_set_default_options_() {
 	lsape_model_ = LSAPESolver::ECBP;
 	greedy_method_ = LSAPESolver::BASIC;
+	enumeration_method_ = LSAPESolver::DISSIMILAR;
 	solve_optimally_ = true;
 	centrality_method_ = NONE;
 	centrality_weight_ = 0.7;

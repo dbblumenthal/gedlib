@@ -33,6 +33,7 @@ LSAPSolver ::
 LSAPSolver(const DMatrix * cost_matrix) :
 cost_matrix_{cost_matrix},
 greedy_method_{BASIC},
+enumeration_method_{DISSIMILAR},
 solve_optimally_{true},
 minimal_cost_{0.0},
 row_to_col_assignments_(),
@@ -44,6 +45,7 @@ LSAPSolver ::
 LSAPSolver() :
 cost_matrix_{nullptr},
 greedy_method_{BASIC},
+enumeration_method_{DISSIMILAR},
 solve_optimally_{true},
 minimal_cost_{0.0},
 row_to_col_assignments_(),
@@ -67,6 +69,12 @@ set_greedy_method(const GreedyMethod & greedy_method) {
 
 void
 LSAPSolver::
+set_enumeration_method(const EnumerationMethod & enumeration_method) {
+    enumeration_method_ = enumeration_method;
+}
+
+void
+LSAPSolver::
 set_hungarian_algorithm() {
 	solve_optimally_ = true;
 }
@@ -77,8 +85,6 @@ clear_solution() {
 	minimal_cost_ = 0.0;
 	row_to_col_assignments_.clear();
 	col_to_row_assignments_.clear();
-	row_to_col_assignments_.push_back(std::vector<std::size_t>(num_rows()));
-	col_to_row_assignments_.push_back(std::vector<std::size_t>(num_cols()));
 	dual_var_rows_ = std::vector<double>(num_rows());
 	dual_var_cols_ = std::vector<double>(num_cols());
 }
@@ -87,6 +93,42 @@ void
 LSAPSolver ::
 solve(int num_solutions) {
 	clear_solution();
+	if (not solve_optimally_) {
+	    std::cout << "WARNING: greedy solvers not implemented yet. Using optimal solvers.";
+	}
+    DMatrix copied_costs(*cost_matrix_);
+    liblsap::LSAP<double, int> lsap(static_cast<int>(num_rows()), static_cast<int>(num_cols()), copied_costs.data());
+    lsap.solve();
+    if (num_solutions > 1) {
+        if (enumeration_method_ == BASELINE) {
+            lsap.enumerate(static_cast<int>(num_solutions), liblsap::ENUM_EDG_SELECT_BALANCED);
+        }
+        else {
+            lsap.enumerateDissimilar(static_cast<int>(num_solutions), liblsap::ENUM_DISS_MXW_DFS,
+                                     liblsap::ENUM_EDG_SELECT_RAND, liblsap::ENUM_CYCLE_SELECT_RAND);
+        }
+    }
+    const std::vector<liblsap::Matching<int>> & matchings{lsap.primals()};
+    for (const liblsap::Matching<int> & matching : matchings) {
+        row_to_col_assignments_.push_back(std::vector<std::size_t>(num_rows()));
+        for (int row{0}; row < static_cast<int>(num_rows()); row++) {
+            row_to_col_assignments_.back().at(row) = matching(0, row);
+        }
+        col_to_row_assignments_.push_back(std::vector<std::size_t>(num_cols()));
+        for (int col{0}; col < static_cast<int>(num_cols()); col++) {
+            col_to_row_assignments_.back().at(col) = matching(1, col);
+        }
+    }
+    for (int row{0}; row < static_cast<int>(num_rows()); row++) {
+        dual_var_rows_.emplace_back(lsap.dual(0, row));
+    }
+    for (int col{0}; col < static_cast<int>(num_cols()); col++) {
+        dual_var_cols_.emplace_back(lsap.dual(1, col));
+    }
+    compute_cost_from_dual_vars_();
+
+
+	/* Old implementation.
 	if (solve_optimally_) {
 		lsape::hungarianLSAP(cost_matrix_->data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), dual_var_rows_.data(), dual_var_cols_.data(), col_to_row_assignments_.at(0).data());
 		compute_cost_from_dual_vars_();
@@ -106,6 +148,7 @@ solve(int num_solutions) {
 	else {
 		minimal_cost_ = lsape::greedyLSAP(cost_matrix_->data(), num_rows(), num_cols(), row_to_col_assignments_.at(0).data(), col_to_row_assignments_.at(0).data(), greedy_method_);
 	}
+	*/
 }
 
 double

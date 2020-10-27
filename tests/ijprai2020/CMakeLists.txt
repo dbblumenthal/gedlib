@@ -21,7 +21,7 @@
 
 # Set executable path.
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/tkde2019/bin)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/ijprai2020/bin)
 
 # Add targets.
 

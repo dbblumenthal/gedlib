@@ -47,7 +47,7 @@ namespace liblsap {
     bool _prims_internal;
     DataType *_dual[2];
     bool _dual_internal;
-    static const DataType _zero = 0;
+    static constexpr DataType _zero = 0;
     IndexType _lb_nb_prim;
     IndexType _ub_nb_prim;
     

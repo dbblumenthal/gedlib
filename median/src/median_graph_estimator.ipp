@@ -47,6 +47,7 @@ labeled_edges_{ged_env_->num_edge_labels() > 1},
 edge_del_cost_{ged_env_->edge_del_cost(ged_env_->get_edge_label(1))},
 edge_ins_cost_{ged_env_->edge_ins_cost(ged_env_->get_edge_label(1))},
 init_type_("RANDOM"),
+update_order_{true},
 num_random_inits_{10},
 desired_num_random_inits_{10},
 use_real_randomness_{true},
@@ -95,6 +96,17 @@ set_options(const std::string & options) {
 				throw ged::Error(std::string("Invalid argument ") + option.second + " for option init-type. Usage: options = \"[--init-type RANDOM|MEDOID|EMPTY|MIN|MAX|MEAN] [...]\"");
 			}
 		}
+        else if (option.first == "update-order") {
+            if (option.second == "TRUE") {
+                update_order_ = true;
+            }
+            else if (option.second == "FALSE") {
+                update_order_ = false;
+            }
+            else {
+                throw ged::Error(std::string("Invalid argument ") + option.second + " for option update-order. Usage: options = \"[--update-order TRUE|FALSE] [...]\"");
+            }
+        }
 		else if (option.first == "random-inits") {
 			try {
 				num_random_inits_ = std::stoul(option.second);
@@ -212,7 +224,7 @@ set_options(const std::string & options) {
 			}
 		}
 		else {
-			std::string valid_options("[--init-type <arg>] [--random-inits <arg>] [--randomness <arg>] [--seed <arg>] [--stdout <arg>] ");
+			std::string valid_options("[--init-type <arg>] [--update-order <arg>] [--random-inits <arg>] [--randomness <arg>] [--seed <arg>] [--stdout <arg>] ");
 			valid_options += "[--time-limit <arg>] [--max-itrs <arg>] [--epsilon <arg>] ";
 			valid_options += "[--inits-increase-order <arg>] [--init-type-increase-order <arg>] [--max-itrs-increase-order <arg>]";
 			throw Error(std::string("Invalid option \"") + option.first + "\". Usage: options = \"" + valid_options + "\"");
@@ -364,7 +376,7 @@ run(const std::vector<GEDGraph::GraphID> & graph_ids, GEDGraph::GraphID median_i
 
 			// Update the median.
 			median_modified = update_median_(graphs, median);
-			if (not median_modified or itrs_.at(median_pos) == 0) {
+			if (update_order_ and (not median_modified or itrs_.at(median_pos) == 0)) {
 				decreased_order = decrease_order_(graphs, median);
 				if (not decreased_order or itrs_.at(median_pos) == 0) {
 					increased_order = increase_order_(graphs, median);
@@ -694,6 +706,7 @@ void
 MedianGraphEstimator<UserNodeID, UserNodeLabel, UserEdgeLabel>::
 set_default_options_() {
 	init_type_ = "RANDOM";
+	update_order_ = true;
 	num_random_inits_ = 10;
 	desired_num_random_inits_ = 10;
 	use_real_randomness_ = true;

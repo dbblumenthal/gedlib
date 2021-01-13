@@ -102,9 +102,16 @@ std::string collection(const std::string & dataset, const std::string & percent,
 int main(int argc, char* argv[]) {
 
 	if (argc <= 1) {
-		throw ged::Error("No dataset specified. Usage: ./median_chem <AIDS|Mutagenicity|Letter|AIDS-EDIT|S-MOL-5>");
+		throw ged::Error("No dataset specified. Usage: ./median_tests <AIDS|Mutagenicity|Letter|AIDS-EDIT|S-MOL-5> [-b]");
 	}
 	std::string dataset(argv[1]);
+	bool baseline{false};
+	if (argc >= 3) {
+	    std::string flag(argv[2]);
+	    if (flag == "-b") {
+	        baseline = true;
+	    }
+	}
 
 	// Varied sub-collections.
 	std::vector<std::string> percents{"10", "20", "30", "40", "50", "60", "70", "80", "90"};
@@ -126,9 +133,22 @@ int main(int argc, char* argv[]) {
 		algo_options_suffixes = {"", " --initial-solutions 10 --ratio-runs-from-initial-solutions .5"};
 	}
 
+	// Configure the median estimator to match the baseline method.
+	if (baseline) {
+	    init_types = {"MEDOID"};
+	    nums_inits = {"1"};
+        algos = {ged::Options::GEDMethod::BRANCH_FAST};
+        algo_options_suffixes = {""};
+	}
+
 	// Generate the result file.
 	std::string result_filename("../output/");
-	result_filename += dataset + "_RESULTS.csv";
+	if (baseline) {
+        result_filename += dataset + "_BASELINE_RESULTS.csv";
+	}
+	else {
+        result_filename += dataset + "_RESULTS.csv";
+	}
 	std::ofstream result_file(result_filename.c_str());
 	result_file << "percent,id,init_type,num_inits,algo,time,time_init,time_converged,sod,sod_init,sod_converged,itrs,state\n";
 	result_file.close();
@@ -157,6 +177,9 @@ int main(int argc, char* argv[]) {
 			for (const auto & init_type : init_types) {
 				for (const auto & num_inits : nums_inits) {
 					std::string mge_options("--time-limit 600 --stdout 0 --init-type " + init_type);
+					if (baseline) {
+					    mge_options += " --update-order FALSE";
+					}
 					if (init_type != "RANDOM" and num_inits != "1") {
 						continue;
 					}

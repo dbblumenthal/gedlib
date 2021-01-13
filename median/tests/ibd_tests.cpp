@@ -60,7 +60,8 @@ int main(int argc, char* argv[]) {
 	for (const std::string & graph_class : graph_classes) {
 
 		// Write header of the result file.
-		std::string result_filename("../output/IBD_" + graph_class + "_RESULTS.csv");
+		std::string result_filename("../output/IBD_" + graph_class + "_NEW_RESULTS.csv");
+        std::string median_filename("../output/IBD_" + graph_class + "_MEDIAN.gxl");
 		std::ofstream result_file(result_filename.c_str());
 		result_file << "time_bcu_I,sod_bcu_I,time_bcu_II,sod_bcu_II,time_bcu_III,sod_bcu_III,\n";
 		result_file.close();
@@ -86,6 +87,7 @@ int main(int argc, char* argv[]) {
 		double sod_bcu_II{mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED)};
 		mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
 		mge.run(graph_ids, median_id);
+		env.save_as_gxl_graph(median_id, median_filename.c_str());
 		result_file.open(result_filename.c_str(),std::ios_base::app);
 		result_file << mge.get_runtime(ged::Options::AlgorithmState::TERMINATED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED) << ",";
 		result_file << time_bcu_II << "," << sod_bcu_II << ",";

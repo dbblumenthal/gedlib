@@ -43,6 +43,7 @@ namespace ged {
  * | <tt>\--@<option@> @<arg@></tt> | modified parameter | default  | more information |
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--init-type RANDOM\|MEDOID\|MIN\|MAX\|MEAN</tt> | method for computing the initial medians | @p RANDOM | unless @p RANDOM, the option @p \--random-inits has no effect |
+ * | <tt>\--update-order TRUE\|FALSE</tt> | update the order of the medians during optimization | @p TRUE | should always be set to TRUE, we included the option only for test purposes |
  * | <tt>\--random-inits @<convertible to int greater 0@></tt> | number of randomly constructed initial medians | @p 50 | n.a. |
  * | <tt>\--randomness REAL\|PSEUDO</tt> | use real randomness or pseudo randomness | @p REAL | if @p REAL, the option @p \--seed has no effect |
  * | <tt>\--seed @<convertible to int greater equal 0@></tt> | seed for generating pseudo random numbers | @p 0 | n.a. |
@@ -215,6 +216,8 @@ private:
 	double edge_ins_cost_;
 
 	std::string init_type_;
+
+	bool update_order_;
 
 	std::size_t num_random_inits_;
 

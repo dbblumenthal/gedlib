@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 		std::string result_filename("../output/IBD_" + graph_class + "_NEW_RESULTS.csv");
         std::string median_filename("../output/IBD_" + graph_class + "_MEDIAN.gxl");
 		std::ofstream result_file(result_filename.c_str());
-		result_file << "time_bcu_I,sod_bcu_I,time_bcu_II,sod_bcu_II,time_bcu_III,sod_bcu_III,\n";
+		result_file << "time_bcu_I,sod_bcu_I\n";
 		result_file.close();
 
 		// Initialize the environment.
@@ -81,17 +81,17 @@ int main(int argc, char* argv[]) {
 
 
 		// Run the tests and save the results.
-		mge.set_descent_method(ged::Options::GEDMethod::REFINE, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
-		mge.run(graph_ids, median_id);
-		double time_bcu_II{mge.get_runtime(ged::Options::AlgorithmState::TERMINATED)};
-		double sod_bcu_II{mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED)};
+		// mge.set_descent_method(ged::Options::GEDMethod::REFINE, "--threads 6 --initial-solutions 10 --ratio-runs-from-initial-solutions .5");
+		// mge.run(graph_ids, median_id);
+		// double time_bcu_II{mge.get_runtime(ged::Options::AlgorithmState::TERMINATED)};
+		// double sod_bcu_II{mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED)};
 		mge.set_descent_method(ged::Options::GEDMethod::BRANCH_FAST, "--threads 6");
 		mge.run(graph_ids, median_id);
 		env.save_as_gxl_graph(median_id, median_filename.c_str());
 		result_file.open(result_filename.c_str(),std::ios_base::app);
-		result_file << mge.get_runtime(ged::Options::AlgorithmState::TERMINATED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED) << ",";
-		result_file << time_bcu_II << "," << sod_bcu_II << ",";
-		result_file << mge.get_runtime(ged::Options::AlgorithmState::CONVERGED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::CONVERGED) << "\n";
+		result_file << mge.get_runtime(ged::Options::AlgorithmState::TERMINATED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::TERMINATED) << "\n";
+		// result_file << time_bcu_II << "," << sod_bcu_II << ",";
+		// result_file << mge.get_runtime(ged::Options::AlgorithmState::CONVERGED) << "," << mge.get_sum_of_distances(ged::Options::AlgorithmState::CONVERGED) << "\n";
 		result_file.close();
 	}
 

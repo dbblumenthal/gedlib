@@ -77,13 +77,19 @@ def append_cmake_lists(identifier):
     append = append + "  add_custom_command(TARGET " + identifier.lower() + "gedlib POST_BUILD COMMAND install_name_tool -change libomp.dylib ${OMP_HOME}/lib/libomp.dylib ${LIBRARY_OUTPUT_PATH}/lib" + identifier.lower() + "gedlib.so)\n"
     append = append + "endif()\n"
     delete_line = 0
+    ignore_next_endif = False
     temp = open("temp", "wb")
     with open("src/CMakeLists.txt", "r") as f:
         for line in f:
+	    if line.startswith("if(GUROBI_HOME)"):
+                ignore_next_endif = True
             if line.startswith("add_library(") and not line.startswith("add_library(gxlgedlib"):
                 delete_line = 9
             if line.startswith("endif()"):
-                line = line + append
+                if ignore_next_endif:
+                    ignore_next_endif = False
+                else:
+                    line = line + append
             if delete_line <= 0:
                 temp.write(line)
             delete_line = delete_line - 1

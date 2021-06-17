@@ -25,7 +25,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/ijprai2020/bin)
 
 # Add targets.
 
-add_custom_target(tkde2019 DEPENDS train_ring train_walks train_subgraph train_ml run_tests run_ipfp)
+add_custom_target(ijprai2020 DEPENDS train_ring train_walks train_subgraph train_ml run_tests run_ipfp)
 
 add_executable(train_ring src/train_ring.cpp)
 target_link_libraries(train_ring gxlgedlib)

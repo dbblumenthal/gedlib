@@ -81,7 +81,7 @@ def append_cmake_lists(identifier):
     temp = open("temp", "wb")
     with open("src/CMakeLists.txt", "r") as f:
         for line in f:
-	    if line.startswith("if(GUROBI_HOME)"):
+            if line.startswith("if(GUROBI_HOME)"):
                 ignore_next_endif = True
             if line.startswith("add_library(") and not line.startswith("add_library(gxlgedlib"):
                 delete_line = 9

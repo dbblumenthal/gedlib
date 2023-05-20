@@ -38,9 +38,11 @@ private:
 
 	std::string options_() const {
 		std::string options("--threads 6");
+#ifdef GUROBI
 		if (ged_method_ == ged::Options::GEDMethod::F2 or ged_method_ == ged::Options::GEDMethod::BLP_NO_EDGE_LABELS) {
 			options += " --relax TRUE";
 		}
+#endif
 		return options;
 	}
 
@@ -59,6 +61,7 @@ public:
 			else if (ged_method_ == ged::Options::GEDMethod::NODE) {
 				name << "NODE";
 			}
+#ifdef GUROBI
 			else if (ged_method_ == ged::Options::GEDMethod::F2) {
 				name << "FTWO";
 			}
@@ -68,6 +71,7 @@ public:
 			else if (ged_method_ == ged::Options::GEDMethod::REFINE) {
 				name << "REFINE";
 			}
+#endif
 			else {
 				name << "IPFP";
 			}
@@ -111,7 +115,17 @@ void test_on_dataset(const std::string & dataset) {
 	std::cout << "\tInitializing the environment ...\n";
 
 	// Collect all tested methods.
-	std::vector<ged::Options::GEDMethod> ged_methods{ged::Options::GEDMethod::NODE, ged::Options::GEDMethod::BRANCH_UNIFORM, ged::Options::GEDMethod::BRANCH_FAST, ged::Options::GEDMethod::IPFP, ged::Options::GEDMethod::REFINE, ged::Options::GEDMethod::F2, ged::Options::GEDMethod::BLP_NO_EDGE_LABELS};
+	std::vector<ged::Options::GEDMethod> ged_methods{
+        ged::Options::GEDMethod::NODE,
+        ged::Options::GEDMethod::BRANCH_UNIFORM,
+        ged::Options::GEDMethod::BRANCH_FAST,
+        ged::Options::GEDMethod::IPFP,
+        ged::Options::GEDMethod::REFINE,
+#ifdef GUROBI
+        ged::Options::GEDMethod::F2,
+        ged::Options::GEDMethod::BLP_NO_EDGE_LABELS
+#endif
+    };
 	std::vector<Method> methods;
 	for (auto ged_method : ged_methods) {
 		methods.emplace_back(ged_method);

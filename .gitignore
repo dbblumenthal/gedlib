@@ -6,7 +6,7 @@ output/
 results/
 ini/
 median/data/
-ext/.INSTALLED
+ext/**
 /.settings/
 /.cproject
 /.project
@@ -22,3 +22,5 @@ ext/.INSTALLED
 median/soa-median/graph-lib_clean-median/test_VLDBJ_final/chemical-edit-distances
 /src/env/ged_env.*.cpp
 !/src/env/ged_env.gxl.cpp
+**/build/**
+**/bin/**

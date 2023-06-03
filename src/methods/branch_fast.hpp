@@ -51,7 +51,9 @@ public:
 
 private:
 
-	enum SortMethod_ {STD, COUNTING};
+	enum SortMethod_ {
+        STD, COUNTING, GPU
+    };
 
 	class SortedEdgeLabels_ {
 	public:
@@ -80,17 +82,23 @@ private:
 
 	virtual void lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem) final;
 
-	virtual void lsape_init_graph_(const GEDGraph & graph) final;
+    virtual void lsape_init_graph_(const GEDGraph &graph) final;
 
-	// Private helper member functions.
+    // Private helper member functions.
 
-	double compute_substitution_cost_(const GEDGraph & g, const GEDGraph & h, GEDGraph::NodeID i, GEDGraph::NodeID k,
-			const SortedEdgeLabels_ & sorted_edge_labels_g, const SortedEdgeLabels_ & sorted_edge_labels_h) const;
+    double compute_substitution_cost_(const GEDGraph &g, const GEDGraph &h, GEDGraph::NodeID i, GEDGraph::NodeID k,
+                                      const SortedEdgeLabels_ &sorted_edge_labels_g,
+                                      const SortedEdgeLabels_ &sorted_edge_labels_h) const;
 
-	double compute_deletion_cost_(const GEDGraph & g, GEDGraph::NodeID i) const;
+    double compute_deletion_cost_(const GEDGraph &g, GEDGraph::NodeID i) const;
 
-	double compute_insertion_cost_(const GEDGraph & h, GEDGraph::NodeID k) const;
-};
+    double compute_insertion_cost_(const GEDGraph &h, GEDGraph::NodeID k) const;
+
+#ifdef CUDA
+        double compute_cost_with_cuda_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem);
+
+#endif
+    };
 
 }
 

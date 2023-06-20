@@ -434,6 +434,8 @@ public:
 	 */
 	double mean_edge_subs_cost(const GEDGraph & g, const GEDGraph & h) const;
 
+    const DMatrix& get_all_dege_cost() const ;
+
 private:
 
 	std::vector<GEDGraph> graphs_;

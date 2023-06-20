@@ -827,7 +827,7 @@ SubproblemSolvers_ ::
 solve(std::size_t num_threads) {
 #ifdef _OPENMP
 	omp_set_num_threads(num_threads - 1);
-#pragma omp parallel for if(num_threads > 1)
+#pragma omp parallel for if(num_threads > 1) default(none)
 #endif
 	for (std::size_t i = 0; i < subproblem_solvers_.size(); i++) {
 		subproblem_solvers_.at(i).solve();

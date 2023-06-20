@@ -41,46 +41,6 @@
 
 #include "../../../src/env/ged_env.hpp"
 
-namespace backtrace {
-
-#include <execinfo.h>  // for backtrace
-#include <dlfcn.h>     // for dladdr
-#include <cxxabi.h>    // for __cxa_demangle
-
-#include <string>
-#include <sstream>
-
-// A C++ function that will produce a stack trace with demangled function and method names.
-    std::string Backtrace(int skip = 1) {
-        void *callstack[128];
-        const int nMaxFrames = sizeof(callstack) / sizeof(callstack[0]);
-        char buf[1024];
-        int nFrames = backtrace(callstack, nMaxFrames);
-
-        std::ostringstream trace_buf;
-        for (int i = skip; i < nFrames; i++) {
-            Dl_info info;
-            if (dladdr(callstack[i], &info)) {
-                char *demangled = NULL;
-                int status;
-                demangled = abi::__cxa_demangle(info.dli_sname, NULL, 0, &status);
-                snprintf(buf, sizeof(buf), "%-3d %*0p %s + %s\n",
-                         i, 2 + sizeof(void *) * 2, static_cast<char *>(callstack[i]),
-                         status == 0 ? demangled : info.dli_sname,
-                         (static_cast<char *>(callstack[i]) - static_cast<char *>(info.dli_saddr)));
-                free(demangled);
-            } else {
-                snprintf(buf, sizeof(buf), "%-3d %*0p\n",
-                         i, 2 + sizeof(void *) * 2, callstack[i]);
-            }
-            trace_buf << buf;
-        }
-        if (nFrames == nMaxFrames)
-            trace_buf << "  [truncated]\n";
-        return trace_buf.str();
-    }
-}
-
 constexpr std::size_t centrality() { return 20; }
 
 constexpr std::size_t no_centrality() { return 0; }

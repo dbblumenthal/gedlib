@@ -225,7 +225,6 @@ private:
 	virtual double lsape_lower_bound_scaling_factor_(const GEDGraph & g, const GEDGraph & h);
 
 };
-
 }
 
 #endif /* SRC_METHODS_LSAPE_BASED_METHOD_HPP_ */

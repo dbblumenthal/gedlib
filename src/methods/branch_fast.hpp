@@ -27,6 +27,9 @@
 #ifndef SRC_METHODS_BRANCH_FAST_HPP_
 #define SRC_METHODS_BRANCH_FAST_HPP_
 
+#include "lsape_based_method.hpp"
+#include "../env/ged_data.hpp"
+
 namespace ged {
 
 /*!
@@ -41,65 +44,75 @@ namespace ged {
  * | ------------------------------ | ------------------ | -------- | ---------------- |
  * | <tt>\--sort-method STD\|COUNTING</tt> | the employed sorting algorithm | @p COUNTING | @ref ged::util::counting_sort() <br> use counting sort if the number of different edge labels is constant |
  */
-template<class UserNodeLabel, class UserEdgeLabel>
-class BranchFast : public LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel> {
+    template<class UserNodeLabel, class UserEdgeLabel>
+    class BranchFast : public LSAPEBasedMethod<UserNodeLabel, UserEdgeLabel> {
 
-public:
-	virtual ~BranchFast();
+    public:
+        virtual ~BranchFast();
 
-	BranchFast(const GEDData<UserNodeLabel, UserEdgeLabel> & ged_data);
+        BranchFast(const GEDData<UserNodeLabel, UserEdgeLabel> &ged_data);
 
-private:
+        DMatrix& get_data();
 
-	enum SortMethod_ {
-        STD, COUNTING, GPU
+    private:
+
+        enum SortMethod_ {
+            STD, COUNTING, GPU
+        };
+
+        class SortedEdgeLabels_ {
+        public:
+            SortedEdgeLabels_(const GEDGraph &g, SortMethod_ sort_method);
+
+            SortedEdgeLabels_();
+
+            void operator=(const SortedEdgeLabels_ &sorted_edge_labels);
+
+            const std::vector<LabelID> &get_incident_labels(GEDGraph::NodeID) const;
+
+            const std::map<GEDGraph::NodeID, std::vector<LabelID>> &get_data() const;
+
+        private:
+            std::map<GEDGraph::NodeID, std::vector<LabelID>> sorted_edge_labels_;
+        };
+
+        SortMethod_ sort_method_;
+
+        std::map<GEDGraph::GraphID, SortedEdgeLabels_> sorted_edge_labels_;
+
+        // Member functions inherited from LSAPEBasedMethod.
+
+        virtual bool lsape_parse_option_(const std::string &option, const std::string &arg) final;
+
+        virtual std::string lsape_valid_options_string_() const final;
+
+        virtual void lsape_set_default_options_() final;
+
+        virtual void lsape_populate_instance_(const GEDGraph &g, const GEDGraph &h, DMatrix &master_problem) final;
+
+        virtual void lsape_init_graph_(const GEDGraph &graph) final;
+
+        // Private helper member functions.
+
+        double compute_substitution_cost_(const GEDGraph &g, const GEDGraph &h, GEDGraph::NodeID i, GEDGraph::NodeID k,
+                                          const SortedEdgeLabels_ &sorted_edge_labels_g,
+                                          const SortedEdgeLabels_ &sorted_edge_labels_h) const;
+
+        double compute_deletion_cost_(const GEDGraph &g, GEDGraph::NodeID i) const;
+
+        double compute_insertion_cost_(const GEDGraph &h, GEDGraph::NodeID k) const;
     };
 
-	class SortedEdgeLabels_ {
-	public:
-		SortedEdgeLabels_(const GEDGraph & g, SortMethod_ sort_method);
 
-		SortedEdgeLabels_();
-
-		void operator=(const SortedEdgeLabels_ & sorted_edge_labels);
-
-		const std::vector<LabelID> & get_incident_labels(GEDGraph::NodeID) const;
-	private:
-		std::map<GEDGraph::NodeID, std::vector<LabelID>> sorted_edge_labels_;
-	};
-
-	SortMethod_ sort_method_;
-
-	std::map<GEDGraph::GraphID, SortedEdgeLabels_> sorted_edge_labels_;
-
-	// Member functions inherited from LSAPEBasedMethod.
-
-	virtual bool lsape_parse_option_(const std::string & option, const std::string & arg) final;
-
-	virtual std::string lsape_valid_options_string_() const final;
-
-	virtual void lsape_set_default_options_() final;
-
-	virtual void lsape_populate_instance_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem) final;
-
-    virtual void lsape_init_graph_(const GEDGraph &graph) final;
-
-    // Private helper member functions.
-
-    double compute_substitution_cost_(const GEDGraph &g, const GEDGraph &h, GEDGraph::NodeID i, GEDGraph::NodeID k,
-                                      const SortedEdgeLabels_ &sorted_edge_labels_g,
-                                      const SortedEdgeLabels_ &sorted_edge_labels_h) const;
-
-    double compute_deletion_cost_(const GEDGraph &g, GEDGraph::NodeID i) const;
-
-    double compute_insertion_cost_(const GEDGraph &h, GEDGraph::NodeID k) const;
-
-#ifdef CUDA
-        double compute_cost_with_cuda_(const GEDGraph & g, const GEDGraph & h, DMatrix & master_problem);
-
+#ifdef GED_ENABLE_CUDA
+    extern "C" double* launch_kernel(int g_num_nodes, int h_num_nodes);
+    extern "C" void prepare_cuda_env_(const DMatrix& mat,
+                           const std::map<GEDGraph::NodeID, std::vector<LabelID>> &sorted_edge_labels_g,
+                           const std::map<GEDGraph::NodeID, std::vector<LabelID>> &sorted_edge_labels_h,
+                           vector<int>& g_deg,
+                           vector<int>& h_deg
+    );
 #endif
-    };
-
 }
 
 #endif /* SRC_METHODS_BRANCH_FAST_HPP_ */

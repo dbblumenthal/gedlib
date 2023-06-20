@@ -21,8 +21,15 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-project(GEDLIB)
+project(GEDLIB CXX CUDA)
 set(VERSION 1.0)
+
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CUDA_ARCHITECTURES 86)
+
+
+add_definitions(-DGED_ENABLE_CUDA)
 
 # Determine build type.
 
@@ -63,7 +70,7 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 set(LSAPE_HOME ${CMAKE_SOURCE_DIR}/ext/lsape.5)
 set(NOMAD_HOME ${CMAKE_SOURCE_DIR}/ext/nomad.3.8.1)
 set(LIBSVM_HOME ${CMAKE_SOURCE_DIR}/ext/libsvm.3.22)
-set(EIGEN_HOME ${CMAKE_SOURCE_DIR}/ext/eigen.3.3.4)
+set(EIGEN_HOME ${CMAKE_SOURCE_DIR}/ext/eigen-3.4.0)
 set(FANN_HOME ${CMAKE_SOURCE_DIR}/ext/fann.2.2.0)
 set(BOOST_HOME ${CMAKE_SOURCE_DIR}/ext/boost.1.69.0)
 
@@ -71,6 +78,7 @@ set(BOOST_HOME ${CMAKE_SOURCE_DIR}/ext/boost.1.69.0)
 
 include_directories(SYSTEM ${BOOST_HOME} ${NOMAD_HOME}/ext/sgtelib/src ${NOMAD_HOME}/src ${LSAPE_HOME}/cpp/include ${EIGEN_HOME}/Eigen ${LIBSVM_HOME} ${FANN_HOME}/include ${GUROBI_HOME}/include ${OMP_HOME}/include)
 link_directories(${NOMAD_HOME}/lib ${FANN_HOME}/lib ${LIBSVM_HOME} ${GUROBI_HOME}/lib ${OMP_HOME}/lib)
+include_directories(${CMAKE_SOURCE_DIR}/ext/cuCollections/include)
 
 if(APPLE)
   include_directories(SYSTEM ${OMP_HOME}/include)

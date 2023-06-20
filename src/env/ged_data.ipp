@@ -1083,6 +1083,10 @@ min_edge_edit_cost(const GEDGraph & g, const GEDGraph & h) const {
 	return min_cost;
 }
 
+    template<class UserNodeLabel, class UserEdgeLabel>
+    const DMatrix &GEDData<UserNodeLabel, UserEdgeLabel>::get_all_dege_cost() const {
+        return this->edge_costs_;
+    }
 }
 
 #endif /* SRC_ENV_GED_DATA_IPP_ */

@@ -92,13 +92,14 @@ namespace ged {
 #ifdef GED_ENABLE_CUDA
         vector<int> g_deg(master_problem.num_rows());
         vector<int> h_deg(master_problem.num_cols());
+        auto num_threads = this->num_threads_;
         for(auto i = 0;i<g_deg.size();i++) {
             g_deg[i] = g.degree(i);
         }
         for(auto i = 0;i<h_deg.size();i++) {
             h_deg[i] = h.degree(i);
         }
-        prepare_cuda_env_(this->ged_data_.get_all_dege_cost(),sorted_edge_labels_g.get_data(),sorted_edge_labels_h.get_data(),g_deg,h_deg);
+        prepare_cuda_env_(this->ged_data_.get_all_dege_cost(),sorted_edge_labels_g.get_data(),sorted_edge_labels_h.get_data(),g_deg,h_deg,num_threads);
 
 #ifdef _OPENMP
         omp_set_num_threads(this->num_threads_ - 1);
@@ -118,7 +119,7 @@ namespace ged {
             }
         }
 
-        auto mat = launch_kernel(master_problem.num_rows(),master_problem.num_cols());
+        auto mat = launch_kernel(master_problem.num_rows(),master_problem.num_cols(),g_deg,h_deg);
 
         for (std::size_t row_in_master = 0; row_in_master < master_problem.num_rows(); row_in_master++) {
             for (std::size_t col_in_master = 0; col_in_master < master_problem.num_cols(); col_in_master++) {

@@ -105,12 +105,13 @@ namespace ged {
 
 
 #ifdef GED_ENABLE_CUDA
-    extern "C" double* launch_kernel(int g_num_nodes, int h_num_nodes);
+    extern "C" double* launch_kernel(int g_num_nodes, int h_num_nodes,vector<int>& g_degs,vector<int>& h_degs);
     extern "C" void prepare_cuda_env_(const DMatrix& mat,
                            const std::map<GEDGraph::NodeID, std::vector<LabelID>> &sorted_edge_labels_g,
                            const std::map<GEDGraph::NodeID, std::vector<LabelID>> &sorted_edge_labels_h,
-                           vector<int>& g_deg,
-                           vector<int>& h_deg
+                           vector<int>& g_degs,
+                           vector<int>& h_degs,
+                           size_t num_threads
     );
 #endif
 }

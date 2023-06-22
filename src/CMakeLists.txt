@@ -38,6 +38,7 @@ target_compile_definitions(cuda_acc PUBLIC -D CUDA_FORCE_CDP1_IF_SUPPORTED)
 add_compile_options(-fPIC -fno-pie)
 set_target_properties(cuda_acc PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON)
+target_compile_definitions(cuda_acc PUBLIC GED_ENABLE_CUDA)
 target_link_libraries(gxlgedlib cuda_acc)
 
 if(GUROBI_HOME)
